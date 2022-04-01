@@ -1,0 +1,62 @@
+.btn{
+	cursor: pointer;
+	text-transform: capitalize;
+	border-radius: 100rem;
+	padding: 1.2rem 1.2rem 1.2rem 2rem;
+	min-width: 16rem;
+
+	&__primary{
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: $color-white !important;
+		background-color: $color-primary;
+		transition: all 0.4s ease-in-out;
+		box-shadow: 0 0.8rem 1.6rem rgba($color-black, 0.24);
+
+		&--inverse{
+			color: $color-black !important;
+			background-color: $color-white;
+
+			.btn__primary__icon{
+				background-color: $color-primary;
+			}
+		}
+
+		&__icon{
+			width: 3.2rem;
+			height: 3.2rem;
+			border-radius: 1.6rem;
+			background-color: $color-white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-left: 1.6rem;
+		}
+
+		&:hover{
+			box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.8);
+			transform: scale(1.01);
+		}
+	}
+
+	&__secondary{
+		font-weight: 500 !important;
+		padding: 0.4rem 1.2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-color: rgba($color-white, 0.8);
+		border-width: 0.16rem;
+		border-style: solid;
+		color: $color-white !important;
+		background-color: rgba($color-white, 0);
+		transition: all 0.4s ease-in-out;
+
+		&:hover{
+			border-color: rgba($color-white, 1);
+		}
+	}
+
+	&--disabled{ cursor:not-allowed; }
+}
