@@ -4,15 +4,15 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	padding: 1.2rem 16rem;
+	padding: 0rem 8rem;
 	box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.1);
 	position: relative;
 	background-color: rgba($color-white, 0.08);
 	color: $color-white;
 
-	@include respond(desk){ padding: 1.2rem 8rem; }
-	@include respond(retinaBig){ padding: 0rem 18rem; }
-	@include respond(tabLand){ padding: 1.2rem 4rem; }
+	@include respond(desk){ padding: 0rem 4rem; }
+	@include respond(retinaBig){ padding: 0rem 8rem; }
+	@include respond(tabLand){ padding: 0rem 4rem; }
 	@include respond(tabPort){ padding: 1.2rem 4rem; }
 	@include respond(phone){ padding: 1.2rem; }
 
@@ -58,7 +58,17 @@
 			}
 
 			&__item{
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
 				&:not(:last-child){margin-right: 4rem;}
+
+				&>img{
+					height: 3.2rem;
+					width: 3.2rem;
+					object-fit: contain;
+				}
 			}
 		}
 
