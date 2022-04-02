@@ -13,6 +13,7 @@ import Snackbar from './components/ui/Snackbar/Snackbar'
 import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
+import ExplorePage from './pages/explore'
 
 const rootReducer = combineReducers({
 	WalletState: WalletReducer,
@@ -30,6 +31,7 @@ function App() {
 					<Routes>
 						<Route path='/*' element={<IndexPage/>}/>
 						<Route path='/' element={<IndexPage/>}/>
+						<Route path='/explore' element={<ExplorePage/>}/>
 					</Routes>
 				</Router>
 				<Snackbar/>
