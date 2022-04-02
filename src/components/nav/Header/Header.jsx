@@ -25,8 +25,8 @@ const Header = props => {
 		{id: 'NI1', title: "Explore", url: "/explore", uri: null, icon: null, action: null},
 		{id: 'NI2', title: "ITO", url: "/ito", uri: null, icon: null, action: null},
 		{id: 'NI3', title: "Book Pool", url: "/pool", uri: null, icon: null, action: null},
-		{id: 'NI3', title: "Profile", url: "/account", uri: null, icon: UserIcon, action: null},
-		{id: 'NI3', title: "My Wallet", url: null, uri: null, icon: WalletIcon, action: handleWallet},
+		{id: 'NI4', title: "Profile", url: "/account", uri: null, icon: UserIcon, action: null},
+		{id: 'NI5', title: "My Wallet", url: null, uri: null, icon: WalletIcon, action: handleWallet},
 	]
 
 	const dispatch = useDispatch()
@@ -99,7 +99,8 @@ const Header = props => {
 
 	const menuItemClickHandler = navItem => {
 		setMenuOpen(false)
-		if(isUsable(navItem.url)) navigate(navItem.url)
+		if(isUsable(navItem.action)) navItem.action()
+		else if(isUsable(navItem.url)) navigate(navItem.url)
 		else{
 			window.open(navItem.uri, "_blank")
 			GaExternalTracker(navItem.title)
