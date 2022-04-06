@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-import { sequence } from '0xsequence'
-
 import { isUsable } from '../../../helpers/functions'
 import { GaExternalTracker } from '../../../trackers/ga-tracker.js'
 
@@ -15,7 +13,7 @@ import Logo from '../../../assets/logo/solid.svg'
 import UserIcon from '../../../assets/icons/user.svg'
 import WalletIcon from '../../../assets/icons/wallet.svg'
 
-const wallet = new sequence.Wallet()
+import SequenceWallet from '../../../helpers/wallet'
 
 const Header = props => {
 
@@ -41,21 +39,12 @@ const Header = props => {
 
 	const connectWallet = () => {
 		dispatch(showSpinner())
-		const connectDetails = wallet.connect({
-			app: 'Nalnda Marketplace',
-			authorize: true,
-			settings: {
-				theme: "light",
-				includedPaymentProviders: ["moonpay", "ramp"],
-				defaultFundingCurrency: "matic",
-				lockFundingCurrencyToDefault: false,
-			}
-		})
+		const connectDetails = SequenceWallet.connect()
 		connectDetails.then(res => {
 			dispatch(hideSpinner())
 			if(res.connected === true){
 				saveWallet(res)
-				wallet.openWallet()
+				SequenceWallet.open()
 				dispatch(setWallet(res))
 			}
 		})
@@ -67,11 +56,11 @@ const Header = props => {
 	}
 
 	const disconectWallet = () => {
-		wallet.openWallet()
+		SequenceWallet.open()
 		// dispatch(showSpinner())
 		// saveWallet(null)
 		// dispatch(clearWallet())
-		// wallet.disconnect()
+		// SequenceWallet.disconnect()
 		// dispatch(hideSpinner())
 	}
 
