@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 
-const projectId = process.env.PROJECT_ID
+const projectId = process.env.REACT_APP_NET_PROJECT_ID
 
 module.exports = {
 	networks: {
