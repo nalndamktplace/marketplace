@@ -13,7 +13,7 @@ import Logo from '../../../assets/logo/solid.svg'
 import UserIcon from '../../../assets/icons/user.svg'
 import WalletIcon from '../../../assets/icons/wallet.svg'
 
-import SequenceWallet from '../../../helpers/wallet'
+import SequenceWallet from '../../../connections/wallet'
 
 const Header = props => {
 
