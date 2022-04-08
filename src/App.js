@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import './main.scss'
 
-import IndexPage from './pages'
 
 import Spinner from './components/ui/Spinner/Spinner'
 import Snackbar from './components/ui/Snackbar/Snackbar'
@@ -13,7 +12,10 @@ import Snackbar from './components/ui/Snackbar/Snackbar'
 import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
+
+import IndexPage from './pages'
 import ExplorePage from './pages/explore'
+import CreateNftPage from './pages/Create'
 
 const rootReducer = combineReducers({
 	WalletState: WalletReducer,
@@ -31,6 +33,7 @@ function App() {
 					<Routes>
 						<Route path='/*' element={<IndexPage/>}/>
 						<Route path='/' element={<IndexPage/>}/>
+						<Route path='/create' element={<CreateNftPage/>}/>
 						<Route path='/explore' element={<ExplorePage/>}/>
 					</Routes>
 				</Router>

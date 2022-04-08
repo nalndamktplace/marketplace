@@ -20,6 +20,9 @@ const Wallet = {
 	},
 	disconnect: () => {
 		wallet.disconnect()
+	},
+	getSigner: () => {
+		return wallet.getSigner()
 	}
 }
 
