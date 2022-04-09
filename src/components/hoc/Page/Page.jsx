@@ -3,13 +3,21 @@ import Footer from '../../nav/Footer/Footer'
 import Header from '../../nav/Header/Header'
 
 const Page = props => {
+
+	const getClasses = () => {
+		let classes = ["page__wrapper"]
+		if(props.fluid) classes.push("page__wrapper--fluid")
+		if(props.containerClass)  classes.push(props.containerClass)
+		return classes.join(" ")
+	}
+
 	return (
 		<div className='page'>
 			<Header/>
-				<div className="page__wrapper">
+				<div className={getClasses()}>
 					{props.children}
 				</div>
-			<Footer/>
+			{props.noFooter?null:<Footer/>}
 		</div>
 	)
 }
