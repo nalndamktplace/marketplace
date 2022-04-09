@@ -19,6 +19,7 @@ const Header = props => {
 	// const handleWallet = () => { WalletConnected?disconectWallet():connectWallet() }
 
 	const NAV_ITEMS = [
+		{id: 'NI5', title: "Create", url: "/create", uri: null, icon: null, action: null},
 		{id: 'NI1', title: "Explore", url: "/explore", uri: null, icon: null, action: null},
 		{id: 'NI2', title: "ITO", url: "/ito", uri: null, icon: null, action: null},
 		{id: 'NI3', title: "Book Pool", url: "/pool", uri: null, icon: null, action: null},
