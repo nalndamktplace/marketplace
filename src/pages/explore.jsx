@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import Page from '../components/hoc/Page/Page'
+
 import Contracts from '../connections/contracts'
+
 import { isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
