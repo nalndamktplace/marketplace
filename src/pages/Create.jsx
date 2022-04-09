@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router'
+
+import Page from '../components/hoc/Page/Page'
+import PrimaryButton from '../components/ui/Buttons/Primary'
+import InputField from '../components/ui/Input/Input'
+
 import Contracts from '../connections/contracts'
+
 import { IpfsClient } from '../connections/ipfs'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 const CreateNftPage = props => {
 
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
 	const [Loading, setLoading] = useState(false)
 	const [FileUrl, setFileUrl] = useState(null)
@@ -32,6 +40,7 @@ const CreateNftPage = props => {
 				const url = `https://ipfs.infura.io/ipfs/${res.path}`
 				Contracts.listNftForSales(url, FormInput).then(res => {
 					setLoading(false)
+					navigate('/explore')
 				}).catch((err => {
 					console.log({err})
 					setLoading(false)
@@ -47,18 +56,24 @@ const CreateNftPage = props => {
 	}
 
 	return (
-		<div className="flex justify-center">
-			<div className="w-1/2 flex flex-col pb-12">
-				<input placeholder="Asset Name" className="mt-8 border rounded p-4" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
-				<textarea placeholder="Asset Description" className="mt-2 border rounded p-4" onChange={e => setFormInput({ ...FormInput, description: e.target.value })} />
-				<input placeholder="Asset Price in Eth" className="mt-2 border rounded p-4" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
-				<input type="file" name="Asset" className="my-4" onChange={e => setFormInput({...FormInput, file: e.target.files[0] })} />
-				{ FileUrl && (
-					<img className="rounded mt-4" width="350" src={FileUrl} alt="nft" />
-				) }
-				<button onClick={listNFTForSale} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">Create NFT</button>
+		<Page noFooter={true}>
+			<div className="create__head">
+				<h3 className='typo__head typo__head--3'>Create EBook</h3>
 			</div>
-		</div>
+			<div className="create__data">
+				<div className="create__data__form">
+					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
+					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, description: e.target.value })} />
+					<InputField type="number" label="price in ETH" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
+					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, file: e.target.files[0] })} />
+					<InputField type="file" label="book" accept='application/pdf' />
+					<PrimaryButton label={"Create EBook"} onClick={()=>listNFTForSale()} />
+				</div>
+				<div className="create__data__preview">
+					{FileUrl?<img src={FileUrl} alt="nft" />:null}
+				</div>
+			</div>
+		</Page>
 	)
 }
 

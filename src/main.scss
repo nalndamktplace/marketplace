@@ -11,7 +11,12 @@
 @import "./sass/components/nav/footer";
 @import "./sass/components/nav/header";
 @import "./sass/components/ui/button";
+@import "./sass/components/ui/input";
 @import "./sass/components/ui/snackbar";
 @import "./sass/components/ui/spinner";
 
-@import "./sass/pages/page.scss";
+@import "./sass/pages/index";
+@import "./sass/pages/page";
+@import "./sass/pages/create";
+@import "./sass/pages/explore";
+@import "./sass/pages/account";

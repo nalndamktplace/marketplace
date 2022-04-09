@@ -7,6 +7,10 @@
 		@include respond(tabLand){ padding: 0 4rem; }
 		@include respond(tabPort){ padding: 0 4rem; }
 		@include respond(phone){ padding: 0 2rem; }
+
+		&--fluid{
+			padding: 0;
+		}
 	}
 
 	&__section{
