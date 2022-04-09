@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router'
 import Contracts from '../connections/contracts'
 import { IpfsClient } from '../connections/ipfs'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -7,6 +8,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 const CreateNftPage = props => {
 
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
 	const [Loading, setLoading] = useState(false)
 	const [FileUrl, setFileUrl] = useState(null)
@@ -32,6 +34,7 @@ const CreateNftPage = props => {
 				const url = `https://ipfs.infura.io/ipfs/${res.path}`
 				Contracts.listNftForSales(url, FormInput).then(res => {
 					setLoading(false)
+					navigate('/explore')
 				}).catch((err => {
 					console.log({err})
 					setLoading(false)
