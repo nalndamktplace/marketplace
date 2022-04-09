@@ -30,10 +30,9 @@
 
 			&__label{
 				text-transform: capitalize;
+				transition: 0.4s all ease-in-out;
 
-				&--active{
-					font-weight: 600;
-				}
+				&--active{ font-weight: 600; }
 			}
 		}
 	}
