@@ -6,7 +6,7 @@ import Contracts from '../connections/contracts'
 import { isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-const ExplorePage = props => {
+const ProfilePage = props => {
 
 	const dispatch = useDispatch()
 
@@ -20,7 +20,7 @@ const ExplorePage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		Contracts.loadNfts().then(res => {
+		Contracts.loadMyNfts().then(res => {
 			setLoading(false)
 			setNfts(res)
 		}).catch(err => {
@@ -39,7 +39,6 @@ const ExplorePage = props => {
 						<p>{nft.name}</p>
 						<p>{nft.description}</p>
 						<p>{nft.price}&nbsp;ETH</p>
-						<div onClick={()=>{Contracts.buyNft(nft)}}>Buy</div>
 					</div>
 				)
 			})
@@ -56,4 +55,4 @@ const ExplorePage = props => {
 	)
 }
 
-export default ExplorePage
+export default ProfilePage

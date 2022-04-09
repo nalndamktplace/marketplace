@@ -31,7 +31,6 @@ const CreateNftPage = props => {
 			IpfsClient.add(data).then(res => {
 				const url = `https://ipfs.infura.io/ipfs/${res.path}`
 				Contracts.listNftForSales(url, FormInput).then(res => {
-					console.log({res})
 					setLoading(false)
 				}).catch((err => {
 					console.log({err})
