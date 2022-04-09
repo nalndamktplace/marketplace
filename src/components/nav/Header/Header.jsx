@@ -1,68 +1,67 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { isUsable } from '../../../helpers/functions'
 import { GaExternalTracker } from '../../../trackers/ga-tracker.js'
 
-import { setWallet } from '../../../store/actions/wallet'
-import { setSnackbar } from '../../../store/actions/snackbar'
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
+// import { setWallet } from '../../../store/actions/wallet'
+// import { setSnackbar } from '../../../store/actions/snackbar'
+// import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 
 import Logo from '../../../assets/logo/solid.svg'
 import UserIcon from '../../../assets/icons/user.svg'
-import WalletIcon from '../../../assets/icons/wallet.svg'
+// import WalletIcon from '../../../assets/icons/wallet.svg'
 
-import SequenceWallet from '../../../connections/wallet'
+// import SequenceWallet from '../../../connections/wallet'
 
 const Header = props => {
 
-	const handleWallet = () => { WalletConnected?disconectWallet():connectWallet() }
+	// const handleWallet = () => { WalletConnected?disconectWallet():connectWallet() }
 
 	const NAV_ITEMS = [
 		{id: 'NI1', title: "Explore", url: "/explore", uri: null, icon: null, action: null},
 		{id: 'NI2', title: "ITO", url: "/ito", uri: null, icon: null, action: null},
 		{id: 'NI3', title: "Book Pool", url: "/pool", uri: null, icon: null, action: null},
 		{id: 'NI4', title: "Profile", url: "/account", uri: null, icon: UserIcon, action: null},
-		{id: 'NI5', title: "My Wallet", url: null, uri: null, icon: WalletIcon, action: handleWallet},
+		// {id: 'NI5', title: "My Wallet", url: null, uri: null, icon: WalletIcon, action: handleWallet},
 	]
 
-	const dispatch = useDispatch()
+	// const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const location = useLocation()
 
 	const [MenuOpen, setMenuOpen] = useState(false)
-	const [Wallet, saveWallet] = useState(null)
-	const [WalletConnected, setWalletConnected] = useState(false)
+	// const [Wallet, saveWallet] = useState(null)
+	// const [WalletConnected, setWalletConnected] = useState(false)
 
-	useEffect(() => { setWalletConnected(isUsable(Wallet)) }, [Wallet])
+	// useEffect(() => { setWalletConnected(isUsable(Wallet)) }, [Wallet])
 
-	const connectWallet = () => {
-		dispatch(showSpinner())
-		const connectDetails = SequenceWallet.connect()
-		connectDetails.then(res => {
-			dispatch(hideSpinner())
-			if(res.connected === true){
-				saveWallet(res)
-				SequenceWallet.open()
-				dispatch(setWallet(res))
-			}
-		})
-		.catch(err => {
-			dispatch(hideSpinner())
-			dispatch(setSnackbar('ERROR'))
-			console.error({err})
-		})
-	}
+	// const connectWallet = () => {
+	// 	dispatch(showSpinner())
+	// 	const connectDetails = SequenceWallet.connect()
+	// 	connectDetails.then(res => {
+	// 		dispatch(hideSpinner())
+	// 		if(res.connected === true){
+	// 			saveWallet(res)
+	// 			SequenceWallet.open()
+	// 			dispatch(setWallet(res))
+	// 		}
+	// 	})
+	// 	.catch(err => {
+	// 		dispatch(hideSpinner())
+	// 		dispatch(setSnackbar('ERROR'))
+	// 		console.error({err})
+	// 	})
+	// }
 
-	const disconectWallet = () => {
-		SequenceWallet.open()
+	// const disconectWallet = () => {
+	// 	SequenceWallet.open()
 		// dispatch(showSpinner())
 		// saveWallet(null)
 		// dispatch(clearWallet())
 		// SequenceWallet.disconnect()
 		// dispatch(hideSpinner())
-	}
+	// }
 
 	const getClasses = () => {
 		let classes = ['header']
