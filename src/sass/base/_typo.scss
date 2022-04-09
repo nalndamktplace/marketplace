@@ -49,11 +49,17 @@
 			text-transform: uppercase;
 			color: $color-primary;
 		}
+
+		&--6{
+			font-weight: 500;
+			font-size: 1.8rem;
+			text-transform: capitalize;
+		}
 	}
 
 	&__body{
 		font-weight: 400;
-		&--2{ font-size: 1.6rem;}
+		&--2{ font-size: 1.4rem;}
 	}
 
 	&__act{
