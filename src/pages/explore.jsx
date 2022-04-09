@@ -13,8 +13,6 @@ const ExplorePage = props => {
 	const [Nfts, setNfts] = useState([])
 	const [Loading, setLoading] = useState(false)
 
-	useEffect(() => { console.log({Nfts}) }, [Nfts])
-
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
@@ -41,6 +39,7 @@ const ExplorePage = props => {
 						<p>{nft.name}</p>
 						<p>{nft.description}</p>
 						<p>{nft.price}&nbsp;ETH</p>
+						<div onClick={()=>{Contracts.buyNft(nft)}}>Buy</div>
 					</div>
 				)
 			})
