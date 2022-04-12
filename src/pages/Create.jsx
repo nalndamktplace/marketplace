@@ -18,7 +18,7 @@ const CreateNftPage = props => {
 
 	const [Loading, setLoading] = useState(false)
 	const [FileUrl, setFileUrl] = useState(null)
-	const [FormInput, setFormInput] = useState({price: '', name: '', description: '', file: null})
+	const [FormInput, setFormInput] = useState({price: '', name: '', description: '', file: null, attributes: [], genres: ''})
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -33,14 +33,14 @@ const CreateNftPage = props => {
 		).then(res => {
 			const fileUrl = `https://ipfs.infura.io/ipfs/${res.path}`
 			setFileUrl(fileUrl)
-			const { name, description, price } = FormInput
+			const { name, description, price, attributes, genres } = FormInput
 			if (!name || !description || !price || !fileUrl) return
-			const data = JSON.stringify({ name, description, image: fileUrl })
+			const data = JSON.stringify({ name, description, genres, attributes, image: fileUrl })
 			IpfsClient.add(data).then(res => {
 				const url = `https://ipfs.infura.io/ipfs/${res.path}`
 				Contracts.listNftForSales(url, FormInput).then(res => {
 					setLoading(false)
-					navigate('/explore')
+					navigate('/account')
 				}).catch((err => {
 					console.log({err})
 					setLoading(false)
@@ -64,6 +64,7 @@ const CreateNftPage = props => {
 				<div className="create__data__form">
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, description: e.target.value })} />
+					<InputField type="string" label="genres" onChange={e => setFormInput({ ...FormInput, genres: e.target.value })} />
 					<InputField type="number" label="price in ETH" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, file: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/pdf' />
