@@ -13,16 +13,18 @@ const ethers = require('ethers')
 
 const AccountPage = props => {
 
-	const FILTERS = [{ name: 'status', values: ['sold', 'listed'] }]
+	const FILTERS = [
+		[{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.009', '0.01 - 0.09', '0.1 - 0.9', '1 - 10'] }],
+		[{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'status', values: ['sold', 'listed'] }, { name: 'price', values: ['0.00 - 0.009', '0.01 - 0.09', '0.1 - 0.9', '1 - 10'] }],
+	]
 
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
-	const [NftsSold, setNftsSold] = useState([])
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [Wallet, setWallet] = useState(null)
-	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null}])
+	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null},{name: 'price', active: null}])
 
 	useEffect(() => { getWalletAddress() }, [])
 
@@ -44,7 +46,6 @@ const AccountPage = props => {
 		else if(ActiveTab === 1)
 			Contracts.loadNftsCreated().then(res => {
 				setLoading(false)
-				setNftsSold(res.filter(i => i.sold))
 				setNfts(res)
 			}).catch(err => {
 				setLoading(false)
@@ -89,6 +90,22 @@ const AccountPage = props => {
 						case 'status':
 							if(filter.active === 0) nfts = nfts.filter(v => v.sold)
 							else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
+							break
+						case 'price':
+							if(filter.active === 0) nfts = nfts.filter(v => v.price <= 0.009)
+							else if(filter.active === 1) nfts = nfts.filter(v => v.price > 0.009 && v.price <= 0.09)
+							else if(filter.active === 2) nfts = nfts.filter(v => v.price > 0.09 && v.price <= 0.9)
+							else nfts = nfts.filter(v => v.price > 0.9)
+							break
+						case 'genres':
+							nfts = nfts.filter(v => {
+								if(isUsable(v.genres))
+									return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
+								else {
+									console.log({noGenres: v})
+									return false
+								}
+							})
 							break
 						default:
 					}
@@ -147,7 +164,7 @@ const AccountPage = props => {
 		}
 
 		let filtersDOM = []
-		FILTERS.forEach((filter, index) => filtersDOM.push(
+		FILTERS[ActiveTab].forEach((filter, index) => filtersDOM.push(
 			<div className="account__data__filters__item" key={"filter"+index.toString()}>
 				<div className="account__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
 				<div className="account__data__filters__item__grid">{renderFilterValues(filter)}</div>
@@ -165,13 +182,13 @@ const AccountPage = props => {
 				{renderTabs()}
 			</div>
 			<div className="account__data">
-				{ActiveTab === 1?<div className="account__data__filters">
+				<div className="account__data__filters">
 					<div className="account__data__filters__head account__data__filters__item">
 						<img className='account__data__filters__head__icon' src={FilterIcon} alt="filters"/>
 						<h6 className="typo__head typo__head--6">Filters</h6>
 					</div>
 					{renderFilters()}
-				</div>:null}
+				</div>
 				<div className="account__data__books">
 					<div className="account__data__books__wrapper">
 						{renderNfts()}
