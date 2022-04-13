@@ -146,9 +146,7 @@
 						color: rgba($color-black, 0.64)
 					}
 
-					&__name{
-
-					}
+					&__name{ text-transform: capitalize; }
 				}
 
 				&__action{
