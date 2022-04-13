@@ -63,6 +63,8 @@
 						font-weight: 600;
 						color: rgba($color-black, 0.64)
 					}
+
+					&__name{ text-transform: capitalize; }
 				}
 			}
 		}

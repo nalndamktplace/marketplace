@@ -28,6 +28,8 @@ const loadNfts = async function loadNFTs() {
 			image: meta.data.image,
 			name: meta.data.name,
 			description: meta.data.description,
+			attributes: meta.data.attributes,
+			genres: meta.data.genres
 		}
 		return item
     }))
@@ -55,6 +57,8 @@ const loadMyNfts = async function loadNFTs() {
 			image: meta.data.image,
 			name: meta.data.name,
 			description: meta.data.description,
+			attributes: meta.data.attributes,
+			genres: meta.data.genres
 		}
 		return item
     }))
@@ -79,10 +83,12 @@ const loadNftsCreated = async function loadNFTs() {
 			tokenId: i.tokenId.toNumber(),
 			seller: i.seller,
 			owner: i.owner,
+			sold: i.sold,
 			image: meta.data.image,
 			name: meta.data.name,
 			description: meta.data.description,
-			sold: i.sold
+			attributes: meta.data.attributes,
+			genres: meta.data.genres
 		}
 		return item
     }))

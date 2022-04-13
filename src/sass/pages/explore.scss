@@ -26,6 +26,55 @@
 			height: calc(100vh - 12rem);
 			border: 0.1rem solid rgba($color-black, 0.08);
 			border-right: none;
+
+			&__item{
+				padding: 1.6rem;
+
+				&:not(:last-child){ border-bottom: 0.1rem solid rgba($color-black, 0.08); }
+
+				&__head{
+					padding-bottom: 1.6rem;
+				}
+
+				&__grid{
+					display: grid;
+					grid-template-columns: repeat(2, 1fr);
+					column-gap: 2.4rem;
+					row-gap: 2.4rem;
+
+					&__item{
+						height: 4.8rem;
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+						justify-content: center;
+						border-radius: 1.2rem;
+						border: 0.1rem solid rgba($color-black, 0.08);
+						text-transform: capitalize;
+						transition: 0.4s all ease-in-out;
+
+						&--active{
+							background-color: $color-secondary;
+							border-color: $color-secondary;
+						}
+					}
+				}
+			}
+
+			&__head{
+				width: 100%;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: flex-start;
+
+				&__icon{
+					height: 2.4rem;
+					width: 2.4rem;
+					object-fit: contain;
+					margin-right: 1.2rem;
+				}
+			}
 		}
 	
 		&__books{
@@ -37,12 +86,10 @@
 			&__wrapper{
 				height: fit-content;
 				display: grid;
-				grid-template-columns: repeat(6, 1fr);
-				// column-gap: calc((100vw - 172rem) / 6);
-				column-gap: calc((100vw - 144rem) / 6);
+				grid-template-columns: repeat(5, 1fr);
+				column-gap: calc((100vw - 172rem) / 5);
 				row-gap: 4rem;
-				// padding: calc((100vw - 172rem) / 6);
-				padding: calc(((100vw - 144rem) / 6) / 2);
+				padding: calc((100vw - 172rem) / 5);
 			}
 
 			&__item{
@@ -75,9 +122,7 @@
 						color: rgba($color-black, 0.64)
 					}
 
-					&__name{
-
-					}
+					&__name{ text-transform: capitalize; }
 				}
 
 				&__action{
