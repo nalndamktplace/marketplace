@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Web3Modal from "web3modal"
 
-import Page from '../components/hoc/Page/Page'
 import Contracts from '../connections/contracts'
+
+import Page from '../components/hoc/Page/Page'
+
 import { isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
@@ -99,8 +101,7 @@ const AccountPage = props => {
 							break
 						case 'genres':
 							nfts = nfts.filter(v => {
-								if(isUsable(v.genres))
-									return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
+								if(isUsable(v.genres)) return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
 								else {
 									console.log({noGenres: v})
 									return false
@@ -117,11 +118,10 @@ const AccountPage = props => {
 					<div className='account__data__books__item' key={nft.tokenId}>
 						<img className='account__data__books__item__cover' src={nft.image} alt={nft.name} />
 						<div className="account__data__books__item__data">
-							<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>
+							{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>:null}
 							<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
 						</div>
 						<div className="account__data__books__item__action">
-							<div onClick={()=>{Contracts.buyNft(nft)}}>Buy</div>
 							<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;ETH</p>
 						</div>
 					</div>
