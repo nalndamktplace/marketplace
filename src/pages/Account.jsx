@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 import Web3Modal from "web3modal"
 
@@ -8,6 +9,7 @@ import Page from '../components/hoc/Page/Page'
 
 import { isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+import { BASE_URL } from '../config/env'
 
 import FilterIcon from '../assets/icons/filter.svg'
 
@@ -20,6 +22,7 @@ const AccountPage = props => {
 		[{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'status', values: ['sold', 'listed'] }, { name: 'price', values: ['0.00 - 0.009', '0.01 - 0.09', '0.1 - 0.9', '1 - 10'] }],
 	]
 
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
@@ -80,6 +83,8 @@ const AccountPage = props => {
 		})
 	}
 
+	const readHandler = nft => { navigate('/account/reader') }
+
 	const renderNfts = () => {
 		if(isUsable(Nfts) && Nfts.length>0){
 			let nftDOM = []
@@ -116,12 +121,13 @@ const AccountPage = props => {
 			nfts.forEach(nft => {
 				nftDOM.push(
 					<div className='account__data__books__item' key={nft.tokenId}>
-						<img className='account__data__books__item__cover' src={nft.image} alt={nft.name} />
+						<img className='account__data__books__item__cover' src={BASE_URL+'/static/'+nft.image} alt={nft.name} />
 						<div className="account__data__books__item__data">
 							{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>:null}
 							<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
 						</div>
 						<div className="account__data__books__item__action">
+							<div onClick={()=>readHandler(nft)}>Read</div>
 							<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;ETH</p>
 						</div>
 					</div>
