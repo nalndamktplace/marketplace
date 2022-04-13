@@ -9,12 +9,17 @@ import { isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
+import FilterIcon from '../assets/icons/filter.svg'
+
 const ExplorePage = props => {
+
+	const FILTERS = [{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.009', '0.01 - 0.09', '0.1 - 0.9', '1 - 10'] }]
 
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
 	const [Loading, setLoading] = useState(false)
+	const [ActiveFilters, setActiveFilters] = useState([{name: 'genres', active: null},{name: 'price', active: null}])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -51,9 +56,39 @@ const ExplorePage = props => {
 	const renderNfts = () => {
 		if(isUsable(Nfts) && Nfts.length>0){
 			let nftDOM = []
-			Nfts.forEach(nft => {
+			let nfts = Nfts
+
+			if(ActiveFilters.indexOf(v => isUsable(v['active']))){
+				const activeFilters = ActiveFilters.filter(v => isUsable(v['active']))
+				activeFilters.forEach(filter => {
+					switch (filter.name) {
+						case 'status':
+							if(filter.active === 0) nfts = nfts.filter(v => v.sold)
+							else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
+							break
+						case 'price':
+							if(filter.active === 0) nfts = nfts.filter(v => v.price <= 0.009)
+							else if(filter.active === 1) nfts = nfts.filter(v => v.price > 0.009 && v.price <= 0.09)
+							else if(filter.active === 2) nfts = nfts.filter(v => v.price > 0.09 && v.price <= 0.9)
+							else nfts = nfts.filter(v => v.price > 0.9)
+							break
+						case 'genres':
+							nfts = nfts.filter(v => {
+								if(isUsable(v.genres)) return v.genres.indexOf(FILTERS.filter(v => v.name === 'genres')[0].values[filter.active]) > -1
+								else {
+									console.log({noGenres: v})
+									return false
+								}
+							})
+							break
+						default:
+					}
+				})
+			}
+
+			nfts.forEach(nft => {
 				nftDOM.push(
-					<div className='explore__data__books__item'>
+					<div className='explore__data__books__item' key={nft.tokenId}>
 						<img className='explore__data__books__item__cover' src={nft.image} alt={nft.name} />
 						<div className="explore__data__books__item__data">
 							<p className='explore__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>
@@ -71,15 +106,57 @@ const ExplorePage = props => {
 		return <p>No NFTs Yet</p>
 	}
 
+	const filterHandler = (filter, index) => {
+		setActiveFilters(old => {
+			const activeFilter = old.filter(v => v['name'] === filter.name)
+			const otherFilters = old.filter(v => v['name'] !== filter.name)
+			if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
+				return [...otherFilters, {name: filter.name, active: null}]
+			return [...otherFilters, {name: filter.name, active: index}]
+		})
+	}
+
+	const renderFilters = () => {
+
+		const renderFilterValues = filter => {
+			let valuesDOM = []
+			filter.values.forEach((value, index) => {
+				const activeFilter = ActiveFilters.filter(v => v['name'] === filter.name)
+				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
+					valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="explore__data__filters__item__grid__item explore__data__filters__item__grid__item--active" key={filter.name+index.toString()}>{value}</div> )
+				else valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="explore__data__filters__item__grid__item" key={filter.name+index.toString()}>{value}</div> )
+			} )
+			return valuesDOM
+		}
+
+		let filtersDOM = []
+		FILTERS.forEach((filter, index) => filtersDOM.push(
+			<div className="explore__data__filters__item" key={"filter"+index.toString()}>
+				<div className="explore__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
+				<div className="explore__data__filters__item__grid">{renderFilterValues(filter)}</div>
+			</div>
+		))
+		return filtersDOM
+	}
+
 	return (
 		<Page noFooter={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__head">
 				<h3 className='typo__head typo__head--3'>Explore Collection</h3>
 			</div>
 			<div className="explore__data">
-				<div className="explore__data__books">
-					<div className="explore__data__books__wrapper">
-						{renderNfts()}
+				<div className="explore__data__filters">
+					<div className="explore__data__filters__head explore__data__filters__item">
+						<img className='explore__data__filters__head__icon' src={FilterIcon} alt="filters"/>
+						<h6 className="typo__head typo__head--6">Filters</h6>
+					</div>
+					{renderFilters()}
+				</div>
+				<div className="explore__data">
+					<div className="explore__data__books">
+						<div className="explore__data__books__wrapper">
+							{renderNfts()}
+						</div>
 					</div>
 				</div>
 			</div>
