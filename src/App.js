@@ -13,10 +13,11 @@ import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 
 import IndexPage from './pages'
+import ReaderPage from './pages/Reader'
+import AccountPage from './pages/Account'
 import ExplorePage from './pages/explore'
 import CreateNftPage from './pages/Create'
 import CreatorsDashboardPage from './pages/Creators/Dashboard'
-import AccountPage from './pages/Account'
 
 const rootReducer = combineReducers({
 	WalletState: WalletReducer,
@@ -38,6 +39,7 @@ function App() {
 						<Route path='/account' element={<AccountPage/>}/>
 						<Route path='/explore' element={<ExplorePage/>}/>
 						<Route path='/creators/dashboard' element={<CreatorsDashboardPage/>}/>
+						<Route path='/account/reader' element={<ReaderPage/>}/>
 					</Routes>
 				</Router>
 				<Snackbar/>
