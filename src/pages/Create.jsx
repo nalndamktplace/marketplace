@@ -35,7 +35,13 @@ const CreateNftPage = props => {
 			setFileUrl(fileUrl)
 			const { name, description, price, attributes, genres } = FormInput
 			if (!name || !description || !price || !fileUrl) return
-			const data = JSON.stringify({ name, description, genres, attributes, image: fileUrl })
+			const data = JSON.stringify({
+				name: name,
+				description: description,
+				genres: genres.toLowerCase(),
+				attributes: attributes,
+				image: fileUrl
+			})
 			IpfsClient.add(data).then(res => {
 				const url = `https://ipfs.infura.io/ipfs/${res.path}`
 				Contracts.listNftForSales(url, FormInput).then(res => {
