@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { Document, Page, pdfjs,  } from 'react-pdf'
+import { useLocation } from 'react-router';
 import TextButton from '../components/ui/Buttons/Text';
 import { isUsable } from '../helpers/functions';
 
@@ -8,32 +9,13 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 const ReaderPage = props => {
 
-	const [PdfUrl, setPdfUrl] = useState("https://ipfs.infura.io/ipfs/QmdRR1DgqAd5GStzsvbG3dK3nh7ghMKPzuQomHoVtQJuo3?filename=test.pdf")
+	const params = useLocation()
+
+	const [PdfUrl, setPdfUrl] = useState(null)
 	const [CurrentPage, setCurrentPage] = useState(1)
 	const [TotalPages, setTotalPages] = useState(null)
 
-	useEffect(() => {
-		// if(isUsable(TotalPages) && TotalPages > 0){
-		// 	var img = document.getElementsByClassName('react-pdf__Page__canvas')
-		// 	var container = document.getElementsByClassName('reader__content__wrapper__page')
-		// 	if(img.length>0 && container.length>0){
-		// 		console.log("Scaling")
-		// 		img = img[0]
-		// 		container = container[0]
-	
-		// 		var width = img.width
-		// 		var height = img.height
-		// 		var maxWidth = container.width
-		// 		var maxHeight = container.height
-	
-		// 		var ratio = maxWidth / width
-		// 		if(height * ratio > maxHeight) ratio = maxHeight / height
-	
-		// 		img.width = (width * ratio)
-		// 		img.height = (height * ratio)
-		// 	}
-		// }
-	}, [TotalPages])
+	useEffect(() => { setPdfUrl(params.state.pdf) }, [params])
 
 	const onDocLoadSucHandler = ({numPages}) => { setTotalPages(numPages) }
 
