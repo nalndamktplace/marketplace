@@ -29,54 +29,58 @@ const CreateNftPage = props => {
 
 	async function listNFTForSale() {
 		setLoading(true)
-		const formData = new FormData()
-		formData.append('cover', FormInput.file)
-		formData.append('back', FormInput.back)
-		axios({
-			url: BASE_URL+"/api/books/publish",
-			method: 'POST',
-			data: formData
-		}).then(res => {
-			if(res.status === 200){
-				const coverUrl = res.data.cover
-				const backUrl = res.data.back
-
-				IpfsClient.add(
-					FormInput.pdf,
-					{ progress: (prog) => console.log(`received: ${prog}`) }
-				).then(res => {
-					const fileUrl = `https://ipfs.infura.io/ipfs/${res.path}`
-					setFileUrl(fileUrl)
-					const { name, description, price, attributes, genres } = FormInput
-					if (!name || !description || !price || !fileUrl) return
-					const data = JSON.stringify({
-						name: name,
-						description: description,
-						genres: genres.toLowerCase(),
-						attributes: attributes,
-						pdf: fileUrl,
-						image: coverUrl,
-						back: backUrl
-					})
-					IpfsClient.add(data).then(res => {
-						const url = `https://ipfs.infura.io/ipfs/${res.path}`
-						Contracts.listNftForSales(url, FormInput).then(res => {
-							setLoading(false)
-							navigate('/account')
-						}).catch((err => {
-							console.log({err})
-							setLoading(false)
-						}))
-					}).catch(err => {
+		IpfsClient.add(
+			FormInput.pdf,
+			{ progress: prog => console.log(`received: ${prog}`) }
+		).then(res => {
+			const pdfUrl = `https://ipfs.infura.io/ipfs/${res.path}`
+			IpfsClient.add(
+				FormInput.file,
+				{ progress: (prog) => console.log(`received: ${prog}`) }
+			).then(res => {
+				const fileUrl = `https://ipfs.infura.io/ipfs/${res.path}`
+				setFileUrl(fileUrl)
+				const { name, description, price, attributes, genres } = FormInput
+				if (!name || !description || !price || !fileUrl) return
+				console.log({
+					name: name,
+					description: description,
+					genres: genres.toLowerCase(),
+					attributes: attributes,
+					pdf: pdfUrl,
+					image: fileUrl,
+					// back: backUrl
+				});
+				const data = JSON.stringify({
+					name: name,
+					description: description,
+					genres: genres.toLowerCase(),
+					attributes: attributes,
+					pdf: pdfUrl,
+					image: fileUrl,
+					// back: backUrl
+				})
+				IpfsClient.add(data).then(res => {
+					const url = `https://ipfs.infura.io/ipfs/${res.path}`
+					Contracts.listNftForSales(url, FormInput).then(res => {
 						setLoading(false)
-						console.log('Error uploading file: ', err)
-					})
+						navigate('/account')
+					}).catch((err => {
+						console.log({err})
+						setLoading(false)
+					}))
 				}).catch(err => {
 					setLoading(false)
-					console.log('Error uploading file: ', err)
+					console.log('Error uploading data: ', err)
 				})
-			}
-		}).catch(err => {console.log({err})})
+			}).catch(err => {
+				setLoading(false)
+				console.log('Error uploading file: ', err)
+			})
+		}).catch(err => {
+			setLoading(false)
+			console.log('Error uploading file: ', err)
+		})
 	}
 
 	return (
