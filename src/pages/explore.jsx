@@ -10,6 +10,7 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
+import { BASE_URL } from '../config/env'
 
 const ExplorePage = props => {
 
@@ -89,7 +90,7 @@ const ExplorePage = props => {
 			nfts.forEach(nft => {
 				nftDOM.push(
 					<div className='explore__data__books__item' key={nft.tokenId}>
-						<img className='explore__data__books__item__cover' src={nft.image} alt={nft.name} />
+						<img className='explore__data__books__item__cover' src={BASE_URL+"/static/"+nft.image} alt={nft.name} />
 						<div className="explore__data__books__item__data">
 							<p className='explore__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>
 							<p className='explore__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>

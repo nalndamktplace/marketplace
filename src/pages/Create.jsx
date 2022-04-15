@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
@@ -10,6 +11,7 @@ import Contracts from '../connections/contracts'
 
 import { IpfsClient } from '../connections/ipfs'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+import { BASE_URL } from '../config/env'
 
 const CreateNftPage = props => {
 
@@ -18,7 +20,7 @@ const CreateNftPage = props => {
 
 	const [Loading, setLoading] = useState(false)
 	const [FileUrl, setFileUrl] = useState(null)
-	const [FormInput, setFormInput] = useState({price: '', name: '', description: '', file: null, attributes: [], genres: ''})
+	const [FormInput, setFormInput] = useState({price: '', name: '', description: '', file: null, back: null, pdf: null, attributes: [], genres: ''})
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -28,29 +30,49 @@ const CreateNftPage = props => {
 	async function listNFTForSale() {
 		setLoading(true)
 		IpfsClient.add(
-			FormInput.file,
-			{ progress: (prog) => console.log(`received: ${prog}`) }
+			FormInput.pdf,
+			{ progress: prog => console.log(`received: ${prog}`) }
 		).then(res => {
-			const fileUrl = `https://ipfs.infura.io/ipfs/${res.path}`
-			setFileUrl(fileUrl)
-			const { name, description, price, attributes, genres } = FormInput
-			if (!name || !description || !price || !fileUrl) return
-			const data = JSON.stringify({
-				name: name,
-				description: description,
-				genres: genres.toLowerCase(),
-				attributes: attributes,
-				image: fileUrl
-			})
-			IpfsClient.add(data).then(res => {
-				const url = `https://ipfs.infura.io/ipfs/${res.path}`
-				Contracts.listNftForSales(url, FormInput).then(res => {
+			const pdfUrl = `https://ipfs.infura.io/ipfs/${res.path}`
+			IpfsClient.add(
+				FormInput.file,
+				{ progress: (prog) => console.log(`received: ${prog}`) }
+			).then(res => {
+				const fileUrl = `https://ipfs.infura.io/ipfs/${res.path}`
+				setFileUrl(fileUrl)
+				const { name, description, price, attributes, genres } = FormInput
+				if (!name || !description || !price || !fileUrl) return
+				console.log({
+					name: name,
+					description: description,
+					genres: genres.toLowerCase(),
+					attributes: attributes,
+					pdf: pdfUrl,
+					image: fileUrl,
+					// back: backUrl
+				});
+				const data = JSON.stringify({
+					name: name,
+					description: description,
+					genres: genres.toLowerCase(),
+					attributes: attributes,
+					pdf: pdfUrl,
+					image: fileUrl,
+					// back: backUrl
+				})
+				IpfsClient.add(data).then(res => {
+					const url = `https://ipfs.infura.io/ipfs/${res.path}`
+					Contracts.listNftForSales(url, FormInput).then(res => {
+						setLoading(false)
+						navigate('/account')
+					}).catch((err => {
+						console.log({err})
+						setLoading(false)
+					}))
+				}).catch(err => {
 					setLoading(false)
-					navigate('/account')
-				}).catch((err => {
-					console.log({err})
-					setLoading(false)
-				}))
+					console.log('Error uploading data: ', err)
+				})
 			}).catch(err => {
 				setLoading(false)
 				console.log('Error uploading file: ', err)
@@ -73,7 +95,8 @@ const CreateNftPage = props => {
 					<InputField type="string" label="genres" onChange={e => setFormInput({ ...FormInput, genres: e.target.value })} />
 					<InputField type="number" label="price in ETH" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, file: e.target.files[0] })} />
-					<InputField type="file" label="book" accept='application/pdf' />
+					<InputField type="file" label="back" accept='image/*' onChange={e => setFormInput({ ...FormInput, back: e.target.files[0] })} />
+					<InputField type="file" label="book" accept='application/pdf' onChange={e => setFormInput({ ...FormInput, pdf: e.target.files[0] })} />
 					<PrimaryButton label={"Create EBook"} onClick={()=>listNFTForSale()} />
 				</div>
 				<div className="create__data__preview">
