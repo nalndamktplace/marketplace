@@ -83,7 +83,7 @@ const AccountPage = props => {
 		})
 	}
 
-	const readHandler = nft => { navigate('/account/reader') }
+	const readHandler = nft => { navigate('/account/reader', {state: nft}) }
 
 	const renderNfts = () => {
 		if(isUsable(Nfts) && Nfts.length>0){
@@ -121,7 +121,7 @@ const AccountPage = props => {
 			nfts.forEach(nft => {
 				nftDOM.push(
 					<div className='account__data__books__item' key={nft.tokenId}>
-						<img className='account__data__books__item__cover' src={BASE_URL+'/static/'+nft.image} alt={nft.name} />
+						<img className='account__data__books__item__cover' src={nft.image} alt={nft.name} />
 						<div className="account__data__books__item__data">
 							{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>:null}
 							<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
