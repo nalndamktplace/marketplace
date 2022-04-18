@@ -40,9 +40,6 @@ const BookPage = props => {
 			{
 				isUsable(NFT)?
 				<React.Fragment>
-					<div className="book__head">
-						<h3 className="typo__head typo__head--3 typo__transform--capital">{NFT.contract}</h3>
-					</div>
 					<div className="book__data">
 						<div className="book__data__background">
 						</div>
