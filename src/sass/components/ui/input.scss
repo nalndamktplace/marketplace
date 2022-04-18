@@ -17,6 +17,12 @@
 			transition: all 0.4s ease-in-out;
 			position: relative;
 
+			&--text{
+				&:focus, &:not(:focus):valid{
+					~ .input__group__label{ top: 5% !important; }
+				}
+			}
+
 			&__list{
 				transition: all 0.4s ease-in-out;
 				background-color: $color-white;
@@ -58,7 +64,7 @@
 				}
 			}
 
-			&[type=file]{
+			&[type=file],&[type=date]{
 				~ .input__group__label{
 					background-color: $color-white;
 					top: 16%;
