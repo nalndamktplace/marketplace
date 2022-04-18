@@ -10,11 +10,13 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
+import { useNavigate } from 'react-router'
 
 const ExplorePage = props => {
 
 	const FILTERS = [{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.0001', '0.0001 - 0.00015', '0.00015 - 0.0002', '0.0002 +'] }]
 
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
@@ -53,6 +55,8 @@ const ExplorePage = props => {
 		})
 	}
 
+	const openHandler = nft => { navigate('/book', {state: nft}) }
+
 	const renderNfts = () => {
 		if(isUsable(Nfts) && Nfts.length>0){
 			let nftDOM = []
@@ -88,7 +92,7 @@ const ExplorePage = props => {
 
 			nfts.forEach(nft => {
 				nftDOM.push(
-					<div className='explore__data__books__item' key={nft.tokenId}>
+					<div className='explore__data__books__item' key={nft.tokenId} onClick={()=>openHandler(nft)}>
 						<img className='explore__data__books__item__cover' src={nft.cover} alt={nft.name} />
 						<div className="explore__data__books__item__data">
 							<p className='explore__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>
