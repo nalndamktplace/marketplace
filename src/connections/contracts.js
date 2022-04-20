@@ -2,6 +2,8 @@ import axios from 'axios'
 // import Wallet from '../helpers/wallet'
 import Web3Modal from "web3modal"
 
+import { BASE_URL } from '../config/env'
+
 const ethers = require('ethers')
 
 const Market = require('../artifacts/contracts/NFTMarket.sol/NFTMarket.json')
@@ -18,20 +20,18 @@ const loadNfts = async function loadNFTs() {
     const data = await marketContract.fetchMarketItems()
     const items = await Promise.all(data.map(async i => {
 		const tokenUri = await nftContract.tokenURI(i.tokenId)
-		const meta = await axios.get(tokenUri)
+		const data = await axios.get(tokenUri)
+		const meta = await axios.get(BASE_URL+'/api/book/info/?bookId='+tokenUri.substring(tokenUri.lastIndexOf('/')+1))
 		let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
 		let item = {
 			price,
 			tokenId: i.tokenId.toNumber(),
 			seller: i.seller,
 			owner: i.owner,
-			pdf: meta.data.pdf,
-			image: meta.data.image,
-			back: meta.data.back,
-			name: meta.data.name,
-			description: meta.data.description,
-			attributes: meta.data.attributes,
-			genres: meta.data.genres
+			contract: i.nftContract,
+			sold: i.sold,
+			...data.data,
+			...meta.data
 		}
 		return item
     }))
@@ -49,20 +49,18 @@ const loadMyNfts = async function loadNFTs() {
     const data = await marketContract.fetchMyNFTs()
     const items = await Promise.all(data.map(async i => {
 		const tokenUri = await nftContract.tokenURI(i.tokenId)
-		const meta = await axios.get(tokenUri)
+		const data = await axios.get(tokenUri)
+		const meta = await axios.get(BASE_URL+'/api/book/info/?bookId='+tokenUri.substring(tokenUri.lastIndexOf('/')+1))
 		let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
 		let item = {
 			price,
 			tokenId: i.tokenId.toNumber(),
 			seller: i.seller,
 			owner: i.owner,
-			pdf: meta.data.pdf,
-			image: meta.data.image,
-			back: meta.data.back,
-			name: meta.data.name,
-			description: meta.data.description,
-			attributes: meta.data.attributes,
-			genres: meta.data.genres
+			contract: i.nftContract,
+			sold: i.sold,
+			...data.data,
+			...meta.data
 		}
 		return item
     }))
@@ -80,21 +78,18 @@ const loadNftsCreated = async function loadNFTs() {
     const data = await marketContract.fetchItemsCreated()
     const items = await Promise.all(data.map(async i => {
 		const tokenUri = await nftContract.tokenURI(i.tokenId)
-		const meta = await axios.get(tokenUri)
+		const data = await axios.get(tokenUri)
+		const meta = await axios.get(BASE_URL+'/api/book/info/?bookId='+tokenUri.substring(tokenUri.lastIndexOf('/')+1))
 		let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
 		let item = {
 			price,
 			tokenId: i.tokenId.toNumber(),
 			seller: i.seller,
 			owner: i.owner,
+			contract: i.nftContract,
 			sold: i.sold,
-			pdf: meta.data.pdf,
-			image: meta.data.image,
-			back: meta.data.back,
-			name: meta.data.name,
-			description: meta.data.description,
-			attributes: meta.data.attributes,
-			genres: meta.data.genres
+			...data.data,
+			...meta.data
 		}
 		return item
     }))
@@ -132,6 +127,7 @@ const listNftForSales = async function listNftForSale(url, formInput){
 	listingPrice = listingPrice.toString()
 	transaction = await contract.createMarketItem('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', tokenId, price, { value: listingPrice })
 	await transaction.wait()
+	return {contract, transaction}
 }
 
 const Contracts = {

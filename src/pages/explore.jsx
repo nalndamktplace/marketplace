@@ -10,12 +10,13 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
-import { BASE_URL } from '../config/env'
+import { useNavigate } from 'react-router'
 
 const ExplorePage = props => {
 
-	const FILTERS = [{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.009', '0.01 - 0.09', '0.1 - 0.9', '1 - 10'] }]
+	const FILTERS = [{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.0001', '0.0001 - 0.00015', '0.00015 - 0.0002', '0.0002 +'] }]
 
+	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
@@ -54,6 +55,8 @@ const ExplorePage = props => {
 		})
 	}
 
+	const openHandler = nft => { navigate('/book', {state: nft}) }
+
 	const renderNfts = () => {
 		if(isUsable(Nfts) && Nfts.length>0){
 			let nftDOM = []
@@ -68,10 +71,10 @@ const ExplorePage = props => {
 							else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
 							break
 						case 'price':
-							if(filter.active === 0) nfts = nfts.filter(v => v.price <= 0.009)
-							else if(filter.active === 1) nfts = nfts.filter(v => v.price > 0.009 && v.price <= 0.09)
-							else if(filter.active === 2) nfts = nfts.filter(v => v.price > 0.09 && v.price <= 0.9)
-							else nfts = nfts.filter(v => v.price > 0.9)
+							if(filter.active === 0) nfts = nfts.filter(v => v.price <= 0.0001)
+							else if(filter.active === 1) nfts = nfts.filter(v => v.price > 0.0001 && v.price <= 0.00015)
+							else if(filter.active === 2) nfts = nfts.filter(v => v.price > 0.00015 && v.price <= 0.0002)
+							else nfts = nfts.filter(v => v.price > 0.0002)
 							break
 						case 'genres':
 							nfts = nfts.filter(v => {
@@ -89,8 +92,8 @@ const ExplorePage = props => {
 
 			nfts.forEach(nft => {
 				nftDOM.push(
-					<div className='explore__data__books__item' key={nft.tokenId}>
-						<img className='explore__data__books__item__cover' src={BASE_URL+"/static/"+nft.image} alt={nft.name} />
+					<div className='explore__data__books__item' key={nft.tokenId} onClick={()=>openHandler(nft)}>
+						<img className='explore__data__books__item__cover' src={nft.cover} alt={nft.name} />
 						<div className="explore__data__books__item__data">
 							<p className='explore__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>
 							<p className='explore__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>

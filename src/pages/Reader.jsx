@@ -15,7 +15,7 @@ const ReaderPage = props => {
 	const [CurrentPage, setCurrentPage] = useState(1)
 	const [TotalPages, setTotalPages] = useState(null)
 
-	useEffect(() => { setPdfUrl(params.state.pdf) }, [params])
+	useEffect(() => { setPdfUrl(params.state.book) }, [params])
 
 	const onDocLoadSucHandler = ({numPages}) => { setTotalPages(numPages) }
 

@@ -4,6 +4,10 @@ const InputField = props => {
 
 	const renderInputField = () => {
 		switch (props.type) {
+			case 'text':
+				return <textarea className='input__group__field input__group__field--text typo__body' type={'text'} rows={props.lines} required value={props.value} onChange={props.onChange}/>
+			case 'date':
+				return <input className='input__group__field typo__body' type={'date'} required value={props.value} onChange={props.onChange}/>
 			case 'string':
 				return <input className='input__group__field typo__body' type={'text'} required value={props.value} onChange={props.onChange}/>
 			case 'email':

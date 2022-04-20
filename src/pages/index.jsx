@@ -37,7 +37,7 @@ const IndexPage = props => {
 			<div className="index__book">
 				{Nft?<div className="index__book__container">
 					<div className='index__book__container__item'>
-						<img className='index__book__container__item__cover' src={Nft.image} alt={Nft.name} />
+						<img className='index__book__container__item__cover' src={Nft.cover} alt={Nft.name} />
 						<div className="index__book__container__item__data">
 							<p className='index__book__container__item__data__author typo__body typo__body--2'>{Nft.description}</p>
 							<p className='index__book__container__item__data__name typo__body typo__body--2'>{Nft.name}</p>
