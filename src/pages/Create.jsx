@@ -21,21 +21,10 @@ const CreateNftPage = props => {
 	const navigate = useNavigate()
 
 	const [Loading, setLoading] = useState(false)
-	const [FormInput, setFormInput] = useState({
-		name: '',
-		author: '',
-		cover: null,
-		book: null,
-		genres: '',
-		price: '',
-		pages: '',
-		publication: '',
-		isbn: '',
-		attributes: [],
-		synopsis: '',
-		language: '',
-		published: ''
-	})
+	const [CoverUrl, setCoverUrl] = useState(null)
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, book: null, genres: '', price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
+
+	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -118,8 +107,8 @@ const CreateNftPage = props => {
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/pdf' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
-					<InputField type="string" label="genres" onChange={e => setFormInput({ ...FormInput, genres: e.target.value })} />
 					<InputField type="string" label="price in ETH" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
+					<InputField type="string" label="genres" onChange={e => setFormInput({ ...FormInput, genres: e.target.value })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} />
 					<InputField type="string" label="isbn" onChange={e => setFormInput({ ...FormInput, isbn: e.target.value })} />
@@ -127,6 +116,19 @@ const CreateNftPage = props => {
 					<InputField type="string" label="language" onChange={e => setFormInput({ ...FormInput, language: e.target.value })} />
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} />
 					<PrimaryButton label={"Create EBook"} onClick={()=>listNFTForSale()} />
+				</div>
+				<div className="create__data__preview">
+					<div className='create__data__preview__item'onClick={()=>{}}>
+						<img className='create__data__preview__item__cover' src={CoverUrl} alt={FormInput.name+" cover"} />
+						<div className="create__data__preview__item__data">
+							<p className='create__data__preview__item__data__author typo__body typo__body--2'>{FormInput.author}</p>
+							<p className='create__data__preview__item__data__name typo__body typo__body--2'>{FormInput.name}</p>
+						</div>
+						<div className="create__data__preview__item__action">
+							<div onClick={()=>{}}>Buy</div>
+							<p className='create__data__preview__item__action__price typo__body typo__body--2'>{FormInput.price}&nbsp;ETH</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</Page>
