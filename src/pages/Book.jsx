@@ -1,39 +1,83 @@
 import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
-import { useLocation } from 'react-router'
 
 import Page from '../components/hoc/Page/Page'
 import PrimaryButton from '../components/ui/Buttons/Primary'
 
-import { hideSpinner, showSpinner } from '../store/actions/spinner'
-import { isUsable } from '../helpers/functions'
+import Contracts from '../connections/contracts'
 
-import TargetIcon from '../assets/icons/target.svg'
+import { isUsable } from '../helpers/functions'
+import { setSnackbar } from '../store/actions/snackbar'
+import { hideSpinner, showSpinner } from '../store/actions/spinner'
+
 import PrintIcon from '../assets/icons/print.svg'
+import TargetIcon from '../assets/icons/target.svg'
 import BarcodeIcon from '../assets/icons/barcode.svg'
 
 const BookPage = props => {
 
 	const params = useLocation()
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
 	const [NFT, setNFT] = useState(null)
+	const [Created, setCreated] = useState(null)
+	const [Owner, setOwner] = useState(null)
 	const [Loading, setLoading] = useState(false)
 
 	useEffect(() => {
-		console.log({params})
 		setLoading(true)
+		Contracts.loadMyNfts().then(res => {
+			if(isUsable(res)){
+				if(res.length>0) res.forEach(book => {
+					if(params.state.tokenId === book.tokenId) setOwner(true)
+					else setOwner(false)
+				})
+				else setOwner(false)
+			}
+		}).catch(err => {
+			console.log({err})
+			dispatch(setSnackbar('ERROR'))
+		})
+		Contracts.loadNftsCreated().then(res => {
+			if(isUsable(res)){
+				if(res.length>0) res.forEach(book => {
+					if(params.state.tokenId === book.tokenId) setCreated(true)
+					else setCreated(false)
+				})
+				else setCreated(false)
+			}
+		}).catch(err => {
+			console.log({err})
+			dispatch(setSnackbar('ERROR'))
+		})
 		setNFT(params.state)
-	}, [params])
+	}, [params, dispatch])
 
-	useEffect(() => {
-		if(isUsable(NFT)) setLoading(false)
-	}, [NFT])
+	useEffect(() => { if(isUsable(NFT) && isUsable(Created) && isUsable(Owner)) setLoading(false) }, [NFT, Created, Owner])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
+
+	const readHandler = () => { navigate('/account/reader', {state: NFT}) }
+
+	const purchaseHandler = () => {
+		setLoading(true)
+		Contracts.buyNft(NFT).then(res => {
+			setLoading(false)
+			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
+			Contracts.loadMyNfts().then(res => { if(isUsable(res) && res.length>0) res.forEach(book => { if(params.state.contract === book.contract) setOwner(true) }) }).catch(err => console.log({err}))
+		}).catch(err => {
+			setLoading(false)
+			if(err.code === 4001)
+				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
+			else dispatch(setSnackbar('ERROR'))
+			console.log({err})
+		})
+	}
 
 	return (
 		<Page>
@@ -72,7 +116,10 @@ const BookPage = props => {
 							</div>
 							<div className='book__data__container__desc'>
 								<div className="book__data__container__desc__cta">
-									<PrimaryButton label={'Buy Now'}/>
+									{Created||Owner
+										?<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
+										:<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
+									}
 								</div>
 								<div className="book__data__container__desc__summary">
 									<p className='book__data__container__desc__summary__head typo__body--3'>category</p>
@@ -83,20 +130,14 @@ const BookPage = props => {
 									<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.genres}</p>
-									<p className='book__data__container__desc__summary__head typo__body--3'>ISBN code</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.price}</p>
-									<p className='book__data__container__desc__summary__head typo__body--3'>print pages</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.print}</p>
-									<p className='book__data__container__desc__summary__head typo__body--3'>publication</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.publication}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>publication date</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.publication_date}</p>
-									<p className='book__data__container__desc__summary__head typo__body--3'>rating</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.rating}</p>
+									<p className='book__data__container__desc__summary__data'>{NFT.publication_date.substring(0, NFT.publication_date.indexOf('T'))}</p>
+									{/* <p className='book__data__container__desc__summary__head typo__body--3'>rating</p>
+									<p className='book__data__container__desc__summary__data'>{NFT.rating}</p> */}
 								</div>
 								<div className="book__data__container__desc__tabs">
 									<div className="book__data__container__desc__tabs__container">
