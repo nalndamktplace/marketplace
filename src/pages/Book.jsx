@@ -120,7 +120,3 @@ const BookPage = props => {
 }
 
 export default BookPage
-
-// Contract Address like Open Sea
-// Create Add Cover on right
-// No NFT graphic GIF
