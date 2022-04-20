@@ -19,17 +19,11 @@
 		font-size: 8rem;
 		font-weight: 800;
 		text-transform: capitalize;
-
-		@include respond(phone){
-			font-size: 4.8rem;
-		}
 	}
 
 	&__head{
 		font-size: 4.8rem;
 		font-weight: 800;
-
-		@include respond(phone){ font-size: 4rem; }
 
 		&--2{
 			font-size: 3.6rem;

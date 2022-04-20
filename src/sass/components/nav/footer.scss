@@ -8,8 +8,7 @@
 	background: url('../../../assets/images/background3.svg');
 	background-repeat: no-repeat;
 
-	@include respond(tabLand){ padding: 4rem; }
-	@include respond(tabPort){ padding: 4rem 2rem; }
+	@include respond(tabLand){ padding: 10rem 4rem 4rem; }
 	@include respond(phone){background: url('../../../assets/images/background3phone.svg'); padding: 12rem 2rem 4rem;}
 
 	&__row{
