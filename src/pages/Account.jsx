@@ -25,6 +25,7 @@ const AccountPage = props => {
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
+	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [Wallet, setWallet] = useState(null)
@@ -189,7 +190,7 @@ const AccountPage = props => {
 				{renderTabs()}
 			</div>
 			<div className="account__data">
-				<div className="account__data__filters">
+				<div className={Filters?"account__data__filters account__data__filters--expanded":"account__data__filters"} onClick={()=>setFilters(old => !old)}>
 					<div className="account__data__filters__head account__data__filters__item">
 						<img className='account__data__filters__head__icon' src={FilterIcon} alt="filters"/>
 						<h6 className="typo__head typo__head--6">Filters</h6>

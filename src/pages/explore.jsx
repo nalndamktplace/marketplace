@@ -20,6 +20,7 @@ const ExplorePage = props => {
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
+	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'genres', active: null},{name: 'price', active: null}])
 
@@ -149,7 +150,7 @@ const ExplorePage = props => {
 				<h3 className='typo__head typo__head--3'>Explore Collection</h3>
 			</div>
 			<div className="explore__data">
-				<div className="explore__data__filters">
+				<div className={Filters?"explore__data__filters explore__data__filters--expanded":"explore__data__filters"} onClick={()=>setFilters(old => !old)}>
 					<div className="explore__data__filters__head explore__data__filters__item">
 						<img className='explore__data__filters__head__icon' src={FilterIcon} alt="filters"/>
 						<h6 className="typo__head typo__head--6">Filters</h6>
