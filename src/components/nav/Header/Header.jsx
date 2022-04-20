@@ -105,8 +105,10 @@ const Header = props => {
 
 		let itemsDOM = []
 		NAV_ITEMS.forEach(navItem => {
-			if(ResponsiveMode)
-				itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+			if(ResponsiveMode){
+				if(isUsable(navItem.icon)) itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item header__menu__phone__container__item--icon typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+				else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+			}
 			else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__part__item typo__body utils__cursor--pointer'>{renderContent(navItem)}</div>)
 		})
 		return itemsDOM

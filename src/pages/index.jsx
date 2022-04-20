@@ -26,7 +26,7 @@ const IndexPage = props => {
 		<Page containerClass='index'>
 			<div className="index__content">
 				<div className="index__content__container">
-					<h2 className="typo__head typo__head--1 typo__transform--capital">experience books<br/>beyond reading</h2>
+					<h2 className="typo__display typo__transform--capital">experience books<br/>beyond reading</h2>
 					<h4 className="typo__head typo__head--4 typo__transform--capital">decentralised marketplace for NFT based ebooks.</h4>
 					<div className="index__content__container__row">
 						<PrimaryButton onClick={()=>navigate('/explore')} label="Explore"/>

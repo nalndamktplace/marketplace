@@ -26,11 +26,53 @@
 			height: calc(100vh - 12rem);
 			border: 0.1rem solid rgba($color-black, 0.08);
 			border-right: none;
+			transition: all 0.4s ease-in-out;
+
+			@include respond(phone){
+				width: 5.6rem;
+				transition: all 0.4s ease-in-out;
+			}
+
+			&--expanded{
+				width: 32rem;
+				transition: all 0.4s ease-in-out;
+
+				.explore__data__filters__item{
+					@include respond(phone){
+						&:not(:first-of-type){
+							opacity: 1;
+							width: max-content;
+	
+						}
+						&:first-of-type{
+							h6.typo__head:nth-child(2){
+								opacity: 1;
+								width: max-content;
+							}
+						}
+					}
+				}
+			}
 
 			&__item{
 				padding: 1.6rem;
+				transition: all 0.4s ease-in-out;
 
 				&:not(:last-child){ border-bottom: 0.1rem solid rgba($color-black, 0.08); }
+
+				@include respond(phone){
+					&:not(:first-of-type){
+						opacity: 0;
+						width: 0;
+
+					}
+					&:first-of-type{
+						h6.typo__head:nth-child(2){
+							opacity: 0;
+							width: 0;
+						}
+					}
+				}
 
 				&__head{
 					padding-bottom: 1.6rem;
@@ -87,9 +129,19 @@
 				height: fit-content;
 				display: grid;
 				grid-template-columns: repeat(5, 1fr);
-				column-gap: calc((100vw - 172rem) / 5);
+				column-gap: 4rem;
 				row-gap: 4rem;
-				padding: calc((100vw - 172rem) / 5);
+				padding: 2.4rem;
+
+				@include respond(tabLand){
+					grid-template-columns: repeat(4, 1fr);
+					column-gap: 2.4rem;
+				}
+
+				@include respond(phone){
+					grid-template-columns: repeat(2, 1fr);
+					column-gap: 2.4rem;
+				}
 			}
 
 			&__item{
@@ -99,20 +151,27 @@
 				justify-content: flex-start;
 				border-radius: 1.2rem;
 				overflow: hidden;
-				width: 24rem;
+				width: 100%;
 				border: 0.1rem solid rgba($color-black, 0.08);
 				height: fit-content;
 
+				@include respond(phone){
+					width: 100%;
+					height: 100%;
+				}
+
 				&__cover{
 					width: 100%;
-					height: 36rem;
-					min-height: 36rem;
-					width: 24rem;
+					height: calc(((100vw - (32rem + 7.2rem))/5)*1.6);
 					object-fit: cover;
+
+					@include respond(tabLand){ height: calc(((100vw - (32rem + 7.2rem))/4)*1.6); }
+					@include respond(phone){ height: calc(((100vw - (5.6rem + 7.2rem))/2)*1.6); }
 				}
 
 				&__data{
 					padding: 0.8rem;
+					margin-bottom: auto;
 					&>p{margin-bottom: 0;}
 
 					&__author{

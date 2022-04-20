@@ -25,6 +25,7 @@ const AccountPage = props => {
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
+	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [Wallet, setWallet] = useState(null)
@@ -84,6 +85,8 @@ const AccountPage = props => {
 
 	const readHandler = nft => { navigate('/account/reader', {state: nft}) }
 
+	const openHandler = nft => { navigate('/book', {state: nft}) }
+
 	const renderNfts = () => {
 		if(isUsable(Nfts) && Nfts.length>0){
 			let nftDOM = []
@@ -118,9 +121,8 @@ const AccountPage = props => {
 			}
 
 			nfts.forEach(nft => {
-				console.log({nft})
 				nftDOM.push(
-					<div className='account__data__books__item' key={nft.tokenId}>
+					<div className='account__data__books__item' key={nft.tokenId} onClick={()=>openHandler(nft)}>
 						<img className='account__data__books__item__cover' src={nft.cover} alt={nft.name} />
 						<div className="account__data__books__item__data">
 							{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.description}</p>:null}
@@ -188,7 +190,7 @@ const AccountPage = props => {
 				{renderTabs()}
 			</div>
 			<div className="account__data">
-				<div className="account__data__filters">
+				<div className={Filters?"account__data__filters account__data__filters--expanded":"account__data__filters"} onClick={()=>setFilters(old => !old)}>
 					<div className="account__data__filters__head account__data__filters__item">
 						<img className='account__data__filters__head__icon' src={FilterIcon} alt="filters"/>
 						<h6 className="typo__head typo__head--6">Filters</h6>
