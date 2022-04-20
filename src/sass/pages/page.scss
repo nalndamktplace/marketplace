@@ -1,7 +1,7 @@
 .page{
 	&__wrapper{
 		padding: 0 16rem;
-		min-height: 100vh;
+		min-height: calc(100vh - 6.4rem);
 		@include respond(desk){ padding: 0 8rem; }
 		@include respond(retinaBig){ padding: 0 12rem; }
 		@include respond(tabLand){ padding: 0 4rem; }
