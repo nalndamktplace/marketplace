@@ -124,8 +124,8 @@ const BookPage = props => {
 								<div className="book__data__container__desc__summary">
 									<p className='book__data__container__desc__summary__head typo__body--3'>category</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.category}</p>
-									<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.contract}</p>
+									{/* <p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
+									<p className='book__data__container__desc__summary__data'>{NFT.contract}</p> */}
 									<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
@@ -152,7 +152,6 @@ const BookPage = props => {
 							</div>
 						</div>
 					</div>
-					<div className="book__data__container__space">&nbsp;</div>
 				</React.Fragment>
 				:null
 			}
