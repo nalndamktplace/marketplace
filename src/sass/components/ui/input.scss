@@ -1,9 +1,53 @@
 .input{
 	position: relative;
 
-	&__form{
-		padding: 4rem 0;
+	&__modal{
+		min-width: 50vw;
+		max-width: 90vw;
+		min-height: 50vh;
+		max-height: 90vh;
+		display: flex;
+		flex-direction: column;
+
+		&__head{ margin-bottom: 2.4rem; }
+
+		&__values{
+			margin-top: 2.4rem;
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			justify-content: flex-start;
+			flex-wrap: wrap;
+
+			&__item{
+				min-width: 8rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0.4rem 1.2rem;
+				background-color: rgba($color-black, 0.08);
+				border-radius: 100rem;
+				margin: 0 1.2rem 1.2rem 0;
+				transition: all 0.4s ease-in-out;
+
+				&--active{
+					background-color: $color-secondary;
+					color: $color-white;
+				}
+			}
+		}
+
+		&__space{ flex: 1; }
+
+		&__actions{
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-end;
+		}
 	}
+
+	&__form{ padding: 4rem 0; }
 
 	&__group{
 		position: relative;
@@ -107,15 +151,11 @@
 					}
 				}
 
-				~ .input__group__field__icon{
-					opacity: 1 !important;
-				}
+				~ .input__group__field__icon{ opacity: 1 !important; }
 
 			}
 			
-			&--icon{
-				position: relative;
-			}
+			&--icon{ position: relative; }
 
 			&__icon{
 				opacity: 0.2;

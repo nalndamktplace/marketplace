@@ -1,6 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Backdrop from '../../hoc/Backdrop/Backdrop'
+import InputModal from './Modal'
 
 const InputField = props => {
+
+	const [ShowValues, setShowValues] = useState(false)
+
+	useEffect(() => {
+		console.log({ShowValues})
+	}, [ShowValues])
 
 	const renderInputField = () => {
 		switch (props.type) {
@@ -20,6 +28,23 @@ const InputField = props => {
 				return <input className='input__group__field typo__body' type={'tel'} required value={props.value} onChange={props.onChange}/>
 			case 'file':
 				return <input className='input__group__field typo__body' type={'file'} accept={props.file} required onChange={props.onChange}/>
+			case 'list':
+				return <React.Fragment>
+					{props.listType==='multiple'?
+						<React.Fragment>
+							<input className='input__group__field typo__body' type={'text'} value={props.value.join(', ')} required onClick={()=>setShowValues(true)}/>
+							<Backdrop show={ShowValues}>
+								<InputModal listType={props.listType} minLimit={props.minLimit} maxLimit={props.maxLimit} value={props.value} values={props.values} label={props.label} onSave={values=>{props.onSave(values); setShowValues(false)}} onCancel={()=>setShowValues(false)}/>
+							</Backdrop>
+						</React.Fragment>
+						:
+						<React.Fragment>
+							<input className='input__group__field typo__body' type={'text'} value={props.value} required onClick={()=>setShowValues(true)}/>
+							<Backdrop show={ShowValues}>
+								<InputModal listType={props.listType} minLimit={props.minLimit} maxLimit={1} value={1} values={props.values} label={props.label} onSave={value=>{props.onSave(value); setShowValues(false)}} onCancel={()=>setShowValues(false)}/>
+							</Backdrop>
+						</React.Fragment>}
+				</React.Fragment>
 			default:
 				return <input className='input__group__field typo__body' type={'text'} required value={props.value} onChange={props.onChange}/>
 		}
