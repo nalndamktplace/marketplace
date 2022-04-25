@@ -8,6 +8,30 @@
 
 	@include respond(phone){ flex-direction: column; }
 
+	&__bg{
+		z-index: -100;
+		position: absolute;
+		top:0;
+		left:0;
+		width: 100vw;
+		overflow: hidden;
+
+		@include respond(phone){ height: calc(100vh - 6.4rem); }
+
+		&>img{
+			object-fit: contain;
+			width: 100%;
+			content: url('../../assets/images/background-hero.png');
+			
+			@include respond(phone){
+				height: 100%;
+				width: unset;
+				object-fit: cover;
+				content: url('../../assets/images/background-hero-phone.svg');
+			}
+		}
+	}
+
 	&__content{
 		flex: 1;
 		display: flex;
