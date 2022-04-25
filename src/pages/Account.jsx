@@ -6,12 +6,13 @@ import Web3Modal from "web3modal"
 import Contracts from '../connections/contracts'
 
 import Page from '../components/hoc/Page/Page'
+import InputField from '../components/ui/Input/Input'
 
 import { isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
-import InputField from '../components/ui/Input/Input'
+import BooksShelf from '../assets/images/books-shelf.png'
 
 const ethers = require('ethers')
 
@@ -80,53 +81,50 @@ const AccountPage = props => {
 	const openHandler = nft => { navigate('/book', {state: nft}) }
 
 	const renderNfts = () => {
-		if(isUsable(Nfts) && Nfts.length>0){
-			let nftDOM = []
-			let nfts = Nfts
+		let nftDOM = []
+		let nfts = Nfts
 
-			if(ActiveFilters.indexOf(v => isUsable(v['active']))){
-				const activeFilters = ActiveFilters.filter(v => isUsable(v['active']))
-				activeFilters.forEach(filter => {
-					switch (filter.name) {
-						case 'status':
-							if(filter.active === 0) nfts = nfts.filter(v => v.sold)
-							else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
-							break
-						case 'price':
-							if(isUsable(filter.active)) nfts = nfts.filter(v => v.price <= filter.active)
-							break
-						case 'genres':
-							nfts = nfts.filter(v => {
-								if(isUsable(v.genres)) return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
-								else {
-									console.log({noGenres: v})
-									return false
-								}
-							})
-							break
-						default:
-					}
-				})
-			}
-
-			nfts.forEach(nft => {
-				nftDOM.push(
-					<div className='account__data__books__item' key={nft.tokenId} onClick={()=>openHandler(nft)}>
-						<img className='account__data__books__item__cover' src={nft.cover} alt={nft.name} />
-						<div className="account__data__books__item__data">
-							{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.author}</p>:null}
-							<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
-						</div>
-						<div className="account__data__books__item__action">
-							<div onClick={()=>readHandler(nft)}>Read</div>
-							<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;ETH</p>
-						</div>
-					</div>
-				)
+		if(ActiveFilters.indexOf(v => isUsable(v['active']))){
+			const activeFilters = ActiveFilters.filter(v => isUsable(v['active']))
+			activeFilters.forEach(filter => {
+				switch (filter.name) {
+					case 'status':
+						if(filter.active === 0) nfts = nfts.filter(v => v.sold)
+						else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
+						break
+					case 'price':
+						if(isUsable(filter.active)) nfts = nfts.filter(v => v.price <= filter.active)
+						break
+					case 'genres':
+						nfts = nfts.filter(v => {
+							if(isUsable(v.genres)) return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
+							else {
+								console.log({noGenres: v})
+								return false
+							}
+						})
+						break
+					default:
+				}
 			})
-			return nftDOM
 		}
-		return <p>No NFTs Yet</p>
+
+		nfts.forEach(nft => {
+			nftDOM.push(
+				<div className='account__data__books__item' key={nft.tokenId} onClick={()=>openHandler(nft)}>
+					<img className='account__data__books__item__cover' src={nft.cover} alt={nft.name} />
+					<div className="account__data__books__item__data">
+						{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.author}</p>:null}
+						<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
+					</div>
+					<div className="account__data__books__item__action">
+						<div onClick={()=>readHandler(nft)}>Read</div>
+						<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;ETH</p>
+					</div>
+				</div>
+			)
+		})
+		return nftDOM
 	}
 
 	const renderTabs = () => {
@@ -210,11 +208,18 @@ const AccountPage = props => {
 					</div>
 					{renderFilters()}
 				</div>
-				<div className="account__data__books">
-					<div className="account__data__books__wrapper">
-						{renderNfts()}
+				{isUsable(Nfts) && Nfts.length>0?
+					<div className="account__data__books">
+						<div className="account__data__books__wrapper">
+							{renderNfts()}
+						</div>
 					</div>
-				</div>
+					:
+					<div className="account__data__books account__data__books--empty">
+						<img src={BooksShelf} alt="books shelf" className="account__data__books__image" />
+						<h4 className="typo__head typo__head--4">No NFTs yet</h4>
+					</div>
+				}
 			</div>
 		</Page>
 	)
