@@ -16,7 +16,7 @@ import BooksShelf from '../assets/images/books-shelf.png'
 
 const ExplorePage = props => {
 
-	const FILTERS = [{ name: 'genres', type: 'options', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}]
+	const FILTERS = [{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}]
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
@@ -131,8 +131,8 @@ const ExplorePage = props => {
 			filter.values.forEach((value, index) => {
 				const activeFilter = ActiveFilters.filter(v => v['name'] === filter.name)
 				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
-					valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="explore__data__filters__item__grid__item explore__data__filters__item__grid__item--active" key={filter.name+index.toString()}>{value}</div> )
-				else valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="explore__data__filters__item__grid__item" key={filter.name+index.toString()}>{value}</div> )
+					valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="typo__body--2 typo__align--center explore__data__filters__item__grid__item explore__data__filters__item__grid__item--active" key={filter.name+index.toString()}>{value}</div> )
+				else valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="typo__body--2 typo__align--center explore__data__filters__item__grid__item" key={filter.name+index.toString()}>{value}</div> )
 			} )
 			return valuesDOM
 		}
@@ -159,7 +159,7 @@ const ExplorePage = props => {
 	return (
 		<Page noFooter={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__head">
-				<h3 className='typo__head typo__head--3'>Explore Collection</h3>
+				<h3 className='typo__head typo__head--3'>Explore eBooks</h3>
 			</div>
 			<div className="explore__data">
 				<div className={Filters?"explore__data__filters explore__data__filters--expanded":"explore__data__filters"} onClick={()=>setFilters(old => !old)}>

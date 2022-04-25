@@ -19,8 +19,8 @@ const ethers = require('ethers')
 const AccountPage = props => {
 
 	const FILTERS = [
-		[{ name: 'genres', type: 'options', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
-		[{ name: 'genres', type: 'options', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
+		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
+		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
 	]
 
 	const navigate = useNavigate()
@@ -167,8 +167,8 @@ const AccountPage = props => {
 			filter.values.forEach((value, index) => {
 				const activeFilter = ActiveFilters.filter(v => v['name'] === filter.name)
 				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
-					valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="account__data__filters__item__grid__item account__data__filters__item__grid__item--active" key={filter.name+index.toString()}>{value}</div> )
-				else valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="account__data__filters__item__grid__item" key={filter.name+index.toString()}>{value}</div> )
+				valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="typo__body--2 typo__align--center account__data__filters__item__grid__item account__data__filters__item__grid__item--active" key={filter.name+index.toString()}>{value}</div> )
+				else valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="typo__body--2 typo__align--center account__data__filters__item__grid__item" key={filter.name+index.toString()}>{value}</div> )
 			} )
 			return valuesDOM
 		}

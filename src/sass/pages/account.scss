@@ -58,6 +58,7 @@
 
 		&__filters{
 			width: 32rem;
+			overflow-y: scroll;
 			height: calc(100vh - 12rem);
 			border: 0.1rem solid rgba($color-black, 0.08);
 			border-right: none;
