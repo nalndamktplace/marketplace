@@ -11,10 +11,11 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import { useNavigate } from 'react-router'
+import InputField from '../components/ui/Input/Input'
 
 const ExplorePage = props => {
 
-	const FILTERS = [{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.0001', '0.0001 - 0.00015', '0.00015 - 0.0002', '0.0002 +'] }]
+	const FILTERS = [{ name: 'genres', type: 'options', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}]
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
@@ -23,6 +24,7 @@ const ExplorePage = props => {
 	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'genres', active: null},{name: 'price', active: null}])
+	const [PriceRange, setPriceRange] = useState(null)
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -72,10 +74,7 @@ const ExplorePage = props => {
 							else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
 							break
 						case 'price':
-							if(filter.active === 0) nfts = nfts.filter(v => v.price <= 0.0001)
-							else if(filter.active === 1) nfts = nfts.filter(v => v.price > 0.0001 && v.price <= 0.00015)
-							else if(filter.active === 2) nfts = nfts.filter(v => v.price > 0.00015 && v.price <= 0.0002)
-							else nfts = nfts.filter(v => v.price > 0.0002)
+							if(isUsable(filter.active)) nfts = nfts.filter(v => v.price <= filter.active)
 							break
 						case 'genres':
 							nfts = nfts.filter(v => {
@@ -112,12 +111,18 @@ const ExplorePage = props => {
 	}
 
 	const filterHandler = (filter, index) => {
+		console.log({filter, index})
 		setActiveFilters(old => {
 			const activeFilter = old.filter(v => v['name'] === filter.name)
 			const otherFilters = old.filter(v => v['name'] !== filter.name)
-			if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
-				return [...otherFilters, {name: filter.name, active: null}]
-			return [...otherFilters, {name: filter.name, active: index}]
+			if(filter.type === 'options'){
+				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index) return [...otherFilters, {name: filter.name, active: null}]
+				return [...otherFilters, {name: filter.name, active: index}]
+			}
+			else if(filter.type === 'range'){
+				setPriceRange(index)
+				return [...otherFilters, {name: filter.name, active: index}]
+			}
 		})
 	}
 
@@ -135,12 +140,21 @@ const ExplorePage = props => {
 		}
 
 		let filtersDOM = []
-		FILTERS.forEach((filter, index) => filtersDOM.push(
-			<div className="explore__data__filters__item" key={"filter"+index.toString()}>
-				<div className="explore__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
-				<div className="explore__data__filters__item__grid">{renderFilterValues(filter)}</div>
-			</div>
-		))
+		FILTERS.forEach((filter, index) => {
+			if(filter.type === 'options') filtersDOM.push(
+				<div className="explore__data__filters__item" key={"filter"+index.toString()}>
+					<div className="explore__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
+					<div className="explore__data__filters__item__grid">{renderFilterValues(filter)}</div>
+				</div>
+			)
+			else if(filter.type === 'range') filtersDOM.push(
+				<div className="explore__data__filters__item" key={"filter"+index.toString()}>
+					<div className="explore__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
+					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange:"Showing all books"}</p>
+					<InputField type="range" min={filter.min} max={filter.max} step={filter.step} onChange={e=>filterHandler(filter, e.target.value)}/>
+				</div>
+			)
+		})
 		return filtersDOM
 	}
 

@@ -11,14 +11,15 @@ import { isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
+import InputField from '../components/ui/Input/Input'
 
 const ethers = require('ethers')
 
 const AccountPage = props => {
 
 	const FILTERS = [
-		[{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', values: ['0.00 - 0.0001', '0.0001 - 0.00015', '0.00015 - 0.0002', '0.0002 +'] }],
-		[{ name: 'genres', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'status', values: ['sold', 'listed'] }, { name: 'price', values: ['0.00 - 0.0001', '0.0001 - 0.00015', '0.00015 - 0.0002', '0.0002 +'] }],
+		[{ name: 'genres', type: 'options', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
+		[{ name: 'genres', type: 'options', values: ['crime', 'action', 'selfhelp', 'drama', 'romance', 'comedy', 'satire', 'fiction'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
 	]
 
 	const navigate = useNavigate()
@@ -30,6 +31,7 @@ const AccountPage = props => {
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [Wallet, setWallet] = useState(null)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null},{name: 'price', active: null}])
+	const [PriceRange, setPriceRange] = useState(null)
 
 	useEffect(() => { getWalletAddress() }, [])
 
@@ -57,16 +59,6 @@ const AccountPage = props => {
 				console.log({err})
 			})
 	}, [ActiveTab])
-
-	const filterHandler = (filter, index) => {
-		setActiveFilters(old => {
-			const activeFilter = old.filter(v => v['name'] === filter.name)
-			const otherFilters = old.filter(v => v['name'] !== filter.name)
-			if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
-				return [...otherFilters, {name: filter.name, active: null}]
-			return [...otherFilters, {name: filter.name, active: index}]
-		})
-	}
 
 	const getWalletAddress = async () => {
 		setLoading(true)
@@ -101,10 +93,7 @@ const AccountPage = props => {
 							else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
 							break
 						case 'price':
-							if(filter.active === 0) nfts = nfts.filter(v => v.price <= 0.0001)
-							else if(filter.active === 1) nfts = nfts.filter(v => v.price > 0.0001 && v.price <= 0.00015)
-							else if(filter.active === 2) nfts = nfts.filter(v => v.price > 0.00015 && v.price <= 0.0002)
-							else nfts = nfts.filter(v => v.price > 0.0002)
+							if(isUsable(filter.active)) nfts = nfts.filter(v => v.price <= filter.active)
 							break
 						case 'genres':
 							nfts = nfts.filter(v => {
@@ -158,6 +147,21 @@ const AccountPage = props => {
 		return tabsDOM
 	}
 
+	const filterHandler = (filter, index) => {
+		setActiveFilters(old => {
+			const activeFilter = old.filter(v => v['name'] === filter.name)
+			const otherFilters = old.filter(v => v['name'] !== filter.name)
+			if(filter.type === 'options'){
+				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index) return [...otherFilters, {name: filter.name, active: null}]
+				return [...otherFilters, {name: filter.name, active: index}]
+			}
+			else if(filter.type === 'range'){
+				setPriceRange(index)
+				return [...otherFilters, {name: filter.name, active: index}]
+			}
+		})
+	}
+
 	const renderFilters = () => {
 
 		const renderFilterValues = filter => {
@@ -172,12 +176,21 @@ const AccountPage = props => {
 		}
 
 		let filtersDOM = []
-		FILTERS[ActiveTab].forEach((filter, index) => filtersDOM.push(
-			<div className="account__data__filters__item" key={"filter"+index.toString()}>
-				<div className="account__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
-				<div className="account__data__filters__item__grid">{renderFilterValues(filter)}</div>
-			</div>
-		))
+		FILTERS[ActiveTab].forEach((filter, index) => {
+			if(filter.type === 'options') filtersDOM.push(
+				<div className="account__data__filters__item" key={"filter"+index.toString()}>
+					<div className="account__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
+					<div className="account__data__filters__item__grid">{renderFilterValues(filter)}</div>
+				</div>
+			)
+			else if(filter.type === 'range') filtersDOM.push(
+				<div className="account__data__filters__item" key={"filter"+index.toString()}>
+					<div className="account__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
+					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange:"Showing all books"}</p>
+					<InputField type="range" min={filter.min} max={filter.max} step={filter.step} onChange={e=>filterHandler(filter, e.target.value)}/>
+				</div>
+			)
+		})
 		return filtersDOM
 	}
 
