@@ -22,6 +22,8 @@ const InputField = props => {
 				return <input className='input__group__field typo__body' type={'email'} required value={props.value} onChange={props.onChange}/>
 			case 'number':
 				return <input className='input__group__field typo__body' type={'number'} required value={props.value} onChange={props.onChange}/>
+			case 'range':
+				return <input className='input__group__field typo__body' type={'range'} required value={props.value} onChange={props.onChange} min={props.min} max={props.max} step={props.step}/>
 			case 'password':
 				return <input className='input__group__field typo__body' type={'password'} required value={props.value} onChange={props.onChange}/>
 			case 'telephone':
