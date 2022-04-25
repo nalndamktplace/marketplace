@@ -14,6 +14,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import BarcodeIcon from '../assets/icons/barcode.svg'
+import BackgroundBook from '../assets/images/background-book.svg'
 
 const BookPage = props => {
 
@@ -81,6 +82,9 @@ const BookPage = props => {
 
 	return (
 		<Page>
+			<div className="book__bg">
+				<img src={BackgroundBook} alt="background"/>
+			</div>
 			{
 				isUsable(NFT)?
 				<React.Fragment>
@@ -129,11 +133,11 @@ const BookPage = props => {
 									<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.genres}</p>
+									<p className='book__data__container__desc__summary__data typo__transform--capital'>{JSON.parse(NFT.genres).join(', ')}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
-									<p className='book__data__container__desc__summary__data'>{NFT.price}</p>
+									<p className='book__data__container__desc__summary__data'>{NFT.price}&nbsp;NALNDA</p>
 									<p className='book__data__container__desc__summary__head typo__body--3'>publication date</p>
 									<p className='book__data__container__desc__summary__data'>{NFT.publication_date.substring(0, NFT.publication_date.indexOf('T'))}</p>
 									{/* <p className='book__data__container__desc__summary__head typo__body--3'>rating</p>
