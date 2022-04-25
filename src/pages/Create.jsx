@@ -55,7 +55,7 @@ const CreateNftPage = props => {
 							axios({
 								url: BASE_URL+'/api/book/publish',
 								method: 'POST',
-								data: { ipfsPath: res2.path, name, author, cover: coverUrl, book: bookUrl, genres, price, pages, publication, isbn, attributes: JSON.stringify(attributes), synopsis, language, published}
+								data: { ipfsPath: res2.path, name, author, cover: coverUrl, book: bookUrl, genres: JSON.stringify(genres.sort((a,b) => a>b)), price, pages, publication, isbn, attributes: JSON.stringify(attributes), synopsis, language, published}
 							}).then(res4 => {
 								setLoading(false)
 								if(res4.status === 200){
