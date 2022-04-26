@@ -6,9 +6,15 @@ const PrimaryButton = props => {
 		props.onClick()
 	}
 
+	const getClasses = () => {
+		let classes = ['button button--primary']
+		if(props.theme === 2) classes.push('button--primary--2')
+		return classes.join(' ')
+	}
+
 	return (
-		<div className='button button--primary' onClick={()=>onClickHandler()}>
-			<p className='typo__act typo__color--white'>{props.label}</p>
+		<div className={getClasses()} onClick={()=>onClickHandler()}>
+			<p className='typo__act'>{props.label}</p>
 		</div>
 	)
 }

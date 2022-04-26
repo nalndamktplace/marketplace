@@ -5,6 +5,28 @@
 	justify-content: flex-start;
 	min-height: calc( 100vh - 6.4rem );
 
+	&__bg{
+		z-index: -100;
+		position: absolute;
+		top:0;
+		left:0;
+		width: 100vw;
+		overflow: hidden;
+
+		@include respond(phone){ height: calc(100vh - 6.4rem); }
+
+		&>img{
+			object-fit: contain;
+			width: 100%;
+			
+			@include respond(phone){
+				height: 100%;
+				width: unset;
+				object-fit: cover;
+			}
+		}
+	}
+
 	&__data{
 		width: 100%;
 		min-height: calc(100vh - 12rem);

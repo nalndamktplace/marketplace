@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Backdrop from '../../hoc/Backdrop/Backdrop'
+import InputModal from './Modal'
 
 const InputField = props => {
+
+	const [ShowValues, setShowValues] = useState(false)
 
 	const renderInputField = () => {
 		switch (props.type) {
@@ -14,12 +18,31 @@ const InputField = props => {
 				return <input className='input__group__field typo__body' type={'email'} required value={props.value} onChange={props.onChange}/>
 			case 'number':
 				return <input className='input__group__field typo__body' type={'number'} required value={props.value} onChange={props.onChange}/>
+			case 'range':
+				return <input className='input__group__field typo__body' type={'range'} required value={props.value} onChange={props.onChange} min={props.min} max={props.max} step={props.step}/>
 			case 'password':
 				return <input className='input__group__field typo__body' type={'password'} required value={props.value} onChange={props.onChange}/>
 			case 'telephone':
 				return <input className='input__group__field typo__body' type={'tel'} required value={props.value} onChange={props.onChange}/>
 			case 'file':
 				return <input className='input__group__field typo__body' type={'file'} accept={props.file} required onChange={props.onChange}/>
+			case 'list':
+				return <React.Fragment>
+					{props.listType==='multiple'?
+						<React.Fragment>
+							<input className='input__group__field typo__body' type={'text'} value={props.value.join(', ')} readOnly required onClick={()=>setShowValues(true)}/>
+							<Backdrop show={ShowValues}>
+								<InputModal listType={props.listType} minLimit={props.minLimit} maxLimit={props.maxLimit} value={props.value} values={props.values} label={props.label} onSave={values=>{props.onSave(values); setShowValues(false)}} onCancel={()=>setShowValues(false)}/>
+							</Backdrop>
+						</React.Fragment>
+						:
+						<React.Fragment>
+							<input className='input__group__field typo__body' type={'text'} value={props.value} readOnly required onClick={()=>setShowValues(true)}/>
+							<Backdrop show={ShowValues}>
+								<InputModal listType={props.listType} minLimit={props.minLimit} maxLimit={1} value={1} values={props.values} label={props.label} onSave={value=>{props.onSave(value); setShowValues(false)}} onCancel={()=>setShowValues(false)}/>
+							</Backdrop>
+						</React.Fragment>}
+				</React.Fragment>
 			default:
 				return <input className='input__group__field typo__body' type={'text'} required value={props.value} onChange={props.onChange}/>
 		}

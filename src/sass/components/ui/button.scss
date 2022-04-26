@@ -24,6 +24,18 @@
 			background-color: $color-primary;
 		}
 
+		&--2{
+			background-color: $color-white;
+			color: $color-primary;
+			border: 0.2rem solid $color-primary;
+
+			@include respond(phone){
+				border: none;
+			}
+		}
+
+		&>p{color: inherit;}
+
 	}
 
 	&--secondary{
@@ -40,7 +52,7 @@
 
 		&--2{
 			border-color: $color-white;
-			color: $color-white !important;
+			color: $color-white;
 		}
 
 		&--3{

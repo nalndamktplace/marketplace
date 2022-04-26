@@ -17,12 +17,15 @@ import { setSnackbar } from '../store/actions/snackbar'
 
 const CreateNftPage = props => {
 
+	const GENRES = ['fantasy', 'science fiction', 'adventure', 'romance', 'mystery', 'horror', 'thriller', 'historical fiction', 'children\'s fiction', 'autobiography', 'biography', 'cooking', 'art', 'selfhelp', 'inspirational', 'health & fitness', 'history', 'humor', 'business', 'travel']
+	const LANGUAGES = ['AF - Afrikaans', 'SQ - Albanian', 'AR - Arabic', 'HY - Armenian', 'AS - Assamese', 'AZ - Azerbaijani', 'BE - Belarusian', 'BN - Bengali']
+
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, book: null, genres: '', price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -52,7 +55,7 @@ const CreateNftPage = props => {
 							axios({
 								url: BASE_URL+'/api/book/publish',
 								method: 'POST',
-								data: { ipfsPath: res2.path, name, author, cover: coverUrl, book: bookUrl, genres, price, pages, publication, isbn, attributes: JSON.stringify(attributes), synopsis, language, published}
+								data: { ipfsPath: res2.path, name, author, cover: coverUrl, book: bookUrl, genres: JSON.stringify(genres.sort((a,b) => a>b)), price, pages, publication, isbn, attributes: JSON.stringify(attributes), synopsis, language, published}
 							}).then(res4 => {
 								setLoading(false)
 								if(res4.status === 200){
@@ -108,25 +111,25 @@ const CreateNftPage = props => {
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/pdf' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
 					<InputField type="string" label="price in ETH" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
-					<InputField type="string" label="genres" onChange={e => setFormInput({ ...FormInput, genres: e.target.value })} />
+					<InputField type="list" label="genres" listType={'multiple'} minLimit={3} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} />
 					<InputField type="string" label="isbn" onChange={e => setFormInput({ ...FormInput, isbn: e.target.value })} />
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} />
-					<InputField type="string" label="language" onChange={e => setFormInput({ ...FormInput, language: e.target.value })} />
+					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} />
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} />
 					<PrimaryButton label={"Create EBook"} onClick={()=>listNFTForSale()} />
 				</div>
 				<div className="create__data__preview">
 					<div className='create__data__preview__item'onClick={()=>{}}>
-						<img className='create__data__preview__item__cover' src={CoverUrl} alt={FormInput.name+" cover"} />
+						{isUsable(CoverUrl)?<img className='create__data__preview__item__cover' src={CoverUrl} alt={FormInput.name+" cover"} />:<div className="create__data__preview__item__cover"/>}
 						<div className="create__data__preview__item__data">
 							<p className='create__data__preview__item__data__author typo__body typo__body--2'>{FormInput.author}</p>
 							<p className='create__data__preview__item__data__name typo__body typo__body--2'>{FormInput.name}</p>
 						</div>
 						<div className="create__data__preview__item__action">
-							<div onClick={()=>{}}>Buy</div>
-							<p className='create__data__preview__item__action__price typo__body typo__body--2'>{FormInput.price}&nbsp;ETH</p>
+							<div onClick={()=>{}}>{isFilled(FormInput.price)?"Buy":null}</div>
+							<p className='create__data__preview__item__action__price typo__body typo__body--2'>{isFilled(FormInput.price)?FormInput.price+" ETH":null}</p>
 						</div>
 					</div>
 				</div>
