@@ -2,12 +2,13 @@
 	position: relative;
 
 	&__modal{
-		min-width: 50vw;
-		max-width: 90vw;
+		width: 50vw;
 		min-height: 50vh;
 		max-height: 90vh;
 		display: flex;
 		flex-direction: column;
+
+		@include respond(tabPort){width: 90vw;}
 
 		&__head{ margin-bottom: 2.4rem; }
 
