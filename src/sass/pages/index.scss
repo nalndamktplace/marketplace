@@ -34,8 +34,6 @@
 			}
 
 			&__item{
-				height: calc(((100vw - (32rem + (4rem)*4))/5)*1.6);
-				width: calc(((100vw - (32rem + (4rem)*4))/5));
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
@@ -48,18 +46,23 @@
 
 				&:not(:last-child){ margin-right: 4rem; }
 
-				@include respond(desk){ height: calc(((100vw - (16rem + (4rem)*4))/4)*1.6); }
-				@include respond(retinaBig){ height: calc(((100vw - (24rem + (4rem)*4))/4)*1.6); }
-				@include respond(tabLand){ height: calc(((100vw - (8rem + (4rem)*4))/4)*1.6); }
-
 				&__cover{
-					width: calc(((100vw - (32rem + (4rem)*4))/5));
-					height: calc(((100vw - (32rem + (4rem)*4))/5)*1.6);
+					width: calc(((100vw - (32rem + ((4rem)*4)))/5));
+					height: calc(((100vw - (32rem + ((4rem)*4)))/5)*1.6);
 					object-fit: cover;
 
-					@include respond(desk){ height: calc(((100vw - (16rem + (4rem)*4))/4)*1.6); }
-					@include respond(retinaBig){ height: calc(((100vw - (24rem + (4rem)*4))/4)*1.6); }
-					@include respond(tabLand){ height: calc(((100vw - (8rem + (4rem)*4))/4)*1.6); }
+					@include respond(desk){
+						width: calc(((100vw - (16rem + ((4rem)*4)))/5));
+						height: calc(((100vw - (16rem + ((4rem)*4)))/5)*1.6);
+					}
+					@include respond(retinaBig){
+						width: calc(((100vw - (24rem + ((4rem)*4)))/5));
+						height: calc(((100vw - (24rem + ((4rem)*4)))/5)*1.6);
+					}
+					@include respond(tabLand){
+						width: calc(((100vw - (8rem + ((4rem)*4)))/5));
+						height: calc(((100vw - (8rem + ((4rem)*4)))/5)*1.6);
+					}
 				}
 
 				&__data{
@@ -158,6 +161,7 @@
 				border: 0.1rem solid rgba($color-black, 0.08);
 				height: fit-content;
 				box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
+				cursor: pointer;
 	
 				&__cover{
 					height: 64rem;
