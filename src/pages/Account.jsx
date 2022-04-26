@@ -217,7 +217,7 @@ const AccountPage = props => {
 					:
 					<div className="account__data__books account__data__books--empty">
 						<img src={BooksShelf} alt="books shelf" className="account__data__books__image" />
-						<h4 className="typo__head typo__head--4">No NFTs yet</h4>
+						<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 					</div>
 				}
 			</div>
