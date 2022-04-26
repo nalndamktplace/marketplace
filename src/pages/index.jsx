@@ -67,31 +67,74 @@ const IndexPage = props => {
 		}
 	}, [Collections, dispatch])
 
-	return (
-		<Page containerClass='index'>
-			<div className="index__bg">
-				<img src={HeroBackground} alt="Background"/>
-			</div>
-			<div className="index__content">
-				<div className="index__content__container">
-					<h2 className="typo__display typo__transform--capital typo__color--white">experience books<br/>beyond reading</h2>
-					<h4 className="typo__head typo__head--4 typo__transform--capital typo__color--white">decentralised marketplace for NFT based ebooks.</h4>
-					<div className="index__content__container__row">
-						<PrimaryButton theme={2} onClick={()=>navigate('/explore')} label="Explore"/>
-						<SecondaryButton theme={2} onClick={()=>navigate('/create')} label="Create"/>
-					</div>
-				</div>
-			</div>
-			<div className="index__book">
-				{Nft?<div className="index__book__container">
-					<div className='index__book__container__item'>
-						<img className='index__book__container__item__cover' src={Nft.cover} alt={Nft.name} />
-						<div className="index__book__container__item__data">
-							<p className='index__book__container__item__data__author typo__body typo__body--2'>{Nft.author}</p>
-							<p className='index__book__container__item__data__name typo__body typo__body--2'>{Nft.name}</p>
+	const renderCollections = () => {
+
+		const renderNfts = (books,collection) => {
+			let booksDOM = []
+			if(isFilled(books)){
+				books.forEach(book => {
+					booksDOM.push(
+						<div className="index__collection__books__item" key={book.id+'|'+collection.id}>
+							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
+							<div className="index__collection__books__item__data">
+								<p className='index__collection__books__item__data__author typo__body typo__body--2'>{book.author}</p>
+								<p className='index__collection__books__item__data__name typo__body typo__body--2'>{book.title}</p>
+							</div>
+						</div>
+					)
+				})
+			}
+			return booksDOM
+		}
+
+		let collectionsDOM = []
+		if(isFilled(CollectionBooks)){
+			CollectionBooks.sort((a,b)=> a.order<b.order).forEach(collection => {
+				collectionsDOM.push(
+					<div className="index__collection" key={collection.id}>
+						<h4 className="typo__head typo__head--4 index__collection__head typo__transform--capital">{collection.name}</h4>
+						<div className="index__collection__books">
+							<div className="index__collection__books__wrapper">
+								{renderNfts(collection.books, collection)}
+							</div>
 						</div>
 					</div>
-				</div>:null}
+				)
+			})
+		}
+		return collectionsDOM
+	}
+
+	return (
+		<Page containerClass='index'>
+			<div className="index__hero">
+				<div className="index__bg">
+					<img src={HeroBackground} alt="Background"/>
+				</div>
+				<div className="index__content">
+					<div className="index__content__container">
+						<h2 className="typo__display typo__transform--capital typo__color--white">experience books<br/>beyond reading</h2>
+						<h4 className="typo__head typo__head--4 typo__transform--capital typo__color--white">decentralised marketplace for NFT based ebooks.</h4>
+						<div className="index__content__container__row">
+							<PrimaryButton theme={2} onClick={()=>navigate('/explore')} label="Explore"/>
+							<SecondaryButton theme={2} onClick={()=>navigate('/create')} label="Create"/>
+						</div>
+					</div>
+				</div>
+				<div className="index__book">
+					{Nft?<div className="index__book__container">
+						<div className='index__book__container__item'>
+							<img className='index__book__container__item__cover' src={Nft.cover} alt={Nft.name} />
+							<div className="index__book__container__item__data">
+								<p className='index__book__container__item__data__author typo__body typo__body--2'>{Nft.author}</p>
+								<p className='index__book__container__item__data__name typo__body typo__body--2'>{Nft.name}</p>
+							</div>
+						</div>
+					</div>:null}
+				</div>
+			</div>
+			<div className="index__section">
+				{renderCollections()}
 			</div>
 		</Page>
 	)
