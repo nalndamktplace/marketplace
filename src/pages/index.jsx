@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useDispatch } from 'react-redux'
 import axios from 'axios'
 
 import Page from '../components/hoc/Page/Page'
@@ -8,9 +9,9 @@ import SecondaryButton from '../components/ui/Buttons/Secondary'
 
 import Contracts from '../connections/contracts'
 
-import { useDispatch } from 'react-redux'
 import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled } from '../helpers/functions'
+import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 
@@ -22,29 +23,37 @@ const IndexPage = props => {
 	const dispatch = useDispatch()
 
 	const [Nft, setNft] = useState(null)
+	const [IsLoading, setIsLoading] = useState(false)
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
 
 	useEffect(() => {
-		console.log({CollectionBooks})
-	}, [CollectionBooks])
+		if(IsLoading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [dispatch, IsLoading])
 
 	useEffect(() => {
+		setIsLoading(true)
 		Contracts.loadNfts().then(res => {
+			setIsLoading(false)
 			setNft(res[res.length-1])
 		}).catch(err => {
+			setIsLoading(false)
 			console.log({err})
 		})
 	}, [])
 
 	useEffect(() => {
+		setIsLoading(true)
 		axios({
 			url: BASE_URL+'/api/collections',
 			method: 'GET'
 		}).then(res => {
+			setIsLoading(false)
 			if(res.status === 200) setCollections(res.data)
 			else dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
+			setIsLoading(false)
 			console.log({err})
 			dispatch(setSnackbar('ERROR'))
 		})
@@ -52,20 +61,26 @@ const IndexPage = props => {
 
 	useEffect(() => {
 		if(isFilled(Collections)){
+			setIsLoading(true)
 			Collections.forEach(collection => {
+				setIsLoading(true)
 				axios({
 					url: BASE_URL+'/api/collections/books?cid='+collection.id,
 					method: 'GET'
 				}).then(res => {
+					setIsLoading(false)
 					if(res.status === 200) setCollectionBooks(old => [...old, {id: collection.id, order: collection.order, name: collection.name, books: res.data}])
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
+					setIsLoading(false)
 					console.log({err})
 					dispatch(setSnackbar('ERROR'))
 				})
 			})
 		}
 	}, [Collections, dispatch])
+
+	const openHandler = nft => { navigate('/book', {state: nft}) }
 
 	const renderCollections = () => {
 
@@ -74,7 +89,7 @@ const IndexPage = props => {
 			if(isFilled(books)){
 				books.forEach(book => {
 					booksDOM.push(
-						<div className="index__collection__books__item" key={book.id+'|'+collection.id}>
+						<div className="index__collection__books__item" key={book.id+'|'+collection.id} onClick={()=>openHandler(book)}>
 							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
 							<div className="index__collection__books__item__data">
 								<p className='index__collection__books__item__data__author typo__body typo__body--2'>{book.author}</p>
@@ -123,7 +138,7 @@ const IndexPage = props => {
 				</div>
 				<div className="index__book">
 					{Nft?<div className="index__book__container">
-						<div className='index__book__container__item'>
+						<div className='index__book__container__item' onClick={()=>openHandler(Nft)}>
 							<img className='index__book__container__item__cover' src={Nft.cover} alt={Nft.name} />
 							<div className="index__book__container__item__data">
 								<p className='index__book__container__item__data__author typo__body typo__body--2'>{Nft.author}</p>
