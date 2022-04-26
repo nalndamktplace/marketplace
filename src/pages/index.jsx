@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import axios from 'axios'
 
 import Page from '../components/hoc/Page/Page'
 import PrimaryButton from '../components/ui/Buttons/Primary'
@@ -7,13 +8,26 @@ import SecondaryButton from '../components/ui/Buttons/Secondary'
 
 import Contracts from '../connections/contracts'
 
+import { useDispatch } from 'react-redux'
+import { setSnackbar } from '../store/actions/snackbar'
+import { isFilled } from '../helpers/functions'
+
+import { BASE_URL } from '../config/env'
+
 import HeroBackground from '../assets/images/background-hero.png'
 
 const IndexPage = props => {
 
 	const navigate = useNavigate()
+	const dispatch = useDispatch()
 
 	const [Nft, setNft] = useState(null)
+	const [Collections, setCollections] = useState([])
+	const [CollectionBooks, setCollectionBooks] = useState([])
+
+	useEffect(() => {
+		console.log({CollectionBooks})
+	}, [CollectionBooks])
 
 	useEffect(() => {
 		Contracts.loadNfts().then(res => {
@@ -22,7 +36,36 @@ const IndexPage = props => {
 			console.log({err})
 		})
 	}, [])
-	
+
+	useEffect(() => {
+		axios({
+			url: BASE_URL+'/api/collections',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setCollections(res.data)
+			else dispatch(setSnackbar('NOT200'))
+		}).catch(err => {
+			console.log({err})
+			dispatch(setSnackbar('ERROR'))
+		})
+	}, [dispatch])
+
+	useEffect(() => {
+		if(isFilled(Collections)){
+			Collections.forEach(collection => {
+				axios({
+					url: BASE_URL+'/api/collections/books?cid='+collection.id,
+					method: 'GET'
+				}).then(res => {
+					if(res.status === 200) setCollectionBooks(old => [...old, {id: collection.id, order: collection.order, name: collection.name, books: res.data}])
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					console.log({err})
+					dispatch(setSnackbar('ERROR'))
+				})
+			})
+		}
+	}, [Collections, dispatch])
 
 	return (
 		<Page containerClass='index'>
