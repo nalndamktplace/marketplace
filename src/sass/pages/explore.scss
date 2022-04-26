@@ -91,13 +91,15 @@
 						align-items: center;
 						justify-content: center;
 						border-radius: 1.2rem;
-						border: 0.1rem solid rgba($color-black, 0.08);
 						text-transform: capitalize;
 						transition: 0.4s all ease-in-out;
+						background-color: rgba($color-black, 0.08);
+						white-space: nowrap;
+						cursor: pointer;
 
 						&--active{
 							background-color: $color-secondary;
-							border-color: $color-secondary;
+							color: $color-white;
 						}
 					}
 				}
@@ -168,6 +170,7 @@
 				width: 100%;
 				border: 0.1rem solid rgba($color-black, 0.08);
 				height: fit-content;
+				cursor: pointer;
 
 				@include respond(phone){
 					width: 100%;
