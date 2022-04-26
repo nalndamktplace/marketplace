@@ -169,20 +169,18 @@ const ExplorePage = props => {
 					</div>
 					{renderFilters()}
 				</div>
-				<div className="explore__data">
-					{isUsable(Nfts) && Nfts.length>0?
-						<div className="explore__data__books">
-							<div className="explore__data__books__wrapper">
-								{renderNfts()}
-							</div>
+				{isUsable(Nfts) && Nfts.length>0?
+					<div className="explore__data__books">
+						<div className="explore__data__books__wrapper">
+							{renderNfts()}
 						</div>
-						:
-						<div className="explore__data__books account__data__books--empty">
-							<img src={BooksShelf} alt="books shelf" className="explore__data__books__image" />
-							<h4 className="typo__head typo__head--4">No NFTs yet</h4>
-						</div>
-					}
-				</div>
+					</div>
+					:
+					<div className="explore__data__books account__data__books--empty">
+						<img src={BooksShelf} alt="books shelf" className="explore__data__books__image" />
+						<h4 className="typo__head typo__head--4">No eBooks yet</h4>
+					</div>
+				}
 			</div>
 		</Page>
 	)
