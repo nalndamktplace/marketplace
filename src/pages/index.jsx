@@ -22,8 +22,8 @@ const IndexPage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-	const [Nft, setNft] = useState(null)
 	const [IsLoading, setIsLoading] = useState(false)
+	const [Highlights, setHighlights] = useState([])
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
 
@@ -34,14 +34,19 @@ const IndexPage = props => {
 
 	useEffect(() => {
 		setIsLoading(true)
-		Contracts.loadNfts().then(res => {
+		axios({
+			url: BASE_URL+'/api/collections/highlights',
+			method: 'GET'
+		}).then(res => {
 			setIsLoading(false)
-			setNft(res[res.length-1])
+			if(res.status === 200) setHighlights(res.data)
+			else dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
 			setIsLoading(false)
 			console.log({err})
+			dispatch(setSnackbar('ERROR'))
 		})
-	}, [])
+	}, [dispatch])
 
 	useEffect(() => {
 		setIsLoading(true)
@@ -120,6 +125,22 @@ const IndexPage = props => {
 		return collectionsDOM
 	}
 
+	const renderHighlights = () => {
+		let highlightsDOM = []
+		Highlights.forEach(highlight => {
+			highlightsDOM.push(
+				<div className='index__book__container__item' onClick={()=>openHandler(highlight)}>
+					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.name} />
+					<div className="index__book__container__item__data">
+						<p className='index__book__container__item__data__author typo__body typo__body--2'>{highlight.author}</p>
+						<p className='index__book__container__item__data__name typo__body typo__body--2'>{highlight.name}</p>
+					</div>
+				</div>
+			)
+		})
+		return highlightsDOM
+	}
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
@@ -137,15 +158,9 @@ const IndexPage = props => {
 					</div>
 				</div>
 				<div className="index__book">
-					{Nft?<div className="index__book__container">
-						<div className='index__book__container__item' onClick={()=>openHandler(Nft)}>
-							<img className='index__book__container__item__cover' src={Nft.cover} alt={Nft.name} />
-							<div className="index__book__container__item__data">
-								<p className='index__book__container__item__data__author typo__body typo__body--2'>{Nft.author}</p>
-								<p className='index__book__container__item__data__name typo__body typo__body--2'>{Nft.name}</p>
-							</div>
-						</div>
-					</div>:null}
+					<div className="index__book__container">
+						{renderHighlights()}
+					</div>
 				</div>
 			</div>
 			<div className="index__section">
