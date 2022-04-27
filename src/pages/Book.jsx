@@ -4,12 +4,13 @@ import { useDispatch } from 'react-redux'
 import axios from 'axios'
 
 import Page from '../components/hoc/Page/Page'
+import InputField from '../components/ui/Input/Input'
 import PrimaryButton from '../components/ui/Buttons/Primary'
 
 import Contracts from '../connections/contracts'
 
 import { BASE_URL } from '../config/env'
-import { isUsable } from '../helpers/functions'
+import { isFilled, isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
@@ -19,22 +20,77 @@ import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import BarcodeIcon from '../assets/icons/barcode.svg'
 import ReviewsIcon from '../assets/icons/reviews.svg'
+import StarEmptyIcon from '../assets/icons/star-empty.svg'
+import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
+import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
+import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
 
 const BookPage = props => {
+
+	const TABS = [{id: 'TAB01', label: 'Synopsis'}, {id: 'TAB02', label: 'reviews'}]
 
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const [NFT, setNFT] = useState(null)
-	const [Likes, setLikes] = useState(0)
-	const [Owner, setOwner] = useState(null)
-	const [Liked, setLiked] = useState(false)
-	const [Rating, setRating] = useState(0)
 	const [Wallet, setWallet] = useState(null)
-	const [Created, setCreated] = useState(null)
 	const [Loading, setLoading] = useState(false)
+	const [ActiveTab, setActiveTab] = useState('TAB01')
+	// NFT
+	const [NFT, setNFT] = useState(null)
+	const [Owner, setOwner] = useState(null)
+	const [Created, setCreated] = useState(null)
+	// Likes
+	const [Likes, setLikes] = useState(0)
+	const [Liked, setLiked] = useState(false)
+	// Reviews
+	const [Rating, setRating] = useState(0)
+	const [Review, setReview] = useState(null)
+	const [Reviews, setReviews] = useState([])
+	const [TotalReveiws, setTotalReveiws] = useState(0)
+	const [ReviewForm, setReviewForm] = useState({title: '', body: '', rating: 0})
+
+	useEffect(() => {
+		if(isUsable(NFT)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/reviews?bid='+NFT.id,
+				method: 'GET'
+			}).then(res => {
+				setLoading(false)
+				if(res.status === 200){
+					setReviews(res.data.reviews)
+					setRating(res.data.rating)
+					setTotalReveiws(res.data.total)
+				}
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				setLoading(false)
+				dispatch(setSnackbar('ERROR'))
+			})
+		}
+	}, [NFT, dispatch])
+
+	useEffect(() => {
+		if(isUsable(NFT) && isUsable(Wallet)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/reviewed?bid='+NFT.id+'&uid='+Wallet,
+				method: 'GET'
+			}).then(res => {
+				setLoading(false)
+				if(res.status === 200){
+					setReview(res.data)
+					console.log({review: res.data})
+				}
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				setLoading(false)
+				dispatch(setSnackbar('ERROR'))
+			})
+		}
+	}, [NFT, Wallet, dispatch])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -80,6 +136,8 @@ const BookPage = props => {
 			console.log({wallet: err})
 		})
 	}, [])
+
+	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
 
 	useEffect(() => {
 		setLoading(true)
@@ -155,6 +213,113 @@ const BookPage = props => {
 		})
 	}
 
+	const renderTabs = () => {
+		let tabsDOM = []
+		TABS.forEach(tab => {
+			tabsDOM.push(
+				<div onClick={()=>setActiveTab(tab.id)} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item"} key={tab.id}>
+					<h5 className="typo__head typo__head--5">{tab.label}</h5>
+				</div>
+			)
+		})
+		return tabsDOM
+	}
+
+	const renderTabData = () => {
+		switch (ActiveTab) {
+			case 'TAB01':
+				return <p className="typo__body">{NFT.synopsis}</p>
+			case 'TAB02':
+				const renderStarsInput = () => {
+					let starsDOM = []
+					for (let i = 1; i <= 5; i++) {
+						if(i <= ReviewForm.rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
+								<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__review__rating__item__icon" />
+								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
+								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
+							</div>)
+						else if(ReviewForm.rating < i && ReviewForm.rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
+								<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__review__rating__item__icon book__data__container__desc__tabs__data__review__rating__item__icon--half" />
+								<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__review__rating__item__icon book__data__container__desc__tabs__data__review__rating__item__icon--half" />
+								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
+								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
+							</div>)
+						else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
+								<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__review__rating__item__icon" />
+								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
+								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
+							</div>)
+					}
+					return starsDOM
+				}
+				const renderStars = rating => {
+					let starsDOM = []
+					for (let i = 1; i <= 5; i++) {
+						if(i <= rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
+								<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
+							</div>)
+						else if(rating < i && rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
+								<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
+								<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
+							</div>)
+						else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
+								<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
+							</div>)
+					}
+					return starsDOM
+				}
+
+				const renderReviews = reviews => {
+					let reviewsDOM = []
+					if(isFilled(reviews)) reviews.forEach(review => reviewsDOM.push(
+						<div className="book__data__container__desc__tabs__data__reviews__item">
+							<div className="book__data__container__desc__tabs__data__reviews__item__rating">
+								{renderStars(review.rating)}
+								<p className="book__data__container__desc__tabs__data__reviews__item__rating__time typo__cap typo__cap--2">{review.reviewed_at.substring(0,review.reviewed_at.indexOf('T'))}</p>
+							</div>
+							<p className="book__data__container__desc__tabs__data__reviews__item__head typo__body typo__transform--upper">{review.title}</p>
+							<p className="book__data__container__desc__tabs__data__reviews__item__body typo__body typo__body--2">{review.body}</p>
+						</div>))
+					return reviewsDOM
+				}
+				
+				return <React.Fragment>
+					{isUsable(Review)?null
+						:<div className="book__data__container__desc__tabs__data__review">
+							<div className="book__data__container__desc__tabs__data__review__rating">{renderStarsInput()}</div>
+							<InputField type="string" label="title" value={ReviewForm.title} onChange={e => setReviewForm({ ...ReviewForm, title: e.target.value })} />
+							<InputField type="text" label="body" value={ReviewForm.body} onChange={e => setReviewForm({ ...ReviewForm, body: e.target.value })} />
+							<PrimaryButton onClick={()=>reviewHandler()} label="submit"/>
+						</div>}
+					<div className="book__data__container__desc__tabs__data__reviews">
+						{renderReviews(Reviews)}
+					</div>
+				</React.Fragment>
+			default:
+				break;
+		}
+	}
+
+	const reviewHandler = () => {
+		setLoading(true)
+		axios({
+			url: BASE_URL+'/api/book/reviews',
+			method: 'POST',
+			data: {
+				review: {...ReviewForm},
+				uid: Wallet,
+				bid: NFT.id
+			}
+		}).then(res => {
+			setLoading(false)
+			if(res.status === 200) console.log("Review submitted")
+			else dispatch(setSnackbar('NOT200'))
+		}).catch(err => {
+			setLoading(false)
+			dispatch(setSnackbar('ERROR'))
+		})
+	}
+
 	return (
 		<Page>
 			<div className="book__bg">
@@ -209,7 +374,7 @@ const BookPage = props => {
 										</div>
 										<div className="book__data__container__desc__interacts__item">
 											<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={ReviewsIcon} alt="rating"/>
-											<p className="typo__bod typo__body--2">{Rating}</p>
+											<p className="typo__bod typo__body--2">{Rating}&nbsp;({TotalReveiws})</p>
 										</div>
 									</div>
 								</div>
@@ -234,12 +399,10 @@ const BookPage = props => {
 									</div>
 									<div className="book__data__container__desc__tabs">
 										<div className="book__data__container__desc__tabs__container">
-											<div className="book__data__container__desc__tabs__container__item">
-												<h5 className="typo__head typo__head--5">synopsis</h5>
-											</div>
+											{renderTabs()}
 										</div>
 										<div className="book__data__container__desc__tabs__data">
-											<p className="typo__body">{NFT.synopsis}</p>
+											{renderTabData()}
 										</div>
 									</div>
 								</div>
