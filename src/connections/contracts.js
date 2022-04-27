@@ -130,6 +130,14 @@ const listNftForSales = async function listNftForSale(url, formInput){
 	return {contract, transaction}
 }
 
+const getWalletAddress = async function getWalletAddress(){
+	const web3Modal = new Web3Modal()
+	const connection = await web3Modal.connect()
+	const provider = new ethers.providers.Web3Provider(connection)
+	const signer = provider.getSigner()
+	return signer.getAddress()
+}
+
 const Contracts = {
 	provider,
 	signer,
@@ -142,7 +150,10 @@ const Contracts = {
 	buyNft,
 	listNftForSales,
 	loadMyNfts,
-	loadNftsCreated
+	loadNftsCreated,
+	Wallet: {
+		getWalletAddress
+	}
 }
 
 export default Contracts
