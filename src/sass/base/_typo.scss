@@ -19,6 +19,8 @@
 		font-size: 8rem;
 		font-weight: 800;
 		text-transform: capitalize;
+
+		@include respond(phone){font-size: 6.4rem;}
 	}
 
 	&__head{

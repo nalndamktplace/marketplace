@@ -10,9 +10,9 @@ import PrimaryButton from '../components/ui/Buttons/Primary'
 import Contracts from '../connections/contracts'
 
 import { BASE_URL } from '../config/env'
-import { isFilled, isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 
 import LikeIcon from '../assets/icons/like.svg'
 import LikedIcon from '../assets/icons/liked.svg'
@@ -81,8 +81,7 @@ const BookPage = props => {
 			}).then(res => {
 				setLoading(false)
 				if(res.status === 200){
-					setReview(res.data)
-					console.log({review: res.data})
+					if(isNotEmpty(res.data)) setReview(res.data)
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -373,12 +372,12 @@ const BookPage = props => {
 											<p className="typo__bod typo__body--2">{Likes}&nbsp;likes</p>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
-											<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={ReviewsIcon} alt="rating"/>
+											<img onClick={()=>setActiveTab('TAB02')} className='book__data__container__desc__interacts__item__icon' src={ReviewsIcon} alt="rating"/>
 											<p className="typo__bod typo__body--2">{Rating}&nbsp;({TotalReveiws})</p>
 										</div>
 									</div>
 								</div>
-								<div className="book__data__container__desc__row">
+								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
 									<div className="book__data__container__desc__summary">
 										<p className='book__data__container__desc__summary__head typo__body--3'>category</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.category}</p>
