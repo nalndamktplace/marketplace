@@ -67,6 +67,13 @@
 			&__cover{
 				z-index: 100;
 				
+				@include respond(phone){
+					width: 100%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				
 				&__container{
 					width: 30rem;
 					height: 48rem;
@@ -75,8 +82,8 @@
 					box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.2);
 
 					@include respond(phone){
-						width: 32rem;
-						height: 51.2rem;
+						width: 40rem;
+						height: 64rem;
 					}
 				}
 			}
@@ -99,7 +106,7 @@
 				&__row{
 					display: flex;
 					flex-direction: row;
-					align-items: center;
+					align-items: flex-start;
 					justify-content: center;
 					margin-top: 6.4rem;
 
@@ -119,6 +126,7 @@
 							text-transform: uppercase;
 							margin-bottom: 0 !important;
 							text-align: center;
+							white-space: nowrap;
 						}
 	
 						&__icon{
@@ -130,6 +138,7 @@
 	
 						&__value{
 							text-transform: capitalize;
+							text-align: center;
 						}
 					}
 				}
@@ -177,6 +186,10 @@
 					align-items: flex-start;
 					justify-content: flex-start;
 					&:not(:last-child){margin-bottom: 3.6rem;}
+
+					&--fluid{
+						@include respond(phone){flex-direction: column;}
+					}
 				}
 
 				&__cta{
@@ -201,9 +214,13 @@
 					align-items: center;
 					justify-content: flex-start;
 
+					@include respond(phone){margin-top: 4.8rem;}
+
 					&__space{
 						width: 38rem;
 						margin-right: 10rem;
+						
+						@include respond(phone){display: none;}
 					}
 					
 					&__item{
@@ -288,6 +305,7 @@
 
 						&__review{
 							width: 40rem;
+							margin-bottom: 4rem;
 							
 							&__rating{
 								display: flex;
