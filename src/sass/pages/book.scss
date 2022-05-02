@@ -193,6 +193,7 @@
 				}
 
 				&__cta{
+					display: flex ;
 					position: absolute;
 					top: 0;
 					left: 58rem;
@@ -205,6 +206,10 @@
 						left: 50%;
 						transform: translate(-50%, -50%);
 					}
+				}
+
+				&__cta > * + * {
+					margin-left: 1rem ;
 				}
 
 				&__interacts{

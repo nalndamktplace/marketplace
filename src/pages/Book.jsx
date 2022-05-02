@@ -360,7 +360,10 @@ const BookPage = props => {
 								<div className="book__data__container__desc__cta">
 									{Created||Owner
 										?<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
-										:<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
+										:<>
+											<PrimaryButton label={'Preview'} onClick={()=>{/* TO BE ADDED */}}/>
+											<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
+										</>
 									}
 								</div>
 								<div className="book__data__container__desc__row">
