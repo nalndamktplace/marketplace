@@ -7,6 +7,7 @@ This is a very brief and precise guide aimed to get started with working on Reac
 * [Live Preview](#live-preview)
 * [Available Scripts](#available-scripts)
 * [Firing Up](#firing-up)
+* [Naming Branches](#naming-branches)
 * [Assets](#assets)
 * [Styling](#styling)
 * [Project Directory Structure Decoded](#project-directory-structure-decoded)
@@ -45,6 +46,17 @@ Steps to get the project running on Localhost
 1. Navigate to `src/` directory: `cd src/`
 2. To initiate blockhain: `npx hardhat node`
 3. To deploy blockhain: `npx hardhat run scripts/deploy.js --network localhost`
+
+# Naming Branches
+Nomenclature of Github Branches
+
+`<Task Nature>`-`<TID Number>`/`<Short Descrtiption>`
+
+* Task Nature is a three letter sequence indicating the nature of the work in the branch
+* TID Number is the tracking number
+* Ideal Short Descirption should be very breif and precise (50 characters approx)
+
+PS: Task nature and TID can be found [here](https://docs.google.com/spreadsheets/d/1Y_oYAoNZLxHe6wF1deY0Qdcax0xU3TSJTnSZMl5w_eM)
 
 # Assets
 
