@@ -31,6 +31,11 @@
 				align-items: flex-start;
 				justify-content: flex-start;
 				width: max-content;
+
+				-ms-overflow-style: none;  /* Internet Explorer 10+ */
+				scrollbar-width: none;  /* Firefox */
+				overflow: -moz-scrollbars-none;  /* Old Firefox */
+				&::-webkit-scrollbar { display: none;  /* Safari and Chrome */ }
 			}
 
 			&__item{
