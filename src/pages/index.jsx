@@ -149,8 +149,8 @@ const IndexPage = props => {
 				</div>
 				<div className="index__content">
 					<div className="index__content__container">
-						<h2 className="typo__display typo__transform--capital typo__color--white">experience books<br/>beyond reading</h2>
-						<h4 className="typo__head typo__head--4 typo__transform--capital typo__color--white">decentralised marketplace for NFT based ebooks.</h4>
+						<h1 className="typo__display typo__transform--capital typo__color--white">experience books<br/>beyond reading</h1>
+						<h3 className="typo__head typo__head--3 typo__transform--capital typo__color--white">decentralised marketplace for NFT based ebooks.</h3>
 						<div className="index__content__container__row">
 							<PrimaryButton theme={2} onClick={()=>navigate('/explore')} label="Explore"/>
 							<SecondaryButton theme={2} onClick={()=>navigate('/create')} label="Create"/>
