@@ -7,11 +7,9 @@
 		@include respond(retinaBig){ padding: 0 12rem; }
 		@include respond(tabLand){ padding: 0 4rem; }
 		@include respond(tabPort){ padding: 0 4rem; }
-		@include respond(phone){ padding: 4.8rem 4rem; }
+		@include respond(phone){ padding: 4.8rem 2rem; }
 
-		&--fluid{
-			padding: 0;
-		}
+		&--fluid{ padding: 0; }
 	}
 
 	&__section{
