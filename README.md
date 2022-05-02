@@ -6,6 +6,7 @@ This is a very brief and precise guide aimed to get started with working on Reac
 #### Table of Contents  
 * [Live Preview](#live-preview)
 * [Available Scripts](#available-scripts)
+* [Firing Up](#firing-up)
 * [Assets](#assets)
 * [Styling](#styling)
 * [Project Directory Structure Decoded](#project-directory-structure-decoded)
@@ -34,9 +35,20 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
+# Firing Up
+Steps to get the project running on Localhost
+
+## React App
+1. To start react app: `npm start`
+
+## Blockchain
+1. Navigate to `src/` directory: `cd src/`
+2. To initiate blockhain: `npx hardhat node`
+3. To deploy blockhain: `npx hardhat run scripts/deploy.js --network localhost`
+
 # Assets
 
-All the assets (icons &amp; images) have been added to the project and can be found at 
+All the assets (icons &amp; images) added to the project and can be found at 
 
 Icons
 `./src/assets/icons`
