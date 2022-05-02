@@ -12,11 +12,11 @@ import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 
-import IndexPage from './pages'
+import IndexPage from './pages/Index'
 import BookPage from './pages/Book'
 import ReaderPage from './pages/Reader'
 import AccountPage from './pages/Account'
-import ExplorePage from './pages/explore'
+import ExplorePage from './pages/Explore'
 import CreateNftPage from './pages/Create'
 
 const rootReducer = combineReducers({

@@ -19,7 +19,6 @@ import LikedIcon from '../assets/icons/liked.svg'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import BarcodeIcon from '../assets/icons/barcode.svg'
-import ReviewsIcon from '../assets/icons/reviews.svg'
 import StarEmptyIcon from '../assets/icons/star-empty.svg'
 import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
@@ -369,18 +368,16 @@ const BookPage = props => {
 										<div className="book__data__container__desc__interacts__space"/>
 										<div className="book__data__container__desc__interacts__item">
 											{Liked?<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={LikedIcon} alt="liked"/>:<img onClick={()=>likeHandler(true)} className='book__data__container__desc__interacts__item__icon' src={LikeIcon} alt="like"/>}
-											<p className="typo__bod typo__body--2">{Likes}&nbsp;likes</p>
+											<p>{Likes}</p>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
-											<img onClick={()=>setActiveTab('TAB02')} className='book__data__container__desc__interacts__item__icon' src={ReviewsIcon} alt="rating"/>
-											<p className="typo__bod typo__body--2">{Rating}&nbsp;({TotalReveiws})</p>
+											<img onClick={()=>setActiveTab('TAB02')} className='book__data__container__desc__interacts__item__icon' src={StarFilledIcon} alt="rating"/>
+											<p>{Rating}&nbsp;({TotalReveiws})</p>
 										</div>
 									</div>
 								</div>
 								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
 									<div className="book__data__container__desc__summary">
-										<p className='book__data__container__desc__summary__head typo__body--3'>category</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.category}</p>
 										{/* <p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.contract}</p> */}
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>

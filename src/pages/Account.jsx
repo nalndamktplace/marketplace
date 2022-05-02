@@ -119,7 +119,7 @@ const AccountPage = props => {
 					</div>
 					<div className="account__data__books__item__action">
 						<div onClick={()=>readHandler(nft)}>Read</div>
-						<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;ETH</p>
+						<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;NALNDA</p>
 					</div>
 				</div>
 			)
