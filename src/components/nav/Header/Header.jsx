@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { isUsable } from '../../../helpers/functions'
@@ -9,7 +9,11 @@ import { GaExternalTracker } from '../../../trackers/ga-tracker.js'
 // import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 
 import Logo from '../../../assets/logo/solid.svg'
-import UserIcon from '../../../assets/icons/user.svg'
+import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
+import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg" ;
+import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg" ;
+import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg" ;
+import {ReactComponent as BriefcaseIcon} from "../../../assets/icons/briefcase.svg" ;
 // import WalletIcon from '../../../assets/icons/wallet.svg'
 
 // import SequenceWallet from '../../../connections/wallet'
@@ -19,10 +23,10 @@ const Header = props => {
 	// const handleWallet = () => { WalletConnected?disconectWallet():connectWallet() }
 
 	const NAV_ITEMS = [
-		{id: 'NI5', title: "Create", url: "/create", uri: null, icon: null, action: null},
-		{id: 'NI1', title: "Explore", url: "/explore", uri: null, icon: null, action: null},
-		{id: 'NI2', title: "ITO", url: "/ito", uri: null, icon: null, action: null},
-		{id: 'NI3', title: "Book Pool", url: "/pool", uri: null, icon: null, action: null},
+		{id: 'NI5', title: "Create", url: "/create", uri: null, icon: PlusSquareIcon, action: null},
+		{id: 'NI1', title: "Explore", url: "/explore", uri: null, icon: CompassIcon, action: null},
+		{id: 'NI2', title: "ITO", url: "/ito", uri: null, icon: FileTextIcon, action: null},
+		{id: 'NI3', title: "Book Pool", url: "/pool", uri: null, icon: BriefcaseIcon, action: null},
 		{id: 'NI4', title: "Profile", url: "/account", uri: null, icon: UserIcon, action: null},
 		// {id: 'NI5', title: "My Wallet", url: null, uri: null, icon: WalletIcon, action: handleWallet},
 	]
@@ -31,7 +35,7 @@ const Header = props => {
 	const navigate = useNavigate()
 	const location = useLocation()
 
-	const [MenuOpen, setMenuOpen] = useState(false)
+	const [MenuOpen, setMenuOpen] = useState(true)
 	// const [Wallet, saveWallet] = useState(null)
 	// const [WalletConnected, setWalletConnected] = useState(false)
 
@@ -63,6 +67,11 @@ const Header = props => {
 		// SequenceWallet.disconnect()
 		// dispatch(hideSpinner())
 	// }
+
+	useEffect(()=>{
+		MenuOpen && window.scrollTo(0,0);
+		window.document.documentElement.style.overflowY = MenuOpen ? "hidden" : "auto" ;
+	},[MenuOpen]);
 
 	const getClasses = () => {
 		let classes = ['header']
@@ -99,14 +108,20 @@ const Header = props => {
 	const renderNavItems = ResponsiveMode => {
 
 		const renderContent = (navItem) => {
-			if(isUsable(navItem.icon)) return <img src={navItem.icon} alt={navItem.title}/>
+			if(isUsable(navItem.icon)) 
+				return (<>
+					{/* <img src={navItem.icon} alt={navItem.title}/> */}
+					<navItem.icon></navItem.icon>
+					<span>{navItem.title}</span>
+				</>)
 			return navItem.title
 		}
 
 		let itemsDOM = []
 		NAV_ITEMS.forEach(navItem => {
 			if(ResponsiveMode){
-				if(isUsable(navItem.icon)) itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item header__menu__phone__container__item--icon typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+				if(isUsable(navItem.icon)) 
+					itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 				else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 			}
 			else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__part__item typo__body utils__cursor--pointer'>{renderContent(navItem)}</div>)

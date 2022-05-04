@@ -14,3 +14,11 @@ $color-blue: #00b0ff;
 
 /*	FONT SIZES	*/
 $text-default-size: 1.6rem;
+
+/* Neutrals */
+$hue : 218 ;
+$color-neutral-100 : hsl($hue,18%,100%) ;
+$color-neutral-300 : hsl($hue,16%,60%) ;
+$color-neutral-500 : hsl($hue,12%,40%) ;
+$color-neutral-700 : hsl($hue,16%,25%) ;
+$color-neutral-900 : hsl($hue,18%,10%) ;
