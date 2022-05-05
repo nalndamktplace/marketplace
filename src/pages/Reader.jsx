@@ -33,6 +33,8 @@ const ReaderPage = props => {
 							standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts`
 						}}>
 						<Page className='reader__content__wrapper__page' pageNumber={CurrentPage} />
+						{/* <Page className='reader__content__wrapper__page' pageNumber={CurrentPage+1} /> */}
+						// todo add another page
 					</Document>
 				:null}
 			</div>

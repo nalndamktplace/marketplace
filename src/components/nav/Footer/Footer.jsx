@@ -1,10 +1,9 @@
 import React from 'react'
-
 import { useNavigate } from 'react-router'
-
-import TwitterIcon from '../../../assets/icons/twitter.svg'
-import MediumIcon from '../../../assets/icons/medium.svg'
-import TelegramIcon from '../../../assets/icons/telegram.svg'
+import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg" ;
+import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg" ;
+import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg" ;
+import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg" ;
 import { GaExternalTracker, GaSocialTracker } from '../../../trackers/ga-tracker'
 
 const Footer = props => {
@@ -35,13 +34,13 @@ const Footer = props => {
 				<div className="footer__row__item">
 					<div className="footer__row__item__socials">
 						<div onClick={()=>{GaSocialTracker('twitter');window.open("https://twitter.com/nalndamktplace", "_blank")}} className="footer__row__item__socials__item">
-							<img src={TwitterIcon} alt={"twitter"}/>
+							<TwitterIcon />
 						</div>
 						<div onClick={()=>{GaSocialTracker('medium');window.open("https://nalndamktplace.medium.com", "_blank")}} className="footer__row__item__socials__item">
-							<img src={MediumIcon} alt={"medium"}/>
+							<MediumIcon />
 						</div>
 						<div onClick={()=>{GaSocialTracker('telegram');window.open("https://t.me/nalndamktplace", "_blank")}} className="footer__row__item__socials__item">
-							<img src={TelegramIcon} alt={"telegram"}/>
+							<TelegramIcon />
 						</div>
 					</div>
 				</div>
