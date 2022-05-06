@@ -349,9 +349,9 @@ const BookPage = props => {
 											<p className="book__data__container__meta__row__item__value typo__body">{NFT.print}</p>
 										</div>
 										<div className="book__data__container__meta__row__item">
-											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">ISBN code</p>
+											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Token ID</p>
 											<img src={BarcodeIcon} alt="ISBN icon" className="book__data__container__meta__row__item__icon" />
-											<p className="book__data__container__meta__row__item__value typo__body">{NFT.isbn}</p>
+											<p className="book__data__container__meta__row__item__value typo__body">{NFT.tokenid || "-"}</p>
 										</div>
 									</div>
 								</div>
@@ -384,6 +384,8 @@ const BookPage = props => {
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
 										<p className='book__data__container__desc__summary__data typo__transform--capital'>{JSON.parse(NFT.genres).join(', ')}</p>
+										<p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
+										<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
