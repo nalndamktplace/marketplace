@@ -24,3 +24,7 @@
 @import "./sass/pages/explore";
 @import "./sass/pages/account";
 @import "./sass/pages/reader";
+
+.web3modal-modal-lightbox {
+    z-index: 999 !important ;
+}

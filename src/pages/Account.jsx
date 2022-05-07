@@ -13,6 +13,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
+import { SET_WALLET } from '../store/actions/wallet'
 
 const ethers = require('ethers')
 
@@ -68,6 +69,8 @@ const AccountPage = props => {
 		const provider = new ethers.providers.Web3Provider(connection)
 		const signer = provider.getSigner()
 		signer.getAddress().then(res => {
+			// ! REPLACE WITH PROPER METHOD
+			dispatch({data:res,type:SET_WALLET})
 			setWallet(res)
 			setLoading(false)
 		}).catch(err => {
