@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
-const sentinel = new Object();
-Object.freeze(sentinel);
+import { useState } from "react";
+
 const Dropdown = ({ title = "", options = "" }) => {
     const [DropdownOpen, setDropdownOpen] = useState(false);
 
-    const toggleDropdown = (state=sentinel) => {
-        if(state!==sentinel){
-            setDropdownOpen((old) => !old);
-        } else {
-            setDropdownOpen(state);
-        }
+    const toggleDropdown = (state) => {
+        setDropdownOpen(state);
     };
 
     const getClasses = () => {
@@ -30,7 +25,6 @@ const Dropdown = ({ title = "", options = "" }) => {
                 {title}
             </div>
             <div className={getClasses()}>{options}</div>
-            {/* <div className="dropdown__backdrop" onClick={()=>toggleDropdown(false)}></div> */}
         </div>
     );
 };

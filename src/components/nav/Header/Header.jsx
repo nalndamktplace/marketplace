@@ -15,33 +15,15 @@ import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg" ;
 import {ReactComponent as BackIcon} from "../../../assets/icons/back-arrow.svg" ;
 import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg" ;
-
 import PrimaryButton from '../../ui/Buttons/Primary'
 import Dropdown from '../../ui/Dropdown/Dropdown'
 import { CLEAR_WALLET, SET_WALLET } from '../../../store/actions/wallet'
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
-import Web3Modal from "web3modal"
-import { ethers } from 'ethers'
-import providerOptions from '../../../connections/providerOptions'
-import SecondaryButton from '../../ui/Buttons/Secondary'
-
-// import { setWallet } from '../../../store/actions/wallet'
-// import { setSnackbar } from '../../../store/actions/snackbar'
-// import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
-// import WalletIcon from '../../../assets/icons/wallet.svg'
-// import SequenceWallet from '../../../connections/wallet'
-
-const web3Modal = new Web3Modal({
-	cacheProvider: true,
-	providerOptions
-});
+import Wallet from "../../../connections/wallet" ;
 
 const Header = props => {
-	// const handleWallet = () => { WalletConnected?disconectWallet():connectWallet() }
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null);
 	const WalletState = useSelector(state=>state.WalletState);
 	const dispatch = useDispatch();
-	// console.log(WalletState);
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore"  ,url: "/explore",uri: null, icon: CompassIcon    ,action: null, subMenu: null },
 		{ id: "NI2",title: "Publish"  ,url: "/create" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
@@ -56,47 +38,22 @@ const Header = props => {
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
 				{id: "NI4SMI2",title: "Wallet", url: "/wallet" ,uri: null,icon: null,action: null,},
 				{id: "NI4SMI3",title: "Library",url: "/account",uri: null,icon: null,action: null},
-				{id: "NI4SMI4",title: "Logout", url: "/"       ,uri: null,icon: null,action: () => {disconnectWallet()}},
+				{id: "NI4SMI4",title: "Logout", url: "/"       ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
 		},
 	];
+	const SocialLinks = [
+		{name:"twitter",url:"https://twitter.com/nalndamktplace",icon:<TwitterIcon />},
+		{name:"medium",url:"https://nalndamktplace.medium.com",icon:<MediumIcon />},
+		{name:"telegram",url:"https://t.me/nalndamktplace",icon:<TelegramIcon />},
+		{name:"github",url:"https://github.com/nalndamktplace",icon:<GithubIcon />}
+	]
+
 	const navigate = useNavigate()
 	const location = useLocation()
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false);
 
-	/*
-	const dispatch = useDispatch()
-	const [Wallet, saveWallet] = useState(null)
-	const [WalletConnected, setWalletConnected] = useState(false)
-	useEffect(() => { setWalletConnected(isUsable(Wallet)) }, [Wallet])
-	const connectWallet = () => {
-		dispatch(showSpinner())
-		const connectDetails = SequenceWallet.connect()
-		connectDetails.then(res => {
-			dispatch(hideSpinner())
-			if(res.connected === true){
-				saveWallet(res)
-				SequenceWallet.open()
-				dispatch(setWallet(res))
-			}
-		})
-		.catch(err => {
-			dispatch(hideSpinner())
-			dispatch(setSnackbar('ERROR'))
-			console.error({err})
-		})
-	}
-	const disconectWallet = () => {
-		SequenceWallet.open()
-		dispatch(showSpinner())
-		saveWallet(null)
-		dispatch(clearWallet())
-		SequenceWallet.disconnect()
-		dispatch(hideSpinner())
-	}
-	*/
-	
 	useEffect(()=>{
 		MenuOpen && window.scrollTo(0,0);
 		window.document.documentElement.style.overflowY = MenuOpen ? "hidden" : "auto" ;
@@ -201,75 +158,44 @@ const Header = props => {
 		})
 		return itemsDOM
 	};
-	const [provider, setProvider] = useState(null);
 
+	const renderSocialIcons = () => {
+		const domItems = [] ;
+		SocialLinks.forEach(item => domItems.push(<div key={item.name} onClick={()=>{GaSocialTracker(item.name);window.open(item.url, "_blank")}} className="header__menu__phone__container__socials__item">
+		{item.icon}
+	</div>))
+		return domItems
+	}
+
+	useEffect(()=>{
+		const handleAccountChange = async accounts => {
+			if(!isFilled(accounts)) handleWalletDisconnect();
+		}
+		if(window?.ethereum?.on){
+			window.ethereum.on("accountsChanged",handleAccountChange);
+			return () => {
+				window?.ethereum?.removeListener("accountsChanged",handleAccountChange);
+			}
+		}
+	},[])
+	
 	useEffect(() => {
-		if (web3Modal.cachedProvider) connectWallet();
+		(async ()=>{
+			if (Wallet.web3Modal.cachedProvider){
+				await Wallet.connectWallet();
+				dispatch({data:Wallet.getSigner(),type:SET_WALLET});
+			}
+		})();
 	}, []);
 
-	useEffect(() => {
-        if (provider?.on) {
-            const handleAccountsChanged = (accounts) => {
-                console.log("accountsChanged", accounts);
-				if(!isFilled(accounts)){
-					disconnectWallet();
-				}
-            };
-
-            // const handleDisconnect = () => {
-            //     console.log("disconnect");
-            //     disconnectWallet();
-            // };
-
-            provider.on("accountsChanged", handleAccountsChanged);
-            // provider.on("disconnect", handleDisconnect);
-            return () => {
-                if (provider.removeListener) {
-                    provider.removeListener("accountsChanged", handleAccountsChanged);
-                    // provider.removeListener("disconnect", handleDisconnect);
-                }
-            };
-        }
-    }, [provider]);
-
-	const connectWeb3Modal = async () => {
-		if (web3Modal.cachedProvider) {
-		  web3Modal.clearCachedProvider()
-		}
-		connectWallet()
+	const handleWalletConnect = async () => {
+		await Wallet.connectWallet();
+		dispatch({data:Wallet.getSigner(),type:SET_WALLET});
 	}
 
-	// TODO Move them to external file
-	// ! REPLACE WITH PROPER METHOD
-	const connectWallet = async () => {
-		// dispatch(showSpinner()) 
-		try{
-			const connection = await web3Modal.connect()
-			const provider = new ethers.providers.Web3Provider(connection)
-			setProvider(connection);
-			// todo set signer as wallet
-			const signer = provider.getSigner()
-			const address = await signer.getAddress()
-			dispatch({data:address,type:SET_WALLET})
-		} catch(e) {
-			console.error(e);
-			// TODO add toast message
-		}
-		// dispatch(hideSpinner())
-	}
-
-	// ! REPLACE WITH PROPER METHOD
-	const disconnectWallet = async () => {
-		dispatch(showSpinner())
-		try{
-    		await web3Modal.clearCachedProvider()
-			dispatch({type:CLEAR_WALLET})
-			dispatch(hideSpinner())
-		} catch(e) {
-			console.error(e);
-			dispatch(hideSpinner())
-			// TODO add toast message
-		}
+	const handleWalletDisconnect = () => {
+		Wallet.disconnectWallet();
+		dispatch({type:CLEAR_WALLET});
 	};
 
 	return (
@@ -288,7 +214,7 @@ const Header = props => {
 			<div className='header__menu'>
 				<div className='header__menu__part'>
 					{renderNavItems(false)}
-					{!isUsable(WalletState.wallet) && <PrimaryButton label="Connect Wallet" onClick={()=>{connectWeb3Modal()}}/>}
+					{!isUsable(WalletState.wallet) && <PrimaryButton label="Connect Wallet" onClick={()=>{handleWalletConnect()}}/>}
 				</div>
 			</div>
 			<div className={getMenuIconClasses()} onClick={()=>toggleMenu()}>
@@ -312,20 +238,9 @@ const Header = props => {
 					</div>
 
 					<div className='header__menu__phone__container__spacer'></div>
-					{!isUsable(WalletState.wallet) && <PrimaryButton label="Connect Wallet" onClick={()=>{connectWeb3Modal()}}/>}
+					{!isUsable(WalletState.wallet) && <PrimaryButton label="Connect Wallet" onClick={()=>{handleWalletConnect()}}/>}
 					<div className='header__menu__phone__container__socials'>
-						<div onClick={()=>{GaSocialTracker('twitter');window.open("https://twitter.com/nalndamktplace", "_blank")}} className="header__menu__phone__container__socials__item">
-							<TwitterIcon />
-						</div>
-						<div onClick={()=>{GaSocialTracker('medium');window.open("https://nalndamktplace.medium.com", "_blank")}} className="header__menu__phone__container__socials__item">
-							<MediumIcon />
-						</div>
-						<div onClick={()=>{GaSocialTracker('telegram');window.open("https://t.me/nalndamktplace", "_blank")}} className="header__menu__phone__container__socials__item">
-							<TelegramIcon />
-						</div>
-						<div onClick={()=>{GaSocialTracker('github');window.open("https://github.com/nalndamktplace", "_blank")}} className="header__menu__phone__container__socials__item">
-							<GithubIcon />
-						</div>
+						{renderSocialIcons()}
 					</div>
 				</div>
 			</div>
