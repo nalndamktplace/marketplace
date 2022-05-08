@@ -196,6 +196,7 @@ const Header = props => {
 	const handleWalletDisconnect = () => {
 		Wallet.disconnectWallet();
 		dispatch({type:CLEAR_WALLET});
+		navigate("/");
 	};
 
 	return (

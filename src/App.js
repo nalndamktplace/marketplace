@@ -18,6 +18,7 @@ import ReaderPage from './pages/Reader'
 import AccountPage from './pages/Account'
 import ExplorePage from './pages/Explore'
 import CreateNftPage from './pages/Create'
+import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 
 const rootReducer = combineReducers({
 	WalletState: WalletReducer,
@@ -36,9 +37,9 @@ function App() {
 						<Route path='/*' element={<IndexPage/>}/>
 						<Route path='/' element={<IndexPage/>}/>
 						<Route path='/book' element={<BookPage/>}/>
-						<Route path='/create' element={<CreateNftPage/>}/>
+						<Route path='/create' element={<ProtectedRoute element={<CreateNftPage/>} />}/>
 						<Route path='/explore' element={<ExplorePage/>}/>
-						<Route path='/account' element={<AccountPage/>}/>
+						<Route path='/account' element={<ProtectedRoute element={<AccountPage />} />}/>
 						<Route path='/account/reader' element={<ReaderPage/>}/>
 					</Routes>
 				</Router>

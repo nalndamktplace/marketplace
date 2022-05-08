@@ -3,6 +3,7 @@ import axios from 'axios'
 import Web3Modal from "web3modal"
 
 import { BASE_URL } from '../config/env'
+import Wallet from './wallet'
 
 const ethers = require('ethers')
 
@@ -39,11 +40,15 @@ const loadNfts = async function loadNFTs() {
 }
 
 const loadMyNfts = async function loadNFTs() {
-	const web3Modal = new Web3Modal()
-    const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
-    const signer = provider.getSigner()
-	// const signer = Wallet.getSigner()
+	// const web3Modal = new Web3Modal()
+    // const connection = await web3Modal.connect()
+    // const provider = new ethers.providers.Web3Provider(connection)
+    // const signer = provider.getSigner()
+
+	await Wallet.connectWallet();
+	const provider = Wallet.getProvider();
+	const signer = Wallet.getSigner()
+
 	const marketContract = new ethers.Contract('0x5FbDB2315678afecb367f032d93F642f64180aa3', Market.abi, signer)
 	const nftContract = new ethers.Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', Nft.abi, provider)
     const data = await marketContract.fetchMyNFTs()
@@ -68,11 +73,16 @@ const loadMyNfts = async function loadNFTs() {
 }
 
 const loadNftsCreated = async function loadNFTs() {
-	const web3Modal = new Web3Modal()
-    const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
-    const signer = provider.getSigner()
+	// const web3Modal = new Web3Modal()
+    // const connection = await web3Modal.connect()
+    // const provider = new ethers.providers.Web3Provider(connection)
+    // const signer = provider.getSigner()
 	// const signer = Wallet.getSigner()
+
+	await Wallet.connectWallet();
+	const provider = Wallet.getProvider();
+	const signer = Wallet.getSigner()
+
 	const marketContract = new ethers.Contract('0x5FbDB2315678afecb367f032d93F642f64180aa3', Market.abi, signer)
 	const nftContract = new ethers.Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', Nft.abi, provider)
     const data = await marketContract.fetchItemsCreated()
@@ -97,11 +107,16 @@ const loadNftsCreated = async function loadNFTs() {
 }
 
 const buyNft = async function buyNft(nft){
-	const web3Modal = new Web3Modal()
-    const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
-    const signer = provider.getSigner()
+	// const web3Modal = new Web3Modal()
+    // const connection = await web3Modal.connect()
+    // const provider = new ethers.providers.Web3Provider(connection)
+    // const signer = provider.getSigner()
 	// const signer = Wallet.getSigner()
+
+	await Wallet.connectWallet();
+	const provider = Wallet.getProvider();
+	const signer = Wallet.getSigner()
+
 	const contract = new ethers.Contract('0x5FbDB2315678afecb367f032d93F642f64180aa3', Market.abi, signer)
 	const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')   
 	const transaction = await contract.createMarketSale('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', nft.tokenId, { value: price })
@@ -109,11 +124,16 @@ const buyNft = async function buyNft(nft){
 }
 
 const listNftForSales = async function listNftForSale(url, formInput){
-	const web3Modal = new Web3Modal()
-    const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
-    const signer = provider.getSigner()
+	// const web3Modal = new Web3Modal()
+    // const connection = await web3Modal.connect()
+    // const provider = new ethers.providers.Web3Provider(connection)
+    // const signer = provider.getSigner()
 	// const signer = Wallet.getSigner()
+
+	await Wallet.connectWallet();
+	const provider = Wallet.getProvider();
+	const signer = Wallet.getSigner()
+	
 	let contract = new ethers.Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', Nft.abi, signer)
 	let transaction = await contract.createToken(url)
 	let tx = await transaction.wait()
@@ -131,11 +151,12 @@ const listNftForSales = async function listNftForSale(url, formInput){
 }
 
 const getWalletAddress = async function getWalletAddress(){
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
-	const provider = new ethers.providers.Web3Provider(connection)
-	const signer = provider.getSigner()
-	return signer.getAddress()
+	// const web3Modal = new Web3Modal()
+	// const connection = await web3Modal.connect()
+	// const provider = new ethers.providers.Web3Provider(connection)
+	// const signer = provider.getSigner()
+	await Wallet.connectWallet();
+	return Wallet.getSigner().getAddress();
 }
 
 const Contracts = {

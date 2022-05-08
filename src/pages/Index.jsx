@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 
 import Page from '../components/hoc/Page/Page'
@@ -10,12 +10,14 @@ import SecondaryButton from '../components/ui/Buttons/Secondary'
 import Contracts from '../connections/contracts'
 
 import { setSnackbar } from '../store/actions/snackbar'
-import { isFilled } from '../helpers/functions'
+import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 
 import HeroBackground from '../assets/images/background-hero.png'
+import Wallet from '../connections/wallet'
+import { SET_WALLET } from '../store/actions/wallet'
 
 const IndexPage = props => {
 
@@ -26,6 +28,7 @@ const IndexPage = props => {
 	const [Highlights, setHighlights] = useState([])
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
+	const WalletState = useSelector(state=>state.WalletState);
 
 	useEffect(() => {
 		if(IsLoading) dispatch(showSpinner())
@@ -141,6 +144,16 @@ const IndexPage = props => {
 		return highlightsDOM
 	}
 
+	const handleCreate = async () => {
+		if(isUsable(WalletState.wallet)){
+			navigate('/create');
+		} else {
+			await Wallet.connectWallet();
+			dispatch({data:Wallet.getSigner(),type:SET_WALLET});
+			navigate('/create');
+		}
+	}
+	
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
@@ -153,7 +166,7 @@ const IndexPage = props => {
 						<h3 className="typo__head typo__head--3 typo__transform--capital typo__color--white">decentralised marketplace for NFT based ebooks.</h3>
 						<div className="index__content__container__row">
 							<PrimaryButton theme={2} onClick={()=>navigate('/explore')} label="Explore"/>
-							<SecondaryButton theme={2} onClick={()=>navigate('/create')} label="Create"/>
+							<SecondaryButton theme={2} onClick={()=>{handleCreate()}} label="Create"/>
 						</div>
 					</div>
 				</div>
