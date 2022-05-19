@@ -14,6 +14,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
 import { SET_WALLET } from '../store/actions/wallet'
+import Wallet from '../connections/wallet'
 
 const ethers = require('ethers')
 
@@ -31,7 +32,7 @@ const AccountPage = props => {
 	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
-	const [Wallet, setWallet] = useState(null)
+	const [WalletAddress, setWalletAddress] = useState(null)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null},{name: 'price', active: null}])
 	const [PriceRange, setPriceRange] = useState(null)
 
@@ -64,19 +65,32 @@ const AccountPage = props => {
 
 	const getWalletAddress = async () => {
 		setLoading(true)
-		const web3Modal = new Web3Modal()
-		const connection = await web3Modal.connect()
-		const provider = new ethers.providers.Web3Provider(connection)
-		const signer = provider.getSigner()
-		signer.getAddress().then(res => {
-			// ! REPLACE WITH PROPER METHOD
-			dispatch({data:res,type:SET_WALLET})
-			setWallet(res)
+		// const web3Modal = new Web3Modal()
+		// const connection = await web3Modal.connect()
+		// const provider = new ethers.providers.Web3Provider(connection)
+		// const signer = provider.getSigner()
+		// signer.getAddress().then(res => {
+		// 	// ! REPLACE WITH PROPER METHOD
+		// 	dispatch({data:res,type:SET_WALLET})
+		// 	setWallet(res)
+		// 	setLoading(false)
+		// }).catch(err => {
+		// 	setLoading(false)
+		// 	console.log({err})
+		// })
+		try{
+			await Wallet.connectWallet();
+			const signer = Wallet.getSigner()
+			dispatch({data:signer,type:SET_WALLET})
+			const address = await signer.getAddress() ;
 			setLoading(false)
-		}).catch(err => {
+			setWalletAddress(address);
+			return address ; 
+		} catch(e) {
+			console.error(e);
 			setLoading(false)
-			console.log({err})
-		})
+			return "" ; 
+		}
 	}
 
 	const readHandler = nft => { navigate('/account/reader', {state: nft}) }
@@ -198,7 +212,7 @@ const AccountPage = props => {
 	return (
 		<Page noFooter={true} fluid={true} containerClass={'explore'}>
 			<div className="account__head">
-				<h3 className='typo__head typo__head--3'>{Wallet?Wallet:"John Doe"}</h3>
+				<h3 className='typo__head typo__head--3'>{WalletAddress?WalletAddress:"John Doe"}</h3>
 			</div>
 			<div className="account__tabs">
 				{renderTabs()}

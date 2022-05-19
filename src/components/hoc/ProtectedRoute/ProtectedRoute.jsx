@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import Contracts from "../../../connections/contracts";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import Wallet from "../../../connections/wallet";
 import { isUsable } from "../../../helpers/functions";
-import { hideSpinner, showSpinner } from "../../../store/actions/spinner";
+import { SET_WALLET } from "../../../store/actions/wallet";
 
 const ProtectedRoute = ({element}) => {
-    const [account, setAccount] = useState(null);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const WalletState = useSelector(state=>state.WalletState);
 
-    useEffect(() => {
-        const checkAccount = async () => {
-            dispatch(showSpinner());
-            console.log("here");
-            let address = await Contracts.Wallet.getWalletAddress() ;
-            setAccount(address)
-            dispatch(hideSpinner());
-        };
-        checkAccount();
-    }, []);
+    useEffect(()=>{
+        if(isUsable(WalletState.wallet)){
+            setIsAuthenticated(true);
+        } else {
+            (async ()=>{
+                try{
+                    await Wallet.connectWallet();
+                    dispatch({data:Wallet.getSigner(),type:SET_WALLET});
+                } catch(e) {
+                    navigate("/");
+                }
+            })()
+        }
+    },[WalletState])
 
-    return <>{isUsable(account) && element }</>;
+    return <>{isAuthenticated && element }</>;
 };
 
 export default ProtectedRoute;
