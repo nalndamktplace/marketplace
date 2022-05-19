@@ -1,68 +1,63 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-
-import { isUsable } from '../../../helpers/functions'
-import { GaExternalTracker } from '../../../trackers/ga-tracker.js'
-
-// import { setWallet } from '../../../store/actions/wallet'
-// import { setSnackbar } from '../../../store/actions/snackbar'
-// import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
+import { useDispatch, useSelector } from 'react-redux'
+import { isFilled, isUsable } from '../../../helpers/functions'
+import { GaExternalTracker,GaSocialTracker } from '../../../trackers/ga-tracker.js'
 
 import Logo from '../../../assets/logo/solid.svg'
-import UserIcon from '../../../assets/icons/user.svg'
-// import WalletIcon from '../../../assets/icons/wallet.svg'
-
-// import SequenceWallet from '../../../connections/wallet'
+import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
+import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg" ;
+import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg" ;
+import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg" ;
+import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg" ;
+import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg" ;
+import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg" ;
+import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg" ;
+import {ReactComponent as BackIcon} from "../../../assets/icons/back-arrow.svg" ;
+import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg" ;
+import PrimaryButton from '../../ui/Buttons/Primary'
+import Dropdown from '../../ui/Dropdown/Dropdown'
+import { CLEAR_WALLET, SET_WALLET } from '../../../store/actions/wallet'
+import Wallet from "../../../connections/wallet" ;
 
 const Header = props => {
-
-	// const handleWallet = () => { WalletConnected?disconectWallet():connectWallet() }
-
+	const [ActiveSubMenu, setActiveSubMenu] = useState(null);
+	const WalletState = useSelector(state=>state.WalletState);
+	const dispatch = useDispatch();
 	const NAV_ITEMS = [
-		{id: 'NI5', title: "Create", url: "/create", uri: null, icon: null, action: null},
-		{id: 'NI1', title: "Explore", url: "/explore", uri: null, icon: null, action: null},
-		{id: 'NI2', title: "ITO", url: "/ito", uri: null, icon: null, action: null},
-		{id: 'NI3', title: "Book Pool", url: "/pool", uri: null, icon: null, action: null},
-		{id: 'NI4', title: "Profile", url: "/account", uri: null, icon: UserIcon, action: null},
-		// {id: 'NI5', title: "My Wallet", url: null, uri: null, icon: WalletIcon, action: handleWallet},
+		{ id: "NI1",title: "Explore"  ,url: "/explore",uri: null, icon: CompassIcon    ,action: null, subMenu: null },
+		{ id: "NI2",title: "Publish"  ,url: "/create" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
+		{ id: "NI3",title: "Resources",url: null      ,uri: null, icon: FileTextIcon   ,action: null,
+			subMenu: [
+				{id: "NI3SMI1",title: "Blog"      ,url: null,uri: "https://nalndamktplace.medium.com/",icon: null,action: null,},
+				{id: "NI3SMI2",title: "Whitepaper",url: null,uri: "https://docs.nalnda.com/"          ,icon: null,action: null,},
+			],
+		},
+		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
+			subMenu: [
+				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
+				{id: "NI4SMI2",title: "Wallet", url: "/wallet" ,uri: null,icon: null,action: null,},
+				{id: "NI4SMI3",title: "Library",url: "/account",uri: null,icon: null,action: null},
+				{id: "NI4SMI4",title: "Logout", url: "/"       ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
+			],
+		},
+	];
+	const SocialLinks = [
+		{name:"twitter",url:"https://twitter.com/nalndamktplace",icon:<TwitterIcon />},
+		{name:"medium",url:"https://nalndamktplace.medium.com",icon:<MediumIcon />},
+		{name:"telegram",url:"https://t.me/nalndamktplace",icon:<TelegramIcon />},
+		{name:"github",url:"https://github.com/nalndamktplace",icon:<GithubIcon />}
 	]
 
-	// const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const location = useLocation()
-
 	const [MenuOpen, setMenuOpen] = useState(false)
-	// const [Wallet, saveWallet] = useState(null)
-	// const [WalletConnected, setWalletConnected] = useState(false)
+	const [SubMenuOpen, setSubMenuOpen] = useState(false);
 
-	// useEffect(() => { setWalletConnected(isUsable(Wallet)) }, [Wallet])
-
-	// const connectWallet = () => {
-	// 	dispatch(showSpinner())
-	// 	const connectDetails = SequenceWallet.connect()
-	// 	connectDetails.then(res => {
-	// 		dispatch(hideSpinner())
-	// 		if(res.connected === true){
-	// 			saveWallet(res)
-	// 			SequenceWallet.open()
-	// 			dispatch(setWallet(res))
-	// 		}
-	// 	})
-	// 	.catch(err => {
-	// 		dispatch(hideSpinner())
-	// 		dispatch(setSnackbar('ERROR'))
-	// 		console.error({err})
-	// 	})
-	// }
-
-	// const disconectWallet = () => {
-	// 	SequenceWallet.open()
-		// dispatch(showSpinner())
-		// saveWallet(null)
-		// dispatch(clearWallet())
-		// SequenceWallet.disconnect()
-		// dispatch(hideSpinner())
-	// }
+	useEffect(()=>{
+		MenuOpen && window.scrollTo(0,0);
+		window.document.documentElement.style.overflowY = MenuOpen ? "hidden" : "auto" ;
+	},[MenuOpen]);
 
 	const getClasses = () => {
 		let classes = ['header']
@@ -71,8 +66,11 @@ const Header = props => {
 	}
 
 	const toggleMenu = () => {
+		SubMenuOpen && setSubMenuOpen(false)
 		setMenuOpen(old => !old)
 	}
+
+	const toggleSubMenu = () => { setSubMenuOpen(old => !old) }
 
 	const getMenuIconClasses = () => {
 		let classes = ['header__menu__icon']
@@ -86,33 +84,119 @@ const Header = props => {
 		return classes.join(' ')
 	}
 
+	const getSubMenuClasses = () => {
+		let classes = ['header__menu__phone__container__submenu']
+		if(SubMenuOpen) classes.push('header__menu__phone__container__submenu--open')
+		return classes.join(' ')
+	}
+
 	const menuItemClickHandler = navItem => {
-		setMenuOpen(false)
-		if(isUsable(navItem.action)) navItem.action()
-		else if(isUsable(navItem.url)) navigate(navItem.url)
-		else{
+		if(isUsable(navItem.action)) {
+			setMenuOpen(false)
+			navItem.action()
+		} else if(isUsable(navItem.url)) {
+			setMenuOpen(false)
+			navigate(navItem.url)
+		} else if(isUsable(navItem.uri)){
 			window.open(navItem.uri, "_blank")
+			setMenuOpen(false)
 			GaExternalTracker(navItem.title)
+		} else if(isUsable(navItem.subMenu)){
+			setActiveSubMenu(navItem);
+			setSubMenuOpen(true);
 		}
 	}
 
 	const renderNavItems = ResponsiveMode => {
-
 		const renderContent = (navItem) => {
-			if(isUsable(navItem.icon)) return <img src={navItem.icon} alt={navItem.title}/>
+			if(isUsable(navItem.icon)) 
+				return (<>
+					<navItem.icon></navItem.icon>
+					<span>{navItem.title}</span>
+				</>)
 			return navItem.title
+		}
+
+		const renderDropdownItems = (subMenu) => {
+			let itemsDOM = []
+			subMenu.forEach(navItem => {
+				itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='dropdown__options__item'>{renderContent(navItem)}</div>)
+			})
+			return itemsDOM
+		}
+
+		const renderDropdown = (navItem) => {
+			if(isUsable(navItem.subMenu) && isFilled(navItem.subMenu)) return <Dropdown title={navItem.id === "NI4" ? <navItem.icon /> : navItem.title} options={renderDropdownItems(navItem.subMenu)}/>
+			else return navItem.title ;
 		}
 
 		let itemsDOM = []
 		NAV_ITEMS.forEach(navItem => {
+			if(!isUsable(WalletState.wallet) && (navItem.id === "NI2" || navItem.id === "NI4")) return ;
 			if(ResponsiveMode){
-				if(isUsable(navItem.icon)) itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item header__menu__phone__container__item--icon typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+				if(isUsable(navItem.icon)) itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 				else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 			}
-			else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__part__item typo__body utils__cursor--pointer'>{renderContent(navItem)}</div>)
+			else itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__part__item typo__body utils__cursor--pointer'>{renderDropdown(navItem)}</div>)
 		})
 		return itemsDOM
 	}
+
+	const renderSubMenuItems = (item) => {
+		if(!item && !item.subMenu) return "" 
+		const renderContent = (navItem) => {
+			if(isUsable(navItem.icon)) 
+				return (<>
+					<navItem.icon></navItem.icon>
+					<span>{navItem.title}</span>
+				</>)
+			return navItem.title
+		}
+		let itemsDOM = []
+		item.subMenu.forEach(navItem => {
+			itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__menu__phone__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+		})
+		return itemsDOM
+	};
+
+	const renderSocialIcons = () => {
+		const domItems = [] ;
+		SocialLinks.forEach(item => domItems.push(<div key={item.name} onClick={()=>{GaSocialTracker(item.name);window.open(item.url, "_blank")}} className="header__menu__phone__container__socials__item">
+		{item.icon}
+	</div>))
+		return domItems
+	}
+
+	useEffect(()=>{
+		const handleAccountChange = async accounts => {
+			if(!isFilled(accounts)) handleWalletDisconnect();
+		}
+		if(window?.ethereum?.on){
+			window.ethereum.on("accountsChanged",handleAccountChange);
+			return () => {
+				window?.ethereum?.removeListener("accountsChanged",handleAccountChange);
+			}
+		}
+	},[])
+	
+	useEffect(() => {
+		(async ()=>{
+			if (Wallet.web3Modal.cachedProvider){
+				await Wallet.connectWallet();
+				dispatch({data:Wallet.getSigner(),type:SET_WALLET});
+			}
+		})();
+	}, []);
+
+	const handleWalletConnect = async () => {
+		await Wallet.connectWallet();
+		dispatch({data:Wallet.getSigner(),type:SET_WALLET});
+	}
+
+	const handleWalletDisconnect = () => {
+		Wallet.disconnectWallet();
+		dispatch({type:CLEAR_WALLET});
+	};
 
 	return (
 		<header className={getClasses()}>
@@ -130,14 +214,34 @@ const Header = props => {
 			<div className='header__menu'>
 				<div className='header__menu__part'>
 					{renderNavItems(false)}
+					{!isUsable(WalletState.wallet) && <PrimaryButton label="Connect Wallet" onClick={()=>{handleWalletConnect()}}/>}
 				</div>
 			</div>
 			<div className={getMenuIconClasses()} onClick={()=>toggleMenu()}>
 				<div/><div/><div/>
 			</div>
-			<div className={getMenuClasses()} onClick={()=>toggleMenu()}>
+			<div className={getMenuClasses()}>
 				<div className='header__menu__phone__container'>
+					<div className='header__menu__phone__container__header'>
+						<div className='header__menu__phone__container__header__title typo__head--5'>Menu</div>
+						<div className='header__menu__phone__container__header__backbtn' onClick={()=>{toggleMenu()}}><CloseIcon /></div>
+					</div>
+					
 					{renderNavItems(true)}
+
+					<div className={getSubMenuClasses()}>
+						<div className='header__menu__phone__container__submenu__header' >
+							<div className='header__menu__phone__container__submenu__header__backbtn' onClick={()=>{toggleSubMenu()}}><BackIcon /></div>
+							<div className='header__menu__phone__container__submenu__header__title typo__head--5'>{ ActiveSubMenu && ActiveSubMenu.title }</div>
+						</div>
+						{SubMenuOpen && ActiveSubMenu && renderSubMenuItems(ActiveSubMenu)}
+					</div>
+
+					<div className='header__menu__phone__container__spacer'></div>
+					{!isUsable(WalletState.wallet) && <PrimaryButton label="Connect Wallet" onClick={()=>{handleWalletConnect()}}/>}
+					<div className='header__menu__phone__container__socials'>
+						{renderSocialIcons()}
+					</div>
 				</div>
 			</div>
 		</header>

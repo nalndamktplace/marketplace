@@ -15,6 +15,7 @@
 @import "./sass/components/ui/input";
 @import "./sass/components/ui/snackbar";
 @import "./sass/components/ui/spinner";
+@import "./sass/components/ui/dropdown";
 
 @import "./sass/pages/book";
 @import "./sass/pages/create";
@@ -23,3 +24,7 @@
 @import "./sass/pages/explore";
 @import "./sass/pages/account";
 @import "./sass/pages/reader";
+
+.web3modal-modal-lightbox {
+    z-index: 999 !important ;
+}

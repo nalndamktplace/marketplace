@@ -9,6 +9,7 @@
 	padding: 0.8rem 1.6rem;
 	cursor: pointer;
 	border-radius: 100rem;
+	white-space: nowrap ;
 
 	@include respond(phone){
 		min-width: 16rem;

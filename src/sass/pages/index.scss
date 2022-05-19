@@ -114,11 +114,13 @@
 		&>img{
 			object-fit: contain;
 			width: 100%;
+			background-size: cover ;
 			content: url('../../assets/images/background-hero.png');
 			
 			@include respond(phone){
 				height: 100%;
 				width: unset;
+				background-size: cover ;
 				object-fit: cover;
 				content: url('../../assets/images/background-hero-phone.svg');
 			}
