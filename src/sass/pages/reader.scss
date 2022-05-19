@@ -1,8 +1,60 @@
 .reader{
 
-	&__content{
+	&__header {
+		position: absolute ;
+		top: 0 ;
+		width: 100% ;
+		display: flex ;
+		padding: 1rem ;
+		align-items: center ;
+		justify-content: flex-end ;
+		z-index: 100 ;
+		background-color: $color-white ;
+	}
+
+	&__book{
+		position: relative ;
 		height: calc( 100vh - 6.4rem );
 		width: 100%;
+
+		&__prev-btn,
+		&__next-btn {
+			position: absolute ;
+			height: 100% ;
+			top: 0 ;
+			left: 0 ;
+			width: 10rem ;
+			display: flex ;
+			align-items: center ;
+			justify-content: center ;
+			z-index: 50 ;
+			color: rgba($color-black, 0.5) ;
+			transition: all 100ms ease-out ;
+			cursor: pointer ;
+
+			&:hover {
+				background: linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,0)) ;
+				color: rgba($color-black, 1) ;
+			}
+		}
+
+		&__next-btn {
+			left: unset ;
+			right: 0 ;
+
+			&:hover {
+				background: linear-gradient(to left,rgba(0,0,0,.5),rgba(0,0,0,0)) ;
+			}
+		}
+
+		&__content {
+			position: relative ;
+			width : 100% ;
+			height: 100% ;
+			display: flex ;
+			align-items: center ;
+			justify-content: center ;
+		}
 
 		&__wrapper{
 			height: 100%;
@@ -14,17 +66,12 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-
-				.react-pdf__Page__canvas{
-					// height: 100% !important;
-					// width: 100% !important;
-					
-				}
 			}
 		}
 	}
 
 	&__nav{
+		position: relative ;
 		height: 6.4rem;
 		display: flex;
 		flex-direction: row;
@@ -32,5 +79,35 @@
 		justify-content: center;
 		box-shadow: 0 -0.2rem 1.6rem rgba($color-black, 0.1);
 		z-index: 100;
+		padding: 0 3rem ;
+		
+		&__progress {
+			width: 100% ;
+		}
+
+		&__progress-value {
+			width: 5ch ;
+			text-align: right ;
+			color: $color-neutral-500 ;
+
+			&:hover {
+				color: $color-neutral-900 ;
+			}
+		}
+	}
+
+	.list {
+		list-style: none ;
+
+		&__item {
+			padding: 1rem ;
+			border-radius: 4px ;
+			color: $color-neutral-500 ;
+			
+			&:hover {
+				background-color: $color-neutral-200 ;
+				color: $color-neutral-900 ;
+			}
+		}
 	}
 }

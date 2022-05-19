@@ -5,3 +5,47 @@
 	z-index: 100;
 	padding: 2.4rem;
 }
+
+/* this is different modal (css for components/hoc/Modal.jsx) */
+.modal__wrapper {
+	position: fixed ;
+	top: 50% ;
+	left: 50% ;
+	min-width: 60vw ;
+	min-height: 20vw ;
+	transform: translate(-50%,-50%);
+	padding: 2rem ;
+	background-color: $color-white ;
+	box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
+	z-index: 999 ;
+	border-radius: 2rem;
+	transition: all 200ms ease-out ;
+
+	&__header {
+		display: flex ;
+		align-items: center ;
+		margin-bottom: 1rem ;
+		&__title {
+			flex: 1 ;
+			color: $color-neutral-500 ;
+		}
+	}
+
+	&__content {
+		max-height: 60vh ;
+		overflow-y: auto ;
+	}
+
+	&--close {
+		transform: translate(-50%,-50%) scale(0) ;
+		opacity: 0 ;
+		pointer-events: none ;
+	}
+
+	&--open {
+		transform: translate(-50%,-50%) scale(1) ;
+		opacity: 1;
+		pointer-events: all ;
+	}
+
+}
