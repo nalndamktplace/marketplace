@@ -358,7 +358,7 @@ const BookPage = props => {
 							</div>
 							<div className='book__data__container__desc'>
 								<div className="book__data__container__desc__cta">
-									{Created||Owner||true
+									{Created||Owner
 										?<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
 										:<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
 									}

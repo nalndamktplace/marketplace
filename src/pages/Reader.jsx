@@ -83,21 +83,21 @@ const ReaderPage = (props) => {
 
     //############### Update Theme ############### */
 
-    useEffect(()=>{
-        if(!isUsable(rendition)) return ;
-        console.log(DarkModeState);
-        if(DarkModeState.darkmode === true){
-            rendition.getContents().forEach(c => c.addStylesheetRules({body:{
-                "background-color" : "black",
-                "color" : "white"
-            }}));
-        } else {
-            rendition.getContents().forEach(c => c.addStylesheetRules({body:{
-                "background-color" : "white",
-                "color" : "black"
-            }}));
-        }
-    },[rendition,DarkModeState,progress])
+    // useEffect(()=>{
+    //     if(!isUsable(rendition)) return ;
+    //     console.log(DarkModeState);
+    //     if(DarkModeState.darkmode === true){
+    //         rendition.getContents().forEach(c => c.addStylesheetRules({body:{
+    //             "background-color" : "black",
+    //             "color" : "white"
+    //         }}));
+    //     } else {
+    //         rendition.getContents().forEach(c => c.addStylesheetRules({body:{
+    //             "background-color" : "white",
+    //             "color" : "black"
+    //         }}));
+    //     }
+    // },[rendition,DarkModeState,progress])
 
     // useEffect(() => {
     //     if(!isUsable(rendition)) return ;
