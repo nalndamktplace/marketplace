@@ -51,7 +51,6 @@ const AccountPage = props => {
 				setNfts(res)
 			}).catch(err => {
 				setLoading(false)
-				console.log({err})
 			})
 		else if(ActiveTab === 1)
 			Contracts.loadNftsCreated().then(res => {
@@ -59,7 +58,6 @@ const AccountPage = props => {
 				setNfts(res)
 			}).catch(err => {
 				setLoading(false)
-				console.log({err})
 			})
 	}, [ActiveTab])
 
@@ -116,7 +114,6 @@ const AccountPage = props => {
 						nfts = nfts.filter(v => {
 							if(isUsable(v.genres)) return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
 							else {
-								console.log({noGenres: v})
 								return false
 							}
 						})

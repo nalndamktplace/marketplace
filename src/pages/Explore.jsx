@@ -41,7 +41,6 @@ const ExplorePage = props => {
 			setNfts(res)
 		}).catch(err => {
 			setLoading(false)
-			console.log({err})
 		})
 	}
 
@@ -55,7 +54,6 @@ const ExplorePage = props => {
 			setLoading(false)
 			if(err.code === 4001)
 				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
-			console.log({err})
 		})
 	}
 
@@ -80,7 +78,6 @@ const ExplorePage = props => {
 						nfts = nfts.filter(v => {
 							if(isUsable(v.genres)) return v.genres.indexOf(FILTERS.filter(v => v.name === 'genres')[0].values[filter.active]) > -1
 							else {
-								console.log({noGenres: v})
 								return false
 							}
 						})
@@ -109,7 +106,6 @@ const ExplorePage = props => {
 	}
 
 	const filterHandler = (filter, index) => {
-		console.log({filter, index})
 		setActiveFilters(old => {
 			const activeFilter = old.filter(v => v['name'] === filter.name)
 			const otherFilters = old.filter(v => v['name'] !== filter.name)

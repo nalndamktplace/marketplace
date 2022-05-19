@@ -132,7 +132,6 @@ const BookPage = props => {
 			if(isUsable(res)) setWallet(res)
 		}).catch(err =>{
 			setLoading(false)
-			console.log({wallet: err})
 		})
 	}, [])
 
@@ -179,7 +178,6 @@ const BookPage = props => {
 				method: 'POST',
 				data: {ownerAddress: Wallet, bookAddress: NFT.book_address, tokenId}
 			}).then(res => {
-				console.log({res})
 				if(res.status === 200) setOwner(true)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -197,7 +195,6 @@ const BookPage = props => {
 			if(err.code === 4001)
 				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
 			else dispatch(setSnackbar('ERROR'))
-			console.log({err})
 		})
 	}
 
@@ -321,8 +318,7 @@ const BookPage = props => {
 			}
 		}).then(res => {
 			setLoading(false)
-			if(res.status === 200) console.log("Review submitted")
-			else dispatch(setSnackbar('NOT200'))
+			if(res.status !== 200) dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
 			setLoading(false)
 			dispatch(setSnackbar('ERROR'))

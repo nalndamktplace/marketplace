@@ -83,13 +83,11 @@ const CreateNftPage = props => {
 									}
 									else {
 										dispatch(setSnackbar('ERROR'))
-										console.log({err: res})
 									}
 								})
 								.catch(err => {
 									dispatch(setSnackbar('NOT200'))
 									setLoading(false)
-									console.log({err})
 								})
 							}
 							else{
@@ -99,13 +97,11 @@ const CreateNftPage = props => {
 							}
 						}).catch((err => {
 							dispatch(setSnackbar('NOT200'))
-							console.log({err})
 							setLoading(false)
 						}))
 					}).catch(err => {
 						dispatch(setSnackbar('NOT200'))
 						setLoading(false)
-						console.log({err})
 					})
 				}
 				else{
@@ -115,12 +111,10 @@ const CreateNftPage = props => {
 			}).catch(err => {
 				dispatch(setSnackbar('NOT200'))
 				setLoading(false)
-				console.log({err})
 			})
 		}).catch(err => {
 			dispatch(setSnackbar('NOT200'))
 			setLoading(false)
-			console.log({err})
 		})
 	}
 
@@ -134,7 +128,7 @@ const CreateNftPage = props => {
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
-					<InputField type="file" label="book" accept='application/pdf' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
+					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
 					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={3} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
