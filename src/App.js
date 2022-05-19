@@ -11,6 +11,7 @@ import Snackbar from './components/ui/Snackbar/Snackbar'
 import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
+import DarkModeReducer from './store/reducers/darkmode'
 
 import IndexPage from './pages/Index'
 import BookPage from './pages/Book'
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
 	WalletState: WalletReducer,
 	SpinnerState: SpinnerReducer,
 	SnackbarState: SnackbarReducer,
+	DarkModeState : DarkModeReducer
 })
 
 const store = createStore(rootReducer)

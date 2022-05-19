@@ -65,4 +65,28 @@
 	&--disabled{
 		cursor: not-allowed;
 	}
+
+	&--icon {
+		position: relative ;
+		min-width: 0 ;
+		width : 4rem ;
+		height: 4rem ;
+		padding: 0 ;
+		flex: 0 0 4rem ;
+		display: flex ;
+		align-items: center ;
+		justify-content: center ;
+		color: $color-neutral-500;
+		border-radius: 4px ;
+		cursor: pointer ;
+
+		&>svg {
+			width: 75% ;
+		}
+
+		&:hover {
+			background-color: $color-neutral-200 ;
+			color: $color-neutral-900;
+		}
+	}
 }
