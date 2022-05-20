@@ -7,9 +7,24 @@
 		display: flex ;
 		padding: 1rem ;
 		align-items: center ;
-		justify-content: flex-end ;
 		z-index: 100 ;
 		background-color: $color-white ;
+
+		&__spacer {
+			flex: 1 ;
+		}
+
+		&__readtime {
+			display: flex ;
+			align-items: center ;
+			justify-content: center ;
+			font-weight: 500 ;
+			padding: 0 1rem ;
+
+			svg {
+				margin-right: 0.5rem ;
+			}
+		}
 	}
 
 	&__book{
@@ -86,8 +101,9 @@
 		}
 
 		&__progress-value {
-			width: 5ch ;
-			text-align: right ;
+			padding: 0 1rem ;
+			padding-left: 2rem ;
+			text-align: center ;
 			color: $color-neutral-500 ;
 
 			&:hover {
@@ -111,3 +127,33 @@
 		}
 	}
 }
+
+[data-theme="dark"] .reader {
+	background-color: #000 ;
+	color: $color-white;
+
+	&__header {
+		background-color: #000 ;
+		color: #fff ;
+	}
+	
+	&__prev-btn,
+	&__next-btn {
+		color: #fff ;
+		&:hover {
+			color: #fff ;
+		}
+	}
+
+	.button {
+		color: $color-neutral-500;
+	
+		&--icon {
+			&:hover {
+				background-color: $color-neutral-700 ;
+				color: $color-neutral-100;
+			}
+		}
+	}
+}
+
