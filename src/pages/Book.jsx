@@ -154,7 +154,9 @@ const BookPage = props => {
 					bookAddress: book.book_address
 				}
 			}).then(res => { if(res.status === 200) setOwner(true)
-			}).catch(err => { console.error({err})
+			}).catch(err => {
+				if(!isUsable(err.response.status))
+					console.error({err})
 			}).finally(() => setLoading(false))
 		}
 	}, [params, dispatch, Wallet])
@@ -170,7 +172,7 @@ const BookPage = props => {
 
 	const purchaseHandler = () => {
 		setLoading(true)
-		Contracts.purchaseNft(Wallet, NFT.book_address, "1").then(res => {
+		Contracts.purchaseNft(Wallet, NFT.book_address, NFT.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
@@ -181,13 +183,11 @@ const BookPage = props => {
 				if(res.status === 200) setOwner(true)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 			axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: NFT.book_address, copies: tokenId } }).then(res => {
 				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			})
 		}).catch(err => {
