@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
+import axios from 'axios'
 
 import Contracts from '../connections/contracts'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
+import { BASE_URL } from '../config/env'
 import { isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -16,12 +18,13 @@ import BooksShelf from '../assets/images/books-shelf.png'
 
 const ExplorePage = props => {
 
-	const FILTERS = [{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}]
+	const FILTERS = [{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 1000, step: 10 }]
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
 	const [Nfts, setNfts] = useState([])
+	const [Wallet, setWallet] = useState(null)
 	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'genres', active: null},{name: 'price', active: null}])
@@ -34,28 +37,53 @@ const ExplorePage = props => {
 
 	useEffect(() => { loadNftHandler() }, [])
 
+	useEffect(() => {
+		setLoading(true)
+		Contracts.Wallet.getWalletAddress().then(res => {
+			setLoading(false)
+			if(isUsable(res)) setWallet(res)
+		}).catch(err =>{
+			setLoading(false)
+		})
+	}, [])
+
 	const loadNftHandler = () => {
 		setLoading(true)
-		Contracts.loadNfts().then(res => {
-			setLoading(false)
-			setNfts(res)
+		axios({
+			url: BASE_URL + '/api/book/all',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setNfts(res.data)
+			else dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
-			setLoading(false)
-			console.log({err})
-		})
+			dispatch(setSnackbar('ERROR'))
+		}).finally(() => setLoading(false))
 	}
 
 	const buyHandler = nft => {
 		setLoading(true)
-		Contracts.buyNft(nft).then(res => {
-			setLoading(false)
+		Contracts.purchaseNft(Wallet, nft.book_address, nft.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
-			loadNftHandler()
+			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
+			axios({
+				url: BASE_URL+'/api/book/purchase',
+				method: 'POST',
+				data: {ownerAddress: Wallet, bookAddress: nft.book_address, tokenId}
+			}).then(res => {
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+			axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: nft.book_address, copies: tokenId } }).then(res => {
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			})
 		}).catch(err => {
 			setLoading(false)
 			if(err.code === 4001)
 				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
-			console.log({err})
+			else dispatch(setSnackbar('ERROR'))
 		})
 	}
 
@@ -80,7 +108,6 @@ const ExplorePage = props => {
 						nfts = nfts.filter(v => {
 							if(isUsable(v.genres)) return v.genres.indexOf(FILTERS.filter(v => v.name === 'genres')[0].values[filter.active]) > -1
 							else {
-								console.log({noGenres: v})
 								return false
 							}
 						})
@@ -109,7 +136,6 @@ const ExplorePage = props => {
 	}
 
 	const filterHandler = (filter, index) => {
-		console.log({filter, index})
 		setActiveFilters(old => {
 			const activeFilter = old.filter(v => v['name'] === filter.name)
 			const otherFilters = old.filter(v => v['name'] !== filter.name)
@@ -148,7 +174,7 @@ const ExplorePage = props => {
 			else if(filter.type === 'range') filtersDOM.push(
 				<div className="explore__data__filters__item" key={"filter"+index.toString()}>
 					<div className="explore__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
-					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange:"Showing all books"}</p>
+					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange+" NALNDA":"Showing all books"}</p>
 					<InputField type="range" min={filter.min} max={filter.max} step={filter.step} onChange={e=>filterHandler(filter, e.target.value)}/>
 				</div>
 			)

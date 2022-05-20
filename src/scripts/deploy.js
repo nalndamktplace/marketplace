@@ -1,16 +1,12 @@
 const hre = require("hardhat")
+require('dotenv').config()
 
 async function main() {
-	
-	const NFTMarket = await hre.ethers.getContractFactory("NFTMarket")
-	const nftMarket = await NFTMarket.deploy()
-	await nftMarket.deployed();
-	console.log("NFT Market deployed to: ", nftMarket.address);
 
-	const NFT  = await hre.ethers.getContractFactory("NFT")
-	const nft = await NFT.deploy(nftMarket.address)
-	await nft.deployed()
-	console.log("NFT deployed to: ", nft.address)
+	const NalndaBooksPrimarySales = await hre.ethers.getContractFactory("NalndaBooksPrimarySales");
+    const primarySales = await NalndaBooksPrimarySales.deploy('0x1Dd5Ee08A759059E0E7734C9d2e4FEde0eD5F865');
+    await primarySales.deployed();
+    console.log("NalndaBooksPrimarySales deployed to:", primarySales.address);
 }
 
 main()

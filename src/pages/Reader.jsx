@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import { isUsable } from "../helpers/functions";
 import Epub, { Rendition } from "epubjs";
 import Modal from "../components/hoc/Modal/Modal";
@@ -12,11 +13,16 @@ import { ReactComponent as ListIcon } from "../assets/icons/list.svg";
 import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg";
 import DarkModeSwitch from "../components/ui/DarkModeSwitch/DarkModeSwitch";
-import { useSelector } from "react-redux";
 import axios from "axios";
+import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 const ReaderPage = (props) => {
+
+	const dispatch = useDispatch()
+
     const params = useLocation();
+
+	const [Loading, setLoading] = useState(false)
     const [bookUrl, setBookUrl] = useState(null);
     const [rendition, setRendition] = useState(null);
     const [isTocModalOpen, setIsTocModalOpen] = useState(false);
@@ -27,16 +33,23 @@ const ReaderPage = (props) => {
     const [book, setBook] = useState(null);
     const [totalLocations, setTotalLocations] = useState(1);
 
+	useEffect(() => {
+		if(Loading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [Loading, dispatch])
+
     //############### Load Book ############### */
     useEffect(() => {
         setBookUrl(params.state.book);
     }, [params]);
 
     useEffect(() => {
+		setLoading(true)
         if (!isUsable(bookUrl)) return;
         let book = Epub(bookUrl, { openAs : "epub" }) ;
         book.ready.then(()=>{
             setBook(book);
+			setLoading(false)
         })
     }, [bookUrl]);
 

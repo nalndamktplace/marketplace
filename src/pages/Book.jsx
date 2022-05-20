@@ -18,12 +18,13 @@ import LikeIcon from '../assets/icons/like.svg'
 import LikedIcon from '../assets/icons/liked.svg'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
-import BarcodeIcon from '../assets/icons/barcode.svg'
+import CartAddIcon from '../assets/icons/cart-add.svg'
 import StarEmptyIcon from '../assets/icons/star-empty.svg'
 import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
+import { ethers } from 'ethers'
 
 const BookPage = props => {
 
@@ -131,40 +132,34 @@ const BookPage = props => {
 			if(isUsable(res)) setWallet(res)
 		}).catch(err =>{
 			setLoading(false)
-			console.log({wallet: err})
 		})
 	}, [])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
 
 	useEffect(() => {
-		setLoading(true)
-		Contracts.loadMyNfts().then(res => {
-			if(isUsable(res)){
-				if(res.length>0) res.forEach(book => {
-					if(params.state.tokenId === book.tokenId) setOwner(true)
-					else setOwner(false)
-				})
-				else setOwner(false)
-			}
-		}).catch(err => {
-			console.log({err})
-			dispatch(setSnackbar('ERROR'))
-		})
-		Contracts.loadNftsCreated().then(res => {
-			if(isUsable(res)){
-				if(res.length>0) res.forEach(book => {
-					if(params.state.tokenId === book.tokenId) setCreated(true)
-					else setCreated(false)
-				})
-				else setCreated(false)
-			}
-		}).catch(err => {
-			console.log({err})
-			dispatch(setSnackbar('ERROR'))
-		})
-		setNFT(params.state)
-	}, [params, dispatch])
+		if(isUsable(Wallet)){
+			setLoading(true)
+			const book = params.state
+			if(book.new_owner === Wallet) setOwner(true)
+			else setOwner(false)
+			if(book.publisher_address === Wallet) setCreated(true)
+			else setCreated(false)
+			setNFT(params.state)
+			axios({
+				url: BASE_URL+'/api/book/owner',
+				method: 'GET',
+				params: {
+					ownerAddress: Wallet,
+					bookAddress: book.book_address
+				}
+			}).then(res => { if(res.status === 200) setOwner(true)
+			}).catch(err => {
+				if(!isUsable(err.response.status))
+					console.error({err})
+			}).finally(() => setLoading(false))
+		}
+	}, [params, dispatch, Wallet])
 
 	useEffect(() => { if(isUsable(NFT) && isUsable(Created) && isUsable(Owner)) setLoading(false) }, [NFT, Created, Owner])
 
@@ -177,16 +172,29 @@ const BookPage = props => {
 
 	const purchaseHandler = () => {
 		setLoading(true)
-		Contracts.buyNft(NFT).then(res => {
-			setLoading(false)
+		Contracts.purchaseNft(Wallet, NFT.book_address, NFT.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
-			Contracts.loadMyNfts().then(res => { if(isUsable(res) && res.length>0) res.forEach(book => { if(params.state.contract === book.contract) setOwner(true) }) }).catch(err => console.log({err}))
+			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
+			axios({
+				url: BASE_URL+'/api/book/purchase',
+				method: 'POST',
+				data: {ownerAddress: Wallet, bookAddress: NFT.book_address, tokenId}
+			}).then(res => {
+				if(res.status === 200) setOwner(true)
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+			axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: NFT.book_address, copies: tokenId } }).then(res => {
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			})
 		}).catch(err => {
 			setLoading(false)
 			if(err.code === 4001)
 				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
 			else dispatch(setSnackbar('ERROR'))
-			console.log({err})
 		})
 	}
 
@@ -310,8 +318,7 @@ const BookPage = props => {
 			}
 		}).then(res => {
 			setLoading(false)
-			if(res.status === 200) console.log("Review submitted")
-			else dispatch(setSnackbar('NOT200'))
+			if(res.status !== 200) dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
 			setLoading(false)
 			dispatch(setSnackbar('ERROR'))
@@ -349,9 +356,9 @@ const BookPage = props => {
 											<p className="book__data__container__meta__row__item__value typo__body">{NFT.print}</p>
 										</div>
 										<div className="book__data__container__meta__row__item">
-											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Token ID</p>
-											<img src={BarcodeIcon} alt="ISBN icon" className="book__data__container__meta__row__item__icon" />
-											<p className="book__data__container__meta__row__item__value typo__body">{NFT.tokenid || "-"}</p>
+											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Copies Sold</p>
+											<img src={CartAddIcon} alt="ISBN icon" className="book__data__container__meta__row__item__icon" />
+											<p className="book__data__container__meta__row__item__value typo__body">{NFT.copies || "-"}</p>
 										</div>
 									</div>
 								</div>
@@ -381,8 +388,8 @@ const BookPage = props => {
 								</div>
 								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
 									<div className="book__data__container__desc__summary">
-										{/* <p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.contract}</p> */}
+										<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
+										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{NFT.book_address}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>

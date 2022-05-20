@@ -46,7 +46,6 @@ const IndexPage = props => {
 			else dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
 			setIsLoading(false)
-			console.log({err})
 			dispatch(setSnackbar('ERROR'))
 		})
 	}, [dispatch])
@@ -62,7 +61,6 @@ const IndexPage = props => {
 			else dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
 			setIsLoading(false)
-			console.log({err})
 			dispatch(setSnackbar('ERROR'))
 		})
 	}, [dispatch])
@@ -81,7 +79,6 @@ const IndexPage = props => {
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
 					setIsLoading(false)
-					console.log({err})
 					dispatch(setSnackbar('ERROR'))
 				})
 			})
