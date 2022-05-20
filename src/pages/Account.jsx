@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
-import Web3Modal from "web3modal"
+import axios from 'axios'
 
-import Contracts from '../connections/contracts'
+import Wallet from '../connections/wallet'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
 import { isUsable } from '../helpers/functions'
+import { SET_WALLET } from '../store/actions/wallet'
+import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
-import { SET_WALLET } from '../store/actions/wallet'
-import Wallet from '../connections/wallet'
 
-const ethers = require('ethers')
+import { BASE_URL } from '../config/env'
 
 const AccountPage = props => {
 
 	const FILTERS = [
-		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
-		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 0.05, step: 0.00001}],
+		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 1000, step: 10 }],
+		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 1000, step: 10 }],
 	]
 
 	const navigate = useNavigate()
@@ -46,20 +46,28 @@ const AccountPage = props => {
 	useEffect(() => {
 		setLoading(true)
 		if(ActiveTab === 0)
-			Contracts.loadMyNfts().then(res => {
-				setLoading(false)
-				setNfts(res)
+			axios({
+				url: BASE_URL+'/api/user/books/owned',
+				method: 'GET',
+				params: {userAddress: WalletAddress}
+			}).then(res => {
+				if(res.status === 200) setNfts(res.data)
+				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
-			})
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
 		else if(ActiveTab === 1)
-			Contracts.loadNftsCreated().then(res => {
-				setLoading(false)
-				setNfts(res)
+			axios({
+				url: BASE_URL+'/api/user/books/created',
+				method: 'GET',
+				params: {userAddress: WalletAddress}
+			}).then(res => {
+				if(res.status === 200) setNfts(res.data)
+				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
-			})
-	}, [ActiveTab])
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+	}, [ActiveTab, WalletAddress, dispatch])
 
 	const getWalletAddress = async () => {
 		setLoading(true)
@@ -85,7 +93,6 @@ const AccountPage = props => {
 			setWalletAddress(address);
 			return address ; 
 		} catch(e) {
-			console.error(e);
 			setLoading(false)
 			return "" ; 
 		}
@@ -129,7 +136,7 @@ const AccountPage = props => {
 					<img className='account__data__books__item__cover' src={nft.cover} alt={nft.name} />
 					<div className="account__data__books__item__data">
 						{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.author}</p>:null}
-						<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
+						<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.title}</p>
 					</div>
 					<div className="account__data__books__item__action">
 						<div onClick={()=>readHandler(nft)}>Read</div>
