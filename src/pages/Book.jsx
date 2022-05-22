@@ -381,8 +381,12 @@ const BookPage = props => {
 								</div>
 								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
 									<div className="book__data__container__desc__summary">
-										{/* <p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.contract}</p> */}
+										<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
+										<p className='book__data__container__desc__summary__data'>
+											{(NFT.contract||"").slice(0,4)}
+											...
+											{(NFT.contract||"").slice((NFT.contract||"").length-4)}
+										</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
