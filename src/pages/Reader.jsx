@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
+
+import Epub, { Rendition } from "epubjs";
+
+import Modal from "../components/hoc/Modal/Modal";
+import IconButton from "../components/ui/Buttons/IconButton";
+import DarkModeSwitch from "../components/ui/DarkModeSwitch/DarkModeSwitch";
+
+import useDebounce from "../hook/useDebounce";
+
 import { useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { isUsable } from "../helpers/functions";
-import Epub, { Rendition } from "epubjs";
-import Modal from "../components/hoc/Modal/Modal";
-import IconButton from "../components/ui/Buttons/IconButton";
-import useDebounce from "../hook/useDebounce";
+
+import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg";
 import { ReactComponent as BookmarkListIcon } from "../assets/icons/bookmark-list.svg";
@@ -13,9 +20,8 @@ import { ReactComponent as ListIcon } from "../assets/icons/list.svg";
 import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg";
 import { ReactComponent as ClockIcon } from "../assets/icons/clock.svg";
-import DarkModeSwitch from "../components/ui/DarkModeSwitch/DarkModeSwitch";
-import axios from "axios";
-import { hideSpinner, showSpinner } from '../store/actions/spinner'
+
+import { BASE_URL } from "../config/env";
 
 const ReaderPage = (props) => {
 
@@ -42,7 +48,10 @@ const ReaderPage = (props) => {
 
     //############### Load Book ############### */
     useEffect(() => {
-        setBookUrl(params.state.book);
+		const navParams = params.state
+		if(isUsable(navParams.preview) && navParams.preview === true)
+			setBookUrl(BASE_URL+'/files/'+navParams.book.preview)
+		else setBookUrl(navParams.book.book)
     }, [params]);
 
     useEffect(() => {
