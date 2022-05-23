@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux"
 import { useNavigate } from 'react-router'
 
 import Page from '../components/hoc/Page/Page'
@@ -14,6 +14,7 @@ import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { BASE_URL } from '../config/env'
 import { setSnackbar } from '../store/actions/snackbar'
+import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 
 const CreateNftPage = props => {
 
@@ -25,7 +26,8 @@ const CreateNftPage = props => {
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
+	const [WalletAddress, setWalletAddress] = useState(null)
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -33,6 +35,18 @@ const CreateNftPage = props => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
+
+	useEffect(() => {
+		setLoading(true)
+		Contracts.Wallet.getWalletAddress().then(address => {
+			if(isUsable(address)) setWalletAddress(address)
+			else dispatch(setSnackbar({show: true, message: "Unable to connect to wallet.", type: 3}))
+		}).catch(err => {
+			console.error({err})
+		}).finally(() => {
+			setLoading(false)
+		})
+	}, [dispatch])
 
 	async function listNFTForSale() {
 		setLoading(true)
@@ -51,36 +65,65 @@ const CreateNftPage = props => {
 					const data = JSON.stringify({ name, author, cover: coverUrl, book: bookUrl, price})
 					IpfsClient.add(data).then(res2 => {
 						const url = `https://ipfs.infura.io/ipfs/${res2.path}`
-						Contracts.listNftForSales(url, FormInput).then(res3 => {
-							axios({
-								url: BASE_URL+'/api/book/publish',
-								method: 'POST',
-								data: { ipfsPath: res2.path, name, author, cover: coverUrl, book: bookUrl, genres: JSON.stringify(genres.sort((a,b) => a>b)), price, pages, publication, isbn, attributes: JSON.stringify(attributes), synopsis, language, published}
-							}).then(res4 => {
-								setLoading(false)
-								if(res4.status === 200){
+						Contracts.listNftForSales(WalletAddress, url, price).then(tx => {
+							const bookAddress = tx.events[0].address
+							const newOwner = tx.events[0].args.newOwner
+							const previousOwner = tx.events[0].args.previousOwner
+							const status = tx.status
+							const txHash = tx.transactionHash
+							if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
+								let formData = new FormData()
+								formData.append("epub", FormInput.preview)
+								formData.append("ipfsPath", res2.path)
+								formData.append("name", name)
+								formData.append("author", author)
+								formData.append("cover", coverUrl)
+								formData.append("book", bookUrl)
+								formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+								formData.append("price", price)
+								formData.append("pages", pages)
+								formData.append("publication", publication)
+								formData.append("isbn", isbn)
+								formData.append("attributes", JSON.stringify(attributes))
+								formData.append("synopsis", synopsis)
+								formData.append("language", language)
+								formData.append("published", published)
+								formData.append("publisherAddress", WalletAddress)
+								formData.append("bookAddress", bookAddress)
+								formData.append("previousOwner", previousOwner)
+								formData.append("newOwner", newOwner)
+								formData.append("status", status)
+								formData.append("txHash", txHash)
+								axios({
+									url: BASE_URL+'/api/book/publish',
+									method: 'POST',
+									data: formData
+								}).then(res4 => {
+									if(res4.status === 200){
+										setLoading(false)
+										navigate('/account')
+									}
+									else {
+										dispatch(setSnackbar('ERROR'))
+									}
+								})
+								.catch(err => {
+									dispatch(setSnackbar('NOT200'))
 									setLoading(false)
-									navigate('/account')
-								}
-								else {
-									dispatch(setSnackbar('ERROR'))
-									console.log({err: res})
-								}
-							})
-							.catch(err => {
-								dispatch(setSnackbar('NOT200'))
+								})
+							}
+							else{
 								setLoading(false)
-								console.log({err})
-							})
+								if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
+								else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
+							}
 						}).catch((err => {
 							dispatch(setSnackbar('NOT200'))
-							console.log({err})
 							setLoading(false)
 						}))
 					}).catch(err => {
 						dispatch(setSnackbar('NOT200'))
 						setLoading(false)
-						console.log({err})
 					})
 				}
 				else{
@@ -90,12 +133,10 @@ const CreateNftPage = props => {
 			}).catch(err => {
 				dispatch(setSnackbar('NOT200'))
 				setLoading(false)
-				console.log({err})
 			})
 		}).catch(err => {
 			dispatch(setSnackbar('NOT200'))
 			setLoading(false)
-			console.log({err})
 		})
 	}
 
@@ -109,7 +150,8 @@ const CreateNftPage = props => {
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
-					<InputField type="file" label="book" accept='application/pdf' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
+					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} />
+					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
 					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={3} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />

@@ -7,28 +7,41 @@ describe("NFTMarket", function () {
 		await market.deployed()
 		const marketAddress = market.address
 
-		const NFT = await ethers.getContractFactory("NFT")
-		const nft = await NFT.deploy(marketAddress)
-		await nft.deployed()
-		const nftAddress = nft.address
+		const Cover = await ethers.getContractFactory("Cover")
+		const cover = await Cover.deploy(marketAddress)
+		await cover.deployed()
+		const coverAddress = cover.address
+
+		const Book = await ethers.getContractFactory("Book")
+		const book = await Book.deploy(marketAddress)
+		await book.deployed()
+		const bookAddress = cover.address
 
 		let listingPrice = await market.getListingPrice()
 		listingPrice = listingPrice.toString()
 
 		const auctionPrice = ethers.utils.parseUnits('100', 'ether')
 
-		await nft.createToken("https://www.mytokenlocation1.com")
-		await nft.createToken("https://www.mytokenlocation2.com")
+		console.log({tokenIds: await cover._tokenIds()})
 
-		await market.createMarketItem(nftAddress, 1, auctionPrice, {value: listingPrice})
-		await market.createMarketItem(nftAddress, 2, auctionPrice, {value: listingPrice})
+		await cover.createToken("https://www.mytokenlocation1.com", 10)
+		await cover.createToken("https://www.mytokenlocation2.com", 10)
+
+		await book.createToken("https://www.mytokenlocation1.com")
+		await book.createToken("https://www.mytokenlocation2.com")
+
+		await market.createMarketItem(coverAddress, bookAddress, 1, 1, auctionPrice, 10, {value: listingPrice},)
+		await market.createMarketItem(coverAddress, bookAddress, 2, 2, auctionPrice, 10, {value: listingPrice},)
 
 		const [_, buyersAddress] = await ethers.getSigners()
 
-		await market.connect(buyersAddress).createMarketSale(nftAddress, 1, {value: auctionPrice})
+		console.log({tokenIds: await cover._tokenIds()})
+
+		await market.connect(buyersAddress).createMarketSale(coverAddress, 1, 2, {value: auctionPrice})
 
 		const items = await market.fetchMarketItems()
 
 		console.log({items})
+
 	});
 });

@@ -1,22 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router";
-import { isUsable } from "../helpers/functions";
+
 import Epub, { Rendition } from "epubjs";
+
 import Modal from "../components/hoc/Modal/Modal";
 import IconButton from "../components/ui/Buttons/IconButton";
+import DarkModeSwitch from "../components/ui/DarkModeSwitch/DarkModeSwitch";
+
 import useDebounce from "../hook/useDebounce";
+
+import { useLocation } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { isUsable } from "../helpers/functions";
+
+import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg";
 import { ReactComponent as BookmarkListIcon } from "../assets/icons/bookmark-list.svg";
 import { ReactComponent as ListIcon } from "../assets/icons/list.svg";
 import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg";
-import DarkModeSwitch from "../components/ui/DarkModeSwitch/DarkModeSwitch";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import { ReactComponent as ClockIcon } from "../assets/icons/clock.svg";
+
+import { BASE_URL } from "../config/env";
 
 const ReaderPage = (props) => {
+
+	const dispatch = useDispatch()
+
     const params = useLocation();
+
+	const [Loading, setLoading] = useState(false)
     const [bookUrl, setBookUrl] = useState(null);
     const [rendition, setRendition] = useState(null);
     const [isTocModalOpen, setIsTocModalOpen] = useState(false);
@@ -26,91 +39,112 @@ const ReaderPage = (props) => {
     const DarkModeState = useSelector((state) => state.DarkModeState);
     const [book, setBook] = useState(null);
     const [totalLocations, setTotalLocations] = useState(1);
+    const [readTime, setReadTime] = useState(0);
+
+	useEffect(() => {
+		if(Loading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [Loading, dispatch])
 
     //############### Load Book ############### */
     useEffect(() => {
-        setBookUrl(params.state.book);
+		const navParams = params.state
+		if(isUsable(navParams.preview) && navParams.preview === true)
+			setBookUrl(BASE_URL+'/files/'+navParams.book.preview)
+		else setBookUrl(navParams.book.book)
     }, [params]);
 
     useEffect(() => {
+		setLoading(true)
         if (!isUsable(bookUrl)) return;
         let book = Epub(bookUrl, { openAs : "epub" }) ;
         book.ready.then(()=>{
             setBook(book);
+			setLoading(false)
         })
     }, [bookUrl]);
 
     useEffect(()=>{
         if (!isUsable(book)) return;
-        book.locations.generate(1650).then(()=>{
-            setTotalLocations(book.locations.total);
-            console.log(book.locations)
-        }).catch((err)=>{
-            console.error(err);
-        });
+        const bookKey = `${book.key()}:locations` ;
+        let stored = localStorage.getItem(bookKey);
+        if (stored) {
+            book.locations.load(stored);
+            setTotalLocations(JSON.parse(stored).length)
+            // console.log("Locations Loaded")
+        } else {
+            book.locations.generate(1650).then(()=>{
+                setTotalLocations(book.locations.total);
+                localStorage.setItem(bookKey, book.locations.save());
+                // console.log("Locations Generated")
+            }).catch((err)=>{
+                console.error(err);
+            });
+        }
         document.querySelector("#book__reader").innerHTML = "";
         setRendition(book.renderTo("book__reader", { height: window.innerHeight * 0.8 }));
     },[book])
 
     useEffect(()=>{
-        console.log(rendition?.book?.locations?.length());
-    },[rendition])
-    
-    // BUG : Appends multiple book reader containers
-    // useEffect(()=>{
-    //     if (!isUsable(rendition)) return;
-    //     if (!isUsable(book)) return;
-    //     document.querySelector("#book__reader").innerHTML = "";
-    //     book.renderTo("book__reader", { height: window.innerHeight * 0.8 });
-    // },[book,rendition]) 
-    
+        const updateReadTime = () => {
+            const bookKey = `${book.key()}:readtime` ;
+            let stored = parseInt(localStorage.getItem(bookKey));
+            if(!isNaN(stored)){
+                localStorage.setItem(bookKey,stored+1);
+                setReadTime(stored+1);
+            } else {
+                localStorage.setItem(bookKey,0);
+            }
+        };
+        let intervalHandler = setInterval(updateReadTime,1000);
+
+        return () => {
+            clearInterval(intervalHandler);
+        }
+
+    },[book])
+
+    const handleResize =  () => {
+        updateTheme();
+    }
+
     useEffect(()=>{
         if(!isUsable(rendition)) return ;
         rendition.display();
-        rendition.themes.register({
-            "darkmode" : {body: { background: "black", color: "#fff" }},
-            "lightmode": {body: { background: "white", color: "#000" }}
-        });
-        console.log(rendition);
         rendition.on("relocated", (event)=>{
             setProgress(event.start.location);
+            saveLastReadPage(event.start.cfi);
+            updateTheme();
         });
-
-        return ()=>{
-
+        rendition.hooks.content.register(updateTheme);
+        window.addEventListener("resize",handleResize);
+        return () => {
+            window.removeEventListener("resize",handleResize);
         }
     },[rendition]);
 
     //############### Update Theme ############### */
 
-    // useEffect(()=>{
-    //     if(!isUsable(rendition)) return ;
-    //     console.log(DarkModeState);
-    //     if(DarkModeState.darkmode === true){
-    //         rendition.getContents().forEach(c => c.addStylesheetRules({body:{
-    //             "background-color" : "black",
-    //             "color" : "white"
-    //         }}));
-    //     } else {
-    //         rendition.getContents().forEach(c => c.addStylesheetRules({body:{
-    //             "background-color" : "white",
-    //             "color" : "black"
-    //         }}));
-    //     }
-    // },[rendition,DarkModeState,progress])
+    const updateTheme = () => {
+        if(DarkModeState.darkmode === true){
+            rendition.getContents().forEach(c => c.addStylesheetRules({body:{
+                "background-color" : "black",
+                "color" : "white"
+            }}));
+            window.document.body.setAttribute("data-theme","dark");
+        } else {
+            rendition.getContents().forEach(c => c.addStylesheetRules({body:{
+                "background-color" : "white",
+                "color" : "black"
+            }}));
+            window.document.body.setAttribute("data-theme","default");
+        }
+    };
 
-    // useEffect(() => {
-    //     if(!isUsable(rendition)) return ;
-    //     if(darkMode===true)
-    //         rendition.themes.select("darkmode");
-    //     else 
-    //         rendition.themes.select("lightmode");
-    // }, [rendition,darkMode]);
-
-    // const toggleDarkMode = () => {
-    //     if(!isUsable(rendition)) return ;
-    //     setDarkMode(s => !s);
-    // }
+    useEffect(()=>{
+        if(!isUsable(rendition)) return ;
+        updateTheme();
+    },[rendition,DarkModeState])
 
     //############### Manage Last Read ############### */
     const saveLastReadPage = (cfi) => {
@@ -150,7 +184,6 @@ const ReaderPage = (props) => {
         if (!isUsable(href)) return;
         rendition.display(href);
         toggleTocModal(false);
-        saveLastReadPage(href);
     };
 
     // todo move it to redux store
@@ -234,9 +267,26 @@ const ReaderPage = (props) => {
         setProgress(e.target.value);
     };
 
+    var toHHMMSS = (secs) => {
+        var sec_num = parseInt(secs, 10)
+        var hours   = Math.floor(sec_num / 3600)
+        var minutes = Math.floor(sec_num / 60) % 60
+        var seconds = sec_num % 60
+    
+        return [hours,minutes,seconds]
+            .map(v => v < 10 ? "0" + v : v)
+            .filter((v,i) => v !== "00" || i > 0)
+            .join(":")
+    }
+
     return (
         <div className="reader">
             <div className="reader__header">
+                <div className="reader__header__readtime">
+                    <ClockIcon width={16} height={16} stroke="currentColor" />
+                    {toHHMMSS(readTime)}
+                </div>
+                <div className="reader__header__spacer"></div>
                 <DarkModeSwitch />
                 <IconButton icon={<BookmarkIcon />} onClick={() => bookmarkCurrentPage()} />
                 <IconButton icon={<BookmarkListIcon />} onClick={() => toggleBookmarkModal()} />
