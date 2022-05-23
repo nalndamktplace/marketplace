@@ -39,6 +39,7 @@ function App() {
 						<Route path='/*' element={<IndexPage/>}/>
 						<Route path='/' element={<IndexPage/>}/>
 						<Route path='/book' element={<BookPage/>}/>
+						<Route path='/book/preview' element={<ReaderPage/>}/>
 						<Route path='/create' element={<ProtectedRoute element={<CreateNftPage/>} />}/>
 						<Route path='/explore' element={<ExplorePage/>}/>
 						<Route path='/account' element={<ProtectedRoute element={<AccountPage />} />}/>
