@@ -24,7 +24,6 @@ import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
-import { ethers } from 'ethers'
 
 const BookPage = props => {
 
@@ -168,7 +167,11 @@ const BookPage = props => {
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
 
-	const readHandler = () => { navigate('/account/reader', {state: NFT}) }
+	const readHandler = () => { navigate('/account/reader', {state: {book: NFT, preview: false}}) }
+
+	const previewHandler = () => {
+		navigate('/book/preview', {state: {book: NFT, preview: true}})
+	}
 
 	const purchaseHandler = () => {
 		setLoading(true)
@@ -342,7 +345,7 @@ const BookPage = props => {
 									<img className='book__data__container__cover__container' src={NFT.cover} alt={NFT.name} />
 								</div>
 								<div className='book__data__container__meta'>
-									<h3 className="typo__head typo__head--3 typo__transform--capital">{NFT.name}</h3>
+									<h3 className="typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__head typo__head--5">{NFT.author}</h5>
 									<div className="book__data__container__meta__row">
 										<div className="book__data__container__meta__row__item">
@@ -368,7 +371,7 @@ const BookPage = props => {
 									{Created||Owner
 										?<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
 										:<>
-											<PrimaryButton label={'Preview'} onClick={()=>{/* TO BE ADDED */}}/>
+											<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
 											<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
 										</>
 									}
