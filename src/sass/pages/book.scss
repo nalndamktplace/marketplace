@@ -199,6 +199,12 @@
 					left: 58rem;
 					transform: translate(0%, -50%);
 
+					> .button {
+						min-width: 0 ;
+						padding-left: 2rem ;
+						padding-right: 2rem ;
+					}
+
 					@include respond(tabLand){
 						left: 46rem;
 					}
