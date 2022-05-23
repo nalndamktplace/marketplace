@@ -401,8 +401,8 @@ const BookPage = props => {
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
 										<p className='book__data__container__desc__summary__data typo__transform--capital'>{JSON.parse(NFT.genres).join(', ')}</p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p>
+										{/* <p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
+										<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p> */}
 										<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
