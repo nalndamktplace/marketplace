@@ -1,4 +1,4 @@
-import Epub from "epubjs";
+import Epub, { EpubCFI } from "epubjs";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import IconButton from "../components/ui/Buttons/IconButton";
@@ -8,14 +8,15 @@ import useDebounce from "../hook/useDebounce";
 import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg";
 import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg";
-import { ReactComponent as BookmarkListIcon } from "../assets/icons/bookmark-list.svg";
 import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.svg";
 import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg";
 import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg";
 import { ReactComponent as ClockIcon } from "../assets/icons/clock.svg";
 import { toHHMMSS } from "../helpers/time-formator";
-import Dropdown from "../components/ui/Dropdown/Dropdown";
 import Customizer from "../components/ui/Customizer/Customizer";
+import SidePanel from "../components/hoc/SidePanel/SidePanel";
+import BookMarkPanel from "../components/ui/BookmarkPanel/BookmarkPanel";
+// import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu";
 
 
 const ReaderPage = () => {
@@ -28,6 +29,8 @@ const ReaderPage = () => {
     const debouncedProgress = useDebounce(progress, 300);
     const [readTime, setReadTime] = useState(0);
     const [customizerOpen, setCustomizerOpen] = useState(false);
+    const [pageBookmarked, setPageBookmarked] = useState(false);
+    const [bookmarkPanel, setBookmarkPanel] = useState(false);
 
     useEffect(()=>{
         if(!isUsable(rendition)) return ;
@@ -35,14 +38,16 @@ const ReaderPage = () => {
             rendition.manager.resize(window.innerWidth-8*16,"100%");
         }
         window.addEventListener("resize",handleResize);
+        window.addEventListener("fullscreenchange",handleResize);
         return () => {
             window.removeEventListener("resize",handleResize);
+            window.removeEventListener("fullscreenchange",handleResize);
         }
     },[rendition])
 
     useEffect(()=>{
-        const bookURL = params.state.book ;
-        setBookMeta(params.state);
+        const bookURL = params.state.book.book ;
+        setBookMeta(params.state.book);
         const book = Epub(bookURL,{openAs:"epub"});
         book.ready.then(()=>{
             document.querySelector("#book__reader").innerHTML = "" ;
@@ -72,9 +77,6 @@ const ReaderPage = () => {
             setRendition(rendition);
         });
 
-        return () => {
-            rendition.destroy();
-        }
     },[params]);
 
     useEffect(()=>{
@@ -174,6 +176,40 @@ const ReaderPage = () => {
         }
     }
 
+    const isCurrentPageBookmarked = () => {
+        if(!isUsable(rendition)) return;
+        if(!isUsable(bookMeta)) return;
+        const bookKey = `${bookMeta.id}:bookmarks`
+        let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
+        let epubcfi = new EpubCFI();
+        let current = rendition.currentLocation();
+        try{
+            for(let bookmark of stored){
+                if(epubcfi.compare(bookmark.cfi,current.start.cfi)===0) return true;
+                if(epubcfi.compare(bookmark.cfi,current.end.cfi)===0) return true;
+                if(epubcfi.compare(bookmark.cfi,current.start.cfi)===1 && epubcfi.compare(bookmark.cfi,current.end.cfi)===-1) return true;
+            }   
+            return false ;     
+        } catch(err){
+            console.error(err);
+            return false;
+        }
+    }
+
+    const updateBookmarkedStatus = () => {
+        const pageBookmarked = isCurrentPageBookmarked() ;
+            console.log("PAGE BOOKMARKED : ",pageBookmarked);
+            setPageBookmarked(pageBookmarked);
+    }
+
+    useEffect(()=>{
+        if(!isUsable(rendition)) return;
+        if(!isUsable(bookMeta)) return;
+        rendition.on("relocated",()=>{
+            updateBookmarkedStatus();
+        });
+    },[rendition,bookMeta]);
+
     return (
         <div className="reader">
             <div className="reader__header">
@@ -183,26 +219,54 @@ const ReaderPage = () => {
                         <ClockIcon width="3rem" height="3rem" stroke="currentColor"/>
                         <div className="reader__header__left__readtime__time">{toHHMMSS(readTime)}</div>
                     </div>
+                    {/* <button onClick={()=>{
+                        console.log(rendition);
+                    }}>Debug</button> */}
                 </div>
                 <div className="reader__header__center">
                 <div className="reader__header__center__title">{bookMeta.title||"Untitled"}</div>
                 </div>
                 <div className="reader__header__right">
                     <IconButton icon={<MaximizeIcon stroke="currentColor"/>} onClick={openFullscreen}/>
+
                     <IconButton icon={<BlockquoteIcon stroke="currentColor"/>} onClick={()=>{}}/>
-                    <IconButton icon={<BookmarkIcon stroke="currentColor"/>} onClick={()=>{}}/>
-                    <IconButton icon={<BookmarkListIcon stroke="currentColor"/>} onClick={()=>{}}/>
-                    <IconButton icon={<LetterCaseIcon stroke="currentColor"/>} onClick={()=>{setCustomizerOpen(s=>!s)}}/>
-                    <div className={
-                        customizerOpen 
-                        ? "reader__header__right__customizer-container reader__header__right__customizer-container--open" 
-                        : "reader__header__right__customizer-container"
-                    }>
+                    <SidePanel show={bookmarkPanel} position="right">
+                        <BookMarkPanel 
+                            rendition={rendition} 
+                            bookMeta={bookMeta}
+                            hideModal={()=>{setBookmarkPanel(false)}}
+                            onBookmarkAdd={()=>{updateBookmarkedStatus()}}
+                            onBookmarkRemove={()=>{updateBookmarkedStatus()}}
+                        />
+                    </SidePanel>
+
+                    <IconButton 
+                        className={bookmarkPanel?"reader__header__right__button--active":""} 
+                        icon={<BookmarkIcon stroke="currentColor"/>} 
+                        onClick={()=>{setBookmarkPanel(s=>!s)}}
+                    />
+                    <SidePanel show={bookmarkPanel} position="right">
+                        <BookMarkPanel 
+                            rendition={rendition} 
+                            bookMeta={bookMeta}
+                            hideModal={()=>{setBookmarkPanel(false)}}
+                            onBookmarkAdd={()=>{updateBookmarkedStatus()}}
+                            onBookmarkRemove={()=>{updateBookmarkedStatus()}}
+                        />
+                    </SidePanel>
+
+                    <IconButton 
+                        className={customizerOpen?"reader__header__right__button--active":""} 
+                        icon={<LetterCaseIcon stroke="currentColor"/>} 
+                        onClick={()=>{setCustomizerOpen(s=>!s)}}
+                    />
+                    <SidePanel show={customizerOpen} position="right">
                         <Customizer rendition={rendition}/>
-                    </div>
+                    </SidePanel>
                 </div>
             </div>
             <div className="reader__container">
+                <div className={pageBookmarked ? "reader__container__bookmark reader__container__bookmark--show" : "reader__container__bookmark"}></div>
                 <div className="reader__container__prev-btn">
                     <div className="reader__container__prev-btn__button" onClick={()=> rendition.prev()}>
                         <ChevronLeftIcon stroke="currentColor" />
@@ -210,10 +274,13 @@ const ReaderPage = () => {
                 </div>
                 <div id="book__reader" className="reader__container__book"></div>
                 <div className="reader__container__next-btn">
-                <div className="reader__container__next-btn__button" onClick={()=> rendition.next()}>
-                    <ChevronRightIcon stroke="currentColor" />
+                    <div className="reader__container__next-btn__button" onClick={()=> rendition.next()}>
+                        <ChevronRightIcon stroke="currentColor" />
+                    </div>
                 </div>
-                </div>
+                {/* <div className="reader__container__context-menu-container">
+                    <AnnotationContextMenu />
+                </div> */}
             </div>
             <nav className="reader__nav">
                 <input

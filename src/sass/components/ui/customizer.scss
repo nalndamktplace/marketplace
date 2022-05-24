@@ -109,6 +109,18 @@
                 background-color: $color-neutral-200 ;
                 color: $color-neutral-900 ;
             }
+
+            &--arial {
+                font-family: Arial, sans-serif ;
+            }
+
+            &--times {
+                font-family: 'Times New Roman', Times, serif ;
+            }
+
+            &--cursive {
+                font-family: "'Brush Script MT', cursive" ;
+            }
         }
     }
 }
@@ -166,13 +178,6 @@
                 color: $color-neutral-100 ;
             }
 
-            &--arial {
-                font-family: Arial, sans-serif ;
-            }
-
-            &--times {
-                font-family: 'Times New Roman', Times, serif ;
-            }
         }
 
         &__font:last-child {

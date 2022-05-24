@@ -51,9 +51,9 @@ const Customizer = ({rendition}) => {
                 <div className="customizer__theme__chip customizer__theme__chip--dark" onClick={()=>setTheme("dark")}>Dark</div>
             </div>
             <div className="customizer__fontfamily">
-                <div className="customizer__fontfamily__font customizer__fontfamily__font--arial" onClick={()=>{setFont("arial")}}>Arial</div>
-                <div className="customizer__fontfamily__font customizer__fontfamily__font--times" onClick={()=>{setFont("Times New Roman")}}>Times New Roman</div>
-                <div className="customizer__fontfamily__font">Font 3</div>
+                <div className="customizer__fontfamily__font customizer__fontfamily__font--arial" onClick={()=>{setFont("Arial, sans-serif")}}>Arial</div>
+                <div className="customizer__fontfamily__font customizer__fontfamily__font--times" onClick={()=>{setFont("'Times New Roman', serif")}}>Times New Roman</div>
+                <div className="customizer__fontfamily__font customizer__fontfamily__font--cursive" onClick={()=>{setFont("'Brush Script MT', cursive")}}>Brush Script MT</div>
             </div>
         </div>
     );

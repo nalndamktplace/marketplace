@@ -1,5 +1,5 @@
-const IconButton = ({icon="",onClick}) => {
-    return ( <div className="button button--icon" onClick={onClick}>
+const IconButton = ({icon="",className="",onClick}) => {
+    return ( <div className={"button button--icon "+className} onClick={onClick}>
         {icon}
     </div> );
 }
