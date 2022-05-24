@@ -14,7 +14,7 @@ import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { BASE_URL } from '../config/env'
 import { setSnackbar } from '../store/actions/snackbar'
-import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 
 const CreateNftPage = props => {
 
@@ -60,8 +60,8 @@ const CreateNftPage = props => {
 				{ progress: (prog) => console.log(`received: ${prog}`) }
 			).then(res1 => {
 				const coverUrl = `https://ipfs.infura.io/ipfs/${res1.path}`
-				const { name, author, cover, book, genres, price, pages, publication, isbn, attributes, synopsis, language, published } = FormInput
-				if(isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication) && isFilled(isbn)){
+				const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published } = FormInput
+				if(isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
 					const data = JSON.stringify({ name, author, cover: coverUrl, book: bookUrl, price})
 					IpfsClient.add(data).then(res2 => {
 						const url = `https://ipfs.infura.io/ipfs/${res2.path}`
@@ -71,7 +71,7 @@ const CreateNftPage = props => {
 							const previousOwner = tx.events[0].args.previousOwner
 							const status = tx.status
 							const txHash = tx.transactionHash
-							if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
+							if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === PRIMARY_MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
 								let formData = new FormData()
 								formData.append("epub", FormInput.preview)
 								formData.append("ipfsPath", res2.path)
@@ -83,7 +83,6 @@ const CreateNftPage = props => {
 								formData.append("price", price)
 								formData.append("pages", pages)
 								formData.append("publication", publication)
-								formData.append("isbn", isbn)
 								formData.append("attributes", JSON.stringify(attributes))
 								formData.append("synopsis", synopsis)
 								formData.append("language", language)
@@ -156,7 +155,6 @@ const CreateNftPage = props => {
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={3} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} />
-					<InputField type="string" label="isbn" onChange={e => setFormInput({ ...FormInput, isbn: e.target.value })} />
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} />
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} />
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} />
