@@ -8,6 +8,7 @@ import './main.scss'
 import Spinner from './components/ui/Spinner/Spinner'
 import Snackbar from './components/ui/Snackbar/Snackbar'
 
+import ModalReducer from './store/reducers/modal'
 import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
@@ -19,9 +20,11 @@ import ReaderPage from './pages/Reader'
 import AccountPage from './pages/Account'
 import ExplorePage from './pages/Explore'
 import CreateNftPage from './pages/Create'
+
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 
 const rootReducer = combineReducers({
+	ModalState: ModalReducer,
 	WalletState: WalletReducer,
 	SpinnerState: SpinnerReducer,
 	SnackbarState: SnackbarReducer,
