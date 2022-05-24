@@ -359,7 +359,7 @@ const BookPage = props => {
 											<p className="book__data__container__meta__row__item__value typo__body">{NFT.print}</p>
 										</div>
 										<div className="book__data__container__meta__row__item">
-											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Copies Sold</p>
+											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Sold</p>
 											<img src={CartAddIcon} alt="ISBN icon" className="book__data__container__meta__row__item__icon" />
 											<p className="book__data__container__meta__row__item__value typo__body">{NFT.copies || "-"}</p>
 										</div>
