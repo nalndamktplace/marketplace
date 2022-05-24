@@ -14,8 +14,8 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 
-import LikeIcon from '../assets/icons/like.svg'
-import LikedIcon from '../assets/icons/liked.svg'
+import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
+import LikedIcon from '../assets/icons/liked.svg' 
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import CartAddIcon from '../assets/icons/cart-add.svg'
@@ -293,13 +293,14 @@ const BookPage = props => {
 				}
 				
 				return <React.Fragment>
-					{isUsable(Review)?null
-						:<div className="book__data__container__desc__tabs__data__review">
+					{ !isUsable(Review) && (Created||Owner) && (
+						<div className="book__data__container__desc__tabs__data__review">
 							<div className="book__data__container__desc__tabs__data__review__rating">{renderStarsInput()}</div>
 							<InputField type="string" label="title" value={ReviewForm.title} onChange={e => setReviewForm({ ...ReviewForm, title: e.target.value })} />
 							<InputField type="text" label="body" value={ReviewForm.body} onChange={e => setReviewForm({ ...ReviewForm, body: e.target.value })} />
 							<PrimaryButton onClick={()=>reviewHandler()} label="submit"/>
-						</div>}
+						</div>
+					)}
 					<div className="book__data__container__desc__tabs__data__reviews">
 						{renderReviews(Reviews)}
 					</div>
@@ -380,7 +381,8 @@ const BookPage = props => {
 									<div className="book__data__container__desc__interacts">
 										<div className="book__data__container__desc__interacts__space"/>
 										<div className="book__data__container__desc__interacts__item">
-											{Liked?<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={LikedIcon} alt="liked"/>:<img onClick={()=>likeHandler(true)} className='book__data__container__desc__interacts__item__icon' src={LikeIcon} alt="like"/>}
+											{/* {Liked?<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={LikedIcon} alt="liked"/>:<img onClick={()=>likeHandler(true)} className='book__data__container__desc__interacts__item__icon' src={LikeIcon} alt="like"/>} */}
+											<LikeIcon className="book__data__container__desc__interacts__item__icon" fill={Liked?"#ff5722":"transparent"} onClick={()=>(Created||Owner) && likeHandler(!Liked)}/>
 											<p>{Likes}</p>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
