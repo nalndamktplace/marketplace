@@ -9,10 +9,14 @@ import PrimaryButton from '../components/ui/Buttons/Primary'
 
 import Contracts from '../connections/contracts'
 
+import ListModal from '../components/modal/List/List'
+import PurchaseModal from '../components/modal/Purchase/Purchase'
+
 import { BASE_URL } from '../config/env'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
+import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL } from '../store/actions/modal'
 
 import LikeIcon from '../assets/icons/like.svg'
 import LikedIcon from '../assets/icons/liked.svg'
@@ -39,6 +43,7 @@ const BookPage = props => {
 	// NFT
 	const [NFT, setNFT] = useState(null)
 	const [Owner, setOwner] = useState(null)
+	const [Listed, setListed] = useState(null)
 	const [Created, setCreated] = useState(null)
 	// Likes
 	const [Likes, setLikes] = useState(0)
@@ -97,13 +102,11 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/likes?bid='+NFT.id,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
 				if(res.status === 200) setLikes(res.data.likes)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally( () => setLoading(false))
 		}
 	}, [NFT, dispatch])
 
@@ -114,13 +117,11 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/liked?bid='+NFT.id+'&uid='+Wallet,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
 				if(res.status === 200) setLiked(res.data.liked)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, Wallet, dispatch])
 
@@ -129,9 +130,7 @@ const BookPage = props => {
 		Contracts.Wallet.getWalletAddress().then(res => {
 			setLoading(false)
 			if(isUsable(res)) setWallet(res)
-		}).catch(err =>{
-			setLoading(false)
-		})
+		}).catch(err =>{ setLoading(false) })
 	}, [])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
@@ -167,16 +166,51 @@ const BookPage = props => {
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
 
-	const readHandler = () => { navigate('/account/reader', {state: {book: NFT, preview: false}}) }
+	const unlistHandler = () => {}
 
-	const previewHandler = () => {
-		navigate('/book/preview', {state: {book: NFT, preview: true}})
+	const listHandler = () => { dispatch(showModal(SHOW_LIST_MODAL)) }
+
+	const onListHandler = listPrice => {
+		setLoading(true)
+		Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice).then(res => {
+			console.log({res})
+			setLoading(true)
+			axios({
+				url: BASE_URL + '/api/book/list',
+				method: 'POST',
+				data: {
+					ownerAddress: Wallet,
+					bookAddress: NFT.book_address,
+					bookPrice: listPrice
+				}
+			}).then(res => {
+				if(res.status === 200){
+					setListed(true)
+					dispatch(hideModal())
+					dispatch(setSnackbar({show: true, message: "Book listed on marketplace.", type: 1}))
+				}
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar('ERROR'))
+			}).finally( ()=> { setLoading(false) })
+		}).catch(err => {
+			console.error({err})
+			dispatch(setSnackbar('ERROR'))
+		}).finally(() => setLoading(false))
 	}
 
-	const purchaseHandler = () => {
+	const readHandler = () => { navigate('/account/reader', {state: {book: NFT, preview: false}}) }
+
+	const previewHandler = () => { navigate('/book/preview', {state: {book: NFT, preview: true}}) }
+
+	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
+
+	const purchaseNewCopyHandler = () => {
 		setLoading(true)
 		Contracts.purchaseNft(Wallet, NFT.book_address, NFT.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
+			dispatch(hideModal())
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
 				url: BASE_URL+'/api/book/purchase',
@@ -198,6 +232,17 @@ const BookPage = props => {
 			if(err.code === 4001)
 				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
 			else dispatch(setSnackbar('ERROR'))
+		})
+	}
+
+	const purchaseOldCopyHandler = () => {
+		setLoading(true)
+		Contracts.buyListedCover(NFT.address, "1", NFT.price).then(res => {
+			console.log({res})
+		}).catch(err => {
+			console.error({err})
+		}).finally( () => {
+			setLoading(false)
 		})
 	}
 
@@ -226,7 +271,7 @@ const BookPage = props => {
 		let tabsDOM = []
 		TABS.forEach(tab => {
 			tabsDOM.push(
-				<div onClick={()=>setActiveTab(tab.id)} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item"} key={tab.id}>
+				<div onClick={()=>setActiveTab(tab.id)} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item utils__cursor--pointer"} key={tab.id}>
 					<h5 className="typo__head typo__head--5">{tab.label}</h5>
 				</div>
 			)
@@ -333,8 +378,7 @@ const BookPage = props => {
 			<div className="book__bg">
 				<img src={BackgroundBook} alt="background"/>
 			</div>
-			{
-				isUsable(NFT)?
+			{isUsable(NFT)?
 				<React.Fragment>
 					<div className="book__data">
 						<div className="book__data__background">
@@ -368,19 +412,25 @@ const BookPage = props => {
 							</div>
 							<div className='book__data__container__desc'>
 								<div className="book__data__container__desc__cta">
-									{Created||Owner
-										?<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
-										:<>
-											<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
-											<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
-										</>
+									{Listed
+										?
+											<PrimaryButton label={'Unlist'} onClick={()=>unlistHandler()}/>
+										:Created||Owner
+											?<React.Fragment>
+												<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
+												<PrimaryButton label={'List'} onClick={()=>listHandler()}/>
+											</React.Fragment>
+											:<React.Fragment>
+												<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
+												<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
+											</React.Fragment>
 									}
 								</div>
 								<div className="book__data__container__desc__row">
 									<div className="book__data__container__desc__interacts">
 										<div className="book__data__container__desc__interacts__space"/>
 										<div className="book__data__container__desc__interacts__item">
-											{Liked?<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={LikedIcon} alt="liked"/>:<img onClick={()=>likeHandler(true)} className='book__data__container__desc__interacts__item__icon' src={LikeIcon} alt="like"/>}
+											{Liked?<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon utils__cursor--pointer' src={LikedIcon} alt="liked"/>:<img onClick={()=>likeHandler(true)} className='book__data__container__desc__interacts__item__icon' src={LikeIcon} alt="like"/>}
 											<p>{Likes}</p>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
@@ -392,11 +442,7 @@ const BookPage = props => {
 								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
 									<div className="book__data__container__desc__summary">
 										<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
-										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>
-											{(NFT.contract||"").slice(0,4)}
-											...
-											{(NFT.contract||"").slice((NFT.contract||"").length-4)}
-										</p>
+										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,4)}…{(NFT.book_address||"").slice((NFT.contract||"").length-4)}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
@@ -424,6 +470,8 @@ const BookPage = props => {
 							</div>
 						</div>
 					</div>
+					<PurchaseModal data={NFT} onNewBookPurchase={()=>purchaseNewCopyHandler()} onOldBookPurchase={()=>purchaseOldCopyHandler()}/>
+					<ListModal data={NFT} onListHandler={listPrice=>onListHandler(listPrice)} />
 				</React.Fragment>
 				:null
 			}
