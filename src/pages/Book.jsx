@@ -393,9 +393,9 @@ const BookPage = props => {
 									<div className="book__data__container__desc__summary">
 										<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
 										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>
-											{(NFT.contract||"").slice(0,4)}
+											{(NFT.book_address||"").slice(0,4)}
 											...
-											{(NFT.contract||"").slice((NFT.contract||"").length-4)}
+											{(NFT.book_address||"").slice((NFT.book_address||"").length-4)}
 										</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
