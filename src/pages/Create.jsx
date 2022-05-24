@@ -27,7 +27,7 @@ const CreateNftPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -72,10 +72,32 @@ const CreateNftPage = props => {
 							const status = tx.status
 							const txHash = tx.transactionHash
 							if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
+								let formData = new FormData()
+								formData.append("epub", FormInput.preview)
+								formData.append("ipfsPath", res2.path)
+								formData.append("name", name)
+								formData.append("author", author)
+								formData.append("cover", coverUrl)
+								formData.append("book", bookUrl)
+								formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+								formData.append("price", price)
+								formData.append("pages", pages)
+								formData.append("publication", publication)
+								formData.append("isbn", isbn)
+								formData.append("attributes", JSON.stringify(attributes))
+								formData.append("synopsis", synopsis)
+								formData.append("language", language)
+								formData.append("published", published)
+								formData.append("publisherAddress", WalletAddress)
+								formData.append("bookAddress", bookAddress)
+								formData.append("previousOwner", previousOwner)
+								formData.append("newOwner", newOwner)
+								formData.append("status", status)
+								formData.append("txHash", txHash)
 								axios({
 									url: BASE_URL+'/api/book/publish',
 									method: 'POST',
-									data: { ipfsPath: res2.path, name, author, cover: coverUrl, book: bookUrl, genres: JSON.stringify(genres.sort((a,b) => a>b)), price, pages, publication, isbn, attributes: JSON.stringify(attributes), synopsis, language, published, publisherAddress: WalletAddress, bookAddress, previousOwner, newOwner, status, txHash}
+									data: formData
 								}).then(res4 => {
 									if(res4.status === 200){
 										setLoading(false)
@@ -128,6 +150,7 @@ const CreateNftPage = props => {
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
+					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
 					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={3} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />

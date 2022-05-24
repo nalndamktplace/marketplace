@@ -24,7 +24,6 @@ import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
-import { ethers } from 'ethers'
 
 const BookPage = props => {
 
@@ -168,7 +167,11 @@ const BookPage = props => {
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
 
-	const readHandler = () => { navigate('/account/reader', {state: NFT}) }
+	const readHandler = () => { navigate('/account/reader', {state: {book: NFT, preview: false}}) }
+
+	const previewHandler = () => {
+		navigate('/book/preview', {state: {book: NFT, preview: true}})
+	}
 
 	const purchaseHandler = () => {
 		setLoading(true)
@@ -342,7 +345,7 @@ const BookPage = props => {
 									<img className='book__data__container__cover__container' src={NFT.cover} alt={NFT.name} />
 								</div>
 								<div className='book__data__container__meta'>
-									<h3 className="typo__head typo__head--3 typo__transform--capital">{NFT.name}</h3>
+									<h3 className="typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__head typo__head--5">{NFT.author}</h5>
 									<div className="book__data__container__meta__row">
 										<div className="book__data__container__meta__row__item">
@@ -368,7 +371,7 @@ const BookPage = props => {
 									{Created||Owner
 										?<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
 										:<>
-											<PrimaryButton label={'Preview'} onClick={()=>{/* TO BE ADDED */}}/>
+											<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
 											<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
 										</>
 									}
@@ -389,13 +392,17 @@ const BookPage = props => {
 								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
 									<div className="book__data__container__desc__summary">
 										<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
-										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{NFT.book_address}</p>
+										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>
+											{(NFT.contract||"").slice(0,4)}
+											...
+											{(NFT.contract||"").slice((NFT.contract||"").length-4)}
+										</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
 										<p className='book__data__container__desc__summary__data typo__transform--capital'>{JSON.parse(NFT.genres).join(', ')}</p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p>
+										{/* <p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
+										<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p> */}
 										<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>price</p>

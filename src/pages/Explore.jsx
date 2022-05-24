@@ -123,7 +123,7 @@ const ExplorePage = props => {
 					<img className='explore__data__books__item__cover' src={nft.cover} alt={nft.name} />
 					<div className="explore__data__books__item__data">
 						<p className='explore__data__books__item__data__author typo__body typo__body--2'>{nft.author}</p>
-						<p className='explore__data__books__item__data__name typo__body typo__body--2'>{nft.name}</p>
+						<p className='explore__data__books__item__data__name typo__body typo__body--2'>{nft.title}</p>
 					</div>
 					<div className="explore__data__books__item__action">
 						<div onClick={()=>buyHandler(nft)}>Buy</div>
