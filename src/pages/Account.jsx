@@ -158,7 +158,7 @@ const AccountPage = props => {
 	}
 
 	const renderTabs = () => {
-		let tabs = ['library', 'created']
+		let tabs = ['library', 'published']
 		let tabsDOM = []
 		tabs.forEach((tab, index) => {
 			if(index === ActiveTab) tabsDOM.push(
