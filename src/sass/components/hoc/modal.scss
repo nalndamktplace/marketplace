@@ -102,6 +102,22 @@
 		&__cta{
 			margin-top: 1.6rem;
 		}
+
+		&__offers{
+
+			&__item{
+				border-bottom: 0.1rem solid rgba($color-black, 0.24);
+				cursor: pointer;
+				padding: 0.8rem;
+
+				&:not(:last-child){ margin-bottom: 0.8rem; }
+
+				&__cta{
+					margin-top: 1.2rem;
+					width: 50%;
+				}
+			}
+		}
 	}
 
 }
