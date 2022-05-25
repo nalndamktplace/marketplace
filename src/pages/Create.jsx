@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useDispatch } from "react-redux"
 import { useNavigate } from 'react-router'
+import React, { useEffect, useState } from 'react'
 
 import Page from '../components/hoc/Page/Page'
-import PrimaryButton from '../components/ui/Buttons/Primary'
 import InputField from '../components/ui/Input/Input'
+import PrimaryButton from '../components/ui/Buttons/Primary'
 
 import Contracts from '../connections/contracts'
-
 import { IpfsClient } from '../connections/ipfs'
+
+import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+
 import { BASE_URL } from '../config/env'
-import { setSnackbar } from '../store/actions/snackbar'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 
 const CreateNftPage = props => {
@@ -100,7 +101,7 @@ const CreateNftPage = props => {
 								}).then(res4 => {
 									if(res4.status === 200){
 										setLoading(false)
-										navigate('/account')
+										navigate('/account', {state: {tab: 'created'}})
 									}
 									else {
 										dispatch(setSnackbar('ERROR'))
