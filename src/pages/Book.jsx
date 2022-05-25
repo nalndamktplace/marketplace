@@ -290,14 +290,28 @@ const BookPage = props => {
 		})
 	}
 
-	const purchaseOldCopyHandler = () => {
+	const purchaseOldCopyHandler = offer => {
 		setLoading(true)
-		Contracts.buyListedCover(NFT.address, "1", NFT.price).then(res => {
-			console.log({res})
+		Contracts.buyListedCover(offer.order_id, offer.price).then(res => {
+			axios({
+				url: BASE_URL+'/api/book/purchase/secondary',
+				method: 'POST',
+				data: {
+					newOwnerAddress: Wallet,
+					previousOwnerAddress: offer.previous_owner,
+					bookAddress: offer.book_address,
+					tokenId: offer.token_id
+				}
+			}).then(res => {
+				if(res.status === 200) setOwner(true)
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
 		}).catch(err => {
-			console.error({err})
-		}).finally( () => {
 			setLoading(false)
+			console.error({err})
 		})
 	}
 
@@ -529,7 +543,7 @@ const BookPage = props => {
 							</div>
 						</div>
 					</div>
-					<PurchaseModal data={NFT} onNewBookPurchase={()=>purchaseNewCopyHandler()} onOldBookPurchase={()=>purchaseOldCopyHandler()}/>
+					<PurchaseModal data={NFT} onNewBookPurchase={()=>purchaseNewCopyHandler()} onOldBookPurchase={offer=>purchaseOldCopyHandler(offer)}/>
 					<ListModal data={NFT} onListHandler={listPrice=>onListHandler(listPrice)} />
 				</React.Fragment>
 				:null
