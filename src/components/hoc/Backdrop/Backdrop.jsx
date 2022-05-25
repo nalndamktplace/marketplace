@@ -1,6 +1,8 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
+
 import { isUsable } from '../../../helpers/functions'
+
 import { unsetBackdrop } from '../../../store/actions/backdrop'
 
 const Backdrop = props => {

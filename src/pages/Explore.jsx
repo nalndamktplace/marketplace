@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 
 import Contracts from '../connections/contracts'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
-import { BASE_URL } from '../config/env'
 import { isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
+
+import { BASE_URL } from '../config/env'
 
 const ExplorePage = props => {
 

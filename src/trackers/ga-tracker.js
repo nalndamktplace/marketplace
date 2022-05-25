@@ -2,7 +2,7 @@ import ReactGA from "react-ga4"
 
 ReactGA.initialize([
 	{trackingId: "G-FN5P6VVSBZ"}
-]);
+])
 
 export const GaClickTracker = action => {
 	ReactGA.event({
@@ -10,7 +10,7 @@ export const GaClickTracker = action => {
 		action: "click",
 		label: action,
 		nonInteraction: false
-	});
+	})
 }
 
 export const GaPageTracker = action => {
@@ -19,7 +19,7 @@ export const GaPageTracker = action => {
 		action: "page_view",
 		label: action,
 		nonInteraction: false
-	});
+	})
 }
 
 export const GaSectionTracker = action => {
@@ -28,7 +28,7 @@ export const GaSectionTracker = action => {
 		action: "section_view",
 		label: action,
 		nonInteraction: false
-	});
+	})
 }
 
 export const GaExternalTracker = action => {
@@ -37,7 +37,7 @@ export const GaExternalTracker = action => {
 		action: "external_page",
 		label: action,
 		nonInteraction: false
-	});
+	})
 }
 
 export const GaSocialTracker = action => {
@@ -46,5 +46,5 @@ export const GaSocialTracker = action => {
 		action: "social_media",
 		label: action,
 		nonInteraction: false
-	});
+	})
 }

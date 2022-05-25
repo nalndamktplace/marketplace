@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+
 import { isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
-import PrimaryButton from '../Buttons/Primary'
-import TextButton from '../Buttons/Text'
+
 import InputField from './Input'
+import TextButton from '../Buttons/Text'
+import PrimaryButton from '../Buttons/Primary'
 
 const InputModal = props => {
 
