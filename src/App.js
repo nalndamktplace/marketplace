@@ -53,7 +53,7 @@ function App() {
 				<Spinner/>
 			</Provider>
 		</div>
-	);
+	)
 }
 
-export default App;
+export default App

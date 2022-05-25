@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { hideModal, SHOW_LIST_MODAL } from '../../../store/actions/modal'
-import Backdrop from '../../hoc/Backdrop/Backdrop'
+
 import Modal from '../../hoc/Modal/Modal'
-import PrimaryButton from '../../ui/Buttons/Primary'
 import InputField from '../../ui/Input/Input'
+import Backdrop from '../../hoc/Backdrop/Backdrop'
+import PrimaryButton from '../../ui/Buttons/Primary'
+
+import { hideModal, SHOW_LIST_MODAL } from '../../../store/actions/modal'
 
 const ListModal = props => {
 	const dispatch = useDispatch()

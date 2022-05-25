@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { unsetSnackbar } from '../../../store/actions/snackbar'
 
-import CloseIconSuccess from '../../../assets/icons/close-green.svg'
 import CloseIconInfo from '../../../assets/icons/close-blue.svg'
-import CloseIconWarn from '../../../assets/icons/close-yellow.svg'
 import CloseIconDanger from '../../../assets/icons/close-red.svg'
+import CloseIconWarn from '../../../assets/icons/close-yellow.svg'
+import CloseIconSuccess from '../../../assets/icons/close-green.svg'
 
 const Snackbar = props => {
 

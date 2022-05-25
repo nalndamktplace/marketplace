@@ -1,5 +1,5 @@
-require("@nomiclabs/hardhat-waffle");
-require("dotenv").config();
+require("@nomiclabs/hardhat-waffle")
+require("dotenv").config()
 
 module.exports = {
 	networks: {
@@ -15,4 +15,4 @@ module.exports = {
 		}
 	},
 	solidity: "0.8.13",
-};
+}

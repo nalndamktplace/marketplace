@@ -1,4 +1,4 @@
-import { isUsable } from "../../helpers/functions";
+import { isUsable } from "../../helpers/functions"
 
 export const SHOW_PURCHASE_MODAL = "SHOW_PURCHASE_MODAL"
 export const SHOW_LIST_MODAL = "SHOW_LIST_MODAL"
