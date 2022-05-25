@@ -97,19 +97,18 @@ const unlistBookFromMarketplace = async function unlistBookFromMarketplace(bookO
 	return await unlisting.wait()
 }
 
-const buyListedCover = async function buyListedCover(bookAddress, bookOrderId, bookPrice) {
-
+const buyListedCover = async function buyListedCover(bookOrderId, bookPrice) {
 	const web3Modal = new Web3Modal()
 	const connection = await web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 
 	const nalndaTokenContract = new ethers.Contract(NALNDA_TOKEN_CONTRACT_ADDRESS, nalndaToken.abi, signer)
-	const approval = await nalndaTokenContract.approve(SECONDARY_MARKET_CONTRACT_ADDRESS, bookPrice)
+	const approval = await nalndaTokenContract.approve(SECONDARY_MARKET_CONTRACT_ADDRESS, ethers.utils.parseEther(bookPrice.toString()))
 	const ap = await approval.wait()
 
 	const secondaryMarketContract = new ethers.Contract(SECONDARY_MARKET_CONTRACT_ADDRESS, secondaryMarket.abi, signer)
-	const transaction = await secondaryMarketContract.buyCover(1)
+	const transaction = await secondaryMarketContract.buyCover(bookOrderId)
 	const tx = await transaction.wait()
 	return tx
 }
