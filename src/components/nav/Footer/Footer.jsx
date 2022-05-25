@@ -1,10 +1,11 @@
 import React from 'react'
 import { useNavigate } from 'react-router'
-import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg" ;
-import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg" ;
-import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg" ;
-import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg" ;
+
 import { GaExternalTracker, GaSocialTracker } from '../../../trackers/ga-tracker'
+
+import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
+import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
+import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
 
 const Footer = props => {
 

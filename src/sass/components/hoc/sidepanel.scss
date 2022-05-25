@@ -1,0 +1,14 @@
+.sidepanel {
+    top: 100% ;
+    position: absolute ;
+    z-index: 100 ;
+    transition: all 300ms ease-out ;
+    &--right {
+        right: 2rem ;
+        transform: translate(calc(100% + 4rem));
+    }
+
+    &--open {
+        transform: translate(0);
+    }
+}
