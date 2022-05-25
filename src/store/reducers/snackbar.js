@@ -1,4 +1,4 @@
-import { ERR_GENERIC_SNACKBAR, ERR_NOT200_SNACKBAR, SET_SNACKBAR, UNSET_SNACKBAR } from "../actions/snackbar";
+import { ERR_GENERIC_SNACKBAR, ERR_NOT200_SNACKBAR, SET_SNACKBAR, UNSET_SNACKBAR } from "../actions/snackbar"
 
 const initState = {
 	show: false,

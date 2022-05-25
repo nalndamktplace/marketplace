@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import Backdrop from '../../hoc/Backdrop/Backdrop'
+
 import InputModal from './Modal'
+import Backdrop from '../../hoc/Backdrop/Backdrop'
 
 const InputField = props => {
 

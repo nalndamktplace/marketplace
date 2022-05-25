@@ -60,8 +60,16 @@ const ReaderPage = () => {
     },[rendition])
 
     useEffect(()=>{
-        const bookURL = params.state.book.book ;
-        setBookMeta(params.state.book);
+      const bookURL = null
+        const navParams = params.state
+      if(isUsable(navParams.preview) && navParams.preview === true){
+        bookURL = BASE_URL+'/files/'+navParams.book.preview
+        setBookMeta(navParams.book.preview)
+      }
+      else{
+        bookURL = navParams.book.book
+        setBookMeta(navParams.book.book)
+      }
         const book = Epub(bookURL,{openAs:"epub"});
         book.ready.then(()=>{
             document.querySelector("#book__reader").innerHTML = "" ;

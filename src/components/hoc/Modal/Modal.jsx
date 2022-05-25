@@ -1,19 +1,21 @@
-import { useEffect } from "react";
-import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg";
-import IconButton from "../../ui/Buttons/IconButton";
+import { useEffect } from "react"
+
 import Backdrop from "../Backdrop/Backdrop";
+import IconButton from "../../ui/Buttons/IconButton"
+
+import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
 
 const Modal = ({ title = "", open = false, toggleModal, children }) => {
-    useEffect(() => {
-        window.document.documentElement.style.overflowY = open ? "hidden" : "auto";
-    }, [open]);
+	useEffect(() => {
+		window.document.documentElement.style.overflowY = open ? "hidden" : "auto"
+	}, [open])
 
-    const getClasses = () => {
-        let classes = ["modal__wrapper"];
-        if (open) classes.push("modal__wrapper--open");
-        else classes.push("modal__wrapper--close");
-        return classes.join(" ");
-    };
+	const getClasses = () => {
+		let classes = ["modal__wrapper"]
+		if (open) classes.push("modal__wrapper--open")
+		else classes.push("modal__wrapper--close")
+		return classes.join(" ")
+	}
 
     return (
         <Backdrop show={open} hideOnClick={true}>
@@ -35,4 +37,4 @@ const Modal = ({ title = "", open = false, toggleModal, children }) => {
     );
 };
 
-export default Modal;
+export default Modal

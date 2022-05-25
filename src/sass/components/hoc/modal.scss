@@ -11,8 +11,9 @@
 	position: fixed ;
 	top: 50% ;
 	left: 50% ;
-	min-width: 60vw ;
-	// min-height: 20vw ;
+	min-width: 40vw ;
+	max-width: 90%;
+	min-height: max-content ;
 	transform: translate(-50%,-50%);
 	padding: 2rem ;
 	background-color: $color-white ;
@@ -46,6 +47,77 @@
 		transform: translate(-50%,-50%) scale(1) ;
 		opacity: 1;
 		pointer-events: all ;
+	}
+}
+
+.modal__purchase{
+
+	&__tabs{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		border-radius: 0.4rem 0.4rem 0 0;
+		overflow: hidden;
+
+		&__item{
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.4s ease-in-out;
+			border: 0.1rem solid rgba($color-black, 0.24);
+			padding: 0.48rem 0;
+
+			&--active{
+				background-color: $color-primary;
+				color: $color-white;
+				border: 0.1rem solid $color-primary;
+			}
+		}
+	}
+
+	&__data{
+		margin-top: 4rem;
+		
+		&__book{
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			justify-content: flex-start;
+
+			&__cover{
+				margin-right: 2.4rem;
+
+				&>img{
+					height: 16rem;
+					width: 10rem;
+					object-fit: contain;
+					border-radius: 0.4rem;
+				}
+			}
+		}
+
+		&__cta{
+			margin-top: 1.6rem;
+		}
+
+		&__offers{
+
+			&__item{
+				border-bottom: 0.1rem solid rgba($color-black, 0.24);
+				cursor: pointer;
+				padding: 0.8rem;
+
+				&:not(:last-child){ margin-bottom: 0.8rem; }
+
+				&__cta{
+					margin-top: 1.2rem;
+					width: 50%;
+				}
+			}
+		}
 	}
 
 }
