@@ -1,7 +1,8 @@
+import axios from 'axios'
+import moment from 'moment'
+import { useDispatch } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
-import axios from 'axios'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
@@ -12,7 +13,6 @@ import Contracts from '../connections/contracts'
 import ListModal from '../components/modal/List/List'
 import PurchaseModal from '../components/modal/Purchase/Purchase'
 
-import { BASE_URL } from '../config/env'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
@@ -28,6 +28,8 @@ import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
+
+import { BASE_URL } from '../config/env'
 
 const BookPage = props => {
 
@@ -54,6 +56,10 @@ const BookPage = props => {
 	const [Reviews, setReviews] = useState([])
 	const [TotalReveiws, setTotalReveiws] = useState(0)
 	const [ReviewForm, setReviewForm] = useState({title: '', body: '', rating: 0})
+
+	useEffect(() => {
+		if(isUsable(NFT)) setListed(NFT.listed === 1?true:false)
+	}, [NFT])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -166,22 +172,71 @@ const BookPage = props => {
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
 
-	const unlistHandler = () => {}
+	const unlistHandler = () => {
+		setLoading(true)
+		axios({
+			url: BASE_URL + '/api/user/book/listed',
+			method: 'GET',
+			params: {
+				ownerAddress: Wallet,
+				tokenId: NFT.tokenId,
+				bookAddress: NFT.book_address
+			}
+		}).then(res => {
+			if(res.status === 200){
+				setLoading(true)
+				const orderId = res.data.order_id
+				Contracts.unlistBookFromMarketplace(orderId).then(res => {
+					setLoading(true)
+					axios({
+						url: BASE_URL + '/api/book/unlist',
+						method: 'POST',
+						data: {
+							ownerAddress: Wallet,
+							bookAddress: NFT.book_address,
+						}
+					}).then(res => {
+						if(res.status === 200){
+							setListed(false)
+							dispatch(hideModal())
+							dispatch(setSnackbar({show: true, message: "Book unlisted from marketplace.", type: 1}))
+						}
+						else dispatch(setSnackbar('NOT200'))
+					}).catch(err => {
+						console.error({err})
+						dispatch(setSnackbar('ERROR'))
+					}).finally( ()=> { setLoading(false) })
+				}).catch(err => {
+					setLoading(false)
+					console.error({err})
+					if(err.data.message === 'execution reverted: NalndaBooksSecondarySales: NFT not yet listed / already sold!')
+						dispatch(setSnackbar({show: true, message: "eBook already sold or not listed.", type: 3}))
+					else dispatch(setSnackbar('ERROR'))
+				})
+			}
+			else dispatch(setSnackbar('NOT200'))
+		}).catch(err => {
+			setLoading(false)
+			console.error({err})
+			dispatch(setSnackbar('ERROR'))
+		})
+	}
 
 	const listHandler = () => { dispatch(showModal(SHOW_LIST_MODAL)) }
 
 	const onListHandler = listPrice => {
 		setLoading(true)
 		Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice).then(res => {
-			console.log({res})
 			setLoading(true)
+			const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
 			axios({
 				url: BASE_URL + '/api/book/list',
 				method: 'POST',
 				data: {
 					ownerAddress: Wallet,
 					bookAddress: NFT.book_address,
-					bookPrice: listPrice
+					bookPrice: listPrice,
+					bookOrderId: orderId
 				}
 			}).then(res => {
 				if(res.status === 200){
@@ -329,7 +384,7 @@ const BookPage = props => {
 						<div className="book__data__container__desc__tabs__data__reviews__item">
 							<div className="book__data__container__desc__tabs__data__reviews__item__rating">
 								{renderStars(review.rating)}
-								<p className="book__data__container__desc__tabs__data__reviews__item__rating__time typo__cap typo__cap--2">{review.reviewed_at.substring(0,review.reviewed_at.indexOf('T'))}</p>
+								<p className="book__data__container__desc__tabs__data__reviews__item__rating__time typo__cap typo__cap--2">{moment(review.reviewed_at).format("D MMM, YYYY")}</p>
 							</div>
 							<p className="book__data__container__desc__tabs__data__reviews__item__head typo__body typo__transform--upper">{review.title}</p>
 							<p className="book__data__container__desc__tabs__data__reviews__item__body typo__body typo__body--2">{review.body}</p>
@@ -350,7 +405,7 @@ const BookPage = props => {
 					</div>
 				</React.Fragment>
 			default:
-				break;
+				break
 		}
 	}
 
@@ -405,7 +460,7 @@ const BookPage = props => {
 										<div className="book__data__container__meta__row__item">
 											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Copies Sold</p>
 											<img src={CartAddIcon} alt="ISBN icon" className="book__data__container__meta__row__item__icon" />
-											<p className="book__data__container__meta__row__item__value typo__body">{NFT.copies || "-"}</p>
+											<p className="book__data__container__meta__row__item__value typo__body">{NFT.copies}</p>
 										</div>
 									</div>
 								</div>
@@ -415,15 +470,19 @@ const BookPage = props => {
 									{Listed
 										?
 											<PrimaryButton label={'Unlist'} onClick={()=>unlistHandler()}/>
-										:Created||Owner
+										:Created
 											?<React.Fragment>
 												<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
-												<PrimaryButton label={'List'} onClick={()=>listHandler()}/>
 											</React.Fragment>
-											:<React.Fragment>
-												<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
-												<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
-											</React.Fragment>
+											:Owner
+												?<React.Fragment>
+													<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
+													<PrimaryButton label={'List'} onClick={()=>listHandler()}/>
+												</React.Fragment>
+												:<React.Fragment>
+													<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
+													<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
+												</React.Fragment>
 									}
 								</div>
 								<div className="book__data__container__desc__row">
@@ -454,7 +513,7 @@ const BookPage = props => {
 										<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.price}&nbsp;NALNDA</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>publication date</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.publication_date.substring(0, NFT.publication_date.indexOf('T'))}</p>
+										<p className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</p>
 										{/* <p className='book__data__container__desc__summary__head typo__body--3'>rating</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.rating}</p> */}
 									</div>
