@@ -15,7 +15,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
-import LikedIcon from '../assets/icons/liked.svg' 
+import LikedIcon from '../assets/icons/liked.svg'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import CartAddIcon from '../assets/icons/cart-add.svg'
