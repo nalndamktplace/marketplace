@@ -143,7 +143,7 @@ const CreateNftPage = props => {
 	return (
 		<Page noFooter={true}>
 			<div className="create__head">
-				<h3 className='typo__head typo__head--3'>Create EBook</h3>
+				<h3 className='typo__head typo__head--3'>Publish EBook</h3>
 			</div>
 			<div className="create__data">
 				<div className="create__data__form">
