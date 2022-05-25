@@ -27,6 +27,10 @@
 				transform: translate(-50%,-50%);
 				font-weight: 500 ;
 				font-size: 1.75rem ;
+
+				@include respond(phone){
+					display: none ;
+				}
 			}
 		}
 
@@ -35,18 +39,6 @@
 			display: flex ;
 			& > * + * {
 				margin-left: 0.5rem ;
-			}
-		}
-
-		&__left {
-			&__readtime {
-				display: flex ;
-				align-items: center ;
-				margin-left: 1rem ;
-				color: $color-neutral-500 ;
-				&__time {
-					margin-left: 1rem ;
-				}
 			}
 		}
 
@@ -129,10 +121,19 @@
 		}
 
 		&__context-menu-container {
-			display: none ;
 			position: fixed ;
 			top : 50% ;
 			left: 50% ;
+			transform: translate(-50%,-50%) scale(0);
+			transition: all 100ms ease-out ;
+			opacity: 0 ;
+			pointer-events: none ;
+
+			&--show {
+				opacity: 1 ;
+				pointer-events: all ;
+				transform: translate(-50%,-50%) scale(1);
+			}
 		}
 	}
 
@@ -181,14 +182,21 @@
 		background-color: #000 ;
 	}
 
-	&__prev-btn,
-	&__next-btn {
-		color: #fff ;
-		&:hover {
-			color: #fff ;
+	&__container{
+		&__prev-btn,
+		&__next-btn {
+			&__button {
+				&:hover {
+					color: #fff ;
+					background-color: $color-neutral-800;
+					&>svg {
+						stroke: #fff ;
+					}
+				}
+			}
 		}
 	}
-
+	
 	.button {
 		color: $color-neutral-500;
 	
@@ -218,5 +226,10 @@
 		}
 	}
 	
+	&__nav {
+		&__progress-value{
+			color: $color-neutral-100 ;
+		}
+	}
 }
 

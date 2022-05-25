@@ -2,7 +2,7 @@ import { useState } from "react";
 import { isUsable } from "../../../helpers/functions";
 import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg";
 
-const BookMarkPanel = ({rendition,bookMeta,onBookmarkAdd=()=>{},onBookmarkRemove=()=>{},hideModal=()=>{}}) => {
+const BookMarkPanel = ({rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=()=>{}}) => {
 
     const [bookmarkTitle, setBookmarkTitle] = useState("");
 
@@ -25,6 +25,8 @@ const BookMarkPanel = ({rendition,bookMeta,onBookmarkAdd=()=>{},onBookmarkRemove
                 </div>
             )
         })
+        if(domItems.length===0)
+            domItems.push(<div key="empty" className="bookmark-panel__container__empty">No Items</div>);
         return domItems;
     }
 
@@ -39,8 +41,7 @@ const BookMarkPanel = ({rendition,bookMeta,onBookmarkAdd=()=>{},onBookmarkRemove
             percent : rendition.currentLocation().start.percentage
         }]))
         setBookmarkTitle("");
-        hideModal();
-        onBookmarkAdd();
+        onAdd();
     }
 
     const removeBookMark = (itemIndex) => {
@@ -51,14 +52,14 @@ const BookMarkPanel = ({rendition,bookMeta,onBookmarkAdd=()=>{},onBookmarkRemove
         stored = stored.filter((item,i) => i != itemIndex );
         window.localStorage.setItem(bookKey,JSON.stringify(stored))
         setBookmarkTitle("");
-        onBookmarkRemove();
+        onRemove();
     }
 
     const gotoBookmarkedPage = (cfi) => {
         if(!isUsable(rendition)) return;
         rendition.display(cfi);
         rendition.display(cfi);
-        hideModal();
+        onGoto();
     }
 
     return (

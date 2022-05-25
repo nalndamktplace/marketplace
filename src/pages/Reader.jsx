@@ -11,12 +11,13 @@ import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg";
 import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.svg";
 import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg";
 import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg";
-import { ReactComponent as ClockIcon } from "../assets/icons/clock.svg";
-import { toHHMMSS } from "../helpers/time-formator";
+import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg";
 import Customizer from "../components/ui/Customizer/Customizer";
 import SidePanel from "../components/hoc/SidePanel/SidePanel";
 import BookMarkPanel from "../components/ui/BookmarkPanel/BookmarkPanel";
-// import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu";
+import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu";
+import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel";
+import ReadTimer from "../components/ui/ReadTime/ReadTime";
 
 
 const ReaderPage = () => {
@@ -28,20 +29,33 @@ const ReaderPage = () => {
     const [totalLocations, setTotalLocations] = useState(0);
     const debouncedProgress = useDebounce(progress, 300);
     const [readTime, setReadTime] = useState(0);
-    const [customizerOpen, setCustomizerOpen] = useState(false);
     const [pageBookmarked, setPageBookmarked] = useState(false);
+    const [customizerPanel, setCustomizerPanel] = useState(false);
     const [bookmarkPanel, setBookmarkPanel] = useState(false);
+    const [annotaionPanel, setAnnotaionPanel] = useState(false);
+    const [fullscreen, setFullscreen] = useState(false);
+
+    const hideAllPanel = ({customizer=true,bookmark=true,annotation=true}) => {
+        customizer && setCustomizerPanel(false);
+        bookmark && setBookmarkPanel(false);
+        annotation && setAnnotaionPanel(false);
+    }
 
     useEffect(()=>{
         if(!isUsable(rendition)) return ;
         const handleResize = () => {
             rendition.manager.resize(window.innerWidth-8*16,"100%");
         }
+        const handleFullscreen = () => {
+            if(isUsable(window.document.fullscreenElement)) setFullscreen(true);
+            else setFullscreen(false);
+            handleResize();
+        }
         window.addEventListener("resize",handleResize);
-        window.addEventListener("fullscreenchange",handleResize);
+        window.addEventListener("fullscreenchange",handleFullscreen);
         return () => {
             window.removeEventListener("resize",handleResize);
-            window.removeEventListener("fullscreenchange",handleResize);
+            window.removeEventListener("fullscreenchange",handleFullscreen);
         }
     },[rendition])
 
@@ -115,27 +129,6 @@ const ReaderPage = () => {
         setProgress(e.target.value);
     };
 
-    useEffect(()=>{
-        if (!isUsable(rendition)) return;
-        if (!isUsable(bookMeta)) return;
-        const updateReadTime = () => {
-            const bookKey = `${bookMeta.id}:readtime` ;
-            let stored = parseInt(localStorage.getItem(bookKey));
-            if(!isNaN(stored)){
-                localStorage.setItem(bookKey,stored+1);
-                setReadTime(stored+1);
-            } else {
-                localStorage.setItem(bookKey,0);
-            }
-        };
-        let intervalHandler = setInterval(updateReadTime,1000);
-
-        return () => {
-            clearInterval(intervalHandler);
-        }
-
-    },[rendition,bookMeta])
-
     const saveLastReadPage = (cfi) => {
         if(!isUsable(window.localStorage)) return;
         if(!isUsable(bookMeta)) return;
@@ -176,6 +169,11 @@ const ReaderPage = () => {
         }
     }
 
+    useEffect(()=>{
+        if(fullscreen===true) openFullscreen();
+        else closeFullscreen();
+    },[fullscreen])
+
     const isCurrentPageBookmarked = () => {
         if(!isUsable(rendition)) return;
         if(!isUsable(bookMeta)) return;
@@ -202,65 +200,184 @@ const ReaderPage = () => {
             setPageBookmarked(pageBookmarked);
     }
 
+    const [annotationSelection, setAnnotationSelection] = useState({});
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    // const [contextMenuPosition, setContextMenuPosition] = useState({x:0,y:0});
+    // const contextMenuContainerRef = useRef();
+
+    // useEffect(()=>{
+    //     if(!isUsable(contextMenuContainerRef.current)) return ;
+    //     contextMenuContainerRef.current.style.setProperty("--x",contextMenuPosition.x)
+    //     contextMenuContainerRef.current.style.setProperty("--y",contextMenuPosition.y)
+    // },[contextMenuContainerRef,contextMenuPosition])
+    
     useEffect(()=>{
         if(!isUsable(rendition)) return;
         if(!isUsable(bookMeta)) return;
-        rendition.on("relocated",()=>{
-            updateBookmarkedStatus();
-        });
+        const handleRelocated = ()=>{updateBookmarkedStatus();}
+        rendition.on("relocated",handleRelocated);
+        return ()=>{rendition.off("relocated",handleRelocated);}
     },[rendition,bookMeta]);
+
+
+    useEffect(()=>{
+        if(!isUsable(rendition)) return;
+        if(!isUsable(bookMeta)) return;
+        const handleSelected = (cfiRange,contents)=>{
+            // console.log(cfiRange,contents)
+            // const selection = contents.window.getSelection() ;
+            // const anchorNodeCoords = selection.anchorNode.parentElement.getBoundingClientRect() ;
+            // const extentNodeCoords = selection.extentNode.parentElement.getBoundingClientRect() ;
+
+            // let coords = {
+            //     y : (Math.min(anchorNodeCoords.y,extentNodeCoords.y) + Math.max(anchorNodeCoords.y+anchorNodeCoords.height,extentNodeCoords.y+extentNodeCoords.height))/2,
+            //     x : (Math.min(anchorNodeCoords.x,extentNodeCoords.x) + Math.max(anchorNodeCoords.x+anchorNodeCoords.width,extentNodeCoords.x+extentNodeCoords.width))/2,
+            // };
+
+            // coords = {
+            //     x : window.innerWidth / 2,
+            //     y : window.innerHeight / 2,
+            // }
+
+            // if(isNaN(coords.x) || isNaN(coords.y)){
+            //     coords = {
+            //         x : window.innerWidth / 2,
+            //         y : window.innerHeight / 2,
+            //     }
+            // }
+
+            rendition.book.getRange(cfiRange).then((range)=>{
+                setAnnotationSelection({
+                    cfiRange,
+                    text : range?.toString()
+                })
+                // setContextMenuPosition(coords);
+                setShowContextMenu(true);
+            }).catch(()=>{
+                setAnnotationSelection({});
+            })
+        }
+        rendition.on("selected",handleSelected);
+        return ()=>{rendition.off("selected",handleSelected);}
+    },[rendition,bookMeta]);
+
+    useEffect(()=>{
+        if(!isUsable(rendition)) return;
+        if(!isUsable(bookMeta)) return;
+        const handleMarkClicked = (cfiRange,data,contents)=>{
+            console.log(cfiRange,data,contents)
+            setAnnotaionPanel(true);
+        }
+        rendition.on("markClicked",handleMarkClicked);
+        return ()=>{rendition.off("markClicked",handleMarkClicked);}
+    },[rendition,bookMeta]);
+
+    useEffect(()=>{
+        if(!isUsable(rendition)) return;
+        if(!isUsable(bookMeta)) return;
+        updateAnnotation();
+    },[rendition,bookMeta]);
+
+    const handleAnnotationColorSelect = (color) => {
+        if(!isUsable(annotationSelection)) return ;
+        if(!isUsable(rendition)) return ;
+        if(!isUsable(bookMeta)) return ;
+        rendition.annotations.add(
+            "highlight",
+            annotationSelection.cfiRange,
+            {},
+            ()=>{},
+            "",
+            {"fill": color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
+        );
+        addAnnotaion({...annotationSelection,color});
+    }
+
+    const addAnnotaion = (annotation) => {
+        if(!isUsable(rendition)) return;
+        if(!isUsable(bookMeta)) return;
+        const bookKey = `${bookMeta.id}:annotations`
+        let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
+        window.localStorage.setItem(bookKey,JSON.stringify([...stored,annotation]))
+    }
+
+    const updateAnnotation = () => {
+        if(!isUsable(rendition)) return "";
+        if(!isUsable(bookMeta)) return "";
+        const bookKey = `${bookMeta.id}:annotations`
+        let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
+        console.log(stored);
+        stored.forEach((item)=>{
+            rendition.annotations.add(
+                "highlight",
+                item.cfiRange,
+                {},
+                ()=>{},
+                "",
+                {"fill": item.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
+            );
+        })
+    }
 
     return (
         <div className="reader">
             <div className="reader__header">
                 <div className="reader__header__left">
                     <IconButton icon={<ChevronLeftIcon stroke="currentColor" />} onClick={()=>{navigate(-1)}}/>
-                    <div className="reader__header__left__readtime">
-                        <ClockIcon width="3rem" height="3rem" stroke="currentColor"/>
-                        <div className="reader__header__left__readtime__time">{toHHMMSS(readTime)}</div>
-                    </div>
+                    <ReadTimer bookMeta={bookMeta}/>
                     {/* <button onClick={()=>{
                         console.log(rendition);
                     }}>Debug</button> */}
                 </div>
                 <div className="reader__header__center">
                 <div className="reader__header__center__title">{bookMeta.title||"Untitled"}</div>
-                </div>
+                </div> 
                 <div className="reader__header__right">
-                    <IconButton icon={<MaximizeIcon stroke="currentColor"/>} onClick={openFullscreen}/>
+                    <IconButton icon={fullscreen?<MinimizeIcon stroke="currentColor"/>:<MaximizeIcon stroke="currentColor"/>} onClick={()=>setFullscreen(s=>!s)}/>
 
-                    <IconButton icon={<BlockquoteIcon stroke="currentColor"/>} onClick={()=>{}}/>
-                    <SidePanel show={bookmarkPanel} position="right">
-                        <BookMarkPanel 
+                    <IconButton
+                        className={annotaionPanel?"reader__header__right__button--active":""}  
+                        icon={<BlockquoteIcon stroke="currentColor"/>} 
+                        onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}}
+                    />
+                    <SidePanel show={annotaionPanel} position="right">
+                        <AnnotationPanel 
                             rendition={rendition} 
                             bookMeta={bookMeta}
-                            hideModal={()=>{setBookmarkPanel(false)}}
-                            onBookmarkAdd={()=>{updateBookmarkedStatus()}}
-                            onBookmarkRemove={()=>{updateBookmarkedStatus()}}
+                            show={annotaionPanel} 
+                            hideModal={()=>{setAnnotaionPanel(false)}}
+                            onRemove={()=>{setAnnotaionPanel(false)}}
                         />
                     </SidePanel>
 
                     <IconButton 
                         className={bookmarkPanel?"reader__header__right__button--active":""} 
                         icon={<BookmarkIcon stroke="currentColor"/>} 
-                        onClick={()=>{setBookmarkPanel(s=>!s)}}
+                        onClick={()=>{hideAllPanel({bookmark:false});setBookmarkPanel(s=>!s)}}
                     />
                     <SidePanel show={bookmarkPanel} position="right">
                         <BookMarkPanel 
                             rendition={rendition} 
                             bookMeta={bookMeta}
-                            hideModal={()=>{setBookmarkPanel(false)}}
-                            onBookmarkAdd={()=>{updateBookmarkedStatus()}}
-                            onBookmarkRemove={()=>{updateBookmarkedStatus()}}
+                            show={bookmarkPanel}
+                            onAdd={()=>{
+                                updateBookmarkedStatus();
+                                setBookmarkPanel(s=>false);
+                            }}
+                            onRemove={()=>{
+                                updateBookmarkedStatus();
+                                setBookmarkPanel(s=>false);
+                            }}
+                            onGoto={()=>setBookmarkPanel(s=>false)}
                         />
                     </SidePanel>
 
                     <IconButton 
-                        className={customizerOpen?"reader__header__right__button--active":""} 
+                        className={customizerPanel?"reader__header__right__button--active":""} 
                         icon={<LetterCaseIcon stroke="currentColor"/>} 
-                        onClick={()=>{setCustomizerOpen(s=>!s)}}
+                        onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s)}}
                     />
-                    <SidePanel show={customizerOpen} position="right">
+                    <SidePanel show={customizerPanel} position="right">
                         <Customizer rendition={rendition}/>
                     </SidePanel>
                 </div>
@@ -278,9 +395,21 @@ const ReaderPage = () => {
                         <ChevronRightIcon stroke="currentColor" />
                     </div>
                 </div>
-                {/* <div className="reader__container__context-menu-container">
-                    <AnnotationContextMenu />
-                </div> */}
+                <div className={
+                    showContextMenu
+                    ? "reader__container__context-menu-container reader__container__context-menu-container--show"
+                    : "reader__container__context-menu-container"
+                }>
+                    <AnnotationContextMenu 
+                        onColorSelect={(color)=>{
+                            handleAnnotationColorSelect(color);
+                            setShowContextMenu(false);
+                        }} 
+                        onClose={()=>{
+                            setShowContextMenu(false);
+                        }}
+                    />
+                </div>
             </div>
             <nav className="reader__nav">
                 <input

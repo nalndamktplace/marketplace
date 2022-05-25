@@ -1,17 +1,27 @@
 import {ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg";
+import IconButton from "../Buttons/IconButton";
 
-const AnnotationContextMenu = () => {
+const AnnotationContextMenu = ({onColorSelect=()=>{},onClose=()=>{}}) => {
+
+    const colors = [
+        "#e6192a",
+        "#0080ff",
+        "#14b84b",
+        "#ffd500",
+        "#aa00ff"
+    ]
+
     return (
         <div className="annotation-context-menu">
             <div className="annotation-context-menu__container">
-                <div className="annotation-context-menu__container__item annotation-context-menu__container__item--red"></div>
-                <div className="annotation-context-menu__container__item annotation-context-menu__container__item--blue"></div>
-                <div className="annotation-context-menu__container__item annotation-context-menu__container__item--green"></div>
-                <div className="annotation-context-menu__container__item annotation-context-menu__container__item--yellow"></div>
-                <div className="annotation-context-menu__container__item annotation-context-menu__container__item--purple"></div>
+                {
+                    colors.map(c=>(
+                        <div style={{"--color":c}} key={c} className="annotation-context-menu__container__item" onClick={()=>onColorSelect(c)}></div>
+                    ))
+                }
             </div>
             <div className="annotation-context-menu__close">
-                <CloseIcon />
+                <IconButton icon={<CloseIcon width="24" height="24"/>} onClick={onClose}/>
             </div>
         </div>
     );
