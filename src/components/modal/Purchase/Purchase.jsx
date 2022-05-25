@@ -6,7 +6,7 @@ import Modal from '../../hoc/Modal/Modal'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
 import PrimaryButton from '../../ui/Buttons/Primary'
 
-import { isUsable } from '../../../helpers/functions'
+import { isFilled, isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import { hideModal, SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
@@ -25,8 +25,6 @@ const PurchaseModal = props => {
 	const [ActiveTab, setActiveTab] = useState(0)
 
 	const modalCloseHandler = state => { if(state === false) dispatch(hideModal()) }
-
-	useEffect(() => { console.log({Offers}) }, [Offers])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -56,9 +54,37 @@ const PurchaseModal = props => {
 	}, [Show, dispatch, props])
 
 	const renderTabs = () => {
+
+		const renderOffers = () => {
+			let offersDOM = []
+			if(isFilled(Offers)){
+				Offers.forEach(offer => {
+					offersDOM.push(
+						<div className="modal__purchase__data__offers__item" key={offer.book_address+'-'+offer.order_id}>
+							<p className='utils__margin__bottom--n'>Order: {offer.order_id}</p>
+							<p className='utils__margin__bottom--n'>Price: {offer.price}&nbsp;NALNDA</p>
+							<p className='utils__margin__bottom--n'>Token: {offer.token_id}</p>
+							<p className='utils__margin__bottom--n'>Address: {offer.book_address}</p>
+							<p className='utils__margin__bottom--n'>Seller: {offer.previous_owner}</p>
+							<div className="modal__purchase__data__offers__item__cta">
+								<PrimaryButton onClick={()=>props.onOldBookPurchase(offer)} label={"Buy Now"}/>
+							</div>
+						</div>
+					)
+				})
+			}
+			return offersDOM
+		}
+
 		switch (ActiveTab) {
 			case 1:
-				return
+				return (
+					<React.Fragment>
+						<div className="modal__purchase__data__offers">
+							{renderOffers()}
+						</div>
+					</React.Fragment>
+				)
 			default:
 				return (
 					<React.Fragment>
