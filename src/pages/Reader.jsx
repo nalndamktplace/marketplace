@@ -19,6 +19,7 @@ import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContext
 import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel";
 import ReadTimer from "../components/ui/ReadTime/ReadTime";
 
+import { BASE_URL } from '../config/env'
 
 const ReaderPage = () => {
     const params = useLocation();
@@ -60,7 +61,7 @@ const ReaderPage = () => {
     },[rendition])
 
     useEffect(()=>{
-      const bookURL = null
+      let bookURL = null
         const navParams = params.state
       if(isUsable(navParams.preview) && navParams.preview === true){
         bookURL = BASE_URL+'/files/'+navParams.book.preview
