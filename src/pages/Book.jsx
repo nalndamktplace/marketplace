@@ -27,7 +27,7 @@ import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
 
 const BookPage = props => {
 
-	const TABS = [{id: 'TAB01', label: 'Synopsis'}, {id: 'TAB02', label: 'reviews'}]
+	const TABS = [{id: 'TAB01', label: 'Synopsis'}, {id: 'TAB02', label: 'reviews'}, {id: 'TAB03', label: 'quotes'}]
 
 	const params = useLocation()
 	const dispatch = useDispatch()
@@ -49,6 +49,9 @@ const BookPage = props => {
 	const [Reviews, setReviews] = useState([])
 	const [TotalReveiws, setTotalReveiws] = useState(0)
 	const [ReviewForm, setReviewForm] = useState({title: '', body: '', rating: 0})
+	// Quotes
+	const [Quotes, setQuotes] = useState([]);
+	const [QuotesForm, setQuotesForm] = useState({quote: ''})
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -305,6 +308,24 @@ const BookPage = props => {
 						{renderReviews(Reviews)}
 					</div>
 				</React.Fragment>
+			case 'TAB03':
+				const renderQuotes = quotes => {
+					let quotesDOM = []
+					
+					return quotesDOM
+				}
+				
+				return <React.Fragment>
+					{ (Created||Owner) && (
+						<div className="book__data__container__desc__tabs__data__quote">
+							<InputField type="string" label="quote" value={QuotesForm.quote} onChange={e => setQuotesForm({ ...QuotesForm, quote: e.target.value })} />
+							<PrimaryButton onClick={()=>quoteHandler()} label="submit"/>
+						</div>
+					)}
+					<div className="book__data__container__desc__tabs__data__reviews">
+						{renderQuotes(Reviews)}
+					</div>
+				</React.Fragment>
 			default:
 				break;
 		}
@@ -327,6 +348,10 @@ const BookPage = props => {
 			setLoading(false)
 			dispatch(setSnackbar('ERROR'))
 		})
+	}
+
+	const quoteHandler = () => {
+		
 	}
 
 	return (
