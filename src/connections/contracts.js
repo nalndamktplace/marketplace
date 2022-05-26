@@ -8,8 +8,6 @@ const secondaryMarket = require('../artifacts/contracts/NalndaBooksSecondarySale
 const nalndaToken = require('../artifacts/contracts/mocks/NALNDA.sol/Nalnda.json')
 const book = require('../artifacts/contracts/NalndaBook.sol/NalndaBook.json')
 
-// const marketProvider = new ethers.providers.Web3Provider(window.ethereum)
-
 const getBooksCount = async function getBooksCount(){
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
 	let primaryMarketContract = new ethers.Contract(PRIMARY_MARKET_CONTRACT_ADDRESS, primaryMarket.abi, provider)
