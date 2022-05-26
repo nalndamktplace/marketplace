@@ -3,14 +3,29 @@
 	flex-direction: column;
 	align-items: flex-start;
 	justify-content: flex-start;
-	min-height: calc( 100vh - 6.4rem );
+	min-height: max-content !important;
+	height: max-content !important;
+
+	&__bg{
+		position: absolute;
+		height: 100vh;
+		width: 100vw;
+		display: flex;
+		background: url('../../assets/images/background-publish.svg');
+
+		&>img{
+			flex: 1;
+			object-fit: cover;
+			object-position: top;
+		}
+	}
 
 	&__head{
 		height: 12rem;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		width: 100%;
 	}
 
@@ -31,6 +46,10 @@
 			max-width: 80rem;
 
 			@include respond(phone){max-width: 100%; width: 100%;}
+
+			&__cta{
+				width: 32%;
+			}
 		}
 
 		&__preview{
@@ -57,6 +76,7 @@
 				width: 40rem;
 				border: 0.1rem solid rgba($color-black, 0.08);
 				height: fit-content;
+				background-color: $color-white;
 
 				&__cover{
 					width: 100%;
