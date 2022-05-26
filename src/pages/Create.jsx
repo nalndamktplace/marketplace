@@ -20,7 +20,7 @@ import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 const CreateNftPage = props => {
 
 	const GENRES = ['fantasy', 'science fiction', 'adventure', 'romance', 'mystery', 'horror', 'thriller', 'historical fiction', 'children\'s fiction', 'autobiography', 'biography', 'cooking', 'art', 'selfhelp', 'inspirational', 'health & fitness', 'history', 'humor', 'business', 'travel']
-	const LANGUAGES = ['AF - Afrikaans', 'SQ - Albanian', 'AR - Arabic', 'HY - Armenian', 'AS - Assamese', 'AZ - Azerbaijani', 'BE - Belarusian', 'BN - Bengali']
+	const LANGUAGES = ['ES - Espanol', 'EN - English', 'HN - Hindi']
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -141,25 +141,27 @@ const CreateNftPage = props => {
 	}
 
 	return (
-		<Page noFooter={true}>
+		<Page noFooter={true} containerClass={'create create__bg'}>
 			<div className="create__head">
-				<h3 className='typo__head typo__head--3'>Publish EBook</h3>
+				<h3 className='typo__head typo__head--2'>Publish EBook</h3>
 			</div>
 			<div className="create__data">
-				<div className="create__data__form">
+				<div className="create__data__form utils__padding__bottom--s">
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} />
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
 					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
 					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
-					<InputField type="list" label="genres" listType={'multiple'} minLimit={3} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
+					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} />
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} />
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} />
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} />
-					<PrimaryButton label={"Create EBook"} onClick={()=>listNFTForSale()} />
+					<div className="create__data__form__cta">
+						<PrimaryButton label={"Publish"} onClick={()=>listNFTForSale()} />
+					</div>
 				</div>
 				<div className="create__data__preview">
 					<div className='create__data__preview__item'onClick={()=>{}}>
