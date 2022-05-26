@@ -19,7 +19,6 @@ import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL } from '../store/actions/modal'
 
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
-import LikedIcon from '../assets/icons/liked.svg'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import CartAddIcon from '../assets/icons/cart-add.svg'
@@ -132,11 +131,14 @@ const BookPage = props => {
 	}, [NFT, Wallet, dispatch])
 
 	useEffect(() => {
-		setLoading(true)
+		// setLoading(true)
 		Contracts.Wallet.getWalletAddress().then(res => {
 			setLoading(false)
 			if(isUsable(res)) setWallet(res)
-		}).catch(err =>{ setLoading(false) })
+		}).catch(err =>{
+			// setLoading(false)
+			// Do Nothing
+		})
 	}, [])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
