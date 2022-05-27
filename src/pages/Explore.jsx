@@ -14,6 +14,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 import { BASE_URL } from '../config/env'
 
@@ -128,7 +129,7 @@ const ExplorePage = props => {
 					</div>
 					<div className="explore__data__books__item__action">
 						<div onClick={()=>buyHandler(nft)}>Buy</div>
-						<p className='explore__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;NALNDA</p>
+						<p className='explore__data__books__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{nft.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
 					</div>
 				</div>
 			)
@@ -175,7 +176,7 @@ const ExplorePage = props => {
 			else if(filter.type === 'range') filtersDOM.push(
 				<div className="explore__data__filters__item" key={"filter"+index.toString()}>
 					<div className="explore__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
-					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange+" NALNDA":"Showing all books"}</p>
+					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange+" USDC":"Showing all books"}</p>
 					<InputField type="range" min={filter.min} max={filter.max} step={filter.step} onChange={e=>filterHandler(filter, e.target.value)}/>
 				</div>
 			)
