@@ -25,7 +25,7 @@ const FilePicker = (props) => {
             <input
                 className="file-input__hidden-input"
                 type="file"
-                accept={props.file}
+                accept={props.accept}
                 onChange={handleFileChange}
                 ref={fileInputRef}
             />

@@ -27,7 +27,7 @@ const InputField = props => {
 			case 'telephone':
 				return <input className='input__group__field typo__body' type={'tel'} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'file':
-				return <FilePicker className='input__group__field typo__body' type={'file'} accept={props.file} required onChange={props.onChange} placeholder={props.placeholder}/>
+				return <FilePicker className='input__group__field typo__body' type={'file'} accept={props.accept} required onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'list':
 				return <React.Fragment>
 					{props.listType==='multiple'?
