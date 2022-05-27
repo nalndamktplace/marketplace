@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { isFilled, isUsable } from "../../../helpers/functions";
+import { isFilled } from "../../../helpers/functions";
 import PrimaryButton from "../Buttons/Primary";
 
 const FilePicker = (props) => {
@@ -16,7 +16,7 @@ const FilePicker = (props) => {
         } else {
             setFile("");
         }
-        (typeof props.onChange === "fucntion") && props.onChange(e);
+        (typeof props.onChange === "function") && props.onChange(e);
     }
 
     return (
