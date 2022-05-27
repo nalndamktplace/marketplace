@@ -1,4 +1,5 @@
 import axios from 'axios'
+import moment from 'moment'
 import { useDispatch } from "react-redux"
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
@@ -28,7 +29,7 @@ const CreateNftPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '' })
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesCopies: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -61,7 +62,7 @@ const CreateNftPage = props => {
 				{ progress: (prog) => console.log(`received: ${prog}`) }
 			).then(res1 => {
 				const coverUrl = `https://ipfs.infura.io/ipfs/${res1.path}`
-				const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published } = FormInput
+				const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, primarySales, secondaryFrom } = FormInput
 				if(isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
 					const data = JSON.stringify({ name, author, cover: coverUrl, book: bookUrl, price})
 					IpfsClient.add(data).then(res2 => {
@@ -88,6 +89,8 @@ const CreateNftPage = props => {
 								formData.append("synopsis", synopsis)
 								formData.append("language", language)
 								formData.append("published", published)
+								formData.append("minPrimarySales", primarySales)
+								formData.append("secondarySalesFrom", secondaryFrom)
 								formData.append("publisherAddress", WalletAddress)
 								formData.append("bookAddress", bookAddress)
 								formData.append("previousOwner", previousOwner)
@@ -143,15 +146,17 @@ const CreateNftPage = props => {
 	return (
 		<Page noFooter={true} containerClass={'create create__bg'}>
 			<div className="create__head">
-				<h3 className='typo__head typo__head--2'>Publish EBook</h3>
+				<h3 className='typo__head typo__head--2'>Publish eBook</h3>
 			</div>
 			<div className="create__data">
 				<div className="create__data__form utils__padding__bottom--s">
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} />
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} />
+					<p className='typo__head typo__head--5 utils__margin__top--m utils__margin__bottom--xs'>files</p>
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
 					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
+					<p className='typo__head typo__head--5 utils__margin__top--m utils__margin__bottom--xs'>meta data</p>
 					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
@@ -159,20 +164,26 @@ const CreateNftPage = props => {
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} />
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} />
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} />
+					<p className='typo__head typo__head--5 utils__margin__top--m utils__margin__bottom--xs'>Secondary Sales Conditions</p>
+					<InputField type="number" label="min. number of primary sales" onChange={e => setFormInput({ ...FormInput, primarySales: e.target.value })} />
+					<InputField type="date" label="open on" min={moment().add(90, 'days')} onChange={e => setFormInput({ ...FormInput, secondaryFrom: e.target.value })} />
 					<div className="create__data__form__cta">
 						<PrimaryButton label={"Publish"} onClick={()=>listNFTForSale()} />
 					</div>
 				</div>
 				<div className="create__data__preview">
-					<div className='create__data__preview__item'onClick={()=>{}}>
-						{isUsable(CoverUrl)?<img className='create__data__preview__item__cover' src={CoverUrl} alt={FormInput.name+" cover"} />:<div className="create__data__preview__item__cover"/>}
-						<div className="create__data__preview__item__data">
-							<p className='create__data__preview__item__data__author typo__body typo__body--2'>{FormInput.author}</p>
-							<p className='create__data__preview__item__data__name typo__body typo__body--2'>{FormInput.name}</p>
-						</div>
-						<div className="create__data__preview__item__action">
-							<div onClick={()=>{}}>{isFilled(FormInput.price)?"Buy":null}</div>
-							<p className='create__data__preview__item__action__price typo__body typo__body--2'>{isFilled(FormInput.price)?FormInput.price+" NALNDA":null}</p>
+					<div className="create__data__preview__container">
+						<p className='typo__head typo__head--5 utils__margin__bottom--xs'>preview</p>
+						<div className='create__data__preview__item'onClick={()=>{}}>
+							{isUsable(CoverUrl)?<img className='create__data__preview__item__cover' src={CoverUrl} alt={FormInput.name+" cover"} />:<div className="create__data__preview__item__cover"/>}
+							<div className="create__data__preview__item__data">
+								<p className='create__data__preview__item__data__author typo__body typo__body--2'>{FormInput.author}</p>
+								<p className='create__data__preview__item__data__name typo__body typo__body--2'>{FormInput.name}</p>
+							</div>
+							<div className="create__data__preview__item__action">
+								<div onClick={()=>{}}>{isFilled(FormInput.price)?"Buy":null}</div>
+								<p className='create__data__preview__item__action__price typo__body typo__body--2'>{isFilled(FormInput.price)?FormInput.price+" NALNDA":null}</p>
+							</div>
 						</div>
 					</div>
 				</div>
