@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 
 import InputModal from './Modal'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
+import FilePicker from '../FilePicker/FilePicker'
 
 import { isUsable } from '../../../helpers/functions'
 
@@ -13,23 +14,23 @@ const InputField = props => {
 	const renderInputField = () => {
 		switch (props.type) {
 			case 'text':
-				return <textarea className='input__group__field input__group__field--text typo__body' type={'text'} rows={props.lines} required value={props.value} onChange={props.onChange}/>
+				return <textarea className='input__group__field input__group__field--text typo__body' type={'text'} rows={props.lines} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'date':
 				return <input className='input__group__field typo__body' type={'date'} required defaultValue={isUsable(props.min)?moment(props.min).format('YYYY-MM-DD'):null} min={isUsable(props.min)?moment(props.min).format('YYYY-MM-DD'):null} value={props.value} onChange={props.onChange}/>
 			case 'string':
-				return <input className='input__group__field typo__body' type={'text'} required value={props.value} onChange={props.onChange}/>
+				return <input className='input__group__field typo__body' type={'text'} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'email':
-				return <input className='input__group__field typo__body' type={'email'} required value={props.value} onChange={props.onChange}/>
+				return <input className='input__group__field typo__body' type={'email'} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'number':
-				return <input className='input__group__field typo__body' type={'number'} required value={props.value} onChange={props.onChange}/>
+				return <input className='input__group__field typo__body' type={'number'} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'range':
-				return <input className='input__group__field typo__body' type={'range'} required value={props.value} onChange={props.onChange} min={props.min} max={props.max} step={props.step}/>
+				return <input className='input__group__field typo__body' type={'range'} required value={props.value} onChange={props.onChange} min={props.min} max={props.max} step={props.step} placeholder={props.placeholder}/>
 			case 'password':
-				return <input className='input__group__field typo__body' type={'password'} required value={props.value} onChange={props.onChange}/>
+				return <input className='input__group__field typo__body' type={'password'} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'telephone':
-				return <input className='input__group__field typo__body' type={'tel'} required value={props.value} onChange={props.onChange}/>
+				return <input className='input__group__field typo__body' type={'tel'} required value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'file':
-				return <input className='input__group__field typo__body' type={'file'} accept={props.file} required onChange={props.onChange}/>
+				return <FilePicker className='input__group__field typo__body' type={'file'} accept={props.accept} required onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'list':
 				return <React.Fragment>
 					{props.listType==='multiple'?
@@ -54,10 +55,9 @@ const InputField = props => {
 
 	return (
 		<div className='input__group'>
+			<div className='input__group__label'>{props.label}</div>
+			<div className='input__group__description'>{props.description}</div>
 			{renderInputField()}
-			<div className='input__group__label'>
-				<p className='input__group__label__container typo__body'>{props.label}</p>
-			</div>
 		</div>
 	)
 }
