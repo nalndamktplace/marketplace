@@ -1,13 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.688a9f4c.css",
-    "main.js": "/static/js/main.ad54fd03.js",
+    "main.css": "/static/css/main.cffe29a3.css",
+    "main.js": "/static/js/main.7fea34a7.js",
     "static/js/787.c23b093c.chunk.js": "/static/js/787.c23b093c.chunk.js",
     "static/media/background-hero.png": "/static/media/background-hero.29e2fb2c28bcf0162b8c.png",
     "static/media/books-shelf.png": "/static/media/books-shelf.5798758d99f224745f08.png",
     "static/media/background-publish.svg": "/static/media/background-publish.cc210a253ef28ba82acf.svg",
     "static/media/background-hero-phone.svg": "/static/media/background-hero-phone.96e4c8c44ec1c9400836.svg",
     "static/media/background-book.svg": "/static/media/background-book.ab78f91e6c81e45864253502041ae721.svg",
+    "static/media/usdc-icon.svg": "/static/media/usdc-icon.5647c865ac91e848b0958faf9c42bef5.svg",
     "static/media/solid.svg": "/static/media/solid.1a8963b284e180518046e4d92bbd41e6.svg",
     "index.html": "/index.html",
     "static/media/cart-add.svg": "/static/media/cart-add.739465eedfbcd475b3cb7d8568dbb350.svg",
@@ -46,12 +47,12 @@
     "static/media/chevron-right.svg": "/static/media/chevron-right.805acebdacaeba75f0cf8fa3a597408a.svg",
     "static/media/back-arrow.svg": "/static/media/back-arrow.f133ec1204bff89cea4f50182f63415f.svg",
     "static/media/filter.svg": "/static/media/filter.5bf21a3bac0561e55d6f4c2fc11ea314.svg",
-    "main.688a9f4c.css.map": "/static/css/main.688a9f4c.css.map",
-    "main.ad54fd03.js.map": "/static/js/main.ad54fd03.js.map",
+    "main.cffe29a3.css.map": "/static/css/main.cffe29a3.css.map",
+    "main.7fea34a7.js.map": "/static/js/main.7fea34a7.js.map",
     "787.c23b093c.chunk.js.map": "/static/js/787.c23b093c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.688a9f4c.css",
-    "static/js/main.ad54fd03.js"
+    "static/css/main.cffe29a3.css",
+    "static/js/main.7fea34a7.js"
   ]
 }
