@@ -16,6 +16,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 const CreateNftPage = props => {
 
@@ -152,7 +153,7 @@ const CreateNftPage = props => {
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} />
 					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} />
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} />
-					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
+					<InputField type="string" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} />
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} />
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} />
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} />
@@ -172,7 +173,7 @@ const CreateNftPage = props => {
 						</div>
 						<div className="create__data__preview__item__action">
 							<div onClick={()=>{}}>{isFilled(FormInput.price)?"Buy":null}</div>
-							<p className='create__data__preview__item__action__price typo__body typo__body--2'>{isFilled(FormInput.price)?FormInput.price+" NALNDA":null}</p>
+							<p className='create__data__preview__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{isFilled(FormInput.price)?<>{FormInput.price}<USDCIcon width={20} height={20} fill='currentColor'/></>:null}</p>
 						</div>
 					</div>
 				</div>

@@ -12,6 +12,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import { hideModal, SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { BASE_URL } from '../../../config/env'
+import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
 
 const PurchaseModal = props => {
 
@@ -62,7 +63,7 @@ const PurchaseModal = props => {
 					offersDOM.push(
 						<div className="modal__purchase__data__offers__item" key={offer.book_address+'-'+offer.order_id}>
 							<p className='utils__margin__bottom--n'>Order: {offer.order_id}</p>
-							<p className='utils__margin__bottom--n'>Price: {offer.price}&nbsp;NALNDA</p>
+							<p className='utils__margin__bottom--n utils__d__flex utils__align__center'>Price: {offer.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
 							<p className='utils__margin__bottom--n'>Token: {offer.token_id}</p>
 							<p className='utils__margin__bottom--n'>Address: {offer.book_address}</p>
 							<p className='utils__margin__bottom--n'>Seller: {offer.previous_owner}</p>
@@ -95,7 +96,7 @@ const PurchaseModal = props => {
 							<div className="modal__purchase__data__book__info">
 								<p className='utils__margin__bottom--n typo__transform--capital'>{props.data.title}</p>
 								<p className='utils__margin__bottom--n typo__body--3 typo__transform--upper'>{props.data.author}</p>
-								<p className='utils__margin__bottom--n typo__body--2 typo__transform--upper'>{props.data.price}&nbsp;NALNDA</p>
+								<p className='utils__margin__bottom--n typo__body--2 typo__transform--upper utils__d__flex utils__align__center'>{props.data.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
 							</div>
 						</div>
 						<div className="modal__purchase__data__cta">
