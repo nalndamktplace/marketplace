@@ -15,6 +15,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg";
 
 import { BASE_URL } from '../config/env'
 
@@ -149,7 +150,7 @@ const AccountPage = props => {
 					</div>
 					<div className="account__data__books__item__action">
 						<div onClick={()=>readHandler(nft)}>Read</div>
-						<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;NALNDA</p>
+						<p className='account__data__books__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{nft.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
 					</div>
 				</div>
 			)

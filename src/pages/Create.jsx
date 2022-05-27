@@ -16,6 +16,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 const CreateNftPage = props => {
 
@@ -151,14 +152,15 @@ const CreateNftPage = props => {
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} description="Enter name of the author"/>
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} description="Upload a picture of book cover. File types supported: JPG, PNG, GIF, SVG, WEBP"/>
 					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} description="Upload a sample of book for preview. File types supported: EPUB"/>
-					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })}  description="Upload a book. File types supported: EPUB"/>
-					<InputField type="string" label="price in NALNDA" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
+					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} description="Upload a book. File types supported: EPUB"/>
+					<InputField type="string" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher"/>
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
+
 					<div className="create__data__form__cta">
 						<PrimaryButton label={"Publish"} onClick={()=>listNFTForSale()} />
 					</div>
@@ -172,7 +174,7 @@ const CreateNftPage = props => {
 						</div>
 						<div className="create__data__preview__item__action">
 							<div onClick={()=>{}}>{isFilled(FormInput.price)?"Buy":null}</div>
-							<p className='create__data__preview__item__action__price typo__body typo__body--2'>{isFilled(FormInput.price)?FormInput.price+" NALNDA":null}</p>
+							<p className='create__data__preview__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{isFilled(FormInput.price)?<>{FormInput.price}<USDCIcon width={20} height={20} fill='currentColor'/></>:null}</p>
 						</div>
 					</div>
 				</div>
