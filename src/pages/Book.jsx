@@ -131,13 +131,12 @@ const BookPage = props => {
 	}, [NFT, Wallet, dispatch])
 
 	useEffect(() => {
-		// setLoading(true)
+		setLoading(true)
 		Contracts.Wallet.getWalletAddress().then(res => {
 			setLoading(false)
 			if(isUsable(res)) setWallet(res)
 		}).catch(err =>{
-			// setLoading(false)
-			// Do Nothing
+			setLoading(false)
 		})
 	}, [])
 
@@ -224,7 +223,11 @@ const BookPage = props => {
 		})
 	}
 
-	const listHandler = () => { dispatch(showModal(SHOW_LIST_MODAL)) }
+	const listHandler = () => {
+		if(NFT.copies >= NFT.min_primary_sales && (moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment()))) dispatch(showModal(SHOW_LIST_MODAL))
+		else if(NFT.copies < NFT.min_primary_sales) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${NFT.min_primary_sales} copies have been sold.`, type: 2}))
+		else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
+	}
 
 	const onListHandler = listPrice => {
 		setLoading(true)
