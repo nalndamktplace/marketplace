@@ -29,7 +29,7 @@ const ListModal = props => {
 				<p className='utils__margin__bottom--n typo__transform--capital'>Book: {props.data.title}</p>
 				<p className='utils__margin__bottom--n typo__transform--capital'>Author: {props.data.author}</p>
 				<p className='typo__transform--capital'>DA Score: {props.data.da_score}</p>
-				<InputField type="string" label="listing price in NALNDA" onChange={e => setListPrice(e.target.value)} />
+				<InputField type="string" label="listing price in USDC" onChange={e => setListPrice(e.target.value)} />
 				<div style={{flex: 1}}/>
 				<PrimaryButton label="List eBook" onClick={()=>props.onListHandler(ListPrice)}/>
 			</Modal>

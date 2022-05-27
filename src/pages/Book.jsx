@@ -27,6 +27,7 @@ import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 import { BASE_URL } from '../config/env'
 
@@ -529,7 +530,7 @@ const BookPage = props => {
 										<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.price}&nbsp;NALNDA</p>
+										<p className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price}&nbsp;<USDCIcon width={24} height={24} fill='currentColor'/></p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>publication date</p>
 										<p className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</p>
 										{/* <p className='book__data__container__desc__summary__head typo__body--3'>rating</p>
