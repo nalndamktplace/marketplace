@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+
 import { isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
-import PrimaryButton from '../Buttons/Primary'
-import TextButton from '../Buttons/Text'
+
 import InputField from './Input'
+import TextButton from '../Buttons/Text'
+import PrimaryButton from '../Buttons/Primary'
 
 const InputModal = props => {
 
@@ -51,11 +53,11 @@ const InputModal = props => {
 	return(
 		<div className="modal input__modal">
 			<h4 className="input__modal__head typo__head typo__head--4">Select {props.label} {isUsable(props.minLimit)?<span className='typo__body typo__body--2'>{'('+SelectedValues.length+'/'+props.maxLimit+')'}</span>:null}</h4>
-			{props.listType==='multiple'?
+			{/* {props.listType==='multiple'?
 				<InputField type="string" label={props.label} value={SelectedValues.join(', ')} onChange={()=>{}}/>
 				:
 				<InputField type="string" label={props.label} value={SelectedValue} onChange={()=>{}}/>
-			}
+			} */}
 			<div className="input__modal__values">
 				{renderValues()}
 			</div>

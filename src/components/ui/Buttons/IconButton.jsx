@@ -1,7 +1,9 @@
-const IconButton = ({icon="",onClick}) => {
-    return ( <div className="button button--icon" onClick={onClick}>
+import React from 'react'
+
+const IconButton = ({icon="",className="",onClick}) => {
+    return ( <div className={"button button--icon "+className} onClick={onClick}>
         {icon}
     </div> );
 }
- 
-export default IconButton;
+
+export default IconButton

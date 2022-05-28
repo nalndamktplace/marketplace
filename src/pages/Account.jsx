@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router'
+import React, { useEffect, useState } from 'react'
 
 import Wallet from '../connections/wallet'
 
@@ -15,6 +15,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg";
 
 import { BASE_URL } from '../config/env'
 
@@ -25,6 +26,7 @@ const AccountPage = props => {
 		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 1000, step: 10 }],
 	]
 
+	const params = useLocation()
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
@@ -35,6 +37,14 @@ const AccountPage = props => {
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null},{name: 'price', active: null}])
 	const [PriceRange, setPriceRange] = useState(null)
+
+	useEffect(() => {
+		if(isUsable(params.state)){
+			const tab = params.state.tab
+			if(tab === 'created') setActiveTab(1)
+			else setActiveTab(0)
+		}
+	}, [params])
 
 	useEffect(() => { getWalletAddress() }, [])
 
@@ -85,16 +95,16 @@ const AccountPage = props => {
 		// 	console.log({err})
 		// })
 		try{
-			await Wallet.connectWallet();
+			await Wallet.connectWallet()
 			const signer = Wallet.getSigner()
 			dispatch({data:signer,type:SET_WALLET})
-			const address = await signer.getAddress() ;
+			const address = await signer.getAddress() 
 			setLoading(false)
-			setWalletAddress(address);
-			return address ; 
+			setWalletAddress(address)
+			return address  
 		} catch(e) {
 			setLoading(false)
-			return "" ; 
+			return ""  
 		}
 	}
 
@@ -140,7 +150,7 @@ const AccountPage = props => {
 					</div>
 					<div className="account__data__books__item__action">
 						<div onClick={()=>readHandler(nft)}>Read</div>
-						<p className='account__data__books__item__action__price typo__body typo__body--2'>{nft.price}&nbsp;NALNDA</p>
+						<p className='account__data__books__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{nft.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
 					</div>
 				</div>
 			)
@@ -149,7 +159,7 @@ const AccountPage = props => {
 	}
 
 	const renderTabs = () => {
-		let tabs = ['library', 'created']
+		let tabs = ['library', 'published']
 		let tabsDOM = []
 		tabs.forEach((tab, index) => {
 			if(index === ActiveTab) tabsDOM.push(

@@ -1,99 +1,150 @@
 .reader{
+	display: flex ;
+	height: 100vh ;
+	width: 100vw ;
+	overflow: hidden ;
+	flex-direction: column ;
 
 	&__header {
-		position: absolute ;
-		top: 0 ;
-		width: 100% ;
+		position: relative ;
+		height: 8rem ;
+		flex: 0 0 8rem ;
 		display: flex ;
-		padding: 1rem ;
+		padding: 0 2rem;
 		align-items: center ;
 		z-index: 100 ;
-		background-color: $color-white ;
+		background-color: #fff ;
 
-		&__spacer {
+		&__center {
 			flex: 1 ;
+			text-align: center ;
+			text-transform: capitalize ;
+
+			&__title {
+				position: absolute ;
+				left: 50% ;
+				top: 50% ;
+				transform: translate(-50%,-50%);
+				font-weight: 500 ;
+				font-size: 1.75rem ;
+
+				@include respond(phone){
+					display: none ;
+				}
+			}
 		}
 
-		&__readtime {
+		&__left,
+		&__right {
 			display: flex ;
-			align-items: center ;
-			justify-content: center ;
-			font-weight: 500 ;
-			padding: 0 1rem ;
+			& > * + * {
+				margin-left: 0.5rem ;
+			}
+		}
 
-			svg {
-				margin-right: 0.5rem ;
+		&__right {
+			&__button {
+				&--active {
+					background-color: $color-secondary ;
+					color: #fff ;
+
+					&:hover {
+						background-color: $color-secondary ;
+						color: #fff ;
+					}
+				}
 			}
 		}
 	}
 
-	&__book{
-		position: relative ;
-		height: calc( 100vh - 6.4rem );
-		width: 100%;
+	&__container {
+		flex: 1 ;
+		display: flex ;
+		overflow: hidden ;
+
+		&__book {
+			position: relative ;
+			flex: 1 ;
+		}
 
 		&__prev-btn,
 		&__next-btn {
+			display: flex ;
+			align-items: center ;
+			justify-content: center ;
+			width: 8rem ;
+
+			&__button {
+				width : 5rem ;
+				height: 5rem ;
+				display: flex ;
+				align-items: center ;
+				justify-content: center ;
+				border-radius: 50% ;
+				cursor: pointer ;
+				transition: all 100ms ease-out  ;
+
+				&>svg {
+					stroke : $color-neutral-500 ;	
+				}
+
+				&:hover {
+					background-color: $color-neutral-200;
+					&>svg {
+						stroke : $color-neutral-800 ;
+					}
+				}
+			}
+		}
+	
+		&__bookmark {
 			position: absolute ;
-			height: 100% ;
-			top: 0 ;
-			left: 0 ;
-			width: 10rem ;
-			display: flex ;
-			align-items: center ;
-			justify-content: center ;
-			z-index: 50 ;
-			color: rgba($color-black, 0.5) ;
+			width: 6rem ;
+			height: 10rem ;
+			right: 4rem ;
+			top: 8rem ;
+			background-color: $color-secondary ;
+			z-index: 99 ;
+			clip-path: polygon(
+				0% 0%,
+				100% 0%,
+				100% 100%,
+				50% 75%,
+				0% 100%	
+			);
+			transform: translateY(calc(-100% - 8rem));
+			transition: all 300ms ease-out ;
+
+			&--show {
+				transform: none ;
+			}
+		}
+
+		&__context-menu-container {
+			position: fixed ;
+			top : 50% ;
+			left: 50% ;
+			transform: translate(-50%,-50%) scale(0);
 			transition: all 100ms ease-out ;
-			cursor: pointer ;
+			opacity: 0 ;
+			pointer-events: none ;
 
-			&:hover {
-				background: linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,0)) ;
-				color: rgba($color-black, 1) ;
-			}
-		}
-
-		&__next-btn {
-			left: unset ;
-			right: 0 ;
-
-			&:hover {
-				background: linear-gradient(to left,rgba(0,0,0,.5),rgba(0,0,0,0)) ;
-			}
-		}
-
-		&__content {
-			position: relative ;
-			width : 100% ;
-			height: 100% ;
-			display: flex ;
-			align-items: center ;
-			justify-content: center ;
-		}
-
-		&__wrapper{
-			height: 100%;
-			width: 100%;
-
-			&__page{
-				height: 100%;
-				width: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
+			&--show {
+				opacity: 1 ;
+				pointer-events: all ;
+				transform: translate(-50%,-50%) scale(1);
 			}
 		}
 	}
 
 	&__nav{
+		height: 8rem ;
+		flex: 0 0 8rem ;
 		position: relative ;
-		height: 6.4rem;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		justify-content: center;
-		box-shadow: 0 -0.2rem 1.6rem rgba($color-black, 0.1);
-		z-index: 100;
+		justify-content: center; 
 		padding: 0 3rem ;
 		
 		&__progress {
@@ -112,18 +163,13 @@
 		}
 	}
 
-	.list {
-		list-style: none ;
-
-		&__item {
-			padding: 1rem ;
-			border-radius: 4px ;
-			color: $color-neutral-500 ;
-			
-			&:hover {
-				background-color: $color-neutral-200 ;
-				color: $color-neutral-900 ;
-			}
+	.bookmark__form__action {
+		display: flex ;
+		&> *{
+			flex:1;
+		}
+		&> * + * {
+			margin-left: 1rem ;
 		}
 	}
 }
@@ -134,17 +180,23 @@
 
 	&__header {
 		background-color: #000 ;
-		color: #fff ;
-	}
-	
-	&__prev-btn,
-	&__next-btn {
-		color: #fff ;
-		&:hover {
-			color: #fff ;
-		}
 	}
 
+	&__container{
+		&__prev-btn,
+		&__next-btn {
+			&__button {
+				&:hover {
+					color: #fff ;
+					background-color: $color-neutral-800;
+					&>svg {
+						stroke: #fff ;
+					}
+				}
+			}
+		}
+	}
+	
 	.button {
 		color: $color-neutral-500;
 	
@@ -153,6 +205,30 @@
 				background-color: $color-neutral-700 ;
 				color: $color-neutral-100;
 			}
+		}
+	}
+
+	&__header {
+		background-color: #000 ;
+		color: #fff ;
+
+		&__right {
+			&__button {
+				&--active {
+					background-color: $color-secondary ;
+					color: #fff !important ;
+					&:hover {
+						background-color: $color-secondary ;
+						color: #fff ;
+					}
+				}
+			}
+		}
+	}
+	
+	&__nav {
+		&__progress-value{
+			color: $color-neutral-100 ;
 		}
 	}
 }

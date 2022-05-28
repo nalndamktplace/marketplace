@@ -9,6 +9,7 @@
 
 @import "./sass/components/hoc/backdrop";
 @import "./sass/components/hoc/modal";
+@import "./sass/components/hoc/sidepanel";
 @import "./sass/components/nav/footer";
 @import "./sass/components/nav/header";
 @import "./sass/components/ui/button";
@@ -16,6 +17,12 @@
 @import "./sass/components/ui/snackbar";
 @import "./sass/components/ui/spinner";
 @import "./sass/components/ui/dropdown";
+@import "./sass/components/ui/customizer";
+@import "./sass/components/ui/bookmark-panel";
+@import "./sass/components/ui/annotation-panel";
+@import "./sass/components/ui/annotation-context-menu";
+@import "./sass/components/ui/read-time";
+@import "./sass/components/ui/file-picker";
 
 @import "./sass/pages/book";
 @import "./sass/pages/create";
