@@ -30,6 +30,32 @@ const IndexPage = props => {
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
 
+	// useEffect(() => {
+	// 	Wallet.connectWallet().then(res => {
+	// 		console.log({res})
+	// 		const connection = res
+	// 		const sequence = connection.sequence
+	// 		console.log({sequence})
+	// 		sequence.connect().then(res => {
+	// 			console.log({connect: res})
+	// 		}).catch(err => {
+	// 			console.error({connect: err})
+	// 		})
+	// 		sequence.getAddress().then(res => {
+	// 			console.log({address: res})
+	// 		}).catch(err => {
+	// 			console.error({address: err})
+	// 		})
+	// 		sequence.openWallet(null,null,8001).then(res => {
+	// 			console.log({open: res})
+	// 		}).catch(err => {
+	// 			console.error({open: err})
+	// 		})
+	// 	}).catch(err => {
+	// 		console.error({err})
+	// 	})
+	// }, [])
+
 	useEffect(() => {
 		if(IsLoading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
@@ -138,9 +164,13 @@ const IndexPage = props => {
 	const handleCreate = async () => {
 		if(isUsable(WalletState.wallet)) navigate('/create')
 		else {
-			await Wallet.connectWallet()
-			dispatch({data:Wallet.getSigner(),type:SET_WALLET})
-			navigate('/create')
+			Wallet.connectWallet().then(res => {
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				navigate('/create')
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+			}).finally(() => dispatch(hideSpinner()))
 		}
 	}
 	

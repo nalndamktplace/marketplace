@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 
@@ -9,7 +9,6 @@ import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
 import { isUsable } from '../helpers/functions'
-import { SET_WALLET } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
@@ -30,6 +29,8 @@ const AccountPage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
+	const WalletState = useSelector(state => state.WalletState.wallet)
+
 	const [Nfts, setNfts] = useState([])
 	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
@@ -46,7 +47,30 @@ const AccountPage = props => {
 		}
 	}, [params])
 
-	useEffect(() => { getWalletAddress() }, [])
+	useEffect(() => { 
+		setLoading(true)
+		if(isUsable(WalletState)){
+			WalletState.sequence.getAddress().then(res => {
+				setWalletAddress(res)
+			}).catch(err => {
+				console.error({err})
+			}).finally(() => setLoading(false))
+		}
+		else {
+			Wallet.connectWallet().then(res => {
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				res.sequence.getAddress().then(res => {
+					setWalletAddress(res)
+				}).catch(err => {
+					console.error({err})
+				}).finally(() => setLoading(false))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				setLoading(false)
+			})
+		}
+	}, [dispatch, WalletState])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -78,35 +102,6 @@ const AccountPage = props => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 	}, [ActiveTab, WalletAddress, dispatch])
-
-	const getWalletAddress = async () => {
-		setLoading(true)
-		// const web3Modal = new Web3Modal()
-		// const connection = await web3Modal.connect()
-		// const provider = new ethers.providers.Web3Provider(connection)
-		// const signer = provider.getSigner()
-		// signer.getAddress().then(res => {
-		// 	// ! REPLACE WITH PROPER METHOD
-		// 	dispatch({data:res,type:SET_WALLET})
-		// 	setWallet(res)
-		// 	setLoading(false)
-		// }).catch(err => {
-		// 	setLoading(false)
-		// 	console.log({err})
-		// })
-		try{
-			await Wallet.connectWallet()
-			const signer = Wallet.getSigner()
-			dispatch({data:signer,type:SET_WALLET})
-			const address = await signer.getAddress() 
-			setLoading(false)
-			setWalletAddress(address)
-			return address  
-		} catch(e) {
-			setLoading(false)
-			return ""  
-		}
-	}
 
 	const readHandler = nft => { navigate('/account/reader', {state: nft}) }
 
@@ -163,12 +158,12 @@ const AccountPage = props => {
 		let tabsDOM = []
 		tabs.forEach((tab, index) => {
 			if(index === ActiveTab) tabsDOM.push(
-				<div className="account__tabs__item">
+				<div key={tab} className="account__tabs__item">
 					<p className="account__tabs__item__label account__tabs__item__label--active typo__body">{tab}</p>
 				</div>
 			)
 			else tabsDOM.push(
-				<div onClick={()=>setActiveTab(index)} className="account__tabs__item">
+				<div key={tab} onClick={()=>setActiveTab(index)} className="account__tabs__item">
 					<p className="account__tabs__item__label typo__body">{tab}</p>
 				</div>
 			)

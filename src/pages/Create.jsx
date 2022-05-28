@@ -1,6 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 
@@ -18,6 +18,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { BASE_URL } from '../config/env'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
+import Wallet from '../connections/wallet'
 
 const CreateNftPage = props => {
 
@@ -26,6 +27,8 @@ const CreateNftPage = props => {
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
+
+	const WalletState = useSelector(state => state.WalletState.wallet)
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
@@ -41,15 +44,28 @@ const CreateNftPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		Contracts.Wallet.getWalletAddress().then(address => {
-			if(isUsable(address)) setWalletAddress(address)
-			else dispatch(setSnackbar({show: true, message: "Unable to connect to wallet.", type: 3}))
-		}).catch(err => {
-			console.error({err})
-		}).finally(() => {
-			setLoading(false)
-		})
-	}, [dispatch])
+		if(isUsable(WalletState)){
+			WalletState.sequence.getAddress().then(res => {
+				setWalletAddress(res)
+			}).catch(err => {
+				console.error({err})
+			}).finally(() => setLoading(false))
+		}
+		else {
+			Wallet.connectWallet().then(res => {
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				res.sequence.getAddress().then(res => {
+					setWalletAddress(res)
+				}).catch(err => {
+					console.error({err})
+				}).finally(() => setLoading(false))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				setLoading(false)
+			})
+		}
+	}, [dispatch, WalletState])
 
 	async function listNFTForSale() {
 		setLoading(true)

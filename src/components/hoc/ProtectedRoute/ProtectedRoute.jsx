@@ -6,13 +6,17 @@ import Wallet from "../../../connections/wallet"
 
 import { isUsable } from "../../../helpers/functions"
 
-import { SET_WALLET } from "../../../store/actions/wallet"
+import { setWallet } from "../../../store/actions/wallet"
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
+import { setSnackbar } from "../../../store/actions/snackbar"
 
 const ProtectedRoute = ({element}) => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const [isAuthenticated, setIsAuthenticated] = useState(false)
+
 	const WalletState = useSelector(state=>state.WalletState)
+
+	const [isAuthenticated, setIsAuthenticated] = useState(false)
 
 	useEffect(()=>{
 		if(isUsable(WalletState.wallet)){
@@ -20,8 +24,14 @@ const ProtectedRoute = ({element}) => {
 		} else {
 			(async ()=>{
 				try{
-					await Wallet.connectWallet()
-					dispatch({data:Wallet.getSigner(),type:SET_WALLET})
+					dispatch(showSpinner())
+					Wallet.connectWallet().then(res => {
+						dispatch(setWallet(res))
+						dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+					}).catch(err => {
+						console.error({err})
+						dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+					}).finally(() => dispatch(hideSpinner()))
 				} catch(e) {
 					navigate("/")
 				}
