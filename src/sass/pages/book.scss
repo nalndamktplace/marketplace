@@ -405,7 +405,27 @@
 						}
 					
 						&__quotes {
-							
+							&__item {
+								position: relative ;
+								padding: 1.5rem ;
+								&__icon {
+									position: absolute ;
+									top: 0 ;
+									left: 0 ;
+									transform: translate(-50%,-50%);
+									color: $color-neutral-200 ;
+								}
+
+								&__time {
+									position: absolute ;
+									right: 0 ;
+									top: 0 ;
+								}
+							}
+
+							&__item + &__item {
+								margin-top: 2rem ;
+							}
 						}
 					}
 				}
