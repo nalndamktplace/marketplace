@@ -47,30 +47,15 @@ const AccountPage = props => {
 		}
 	}, [params])
 
-	useEffect(() => { 
+	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)){
-			WalletState.sequence.getAddress().then(res => {
-				setWalletAddress(res)
-			}).catch(err => {
-				console.error({err})
-			}).finally(() => setLoading(false))
-		}
-		else {
-			Wallet.connectWallet().then(res => {
-				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-				res.sequence.getAddress().then(res => {
-					setWalletAddress(res)
-				}).catch(err => {
-					console.error({err})
-				}).finally(() => setLoading(false))
-			}).catch(err => {
-				console.error({err})
-				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-				setLoading(false)
-			})
-		}
-	}, [dispatch, WalletState])
+		Wallet.getAccountAddress().then(res => {
+			setWalletAddress(res)
+		}).catch(err => {
+			console.error({err})
+			dispatch(setSnackbar({show: true, message: "Unable to get wallet address", type: 4}))
+		}).finally(() => setLoading(false))
+	}, [dispatch])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())

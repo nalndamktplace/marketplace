@@ -30,6 +30,7 @@ import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 import { BASE_URL } from '../config/env'
+import Wallet from '../connections/wallet'
 
 const BookPage = props => {
 
@@ -134,14 +135,14 @@ const BookPage = props => {
 	}, [NFT, WalletAddress, dispatch])
 
 	useEffect(() => {
-		if(isUsable(WalletState.wallet)){
-			WalletState.wallet.sequence.getAddress().then(res => {
-				setWalletAddress(res)
-			}).catch(err => {
-				console.error({err})
-			})
-		}
-	}, [WalletState])
+		setLoading(true)
+		Wallet.getAccountAddress().then(res => {
+			setWalletAddress(res)
+		}).catch(err => {
+			console.error({err})
+			dispatch(setSnackbar({show: true, message: "Unable to get wallet address", type: 4}))
+		}).finally(() => setLoading(false))
+	}, [dispatch])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
 

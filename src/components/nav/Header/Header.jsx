@@ -49,7 +49,7 @@ const Header = props => {
 		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
-				{id: "NI4SMI2",title: "Wallet", url: null ,uri: null,icon: null,action: isUsable(WalletState.wallet)?WalletState.wallet.sequence.openWallet():null,},
+				// {id: "NI4SMI2",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet)?WalletState.wallet.sequence.openWallet():null,},
 				{id: "NI4SMI3",title: "Library",url: "/account",uri: null,icon: null,action: null},
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
@@ -209,6 +209,7 @@ const Header = props => {
 	const handleWalletConnect = () => {
 		setLoading(true)
 		Wallet.connectWallet().then(res => {
+			console.log({res})
 			dispatch(setWallet(res))
 			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 		}).catch(err => {
@@ -220,6 +221,7 @@ const Header = props => {
 	const handleWalletDisconnect = () => {
 		setLoading(true)
 		Wallet.disconnectWallet().then(res => {
+			window.localStorage.clear()
 			dispatch(clearWallet())
 			navigate('/')
 			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
