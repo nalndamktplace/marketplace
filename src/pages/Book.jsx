@@ -261,7 +261,45 @@ const BookPage = props => {
 		}).finally(() => setLoading(false))
 	}
 
-	const readHandler = () => { navigate('/account/reader', {state: {book: NFT, preview: false}}) }
+	const readHandler = async () => { 
+		try {
+			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address);
+			console.log(messageToSign.data);
+			// todo replace with web3modal
+			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+			const account = accounts[0];
+			const signedData = await window.ethereum.request({
+				method: "personal_sign",
+				params: [JSON.stringify(messageToSign.data), account, messageToSign.data.id],
+				// params: [`To verify you own the NFT in question, you must sign this message. \nThe NFT contract address is: \n${messageToSign.data.contract} \nThe verification id is: \n${messageToSign.data.id}`, account, messageToSign.data.id],
+			});
+			console.log(signedData);
+			axios({
+				url : BASE_URL + '/api/verify',
+				method : "POST",
+				data : {
+					accountAddress:account,
+					bookAddress: NFT.book_address,
+					signedData,
+					cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1)
+				}
+			}).then(res=>{
+				if(res.status === 200) {
+					console.log("RESPONSE",res.data);
+					navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
+				} else {
+					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+				}
+			}).catch(err => {
+				console.error(err);
+			});
+			
+			
+		} catch (err) {
+			console.error(err);
+		}
+		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
+	}
 
 	const previewHandler = () => { navigate('/book/preview', {state: {book: NFT, preview: true}}) }
 

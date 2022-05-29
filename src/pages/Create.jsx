@@ -51,93 +51,90 @@ const CreateNftPage = props => {
 		})
 	}, [dispatch])
 
+	useEffect(()=>{
+		console.log(FormInput);
+	},[FormInput])
+
 	async function listNFTForSale() {
 		setLoading(true)
-		IpfsClient.add(
-			FormInput.book,
-			{ progress: prog => console.log(`received: ${prog}`) }
-		).then(res => {
-			const bookUrl = `https://ipfs.infura.io/ipfs/${res.path}`
-			IpfsClient.add(
-				FormInput.cover,
-				{ progress: (prog) => console.log(`received: ${prog}`) }
-			).then(res1 => {
-				const coverUrl = `https://ipfs.infura.io/ipfs/${res1.path}`
-				const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, primarySales, secondaryFrom } = FormInput
-				if(isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
-					const data = JSON.stringify({ name, author, cover: coverUrl, book: bookUrl, price})
-					IpfsClient.add(data).then(res2 => {
-						const url = `https://ipfs.infura.io/ipfs/${res2.path}`
-						Contracts.listNftForSales(WalletAddress, url, price).then(tx => {
-							const bookAddress = tx.events[0].address
-							const newOwner = tx.events[0].args.newOwner
-							const previousOwner = tx.events[0].args.previousOwner
-							const status = tx.status
-							const txHash = tx.transactionHash
-							if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === PRIMARY_MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
-								let formData = new FormData()
-								formData.append("epub", FormInput.preview)
-								formData.append("ipfsPath", res2.path)
-								formData.append("name", name)
-								formData.append("author", author)
-								formData.append("cover", coverUrl)
-								formData.append("book", bookUrl)
-								formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
-								formData.append("price", price)
-								formData.append("pages", pages)
-								formData.append("publication", publication)
-								formData.append("attributes", JSON.stringify(attributes))
-								formData.append("synopsis", synopsis)
-								formData.append("language", language)
-								formData.append("published", published)
-								formData.append("minPrimarySales", primarySales)
-								formData.append("secondarySalesFrom", secondaryFrom)
-								formData.append("publisherAddress", WalletAddress)
-								formData.append("bookAddress", bookAddress)
-								formData.append("previousOwner", previousOwner)
-								formData.append("newOwner", newOwner)
-								formData.append("status", status)
-								formData.append("txHash", txHash)
-								axios({
-									url: BASE_URL+'/api/book/publish',
-									method: 'POST',
-									data: formData
-								}).then(res4 => {
-									if(res4.status === 200){
-										setLoading(false)
-										navigate('/account', {state: {tab: 'created'}})
-									}
-									else {
-										dispatch(setSnackbar('ERROR'))
-									}
-								})
-								.catch(err => {
-									dispatch(setSnackbar('NOT200'))
-									setLoading(false)
-								})
-							}
-							else{
+
+		let formData = new FormData();
+		formData.append("book",FormInput.book)
+		formData.append("cover",FormInput.cover)
+		formData.append("bookTitle",FormInput.title)
+
+		axios({
+			url : BASE_URL + "/api/book/submarine",
+			method : "POST",
+			data : formData
+		}).then(res => {
+			const bookUrl = res.data.book.url ;
+			const coverUrl = res.data.cover.url
+			console.log(res.data);
+			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, primarySales, secondaryFrom } = FormInput
+			if(isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){				
+				Contracts.listNftForSales(WalletAddress, coverUrl, price).then(tx => {
+					const bookAddress = tx.events[0].address
+					const newOwner = tx.events[0].args.newOwner
+					const previousOwner = tx.events[0].args.previousOwner
+					const status = tx.status
+					const txHash = tx.transactionHash
+					if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === PRIMARY_MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
+						let formData = new FormData()
+						formData.append("epub", FormInput.preview)
+						formData.append("ipfsPath", name)
+						formData.append("name", name)
+						formData.append("author", author)
+						formData.append("cover", coverUrl)
+						formData.append("book", bookUrl)
+						formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+						formData.append("price", price)
+						formData.append("pages", pages)
+						formData.append("publication", publication)
+						formData.append("attributes", JSON.stringify(attributes))
+						formData.append("synopsis", synopsis)
+						formData.append("language", language)
+						formData.append("published", published)
+						formData.append("minPrimarySales", primarySales)
+						formData.append("secondarySalesFrom", secondaryFrom)
+						formData.append("publisherAddress", WalletAddress)
+						formData.append("bookAddress", bookAddress)
+						formData.append("previousOwner", previousOwner)
+						formData.append("newOwner", newOwner)
+						formData.append("status", status)
+						formData.append("txHash", txHash)
+						axios({
+							url: BASE_URL+'/api/book/publish',
+							method: 'POST',
+							data: formData
+						}).then(res4 => {
+							if(res4.status === 200){
 								setLoading(false)
-								if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
-								else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
+								navigate('/account', {state: {tab: 'created'}})
 							}
-						}).catch((err => {
+							else {
+								dispatch(setSnackbar('ERROR'))
+							}
+						})
+						.catch(err => {
 							dispatch(setSnackbar('NOT200'))
 							setLoading(false)
-						}))
-					}).catch(err => {
-						dispatch(setSnackbar('NOT200'))
+						})
+					}
+					else{
 						setLoading(false)
-					})
-				}
-				else{
-					dispatch(setSnackbar({show: true, message: "Incomplete details", type: 3}))
+						if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
+						else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
+					}
+				}).catch((err => {
+					dispatch(setSnackbar('NOT200'))
 					setLoading(false)
-				}
-			}).catch(err => {
-				dispatch(setSnackbar('NOT200'))
+				}))
+			}
+			else{
+				dispatch(setSnackbar({show: true, message: "Incomplete details", type: 3}))
 				setLoading(false)
-			})
+			}
 		}).catch(err => {
 			dispatch(setSnackbar('NOT200'))
 			setLoading(false)

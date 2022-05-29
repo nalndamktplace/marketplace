@@ -68,7 +68,7 @@ const ReaderPage = () => {
         setBookMeta(navParams.book.preview)
       }
       else{
-        bookURL = navParams.book.book
+        bookURL = navParams.book.submarineURL
         setBookMeta(navParams.book.book)
       }
         const book = Epub(bookURL,{openAs:"epub"});
