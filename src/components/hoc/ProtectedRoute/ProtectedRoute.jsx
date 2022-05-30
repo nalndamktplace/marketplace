@@ -22,20 +22,16 @@ const ProtectedRoute = ({element}) => {
 		if(isUsable(WalletState.wallet)){
 			setIsAuthenticated(true)
 		} else {
-			(async ()=>{
-				try{
-					dispatch(showSpinner())
-					Wallet.connectWallet().then(res => {
-						dispatch(setWallet(res))
-						dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-					}).catch(err => {
-						console.error({err})
-						dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-					}).finally(() => dispatch(hideSpinner()))
-				} catch(e) {
-					navigate("/")
-				}
-			})()
+			dispatch(showSpinner())
+			Wallet.connectWallet().then(res => {
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				setIsAuthenticated(true)
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				navigate('/')
+			}).finally(() => dispatch(hideSpinner()))
 		}
 	},[WalletState, dispatch, navigate])
 
