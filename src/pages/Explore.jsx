@@ -44,13 +44,9 @@ const ExplorePage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		Wallet.getAccountAddress().then(res => {
-			setWalletAddress(res)
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar({show: true, message: "Unable to get wallet address", type: 4}))
-		}).finally(() => setLoading(false))
-	}, [dispatch])
+		if(isUsable(WalletState)) setWalletAddress(WalletState)
+		setLoading(false)
+	}, [WalletState])
 
 	const loadNftHandler = () => {
 		setLoading(true)

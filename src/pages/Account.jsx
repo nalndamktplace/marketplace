@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import Wallet from '../connections/wallet'
 
@@ -9,6 +9,7 @@ import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
 import { isUsable } from '../helpers/functions'
+import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
@@ -39,6 +40,18 @@ const AccountPage = props => {
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null},{name: 'price', active: null}])
 	const [PriceRange, setPriceRange] = useState(null)
 
+	const connectWallet = useCallback(
+		() => {
+			Wallet.connectWallet().then(res => {
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+			}).finally(() => setLoading(false))
+		},[dispatch],
+	)
+
 	useEffect(() => {
 		if(isUsable(params.state)){
 			const tab = params.state.tab
@@ -49,13 +62,11 @@ const AccountPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		Wallet.getAccountAddress().then(res => {
-			setWalletAddress(res)
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar({show: true, message: "Unable to get wallet address", type: 4}))
-		}).finally(() => setLoading(false))
-	}, [dispatch])
+		if(isUsable(WalletState))
+			setWalletAddress(WalletState)
+		else connectWallet()
+		setLoading(false)
+	}, [WalletState, connectWallet])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
