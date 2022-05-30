@@ -62,14 +62,15 @@ const ReaderPage = () => {
 
     useEffect(()=>{
       let bookURL = null
-        const navParams = params.state
+    const navParams = params.state
+    console.log(params.state);
       if(isUsable(navParams.preview) && navParams.preview === true){
         bookURL = BASE_URL+'/files/'+navParams.book.preview
-        setBookMeta(navParams.book.preview)
+        setBookMeta(navParams.book)
       }
       else{
         bookURL = navParams.book.book
-        setBookMeta(navParams.book.book)
+        setBookMeta(navParams.book)
       }
         const book = Epub(bookURL,{openAs:"epub"});
         book.ready.then(()=>{
@@ -169,6 +170,7 @@ const ReaderPage = () => {
     }
 
     function closeFullscreen() {
+        if(!document.fullscreenElement) return ;
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.webkitExitFullscreen) { /* Safari */
