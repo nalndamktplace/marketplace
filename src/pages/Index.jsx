@@ -150,10 +150,10 @@ const IndexPage = props => {
 		Highlights.forEach(highlight => {
 			highlightsDOM.push(
 				<div key={highlight.id} className='index__book__container__item' onClick={()=>openHandler(highlight)}>
-					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.name} />
+					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.title} />
 					<div className="index__book__container__item__data">
 						<p className='index__book__container__item__data__author typo__body typo__body--2'>{highlight.author}</p>
-						<p className='index__book__container__item__data__name typo__body typo__body--2'>{highlight.name}</p>
+						<p className='index__book__container__item__data__name typo__body typo__body--2'>{highlight.title}</p>
 					</div>
 				</div>
 			)
