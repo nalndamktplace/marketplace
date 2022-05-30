@@ -181,23 +181,11 @@ const Header = props => {
 		return domItems
 	}
 
-	// useEffect(()=>{
-	// 	const handleAccountChange = async accounts => {
-	// 		if(!isFilled(accounts)) handleWalletDisconnect()
-	// 	}
-	// 	if(window?.ethereum?.on){
-	// 		window.ethereum.on("accountsChanged",handleAccountChange)
-	// 		return () => {
-	// 			window?.ethereum?.removeListener("accountsChanged",handleAccountChange)
-	// 		}
-	// 	}
-	// },[])
-	
 	useEffect(() => {
 		(async ()=>{
 			if (Wallet.web3Modal.cachedProvider){
 				Wallet.connectWallet().then(res => {
-					dispatch(setWallet(res))
+					dispatch(setWallet(res.selectedAddress))
 				}).catch(err => {
 					console.error({err})
 					dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
@@ -209,8 +197,7 @@ const Header = props => {
 	const handleWalletConnect = () => {
 		setLoading(true)
 		Wallet.connectWallet().then(res => {
-			console.log({res})
-			dispatch(setWallet(res))
+			dispatch(setWallet(res.selectedAddress))
 			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 		}).catch(err => {
 			console.error({err})
