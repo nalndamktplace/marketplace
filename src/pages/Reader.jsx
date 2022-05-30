@@ -61,16 +61,16 @@ const ReaderPage = () => {
     },[rendition])
 
     useEffect(()=>{
-        let bookURL = null
-        const navParams = params.state
-        if(isUsable(navParams.preview) && navParams.preview === true){
-            bookURL = BASE_URL+'/files/'+navParams.book.preview
-            setBookMeta(navParams.book)
-        }
-        else{
-            bookURL = navParams.book.book
-            setBookMeta(navParams.book)
-        }
+      let bookURL = null
+      const navParams = params.state
+      if(isUsable(navParams.preview) && navParams.preview === true){
+        bookURL = BASE_URL+'/files/'+navParams.book.preview
+        setBookMeta(navParams.book)
+      }
+      else{
+        bookURL = navParams.book.book
+        setBookMeta(navParams.book)
+      }
         const book = Epub(bookURL,{openAs:"epub"});
         book.ready.then(()=>{
             document.querySelector("#book__reader").innerHTML = "" ;
@@ -169,6 +169,7 @@ const ReaderPage = () => {
     }
 
     function closeFullscreen() {
+        if(!document.fullscreenElement) return ;
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.webkitExitFullscreen) { /* Safari */
