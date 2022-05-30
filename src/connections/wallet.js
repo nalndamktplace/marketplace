@@ -31,7 +31,6 @@ const Wallet = {
 		return provider
 	},
 	getAccountAddress: async () => {
-		console.log({address: await signer.getAddress()})
 		const address = await signer.getAddress()
 		return(address)
 	}
