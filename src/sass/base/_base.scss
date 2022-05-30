@@ -57,3 +57,7 @@ p{
 // .sc-eCImPb.bElhDP.web3modal-provider-wrapper{
 // 	&:first-child{display: none;}
 // }
+
+.web3modal-modal-lightbox {
+	z-index: 999 !important ;
+}

@@ -18,7 +18,6 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL } from '../store/actions/modal'
 
-import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import CartAddIcon from '../assets/icons/cart-add.svg'
@@ -27,6 +26,7 @@ import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
+import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 import {ReactComponent as QuoteIcon} from "../assets/icons/quote.svg"
 
@@ -62,9 +62,7 @@ const BookPage = props => {
 	const [Quotes, setQuotes] = useState([]);
 	const [QuotesForm, setQuotesForm] = useState({quote: ''})
 
-	useEffect(() => {
-		if(isUsable(NFT)) setListed(NFT.listed === 1?true:false)
-	}, [NFT])
+	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -73,7 +71,6 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/reviews?bid='+NFT.id,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
 				if(res.status === 200){
 					setReviews(res.data.reviews)
 					setRating(res.data.rating)
@@ -81,9 +78,8 @@ const BookPage = props => {
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, dispatch])
 
@@ -94,15 +90,11 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/reviewed?bid='+NFT.id+'&uid='+Wallet,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
-				if(res.status === 200){
-					if(isNotEmpty(res.data)) setReview(res.data)
-				}
+				if(res.status === 200) if(isNotEmpty(res.data)) setReview(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, Wallet, dispatch])
 
@@ -110,19 +102,17 @@ const BookPage = props => {
 		if(isUsable(NFT)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/book/quotes?bid='+NFT.id,
-				method: 'GET'
-			}).then(res => {
-				setLoading(false)
-				if(res.status === 200){
-					console.log(res.data);
-					setQuotes(res.data)
+				url: BASE_URL+'/api/book/quotes',
+				method: 'GET',
+				params: {
+					bid: NFT.id
 				}
+			}).then(res => {
+				if(res.status === 200) setQuotes(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, dispatch])
 
@@ -133,21 +123,13 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/quoted?bid='+NFT.id+'&uid='+Wallet,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
-				if(res.status === 200){
-					if(isNotEmpty(res.data)) setQuote(res.data)
-				}
+				if(res.status === 200) if(isNotEmpty(res.data)) setQuote(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, Wallet, dispatch])
-
-	useEffect(()=>{
-		console.log(Quotes);
-	},[Quotes])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -182,11 +164,10 @@ const BookPage = props => {
 	useEffect(() => {
 		setLoading(true)
 		Contracts.Wallet.getWalletAddress().then(res => {
-			setLoading(false)
 			if(isUsable(res)) setWallet(res)
 		}).catch(err =>{
-			setLoading(false)
-		})
+			// do nothing
+		}).finally(() => setLoading(false))
 	}, [])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
@@ -234,10 +215,8 @@ const BookPage = props => {
 			}
 		}).then(res => {
 			if(res.status === 200){
-				setLoading(true)
 				const orderId = res.data.order_id
 				Contracts.unlistBookFromMarketplace(orderId).then(res => {
-					setLoading(true)
 					axios({
 						url: BASE_URL + '/api/book/unlist',
 						method: 'POST',
@@ -266,10 +245,9 @@ const BookPage = props => {
 			}
 			else dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
-			setLoading(false)
 			console.error({err})
 			dispatch(setSnackbar('ERROR'))
-		})
+		}).finally(() => setLoading(false))
 	}
 
 	const listHandler = () => {

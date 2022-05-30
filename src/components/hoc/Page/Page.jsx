@@ -8,7 +8,7 @@ const Page = props => {
 	const getClasses = () => {
 		let classes = ["page__wrapper"]
 		if(props.fluid) classes.push("page__wrapper--fluid")
-		if(props.containerClass)  classes.push(props.containerClass)
+		if(props.containerClass) classes.push(props.containerClass)
 		return classes.join(" ")
 	}
 

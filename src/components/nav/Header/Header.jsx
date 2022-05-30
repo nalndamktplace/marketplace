@@ -29,7 +29,7 @@ const Header = props => {
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore" ,url: "/explore",uri: null, icon: CompassIcon ,action: null, subMenu: null },
 		{ id: "NI2",title: "Publish" ,url: "/create" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
-		{ id: "NI3",title: "Resources",url: null ,uri: null, icon: FileTextIcon   ,action: null,
+		{ id: "NI3",title: "Resources",url: null ,uri: null, icon: FileTextIcon ,action: null,
 			subMenu: [
 				{id: "NI3SMI1",title: "Blog" ,url: null,uri: "https://nalndamktplace.medium.com/",icon: null,action: null,},
 				{id: "NI3SMI2",title: "Whitepaper",url: null,uri: "https://docs.nalnda.com/" ,icon: null,action: null,},

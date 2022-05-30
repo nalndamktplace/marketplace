@@ -101,10 +101,10 @@ const AccountPage = props => {
 			const address = await signer.getAddress() 
 			setLoading(false)
 			setWalletAddress(address)
-			return address  
+			return address
 		} catch(e) {
 			setLoading(false)
-			return ""  
+			return ""
 		}
 	}
 
