@@ -1,5 +1,5 @@
 import Epub, { EpubCFI } from "epubjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import IconButton from "../components/ui/Buttons/IconButton";
 import { isUsable } from "../helpers/functions";
@@ -62,8 +62,7 @@ const ReaderPage = () => {
 
     useEffect(()=>{
       let bookURL = null
-    const navParams = params.state
-    console.log(params.state);
+      const navParams = params.state
       if(isUsable(navParams.preview) && navParams.preview === true){
         bookURL = BASE_URL+'/files/'+navParams.book.preview
         setBookMeta(navParams.book)
@@ -289,45 +288,32 @@ const ReaderPage = () => {
         updateAnnotation();
     },[rendition,bookMeta]);
 
+    const addAnnotationRef = useRef();
+
     const handleAnnotationColorSelect = (color) => {
         if(!isUsable(annotationSelection)) return ;
         if(!isUsable(rendition)) return ;
         if(!isUsable(bookMeta)) return ;
-        rendition.annotations.add(
-            "highlight",
-            annotationSelection.cfiRange,
-            {},
-            ()=>{},
-            "",
-            {"fill": color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-        );
-        addAnnotaion({...annotationSelection,color});
-    }
-
-    const addAnnotaion = (annotation) => {
-        if(!isUsable(rendition)) return;
-        if(!isUsable(bookMeta)) return;
-        const bookKey = `${bookMeta.id}:annotations`
-        let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
-        window.localStorage.setItem(bookKey,JSON.stringify([...stored,annotation]))
+        if(isUsable(addAnnotationRef.current) && typeof addAnnotationRef.current === "function")
+            addAnnotationRef.current({...annotationSelection,color});
     }
 
     const updateAnnotation = () => {
-        if(!isUsable(rendition)) return "";
-        if(!isUsable(bookMeta)) return "";
-        const bookKey = `${bookMeta.id}:annotations`
-        let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
-        console.log(stored);
-        stored.forEach((item)=>{
-            rendition.annotations.add(
-                "highlight",
-                item.cfiRange,
-                {},
-                ()=>{},
-                "",
-                {"fill": item.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-            );
-        })
+        // if(!isUsable(rendition)) return "";
+        // if(!isUsable(bookMeta)) return "";
+        // const bookKey = `${bookMeta.id}:annotations`
+        // let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
+        // console.log(stored);
+        // stored.forEach((item)=>{
+        //     rendition.annotations.add(
+        //         "highlight",
+        //         item.cfiRange,
+        //         {},
+        //         ()=>{},
+        //         "",
+        //         {"fill": item.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
+        //     );
+        // })
     }
 
     return (
@@ -356,6 +342,7 @@ const ReaderPage = () => {
                             rendition={rendition} 
                             bookMeta={bookMeta}
                             show={annotaionPanel} 
+                            addAnnotationRef={addAnnotationRef}
                             hideModal={()=>{setAnnotaionPanel(false)}}
                             onRemove={()=>{setAnnotaionPanel(false)}}
                         />
