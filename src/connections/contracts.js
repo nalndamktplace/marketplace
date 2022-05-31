@@ -1,4 +1,6 @@
-import Web3Modal from "web3modal"
+
+import Wallet from "./wallet"
+
 import { PRIMARY_MARKET_CONTRACT_ADDRESS, SECONDARY_MARKET_CONTRACT_ADDRESS, NALNDA_TOKEN_CONTRACT_ADDRESS } from "../config/contracts"
 
 const { ethers } = require('ethers')
@@ -23,8 +25,7 @@ const getBooks = async function getBooks (index){
 }
 
 const listNftForSales = async function listNftForSale(authorAddress, coverUrl, price){
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
+	const connection = Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 	let primaryMarketContract = new ethers.Contract(PRIMARY_MARKET_CONTRACT_ADDRESS, primaryMarket.abi, signer)
@@ -34,8 +35,7 @@ const listNftForSales = async function listNftForSale(authorAddress, coverUrl, p
 }
 
 const purchaseNft = async function purchaseNft(buyer, bookAddress, amount){
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
+	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 	const nalndaTokenContract = new ethers.Contract(NALNDA_TOKEN_CONTRACT_ADDRESS, nalndaToken.abi, signer)
@@ -47,21 +47,8 @@ const purchaseNft = async function purchaseNft(buyer, bookAddress, amount){
 	return tx
 }
 
-const getWalletAddress = async function getWalletAddress(){
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
-	const provider = new ethers.providers.Web3Provider(connection)
-	const signer = provider.getSigner()
-	return signer.getAddress()
-}
-
-const connectWallet = async function connectWallet(){
-	return await window.ethereum.enable()
-}
-
 const getBookUri = async function getBookUri(bookAddress){
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
+	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 	const bookContract = new ethers.Contract(bookAddress, book.abi, signer)
@@ -70,8 +57,7 @@ const getBookUri = async function getBookUri(bookAddress){
 }
 
 const listBookToMarketplace = async function listBookToMarketplace(bookAddress, bookTokenId, bookPrice) {
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
+	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 
@@ -85,8 +71,7 @@ const listBookToMarketplace = async function listBookToMarketplace(bookAddress, 
 }
 
 const unlistBookFromMarketplace = async function unlistBookFromMarketplace(bookOrderId) {
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
+	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 
@@ -96,8 +81,7 @@ const unlistBookFromMarketplace = async function unlistBookFromMarketplace(bookO
 }
 
 const buyListedCover = async function buyListedCover(bookOrderId, bookPrice) {
-	const web3Modal = new Web3Modal()
-	const connection = await web3Modal.connect()
+	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 
@@ -123,11 +107,7 @@ const Contracts = {
 	getBookUri,
 	listBookToMarketplace,
 	unlistBookFromMarketplace,
-	buyListedCover,
-	Wallet: {
-		getWalletAddress,
-		connectWallet
-	}
+	buyListedCover
 }
 
 export default Contracts

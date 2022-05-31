@@ -2,8 +2,10 @@ import React, { useState,useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { setSnackbar } from '../../../store/actions/snackbar'
 import { isFilled, isUsable } from '../../../helpers/functions'
-import { CLEAR_WALLET, SET_WALLET } from '../../../store/actions/wallet'
+import { clearWallet, setWallet } from '../../../store/actions/wallet'
+import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import { GaExternalTracker,GaSocialTracker } from '../../../trackers/ga-tracker.js'
 
 import Wallet from "../../../connections/wallet"
@@ -12,20 +14,29 @@ import PrimaryButton from '../../ui/Buttons/Primary'
 
 import Logo from '../../../assets/logo/solid.svg'
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
-import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
-import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
-import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg"
-import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
-import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
-import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg"
+import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
+import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
+import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
 import {ReactComponent as BackIcon} from "../../../assets/icons/back-arrow.svg"
 import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg"
+import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
+import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg"
+import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
 const Header = props => {
-	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
-	const WalletState = useSelector(state=>state.WalletState)
+
 	const dispatch = useDispatch()
+	const location = useLocation()
+	const navigate = useNavigate()
+
+	const WalletState = useSelector(state=>state.WalletState)
+
+	const [Loading, setLoading] = useState(false)
+	const [MenuOpen, setMenuOpen] = useState(false)
+	const [SubMenuOpen, setSubMenuOpen] = useState(false)
+	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
+
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore" ,url: "/explore",uri: null, icon: CompassIcon ,action: null, subMenu: null },
 		{ id: "NI2",title: "Publish" ,url: "/create" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
@@ -38,23 +49,23 @@ const Header = props => {
 		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
-				{id: "NI4SMI2",title: "Wallet", url: "/wallet" ,uri: null,icon: null,action: null,},
+				// {id: "NI4SMI2",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet)?WalletState.wallet.sequence.openWallet():null,},
 				{id: "NI4SMI3",title: "Library",url: "/account",uri: null,icon: null,action: null},
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
 		},
 	]
-	const SocialLinks = [
+	const SOCIAL_LINKS = [
 		{name:"twitter",url:"https://twitter.com/nalndamktplace",icon:<TwitterIcon />},
 		{name:"medium",url:"https://nalndamktplace.medium.com",icon:<MediumIcon />},
 		{name:"telegram",url:"https://t.me/nalndamktplace",icon:<TelegramIcon />},
 		{name:"github",url:"https://github.com/nalndamktplace",icon:<GithubIcon />}
 	]
 
-	const navigate = useNavigate()
-	const location = useLocation()
-	const [MenuOpen, setMenuOpen] = useState(false)
-	const [SubMenuOpen, setSubMenuOpen] = useState(false)
+	useEffect(() => {
+		if(Loading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [dispatch, Loading])
 
 	useEffect(()=>{
 		MenuOpen && window.scrollTo(0,0)
@@ -163,42 +174,48 @@ const Header = props => {
 
 	const renderSocialIcons = () => {
 		const domItems = []
-		SocialLinks.forEach(item => domItems.push(<div key={item.name} onClick={()=>{GaSocialTracker(item.name);window.open(item.url, "_blank")}} className="header__menu__phone__container__socials__item">
-		{item.icon}
-	</div>))
+		SOCIAL_LINKS.forEach(item => domItems.push(
+			<div key={item.name} onClick={()=>{GaSocialTracker(item.name);window.open(item.url, "_blank")}} className="header__menu__phone__container__socials__item">
+				{item.icon}
+			</div>))
 		return domItems
 	}
 
-	useEffect(()=>{
-		const handleAccountChange = async accounts => {
-			if(!isFilled(accounts)) handleWalletDisconnect()
-		}
-		if(window?.ethereum?.on){
-			window.ethereum.on("accountsChanged",handleAccountChange)
-			return () => {
-				window?.ethereum?.removeListener("accountsChanged",handleAccountChange)
-			}
-		}
-	},[])
-	
 	useEffect(() => {
 		(async ()=>{
 			if (Wallet.web3Modal.cachedProvider){
-				await Wallet.connectWallet()
-				dispatch({data:Wallet.getSigner(),type:SET_WALLET})
+				Wallet.connectWallet().then(res => {
+					dispatch(setWallet(res.selectedAddress))
+				}).catch(err => {
+					console.error({err})
+					dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				})
 			}
 		})()
-	}, [])
+	}, [dispatch])
 
-	const handleWalletConnect = async () => {
-		await Wallet.connectWallet()
-		dispatch({data:Wallet.getSigner(),type:SET_WALLET})
+	const handleWalletConnect = () => {
+		setLoading(true)
+		Wallet.connectWallet().then(res => {
+			dispatch(setWallet(res.selectedAddress))
+			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+		}).catch(err => {
+			console.error({err})
+			dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+		}).finally(() => setLoading(false))
 	}
 
 	const handleWalletDisconnect = () => {
-		Wallet.disconnectWallet()
-		dispatch({type:CLEAR_WALLET})
-		navigate("/")
+		setLoading(true)
+		Wallet.disconnectWallet().then(res => {
+			window.localStorage.clear()
+			dispatch(clearWallet())
+			navigate('/')
+			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
+		}).catch(err => {
+			console.error({err})
+			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
+		}).finally(() => setLoading(false))
 	}
 
 	return (

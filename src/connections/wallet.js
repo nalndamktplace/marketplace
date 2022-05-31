@@ -8,6 +8,7 @@ const web3Modal = new Web3Modal({
 	providerOptions,
 })
 
+let signer
 let provider
 let connection
 
@@ -16,6 +17,7 @@ const Wallet = {
 	connectWallet: async () => {
 		connection = await web3Modal.connect()
 		provider = new ethers.providers.Web3Provider(connection) 
+		signer = provider.getSigner()
 		return connection 
 	},
 	disconnectWallet: async () => {
@@ -23,11 +25,15 @@ const Wallet = {
 			await web3Modal.clearCachedProvider()
 	},
 	getSigner: () => {
-		return provider.getSigner()
+		return signer
 	},
 	getProvider: () => {
 		return provider
 	},
+	getAccountAddress: async () => {
+		const address = await signer.getAddress()
+		return(address)
+	}
 }
 
 export default Wallet 

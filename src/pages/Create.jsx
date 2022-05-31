@@ -1,8 +1,8 @@
 import axios from 'axios'
 import moment from 'moment'
-import { useDispatch } from "react-redux"
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux"
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
@@ -17,7 +17,8 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
-import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
+
+import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
 
 const CreateNftPage = props => {
 
@@ -26,6 +27,8 @@ const CreateNftPage = props => {
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
+
+	const WalletState = useSelector(state => state.WalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
@@ -41,15 +44,9 @@ const CreateNftPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		Contracts.Wallet.getWalletAddress().then(address => {
-			if(isUsable(address)) setWalletAddress(address)
-			else dispatch(setSnackbar({show: true, message: "Unable to connect to wallet.", type: 3}))
-		}).catch(err => {
-			console.error({err})
-		}).finally(() => {
-			setLoading(false)
-		})
-	}, [dispatch])
+		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
+		setLoading(false)
+	}, [WalletState])
 
 	async function listNFTForSale() {
 		setLoading(true)

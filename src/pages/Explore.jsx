@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 
@@ -17,6 +17,7 @@ import BooksShelf from '../assets/images/books-shelf.png'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 import { BASE_URL } from '../config/env'
+import Wallet from '../connections/wallet'
 
 const ExplorePage = props => {
 
@@ -25,8 +26,10 @@ const ExplorePage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
+	const WalletState = useSelector(state => state.WalletState)
+
 	const [Nfts, setNfts] = useState([])
-	const [Wallet, setWallet] = useState(null)
+	const [WalletAddress, setWalletAddress] = useState(null)
 	const [Filters, setFilters] = useState(false)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveFilters, setActiveFilters] = useState([{name: 'genres', active: null},{name: 'price', active: null}])
@@ -41,13 +44,9 @@ const ExplorePage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		Contracts.Wallet.getWalletAddress().then(res => {
-			setLoading(false)
-			if(isUsable(res)) setWallet(res)
-		}).catch(err =>{
-			setLoading(false)
-		})
-	}, [])
+		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
+		setLoading(false)
+	}, [WalletState])
 
 	const loadNftHandler = () => {
 		setLoading(true)
@@ -64,13 +63,13 @@ const ExplorePage = props => {
 
 	const buyHandler = nft => {
 		setLoading(true)
-		Contracts.purchaseNft(Wallet, nft.book_address, nft.price.toString()).then(res => {
+		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
 				url: BASE_URL+'/api/book/purchase',
 				method: 'POST',
-				data: {ownerAddress: Wallet, bookAddress: nft.book_address, tokenId}
+				data: {ownerAddress: WalletAddress, bookAddress: nft.book_address, tokenId}
 			}).then(res => {
 				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
 			}).catch(err => {

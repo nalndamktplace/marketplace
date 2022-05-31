@@ -1,6 +1,6 @@
 import axios from 'axios'
 import moment from 'moment'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 
@@ -13,6 +13,9 @@ import Contracts from '../connections/contracts'
 import ListModal from '../components/modal/List/List'
 import PurchaseModal from '../components/modal/Purchase/Purchase'
 
+import Wallet from '../connections/wallet'
+
+import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
@@ -40,7 +43,9 @@ const BookPage = props => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const [Wallet, setWallet] = useState(null)
+	const WalletState = useSelector(state => state.WalletState)
+
+	const [WalletAddress, setWalletAddress] = useState(null)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState('TAB01')
 	// NFT
@@ -84,19 +89,18 @@ const BookPage = props => {
 	}, [NFT, dispatch])
 
 	useEffect(() => {
-		if(isUsable(NFT) && isUsable(Wallet)){
+		if(isUsable(NFT) && isUsable(WalletAddress)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/book/reviewed?bid='+NFT.id+'&uid='+Wallet,
+				url: BASE_URL+'/api/book/reviewed?bid='+NFT.id+'&uid='+WalletAddress,
 				method: 'GET'
 			}).then(res => {
 				if(res.status === 200) if(isNotEmpty(res.data)) setReview(res.data)
-				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [NFT, Wallet, dispatch])
+	}, [NFT, dispatch, WalletAddress])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -124,12 +128,11 @@ const BookPage = props => {
 				method: 'GET'
 			}).then(res => {
 				if(res.status === 200) if(isNotEmpty(res.data)) setQuote(res.data)
-				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [NFT, Wallet, dispatch])
+	}, [NFT, WalletAddress, dispatch])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -147,45 +150,41 @@ const BookPage = props => {
 	}, [NFT, dispatch])
 
 	useEffect(() => {
-		if(isUsable(NFT) && isUsable(Wallet)){
+		if(isUsable(NFT) && isUsable(WalletAddress)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/book/liked?bid='+NFT.id+'&uid='+Wallet,
+				url: BASE_URL+'/api/book/liked?bid='+NFT.id+'&uid='+WalletAddress,
 				method: 'GET'
 			}).then(res => {
 				if(res.status === 200) setLiked(res.data.liked)
-				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [NFT, Wallet, dispatch])
+	}, [NFT, WalletAddress, dispatch])
 
 	useEffect(() => {
 		setLoading(true)
-		Contracts.Wallet.getWalletAddress().then(res => {
-			if(isUsable(res)) setWallet(res)
-		}).catch(err =>{
-			// do nothing
-		}).finally(() => setLoading(false))
-	}, [])
+		if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
+		setLoading(false)
+	}, [WalletState])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
 
 	useEffect(() => {
-		if(isUsable(Wallet)){
+		setNFT(params.state)
+		if(isUsable(WalletAddress)){
 			setLoading(true)
 			const book = params.state
-			if(book.new_owner === Wallet) setOwner(true)
+			if(book.new_owner === WalletAddress) setOwner(true)
 			else setOwner(false)
-			if(book.publisher_address === Wallet) setCreated(true)
+			if(book.publisher_address === WalletAddress) setCreated(true)
 			else setCreated(false)
-			setNFT(params.state)
 			axios({
 				url: BASE_URL+'/api/book/owner',
 				method: 'GET',
 				params: {
-					ownerAddress: Wallet,
+					ownerAddress: WalletAddress,
 					bookAddress: book.book_address
 				}
 			}).then(res => { if(res.status === 200) setOwner(true)
@@ -194,7 +193,7 @@ const BookPage = props => {
 					console.error({err})
 			}).finally(() => setLoading(false))
 		}
-	}, [params, dispatch, Wallet])
+	}, [params, dispatch, WalletAddress])
 
 	useEffect(() => { if(isUsable(NFT) && isUsable(Created) && isUsable(Owner)) setLoading(false) }, [NFT, Created, Owner])
 
@@ -203,51 +202,77 @@ const BookPage = props => {
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
 
+	const walletStatus = () => {
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+			setWalletAddress(WalletState.wallet)
+			return true
+		}
+		else if(!isUsable(WalletState.support) || WalletState.support === false){
+			window.open("https://metamask.io/download/", '_blank')
+			return false
+		}
+		else {
+			setLoading(true)
+			Wallet.connectWallet().then(res => {
+				setWalletAddress(res.selectedAddress)
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				return true
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				return false
+			}).finally(() => setLoading(false))
+		}
+	}
+
 	const unlistHandler = () => {
-		setLoading(true)
-		axios({
-			url: BASE_URL + '/api/user/book/listed',
-			method: 'GET',
-			params: {
-				ownerAddress: Wallet,
-				tokenId: NFT.tokenId,
-				bookAddress: NFT.book_address
-			}
-		}).then(res => {
-			if(res.status === 200){
-				const orderId = res.data.order_id
-				Contracts.unlistBookFromMarketplace(orderId).then(res => {
-					axios({
-						url: BASE_URL + '/api/book/unlist',
-						method: 'POST',
-						data: {
-							ownerAddress: Wallet,
-							bookAddress: NFT.book_address,
-						}
-					}).then(res => {
-						if(res.status === 200){
-							setListed(false)
-							dispatch(hideModal())
-							dispatch(setSnackbar({show: true, message: "Book unlisted from marketplace.", type: 1}))
-						}
-						else dispatch(setSnackbar('NOT200'))
+		if(isUsable(WalletAddress)){
+			setLoading(true)
+			axios({
+				url: BASE_URL + '/api/user/book/listed',
+				method: 'GET',
+				params: {
+					ownerAddress: WalletAddress,
+					tokenId: NFT.tokenId,
+					bookAddress: NFT.book_address
+				}
+			}).then(res => {
+				if(res.status === 200){
+					setLoading(true)
+					const orderId = res.data.order_id
+					Contracts.unlistBookFromMarketplace(orderId).then(res => {
+						setLoading(true)
+						axios({
+							url: BASE_URL + '/api/book/unlist',
+							method: 'POST',
+							data: {
+								ownerAddress: WalletAddress,
+								bookAddress: NFT.book_address,
+							}
+						}).then(res => {
+							if(res.status === 200){
+								setListed(false)
+								dispatch(hideModal())
+								dispatch(setSnackbar({show: true, message: "Book unlisted from marketplace.", type: 1}))
+							}
+							else dispatch(setSnackbar('NOT200'))
+						}).catch(err => {
+							dispatch(setSnackbar('ERROR'))
+						}).finally( ()=> { setLoading(false) })
 					}).catch(err => {
-						console.error({err})
-						dispatch(setSnackbar('ERROR'))
-					}).finally( ()=> { setLoading(false) })
-				}).catch(err => {
-					setLoading(false)
-					console.error({err})
-					if(err.data.message === 'execution reverted: NalndaBooksSecondarySales: NFT not yet listed / already sold!')
-						dispatch(setSnackbar({show: true, message: "eBook already sold or not listed.", type: 3}))
-					else dispatch(setSnackbar('ERROR'))
-				})
-			}
-			else dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
+						setLoading(false)
+						if(err.data.message === 'execution reverted: NalndaBooksSecondarySales: NFT not yet listed / already sold!')
+							dispatch(setSnackbar({show: true, message: "eBook already sold or not listed.", type: 3}))
+						else dispatch(setSnackbar('ERROR'))
+					})
+				}
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				setLoading(false)
+				dispatch(setSnackbar('ERROR'))
+			})
+		}
 	}
 
 	const listHandler = () => {
@@ -257,34 +282,36 @@ const BookPage = props => {
 	}
 
 	const onListHandler = listPrice => {
-		setLoading(true)
-		Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice).then(res => {
+		if(isUsable(WalletAddress)){
 			setLoading(true)
-			const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
-			axios({
-				url: BASE_URL + '/api/book/list',
-				method: 'POST',
-				data: {
-					ownerAddress: Wallet,
-					bookAddress: NFT.book_address,
-					bookPrice: listPrice,
-					bookOrderId: orderId
-				}
-			}).then(res => {
-				if(res.status === 200){
-					setListed(true)
-					dispatch(hideModal())
-					dispatch(setSnackbar({show: true, message: "Book listed on marketplace.", type: 1}))
-				}
-				else dispatch(setSnackbar('NOT200'))
+			Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice).then(res => {
+				setLoading(true)
+				const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
+				axios({
+					url: BASE_URL + '/api/book/list',
+					method: 'POST',
+					data: {
+						ownerAddress: WalletAddress,
+						bookAddress: NFT.book_address,
+						bookPrice: listPrice,
+						bookOrderId: orderId
+					}
+				}).then(res => {
+					if(res.status === 200){
+						setListed(true)
+						dispatch(hideModal())
+						dispatch(setSnackbar({show: true, message: "Book listed on marketplace.", type: 1}))
+					}
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					console.error({err})
+					dispatch(setSnackbar('ERROR'))
+				}).finally( ()=> { setLoading(false) })
 			}).catch(err => {
 				console.error({err})
 				dispatch(setSnackbar('ERROR'))
-			}).finally( ()=> { setLoading(false) })
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
+			}).finally(() => setLoading(false))
+		}
 	}
 
 	const readHandler = () => { navigate('/account/reader', {state: {book: NFT, preview: false}}) }
@@ -294,78 +321,88 @@ const BookPage = props => {
 	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
 
 	const purchaseNewCopyHandler = () => {
-		setLoading(true)
-		Contracts.purchaseNft(Wallet, NFT.book_address, NFT.price.toString()).then(res => {
-			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
-			dispatch(hideModal())
-			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
-			axios({
-				url: BASE_URL+'/api/book/purchase',
-				method: 'POST',
-				data: {ownerAddress: Wallet, bookAddress: NFT.book_address, tokenId}
-			}).then(res => {
-				if(res.status === 200) setOwner(true)
-				else dispatch(setSnackbar('NOT200'))
+		if(walletStatus()){
+			setLoading(true)
+			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString()).then(res => {
+				dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
+				dispatch(hideModal())
+				const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
+				axios({
+					url: BASE_URL+'/api/book/purchase',
+					method: 'POST',
+					data: {ownerAddress: WalletAddress, bookAddress: NFT.book_address, tokenId}
+				}).then(res => {
+					if(res.status === 200) setOwner(true)
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					dispatch(setSnackbar('ERROR'))
+				}).finally(() => setLoading(false))
+				axios({
+					url: BASE_URL+'/api/book/copies',
+					method: 'POST',
+					data: {bookAddress: NFT.book_address, copies: tokenId}
+				}).then(res => {
+					if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					dispatch(setSnackbar('ERROR'))
+				})
 			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
-			}).finally(() => setLoading(false))
-			axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: NFT.book_address, copies: tokenId } }).then(res => {
-				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
-			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
+				setLoading(false)
+				if(err.code === 4001)
+					dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
+				else dispatch(setSnackbar('ERROR'))
 			})
-		}).catch(err => {
-			setLoading(false)
-			if(err.code === 4001)
-				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
-			else dispatch(setSnackbar('ERROR'))
-		})
+		}
 	}
 
 	const purchaseOldCopyHandler = offer => {
-		setLoading(true)
-		Contracts.buyListedCover(offer.order_id, offer.price).then(res => {
-			axios({
-				url: BASE_URL+'/api/book/purchase/secondary',
-				method: 'POST',
-				data: {
-					newOwnerAddress: Wallet,
-					previousOwnerAddress: offer.previous_owner,
-					bookAddress: offer.book_address,
-					tokenId: offer.token_id
-				}
-			}).then(res => {
-				if(res.status === 200) setOwner(true)
-				else dispatch(setSnackbar('NOT200'))
+		if(walletStatus()){
+			setLoading(true)
+			Contracts.buyListedCover(offer.order_id, offer.price).then(res => {
+				axios({
+					url: BASE_URL+'/api/book/purchase/secondary',
+					method: 'POST',
+					data: {
+						newOwnerAddress: WalletAddress,
+						previousOwnerAddress: offer.previous_owner,
+						bookAddress: offer.book_address,
+						tokenId: offer.token_id
+					}
+				}).then(res => {
+					if(res.status === 200) setOwner(true)
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					console.error({err})
+					dispatch(setSnackbar('ERROR'))
+				}).finally(() => setLoading(false))
 			}).catch(err => {
+				setLoading(false)
 				console.error({err})
-				dispatch(setSnackbar('ERROR'))
-			}).finally(() => setLoading(false))
-		}).catch(err => {
-			setLoading(false)
-			console.error({err})
-		})
+			})
+		}
 	}
 
 	const likeHandler = likeState => {
-		setLiked(likeState)
-		if(likeState) setLikes(old => old+1)
-		else setLikes(old => old-1)
-		axios({
-			url: BASE_URL+'/api/book/likes',
-			method: 'POST',
-			data: {
-				bid: NFT.id,
-				uid: Wallet,
-				likedState: likeState
-			}
-		}).then(res => {
-			setLoading(false)
-			if(res.status !== 200) dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			setLoading(false)
-			dispatch(setSnackbar('ERROR'))
-		})
+		if(walletStatus()){
+			setLiked(likeState)
+			if(likeState) setLikes(old => old+1)
+			else setLikes(old => old-1)
+			axios({
+				url: BASE_URL+'/api/book/likes',
+				method: 'POST',
+				data: {
+					bid: NFT.id,
+					uid: WalletAddress,
+					likedState: likeState
+				}
+			}).then(res => {
+				setLoading(false)
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				setLoading(false)
+				dispatch(setSnackbar('ERROR'))
+			})
+		}
 	}
 
 	const renderTabs = () => {
@@ -489,22 +526,24 @@ const BookPage = props => {
 	}
 
 	const reviewHandler = () => {
-		setLoading(true)
-		axios({
-			url: BASE_URL+'/api/book/reviews',
-			method: 'POST',
-			data: {
-				review: {...ReviewForm},
-				uid: Wallet,
-				bid: NFT.id
-			}
-		}).then(res => {
-			setLoading(false)
-			if(res.status !== 200) dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			setLoading(false)
-			dispatch(setSnackbar('ERROR'))
-		})
+		if(isUsable(WalletAddress)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/reviews',
+				method: 'POST',
+				data: {
+					review: {...ReviewForm},
+					uid: WalletAddress,
+					bid: NFT.id
+				}
+			}).then(res => {
+				setLoading(false)
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				setLoading(false)
+				dispatch(setSnackbar('ERROR'))
+			})
+		}
 	}
 
 	const quoteHandler = () => {

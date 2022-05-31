@@ -21,6 +21,7 @@ import AccountPage from './pages/Account'
 import ExplorePage from './pages/Explore'
 import CreateNftPage from './pages/Create'
 
+import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 
 const rootReducer = combineReducers({
@@ -51,6 +52,7 @@ function App() {
 				</Router>
 				<Snackbar/>
 				<Spinner/>
+				<WalletHOC/>
 			</Provider>
 		</div>
 	)

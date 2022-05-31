@@ -9,7 +9,6 @@ import Page from '../components/hoc/Page/Page'
 import PrimaryButton from '../components/ui/Buttons/Primary'
 import SecondaryButton from '../components/ui/Buttons/Secondary'
 
-import { SET_WALLET } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -63,7 +62,6 @@ const IndexPage = props => {
 
 	useEffect(() => {
 		if(isFilled(Collections)){
-			setIsLoading(true)
 			Collections.forEach(collection => {
 				setIsLoading(true)
 				axios({
@@ -124,10 +122,10 @@ const IndexPage = props => {
 		Highlights.forEach(highlight => {
 			highlightsDOM.push(
 				<div key={highlight.id} className='index__book__container__item' onClick={()=>openHandler(highlight)}>
-					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.name} />
+					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.title} />
 					<div className="index__book__container__item__data">
 						<p className='index__book__container__item__data__author typo__body typo__body--2'>{highlight.author}</p>
-						<p className='index__book__container__item__data__name typo__body typo__body--2'>{highlight.name}</p>
+						<p className='index__book__container__item__data__name typo__body typo__body--2'>{highlight.title}</p>
 					</div>
 				</div>
 			)
@@ -138,12 +136,16 @@ const IndexPage = props => {
 	const handleCreate = async () => {
 		if(isUsable(WalletState.wallet)) navigate('/create')
 		else {
-			await Wallet.connectWallet()
-			dispatch({data:Wallet.getSigner(),type:SET_WALLET})
-			navigate('/create')
+			Wallet.connectWallet().then(res => {
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				navigate('/create')
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+			}).finally(() => setIsLoading(false))
 		}
 	}
-	
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">

@@ -33,6 +33,7 @@ const ReaderPage = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate();
 
+	const [Preview, setPreview] = useState(null)
 	const [Loading, setLoading] = useState(false)
 	const [bookMeta, setBookMeta] = useState({});
 	const [progress, setProgress] = useState(0);
@@ -85,10 +86,12 @@ const ReaderPage = () => {
 		if(isUsable(navParams.preview) && navParams.preview === true){
 			bookURL = BASE_URL+'/files/'+navParams.book.preview
 			setBookMeta(navParams.book)
+			setPreview(true)
 		}
 		else{
 			bookURL = navParams.book.book
 			setBookMeta(navParams.book)
+			setPreview(false)
 		}
 		const book = Epub(bookURL,{openAs:"epub"});
 		book.ready.then(()=>{
@@ -358,11 +361,11 @@ const ReaderPage = () => {
 					<IconButton icon={fullscreen?<MinimizeIcon stroke="currentColor"/>:<MaximizeIcon stroke="currentColor"/>} onClick={()=>setFullscreen(s=>!s)}/>
 					<IconButton className={annotaionPanel?"reader__header__right__button--active":""} icon={<BlockquoteIcon stroke="currentColor"/>} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} />
 					<SidePanel show={annotaionPanel} position="right">
-						<AnnotationPanel rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
+						<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
 					</SidePanel>
 					<IconButton className={bookmarkPanel?"reader__header__right__button--active":""} icon={<BookmarkIcon stroke="currentColor"/>} onClick={()=>{hideAllPanel({bookmark:false});setBookmarkPanel(s=>!s)}} />
 					<SidePanel show={bookmarkPanel} position="right">
-						<BookMarkPanel rendition={rendition} bookMeta={bookMeta} show={bookmarkPanel}
+						<BookMarkPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={bookmarkPanel}
 							onAdd={()=>{
 								updateBookmarkedStatus();
 								setBookmarkPanel(s=>false);
