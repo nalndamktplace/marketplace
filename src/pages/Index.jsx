@@ -9,7 +9,6 @@ import Page from '../components/hoc/Page/Page'
 import PrimaryButton from '../components/ui/Buttons/Primary'
 import SecondaryButton from '../components/ui/Buttons/Secondary'
 
-import { SET_WALLET } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -29,32 +28,6 @@ const IndexPage = props => {
 	const [Highlights, setHighlights] = useState([])
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
-
-	// useEffect(() => {
-	// 	Wallet.connectWallet().then(res => {
-	// 		console.log({res})
-	// 		const connection = res
-	// 		const sequence = connection.sequence
-	// 		console.log({sequence})
-	// 		sequence.connect().then(res => {
-	// 			console.log({connect: res})
-	// 		}).catch(err => {
-	// 			console.error({connect: err})
-	// 		})
-	// 		sequence.getAddress().then(res => {
-	// 			console.log({address: res})
-	// 		}).catch(err => {
-	// 			console.error({address: err})
-	// 		})
-	// 		sequence.openWallet(null,null,8001).then(res => {
-	// 			console.log({open: res})
-	// 		}).catch(err => {
-	// 			console.error({open: err})
-	// 		})
-	// 	}).catch(err => {
-	// 		console.error({err})
-	// 	})
-	// }, [])
 
 	useEffect(() => {
 		if(IsLoading) dispatch(showSpinner())
@@ -89,7 +62,6 @@ const IndexPage = props => {
 
 	useEffect(() => {
 		if(isFilled(Collections)){
-			setIsLoading(true)
 			Collections.forEach(collection => {
 				setIsLoading(true)
 				axios({
@@ -170,10 +142,10 @@ const IndexPage = props => {
 			}).catch(err => {
 				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-			}).finally(() => dispatch(hideSpinner()))
+			}).finally(() => setIsLoading(false))
 		}
 	}
-	
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">

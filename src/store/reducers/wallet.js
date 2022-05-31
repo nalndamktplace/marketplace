@@ -1,7 +1,8 @@
-import { CLEAR_WALLET, SET_WALLET } from "../actions/wallet"
+import { CLEAR_WALLET, SET_WALLET, WEB3_IS_NOT_SUPPORTED, WEB3_IS_SUPPORTED } from "../actions/wallet"
 
 const initState = {
-	wallet: null
+	wallet: null,
+	support: null
 }
 
 const handleData = (state = initState, action) => {
@@ -9,12 +10,24 @@ const handleData = (state = initState, action) => {
 		case SET_WALLET:
 			return {
 				...state,
-				wallet: action.data
+				wallet: action.data,
+				support: true
 			}
 		case CLEAR_WALLET:
 			return {
 				...state,
 				wallet: null
+			}
+		case WEB3_IS_SUPPORTED:
+			return {
+				...state,
+				support: true
+			}
+		case WEB3_IS_NOT_SUPPORTED:
+			return {
+				...state,
+				support: false,
+				wallet: undefined
 			}
 		default:
 			return state

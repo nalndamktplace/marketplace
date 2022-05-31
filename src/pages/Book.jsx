@@ -13,12 +13,14 @@ import Contracts from '../connections/contracts'
 import ListModal from '../components/modal/List/List'
 import PurchaseModal from '../components/modal/Purchase/Purchase'
 
+import Wallet from '../connections/wallet'
+
+import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL } from '../store/actions/modal'
 
-import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import PrintIcon from '../assets/icons/print.svg'
 import TargetIcon from '../assets/icons/target.svg'
 import CartAddIcon from '../assets/icons/cart-add.svg'
@@ -27,6 +29,7 @@ import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
+import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 import { BASE_URL } from '../config/env'
@@ -39,7 +42,7 @@ const BookPage = props => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const WalletState = useSelector(state => state.WalletState.wallet)
+	const WalletState = useSelector(state => state.WalletState)
 
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [Loading, setLoading] = useState(false)
@@ -135,7 +138,7 @@ const BookPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState)
+		if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
 		setLoading(false)
 	}, [WalletState])
 
@@ -171,6 +174,30 @@ const BookPage = props => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
+
+	const walletStatus = () => {
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+			setWalletAddress(WalletState.wallet)
+			return true
+		}
+		else if(!isUsable(WalletState.support) || WalletState.support === false){
+			window.open("https://metamask.io/download/", '_blank')
+			return false
+		}
+		else {
+			setLoading(true)
+			Wallet.connectWallet().then(res => {
+				setWalletAddress(res.selectedAddress)
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				return true
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				return false
+			}).finally(() => setLoading(false))
+		}
+	}
 
 	const unlistHandler = () => {
 		if(isUsable(WalletAddress)){
@@ -270,7 +297,7 @@ const BookPage = props => {
 	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
 
 	const purchaseNewCopyHandler = () => {
-		if(isUsable(WalletAddress)){
+		if(walletStatus()){
 			setLoading(true)
 			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString()).then(res => {
 				dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
@@ -301,7 +328,7 @@ const BookPage = props => {
 	}
 
 	const purchaseOldCopyHandler = offer => {
-		if(isUsable(WalletAddress)){
+		if(walletStatus()){
 			setLoading(true)
 			Contracts.buyListedCover(offer.order_id, offer.price).then(res => {
 				axios({
@@ -328,7 +355,7 @@ const BookPage = props => {
 	}
 
 	const likeHandler = likeState => {
-		if(isUsable(WalletAddress)){
+		if(walletStatus()){
 			setLiked(likeState)
 			if(likeState) setLikes(old => old+1)
 			else setLikes(old => old-1)

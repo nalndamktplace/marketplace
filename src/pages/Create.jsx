@@ -1,8 +1,8 @@
 import axios from 'axios'
 import moment from 'moment'
-import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux"
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
@@ -17,8 +17,8 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
-import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
-import Wallet from '../connections/wallet'
+
+import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
 
 const CreateNftPage = props => {
 
