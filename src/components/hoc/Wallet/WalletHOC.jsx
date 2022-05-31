@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { setWallet, web3IsNotSupported } from '../../../store/actions/wallet'
+import { setWallet, web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
 import { setSnackbar } from '../../../store/actions/snackbar'
 
 import { isUsable } from '../../../helpers/functions'
@@ -12,6 +12,7 @@ const WalletHOC = props => {
 
 	useEffect(() => {
 		if(isUsable(window.ethereum)){
+			dispatch(web3IsSupported())
 
 			const getAccount = async () => {
 				try{
