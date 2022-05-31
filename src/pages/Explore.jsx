@@ -26,7 +26,7 @@ const ExplorePage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-	const WalletState = useSelector(state => state.WalletState.wallet)
+	const WalletState = useSelector(state => state.WalletState)
 
 	const [Nfts, setNfts] = useState([])
 	const [WalletAddress, setWalletAddress] = useState(null)
@@ -44,7 +44,7 @@ const ExplorePage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState)
+		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
 		setLoading(false)
 	}, [WalletState])
 

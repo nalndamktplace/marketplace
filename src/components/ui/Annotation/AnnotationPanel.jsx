@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
-
-import Contracts from "../../../connections/contracts";
 
 import { isUsable } from "../../../helpers/functions";
 import { setSnackbar } from "../../../store/actions/snackbar";
@@ -12,11 +11,14 @@ import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg"
 
 import { BASE_URL } from "../../../config/env";
 
-const AnnotationPanel = ({rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hideModal=()=>{}}) => {
+const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hideModal=()=>{}}) => {
 
-	const dispatch = useDispatch();
+	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
-	const [Wallet, setWallet] = useState(null);
+	const WalletState = useSelector(state => state.WalletState)
+
+	const [WalletAddress, setWalletAddress] = useState(null);
 	const [Loading, setLoading] = useState(false);
 	const [Annotations, setAnnotations] = useState([]);
 
@@ -26,22 +28,21 @@ const AnnotationPanel = ({rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hi
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		Contracts.Wallet.getWalletAddress().then(res => {
-			if(isUsable(res)) setWallet(res)
-		}).catch(err =>{
-			console.error(err);
-		})
-	}, [])
+		if(isUsable(preview) && !preview){
+			if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
+			else navigate(-1)
+		}
+	}, [WalletState, navigate, preview])
 
 	useEffect(() => {
-		if(isUsable(bookMeta) && isUsable(Wallet) && isUsable(rendition)){
+		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
 			setLoading(true)
 			axios({
 				url: BASE_URL+'/api/reader/annotations',
 				method: 'GET',
 				params: {
 					bid: bookMeta.book_address,
-					uid: Wallet
+					uid: WalletAddress
 				}
 			}).then(res => {
 				if(res.status === 200) {
@@ -63,7 +64,7 @@ const AnnotationPanel = ({rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hi
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [bookMeta, Wallet, dispatch,rendition])
+	}, [bookMeta, WalletAddress, dispatch, rendition, preview])
 
 	const renderAnnotationItems = () => {
 		let domItems = [] ;
@@ -85,28 +86,30 @@ const AnnotationPanel = ({rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hi
 	}
 
 	const removeAnnotation = (itemIndex,item) => {
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
-		setLoading(true)
-		let newAnnotations = Annotations.filter((item,i) => i != itemIndex );
-		axios({
-			url: BASE_URL+'/api/reader/annotations',
-			method: 'POST',
-			data: {
-				bid: bookMeta.book_address,
-				uid: Wallet,
-				annotations : JSON.stringify(newAnnotations),
-			}
-		}).then(res => {
-			if(res.status === 200) {
-				setAnnotations(newAnnotations);
-				rendition.annotations.remove(item.cfiRange,"highlight");
-				onRemove();
-			} 
-			else dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
+		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
+			if(!isUsable(rendition)) return;
+			if(!isUsable(bookMeta)) return;
+			setLoading(true)
+			let newAnnotations = Annotations.filter((item,i) => i != itemIndex );
+			axios({
+				url: BASE_URL+'/api/reader/annotations',
+				method: 'POST',
+				data: {
+					bid: bookMeta.book_address,
+					uid: WalletAddress,
+					annotations : JSON.stringify(newAnnotations),
+				}
+			}).then(res => {
+				if(res.status === 200) {
+					setAnnotations(newAnnotations);
+					rendition.annotations.remove(item.cfiRange,"highlight");
+					onRemove();
+				} 
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
 	}
 
 	const gotoPage = (cfi) => {
@@ -118,36 +121,38 @@ const AnnotationPanel = ({rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hi
 
 	const addAnnotaion = useCallback(
 		(annotation) => {
-			if(!isUsable(rendition)) return;
-			if(!isUsable(bookMeta)) return;
-			setLoading(true)
-			let newAnnotations = [...Annotations,annotation];
-			axios({
-				url: BASE_URL+'/api/reader/annotations',
-				method: 'POST',
-				data: {
-					bid: bookMeta.book_address,
-					uid: Wallet,
-					annotations : JSON.stringify(newAnnotations),
-				}
-			}).then(res => {
-				if(res.status === 200) {
-					setAnnotations(newAnnotations);
-					rendition.annotations.add(
-						"highlight",
-						annotation.cfiRange,
-						{},
-						()=>{},
-						"",
-						{"fill": annotation.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-					);
-				} 
-				else dispatch(setSnackbar('NOT200'))
-			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
-			}).finally(() => setLoading(false))
+			if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
+				if(!isUsable(rendition)) return;
+				if(!isUsable(bookMeta)) return;
+				setLoading(true)
+				let newAnnotations = [...Annotations,annotation];
+				axios({
+					url: BASE_URL+'/api/reader/annotations',
+					method: 'POST',
+					data: {
+						bid: bookMeta.book_address,
+						uid: WalletAddress,
+						annotations : JSON.stringify(newAnnotations),
+					}
+				}).then(res => {
+					if(res.status === 200) {
+						setAnnotations(newAnnotations);
+						rendition.annotations.add(
+							"highlight",
+							annotation.cfiRange,
+							{},
+							()=>{},
+							"",
+							{"fill": annotation.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
+						);
+					} 
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					dispatch(setSnackbar('ERROR'))
+				}).finally(() => setLoading(false))
+			}
 		},
-		[Annotations, Wallet, bookMeta, dispatch, rendition],
+		[Annotations, WalletAddress, bookMeta, dispatch, rendition, preview],
 	)
 
 	useEffect(()=>{

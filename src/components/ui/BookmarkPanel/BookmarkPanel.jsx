@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-
-import Contracts from "../../../connections/contracts";
+import { useDispatch, useSelector } from "react-redux";
 
 import { isUsable } from "../../../helpers/functions";
 import { setSnackbar } from "../../../store/actions/snackbar";
@@ -12,14 +11,17 @@ import { BASE_URL } from "../../../config/env";
 
 import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg";
 
-const BookMarkPanel = ({rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=()=>{}}) => {
+const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=()=>{}}) => {
 
-	const dispatch = useDispatch();
+	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
-	const [WalletAddress, setWalletAddress] = useState(null);
+	const WalletState = useSelector(state => state.WalletState)
+
 	const [Loading, setLoading] = useState(true);
-	const [bookmarks, setBookmarks] = useState([]);
+	const [bookmarks, setBookmarks] = useState([])
 	const [bookmarkTitle, setBookmarkTitle] = useState("");
+	const [WalletAddress, setWalletAddress] = useState(null);
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -27,7 +29,7 @@ const BookMarkPanel = ({rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=(
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		if(isUsable(bookMeta) && isUsable(WalletAddress)){
+		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			setLoading(true)
 			axios({
 				url: BASE_URL+'/api/reader/bookmarks',
@@ -48,15 +50,14 @@ const BookMarkPanel = ({rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=(
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [bookMeta, WalletAddress, dispatch])
+	}, [bookMeta, WalletAddress, dispatch, preview])
 
 	useEffect(() => {
-		Contracts.Wallet.getWalletAddress().then(res => {
-			if(isUsable(res)) setWalletAddress(res)
-		}).catch(err =>{
-			console.error(err);
-		})
-	}, [])
+		if(isUsable(preview) && !preview){
+			if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
+			else navigate(-1)
+		}
+	}, [WalletState, navigate, preview])
 
 	const renderBookmarkedItems = () => {
 		let domItems = [] ;
@@ -81,62 +82,66 @@ const BookMarkPanel = ({rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=(
 	}
 
 	const addBookMark = () => {
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
-		if(!bookmarkTitle) return;
-		setLoading(true)
-		let newBookmarks = [...bookmarks,{
-			title : bookmarkTitle || "Untitled",
-			cfi : rendition.currentLocation().start.cfi,
-			percent : rendition.currentLocation().start.percentage
-		}];
-		axios({
-			url: BASE_URL+'/api/reader/bookmarks',
-			method: 'POST',
-			data: {
-				bid: bookMeta.book_address,
-				uid: WalletAddress,
-				bookmarks: JSON.stringify(newBookmarks),
-			}
-		}).then(res => {
-			if(res.status === 200) {
-				setBookmarkTitle("");
-				setBookmarks(newBookmarks);
-				const bookKey = `${bookMeta.id}:bookmarks`
-				localStorage.setItem(bookKey,JSON.stringify(newBookmarks));
-				onAdd();
-			} 
-			else dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
+		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+			if(!isUsable(rendition)) return;
+			if(!isUsable(bookMeta)) return;
+			if(!bookmarkTitle) return;
+			setLoading(true)
+			let newBookmarks = [...bookmarks,{
+				title : bookmarkTitle || "Untitled",
+				cfi : rendition.currentLocation().start.cfi,
+				percent : rendition.currentLocation().start.percentage
+			}];
+			axios({
+				url: BASE_URL+'/api/reader/bookmarks',
+				method: 'POST',
+				data: {
+					bid: bookMeta.book_address,
+					uid: WalletAddress,
+					bookmarks: JSON.stringify(newBookmarks),
+				}
+			}).then(res => {
+				if(res.status === 200) {
+					setBookmarkTitle("");
+					setBookmarks(newBookmarks);
+					const bookKey = `${bookMeta.id}:bookmarks`
+					localStorage.setItem(bookKey,JSON.stringify(newBookmarks));
+					onAdd();
+				} 
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
 	}
 
 	const removeBookMark = (itemIndex) => {
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
-		setLoading(true)
-		let newBookmarks = bookmarks.filter((item,i) => i != itemIndex );
-		axios({
-			url: BASE_URL+'/api/reader/bookmarks',
-			method: 'POST',
-			data: {
-				bid: bookMeta.book_address,
-				uid: WalletAddress,
-				bookmarks: JSON.stringify(newBookmarks),
-			}
-		}).then(res => {
-			if(res.status === 200) {
-				setBookmarkTitle("");
-				setBookmarks(newBookmarks);
-				const bookKey = `${bookMeta.id}:bookmarks`
-				localStorage.setItem(bookKey,JSON.stringify(newBookmarks));
-				onRemove();
-			} 
-			else dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
+		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+			if(!isUsable(rendition)) return;
+			if(!isUsable(bookMeta)) return;
+			setLoading(true)
+			let newBookmarks = bookmarks.filter((item,i) => i != itemIndex );
+			axios({
+				url: BASE_URL+'/api/reader/bookmarks',
+				method: 'POST',
+				data: {
+					bid: bookMeta.book_address,
+					uid: WalletAddress,
+					bookmarks: JSON.stringify(newBookmarks),
+				}
+			}).then(res => {
+				if(res.status === 200) {
+					setBookmarkTitle("");
+					setBookmarks(newBookmarks);
+					const bookKey = `${bookMeta.id}:bookmarks`
+					localStorage.setItem(bookKey,JSON.stringify(newBookmarks));
+					onRemove();
+				} 
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
 	}
 
 	const gotoBookmarkedPage = (cfi) => {

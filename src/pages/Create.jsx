@@ -28,7 +28,7 @@ const CreateNftPage = props => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const WalletState = useSelector(state => state.WalletState.wallet)
+	const WalletState = useSelector(state => state.WalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
@@ -44,7 +44,7 @@ const CreateNftPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState)
+		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
 		setLoading(false)
 	}, [WalletState])
 
