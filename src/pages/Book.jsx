@@ -31,12 +31,13 @@ import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
+import {ReactComponent as QuoteIcon} from "../assets/icons/quote.svg"
 
 import { BASE_URL } from '../config/env'
 
 const BookPage = props => {
 
-	const TABS = [{id: 'TAB01', label: 'Synopsis'}, {id: 'TAB02', label: 'reviews'}]
+	const TABS = [{id: 'TAB01', label: 'Synopsis'}, {id: 'TAB02', label: 'reviews'}, {id: 'TAB03', label: 'quotes'}]
 
 	const params = useLocation()
 	const dispatch = useDispatch()
@@ -61,10 +62,12 @@ const BookPage = props => {
 	const [Reviews, setReviews] = useState([])
 	const [TotalReveiws, setTotalReveiws] = useState(0)
 	const [ReviewForm, setReviewForm] = useState({title: '', body: '', rating: 0})
+	// Quotes
+	const [Quote, setQuote] = useState(null);
+	const [Quotes, setQuotes] = useState([]);
+	const [QuotesForm, setQuotesForm] = useState({quote: ''})
 
-	useEffect(() => {
-		if(isUsable(NFT)) setListed(NFT.listed === 1?true:false)
-	}, [NFT])
+	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -73,7 +76,6 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/reviews?bid='+NFT.id,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
 				if(res.status === 200){
 					setReviews(res.data.reviews)
 					setRating(res.data.rating)
@@ -81,9 +83,8 @@ const BookPage = props => {
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, dispatch])
 
@@ -94,15 +95,42 @@ const BookPage = props => {
 				url: BASE_URL+'/api/book/reviewed?bid='+NFT.id+'&uid='+WalletAddress,
 				method: 'GET'
 			}).then(res => {
-				setLoading(false)
-				if(res.status === 200){
-					if(isNotEmpty(res.data)) setReview(res.data)
+				if(res.status === 200) if(isNotEmpty(res.data)) setReview(res.data)
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}, [NFT, dispatch, WalletAddress])
+
+	useEffect(() => {
+		if(isUsable(NFT)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/quotes',
+				method: 'GET',
+				params: {
+					bid: NFT.id
 				}
+			}).then(res => {
+				if(res.status === 200) setQuotes(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				setLoading(false)
 				dispatch(setSnackbar('ERROR'))
-			})
+			}).finally(() => setLoading(false))
+		}
+	}, [NFT, dispatch])
+
+	useEffect(() => {
+		if(isUsable(NFT) && isUsable(Wallet)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/quoted?bid='+NFT.id+'&uid='+Wallet,
+				method: 'GET'
+			}).then(res => {
+				if(res.status === 200) if(isNotEmpty(res.data)) setQuote(res.data)
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
 		}
 	}, [NFT, WalletAddress, dispatch])
 
@@ -129,7 +157,6 @@ const BookPage = props => {
 				method: 'GET'
 			}).then(res => {
 				if(res.status === 200) setLiked(res.data.liked)
-				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
@@ -231,12 +258,10 @@ const BookPage = props => {
 							}
 							else dispatch(setSnackbar('NOT200'))
 						}).catch(err => {
-							console.error({err})
 							dispatch(setSnackbar('ERROR'))
 						}).finally( ()=> { setLoading(false) })
 					}).catch(err => {
 						setLoading(false)
-						console.error({err})
 						if(err.data.message === 'execution reverted: NalndaBooksSecondarySales: NFT not yet listed / already sold!')
 							dispatch(setSnackbar({show: true, message: "eBook already sold or not listed.", type: 3}))
 						else dispatch(setSnackbar('ERROR'))
@@ -245,7 +270,6 @@ const BookPage = props => {
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				setLoading(false)
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			})
 		}
@@ -313,7 +337,11 @@ const BookPage = props => {
 				}).catch(err => {
 					dispatch(setSnackbar('ERROR'))
 				}).finally(() => setLoading(false))
-				axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: NFT.book_address, copies: tokenId } }).then(res => {
+				axios({
+					url: BASE_URL+'/api/book/copies',
+					method: 'POST',
+					data: {bookAddress: NFT.book_address, copies: tokenId}
+				}).then(res => {
 					if(res.status !== 200) dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
 					dispatch(setSnackbar('ERROR'))
@@ -460,6 +488,38 @@ const BookPage = props => {
 						{renderReviews(Reviews)}
 					</div>
 				</React.Fragment>
+			case 'TAB03':
+				const renderQuotes = quotes => {
+					let quotesDOM = []
+					quotes.forEach((quote,i) => {
+						quotesDOM.push(
+							<div key={i} className='book__data__container__desc__tabs__data__quotes__item'>
+								<div className="book__data__container__desc__tabs__data__quotes__item__icon">
+									<QuoteIcon width={32} height={32} fill="currentColor"/>
+								</div>
+								<div className="book__data__container__desc__tabs__data__quotes__item__body">
+									{quote.body}
+								</div>
+								<div className="book__data__container__desc__tabs__data__quotes__item__time typo__cap typo__cap--2">
+									{moment(quote.created_at).format("D MMM, YYYY") || "-"}
+								</div>
+							</div>
+						)
+					})
+					return quotesDOM
+				}
+				
+				return <React.Fragment>
+					{ !isUsable(Quote) && (Created||Owner) && (
+						<div className="book__data__container__desc__tabs__data__quote">
+							<InputField type="string" label="quote" value={QuotesForm.quote} onChange={e => setQuotesForm({ ...QuotesForm, quote: e.target.value })} />
+							<PrimaryButton onClick={()=>quoteHandler()} label="submit"/>
+						</div>
+					)}
+					<div className="book__data__container__desc__tabs__data__quotes">
+						{renderQuotes(Quotes)}
+					</div>
+				</React.Fragment>
 			default:
 				break
 		}
@@ -484,6 +544,26 @@ const BookPage = props => {
 				dispatch(setSnackbar('ERROR'))
 			})
 		}
+	}
+
+	const quoteHandler = () => {
+		if(!QuotesForm.quote) return;
+		setLoading(true)
+		axios({
+			url: BASE_URL+'/api/book/quotes',
+			method: 'POST',
+			data: {
+				quote: {body:QuotesForm.quote},
+				uid: Wallet,
+				bid: NFT.id
+			}
+		}).then(res => {
+			setLoading(false)
+			if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+		}).catch(err => {
+			setLoading(false)
+			dispatch(setSnackbar('ERROR'))
+		})
 	}
 
 	return (

@@ -179,15 +179,15 @@
 	}
 
 	&__align {
-		&__start  {align-items: flex-start;}
+		&__start {align-items: flex-start;}
 		&__center {align-items: center;}
-		&__end    {align-items: flex-end;}
+		&__end {align-items: flex-end;}
 	}
 
 	&__justify {
-		&__start  {justify-content: flex-start;}
+		&__start {justify-content: flex-start;}
 		&__center {justify-content: center;}
-		&__end    {justify-content: flex-end;}
+		&__end {justify-content: flex-end;}
 		&__between{justify-content: space-between;}
 		&__around {justify-content: space-around;}
 	}

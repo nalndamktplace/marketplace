@@ -17,24 +17,24 @@ const Modal = ({ title = "", open = false, toggleModal, children }) => {
 		return classes.join(" ")
 	}
 
-    return (
-        <Backdrop show={open} hideOnClick={true}>
-            <div className={getClasses()}>
-                <div className="modal__wrapper__header">
-                    <div className="modal__wrapper__header__title typo__head--5">{title}</div>
-                    <div className="modal__wrapper__header__close-button">
-                        <IconButton
-                            icon={<CloseIcon />}
-                            onClick={() => {
-                                toggleModal(false);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div className="modal__wrapper__content">{children}</div>
-            </div>
-        </Backdrop>
-    );
+	return (
+		<Backdrop show={open} hideOnClick={true}>
+			<div className={getClasses()}>
+				<div className="modal__wrapper__header">
+					<div className="modal__wrapper__header__title typo__head--5">{title}</div>
+					<div className="modal__wrapper__header__close-button">
+						<IconButton
+							icon={<CloseIcon />}
+							onClick={() => {
+								toggleModal(false);
+							}}
+						/>
+					</div>
+				</div>
+				<div className="modal__wrapper__content">{children}</div>
+			</div>
+		</Backdrop>
+	);
 };
 
 export default Modal
