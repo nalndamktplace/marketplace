@@ -14,6 +14,7 @@ import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import HeroBackground from '../assets/images/background-hero.png'
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 
 import { BASE_URL } from '../config/env'
 
@@ -82,15 +83,27 @@ const IndexPage = props => {
 	const renderCollections = () => {
 
 		const renderNfts = (books,collection) => {
+			console.log(books);
 			let booksDOM = []
+
+			const getPriceTagClass = (book) => {
+				let classes = ["index__collection__books__item__data__price typo-head--6"]
+				if(book.price === 0) classes.push("index__collection__books__item__data__price--free")
+				return classes.join(" ");
+			}
+
 			if(isFilled(books)){
 				books.forEach(book => {
 					booksDOM.push(
 						<div className="index__collection__books__item" key={book.id+'|'+collection.id} onClick={()=>openHandler(book)}>
 							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
 							<div className="index__collection__books__item__data">
+								<div className={getPriceTagClass(book)}>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{book.price}</>}</div>
+								<p className='index__collection__books__item__data__name typo__head typo__head--4'>
+									{(book?.title||"").slice(0,40)}
+									{book?.title?.length > 40 && "..."}
+								</p>
 								<p className='index__collection__books__item__data__author typo__body typo__body--2'>{book.author}</p>
-								<p className='index__collection__books__item__data__name typo__body typo__body--2'>{book.title}</p>
 							</div>
 						</div>
 					)
@@ -104,7 +117,7 @@ const IndexPage = props => {
 			CollectionBooks.sort((a,b)=> a.order<b.order).forEach(collection => {
 				collectionsDOM.push(
 					<div className="index__collection" key={collection.id}>
-						<h4 className="typo__head typo__head--4 index__collection__head typo__transform--capital">{collection.name}</h4>
+						<h4 className="typo__head typo__head--2 index__collection__head typo__transform--capital">{collection.name}</h4>
 						<div className="index__collection__books">
 							<div className="index__collection__books__wrapper">
 								{renderNfts(collection.books, collection)}

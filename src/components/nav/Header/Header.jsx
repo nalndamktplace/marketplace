@@ -225,6 +225,9 @@ const Header = props => {
 					<div onClick={()=>navigate('/')} className='header__menu__part__logo utils__cursor--pointer' >
 						<img className='header__menu__part__logo' src={Logo} alt="Nalnda" />
 					</div>
+					<div className="header__menu__part__name typo__head--4">
+						Nalnda
+					</div>
 				</div>
 			</div>
 			<div className="header__menu">
