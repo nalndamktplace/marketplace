@@ -66,6 +66,9 @@ const BookPage = props => {
 	const [Quote, setQuote] = useState(null);
 	const [Quotes, setQuotes] = useState([]);
 	const [QuotesForm, setQuotesForm] = useState({quote: ''})
+	// live reader count
+	const [liveReaderCount, setLiveReaderCount] = useState(0);
+	const [avgReadTime, setAvgReadTime] = useState(0);
 
 	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
 
@@ -162,6 +165,35 @@ const BookPage = props => {
 			}).finally(() => setLoading(false))
 		}
 	}, [NFT, WalletAddress, dispatch])
+
+	useEffect(() => {
+		if(isUsable(NFT)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/reader/count?bid='+NFT.id,
+				method: 'GET'
+			}).then(res => {
+				if(res.status === 200) setLiveReaderCount(res.data.reader_count)
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}, [NFT, dispatch])
+
+	useEffect(() => {
+		if(isUsable(NFT)){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/reader/avg-read-time?bid='+NFT.id,
+				method: 'GET'
+			}).then(res => {
+				console.log(res.data)
+				if(res.status === 200) setAvgReadTime(res.data.avg_read_time)
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}, [NFT, dispatch])
 
 	useEffect(() => {
 		setLoading(true)
@@ -643,6 +675,10 @@ const BookPage = props => {
 										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,4)}…{(NFT.book_address||"").slice((NFT.contract||"").length-4)}</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
 										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
+										<p className='book__data__container__desc__summary__head typo__body--3'>Live Readers Count</p>
+										<p className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</p>
+										<p className='book__data__container__desc__summary__head typo__body--3'>Average Read Time</p>
+										<p className='book__data__container__desc__summary__data'>{moment.utc(avgReadTime*1000).format('HH:mm:ss')} </p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
 										<p className='book__data__container__desc__summary__data typo__transform--capital'>{JSON.parse(NFT.genres).join(', ')}</p>
 										{/* <p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
