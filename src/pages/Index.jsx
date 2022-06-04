@@ -15,8 +15,10 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import HeroBackground from '../assets/images/background-hero.png'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
+import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 
 import { BASE_URL } from '../config/env'
+import IconButton from '../components/ui/Buttons/IconButton'
 
 const IndexPage = props => {
 
@@ -117,7 +119,15 @@ const IndexPage = props => {
 			CollectionBooks.sort((a,b)=> a.order<b.order).forEach(collection => {
 				collectionsDOM.push(
 					<div className="index__collection" key={collection.id}>
-						<h4 className="typo__head typo__head--2 index__collection__head typo__transform--capital">{collection.name}</h4>
+						<div className="index__collection__header">
+							<h4 className="typo__head typo__head--2 index__collection__header__title typo__transform--capital">
+								{collection.name}
+							</h4>
+							<div className='index__collection__header__button' >
+								View more <ArrowRight width={24} height={24} />
+							</div>
+						</div>
+						
 						<div className="index__collection__books">
 							<div className="index__collection__books__wrapper">
 								{renderNfts(collection.books, collection)}

@@ -1,8 +1,8 @@
 import React from 'react'
 
-const IconButton = ({icon="",className="",onClick}) => {
+const IconButton = ({icon="",className="",text="",onClick}) => {
 	return ( <div className={"button button--icon "+className} onClick={onClick}>
-		{icon}
+		{text} {icon}
 	</div> );
 }
 

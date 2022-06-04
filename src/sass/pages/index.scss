@@ -20,7 +20,35 @@
 
 		// &:not(:last-child){margin-bottom: 8rem;}
 
-		&__head{ margin-bottom: 4rem; }
+		&__header {
+			display: flex ;
+			justify-content: space-between ;
+			align-items: center ;
+			margin-bottom: 4rem ;
+
+			&__button {
+				position: relative ;
+				min-width: 0 ;
+				padding: 1.5rem 2rem ;
+				display: flex ;
+				align-items: center ;
+				justify-content: center ;
+				color: $color-neutral-500;
+				border-radius: 4px ;
+				white-space: nowrap ;
+				cursor: pointer ;
+		
+				&>svg {
+					width: 75% ;
+				}
+		
+				&:hover {
+					background-color: $color-neutral-200 ;
+					color: $color-neutral-900;
+				}
+			}
+		}
+
 
 		&__books{
 			width: 100%;
