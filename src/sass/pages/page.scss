@@ -1,9 +1,11 @@
 .page{
 	overflow-x: hidden ; 
 	max-width: 100% ;
+	--header-height : 14rem ;
 	&__wrapper{
 		padding: 0 16rem; 
 		min-height: calc(100vh - 6.4rem);
+		margin-top: var(--header-height) ;
 
 		@include respond(desk){ padding: 0 8rem; }
 		@include respond(retinaBig){ padding: 0 12rem; }

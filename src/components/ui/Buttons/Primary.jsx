@@ -7,15 +7,16 @@ const PrimaryButton = props => {
 	}
 
 	const getClasses = () => {
-		let classes = ['button button--primary']
+		let classes = ['button button--primary typo__act']
 		if(props.theme === 2) classes.push('button--primary--2')
+		else if(props.theme === 3) classes.push('button--primary--white')
 		return classes.join(' ')
 	}
 
 	return (
-		<div className={getClasses()} onClick={()=>onClickHandler()}>
-			<p className='typo__act'>{props.label}</p>
-		</div>
+		<button className={getClasses()} onClick={()=>onClickHandler()}>
+			{props.label}
+		</button>
 	)
 }
 

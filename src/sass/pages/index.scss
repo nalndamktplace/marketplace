@@ -1,13 +1,38 @@
 .index{
+	--header-height : 14rem ;
+	margin-top: var(--header-height) ;
 	
 	&__hero{
-		min-height: calc(100vh - 6.4rem);
+		min-height: calc(100vh - var(--header-height)) ;
 		width: 100%;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: flex-start;
-		@include respond(phone){ flex-direction: column; }
+		@include respond(tabLand){ 
+			flex-direction: column; 
+		}
+		@include respond(phone){
+			--header-height : 8rem ;
+		}
+		margin-bottom: 32rem ;
+	}
+
+	&__bg{
+		z-index: -100;
+		position: absolute;
+		top: var(--header-height) ;
+		left:0;
+		width: 100vw;
+		height: 120% ;
+		overflow: hidden;
+		background-color: $color-blue ;
+		background-image: url('../../assets/images/banner-top.svg') , url('../../assets/images/banner-bottom.svg');
+		background-size: 100% auto,100% auto;
+		background-position: top,bottom;
+		background-repeat: no-repeat;
+
+		@include respond(phone){ height: calc(100vh - 6.4rem); }
 	}
 
 	&__section{
@@ -37,14 +62,16 @@
 				border-radius: 4px ;
 				white-space: nowrap ;
 				cursor: pointer ;
+				font-weight: 500 ;
 		
 				&>svg {
 					width: 75% ;
+					stroke: currentColor ;
 				}
 		
 				&:hover {
 					background-color: $color-neutral-200 ;
-					color: $color-neutral-900;
+					color: $color-neutral-700;
 				}
 			}
 		}
@@ -163,34 +190,6 @@
 		}
 	}
 
-	&__bg{
-		z-index: -100;
-		position: absolute;
-		top:6.4rem ;
-		left:0;
-		width: 100vw;
-		height: 100% ;
-		overflow: hidden;
-		background-image: url('../../assets/images/bg.jpg') ;
-		background-position: center ;
-		background-size: cover ;
-
-		@include respond(phone){ height: calc(100vh - 6.4rem); }
-
-		&>img{
-			display: none ;
-			// object-fit: cover ;
-			// background-size: cover ;
-			// content: url('../../assets/images/bg.png');
-			
-			// @include respond(phone){
-			// 	background-size: cover ;
-			// 	object-fit: cover;
-			// 	content: url('../../assets/images/background-hero-phone.svg');
-			// }
-		}
-	}
-
 	&__content{
 		flex: 1;
 		display: flex;
@@ -200,14 +199,17 @@
 		@include respond(phone){ margin-bottom: 4.8rem; }
 
 		&__container{
+			text-shadow: 0 0 4px rgba($color-black,0.3), 0 0 16px rgba($color-black,0.2);
 			&__row{
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 				justify-content: flex-start;
 				margin-top: 4rem;
-	
-				&>div{ &:not(:last-child){ margin-right: 2.4rem; } }
+				
+				&> * + * {
+					margin-left: 1.5rem ;
+				}
 			}
 		}
 
@@ -231,6 +233,10 @@
 			@include respond(phone){
 				min-height: 32rem;
 				min-width: 50rem;
+			}
+
+			@include respond(tabPort){
+				margin-top: 8rem ;
 			}
 
 			&__item{
@@ -309,6 +315,52 @@
 
 					&__name{ text-transform: capitalize; }
 				}
+			}
+		}
+	}
+
+	&__featured {
+		display: flex ;
+		align-items: center ;
+		justify-content: center ;
+		padding: 4rem 1rem ;
+
+		&__container {
+			&__row {
+				display: flex ;
+				
+				&__item {
+					flex: 1 ;
+					background-color: $color-neutral-200 ;
+					border-radius: 1rem ;
+					padding: 2rem ;
+					display: flex ;
+					flex-direction: column ;
+					align-items: center ;
+					text-align: center ;
+
+					&__image {
+						display: flex ;
+						align-items: center ;
+						justify-content: center ;
+						img {
+							height: 24rem ;
+						}
+					}
+
+					&__title {
+						color: $color-neutral-700;
+					}
+				}
+
+				&> * + * {
+					margin-left: 2rem ;
+				}
+
+			}
+
+			&> * + * {
+				margin-top: 2rem ;
 			}
 		}
 	}

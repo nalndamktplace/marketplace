@@ -14,9 +14,9 @@ const SecondaryButton = props => {
 	}
 
 	return (
-		<div className={getClasses()} onClick={()=>onClickHandler()}>
-			<p className='typo__act typo--primary'>{props.label}</p>
-		</div>
+		<button className={getClasses()} onClick={()=>onClickHandler()}>
+			{props.label}
+		</button>
 	)
 }
 

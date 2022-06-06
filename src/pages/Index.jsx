@@ -13,9 +13,10 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-import HeroBackground from '../assets/images/background-hero.png'
+// import HeroBackground from '../assets/images/background-hero.png'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
+import FeaturedPlaceholder from "../assets/images/featured-placeholder.png"
 
 import { BASE_URL } from '../config/env'
 import IconButton from '../components/ui/Buttons/IconButton'
@@ -146,10 +147,6 @@ const IndexPage = props => {
 			highlightsDOM.push(
 				<div key={highlight.id} className='index__book__container__item' onClick={()=>openHandler(highlight)}>
 					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.title} />
-					<div className="index__book__container__item__data">
-						<p className='index__book__container__item__data__author typo__body typo__body--2'>{highlight.author}</p>
-						<p className='index__book__container__item__data__name typo__body typo__body--2'>{highlight.title}</p>
-					</div>
 				</div>
 			)
 		})
@@ -173,14 +170,14 @@ const IndexPage = props => {
 		<Page containerClass='index'>
 			<div className="index__hero">
 				<div className="index__bg">
-					<img src={HeroBackground} alt="Background"/>
+					{/* <img src={HeroBackground} alt="Background"/> */}
 				</div>
 				<div className="index__content">
 					<div className="index__content__container">
-						<h1 className="typo__display typo__transform--capital typo__color--white">experience books<br/>beyond reading</h1>
+						<h1 className="typo__display typo__transform--capital typo__color--white typo__transform--capital">experience<br/> books beyond<br/> reading</h1>
 						<h3 className="typo__head typo__head--3 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
 						<div className="index__content__container__row">
-							<PrimaryButton theme={2} onClick={()=>navigate('/explore')} label="Explore"/>
+							<PrimaryButton theme={3} onClick={()=>navigate('/explore')} label="Explore"/>
 							<SecondaryButton theme={2} onClick={()=>{handleCreate()}} label="Publish"/>
 						</div>
 					</div>
@@ -188,6 +185,44 @@ const IndexPage = props => {
 				<div className="index__book">
 					<div className="index__book__container">
 						{renderHighlights()}
+					</div>
+				</div>
+			</div>
+			<div className="index__featured">
+				<div className="index__featured__container">
+					<div className="index__featured__container__row">
+						<div className="index__featured__container__row__item">
+							<div className="index__featured__container__row__item__image">
+								<img src={FeaturedPlaceholder} />
+							</div>
+							<div className="index__featured__container__row__item__title typo__head--4">Motivational Books</div>
+						</div>
+						<div className="index__featured__container__row__item">
+							<div className="index__featured__container__row__item__image">
+								<img src={FeaturedPlaceholder} />
+							</div>
+							<div className="index__featured__container__row__item__title typo__head--4">Bestsellers</div>
+						</div>
+						<div className="index__featured__container__row__item">
+							<div className="index__featured__container__row__item__image">
+								<img src={FeaturedPlaceholder} />
+							</div>
+							<div className="index__featured__container__row__item__title typo__head--4">Cooking</div>
+						</div>
+					</div>
+					<div className="index__featured__container__row">
+						<div className="index__featured__container__row__item">
+							<div className="index__featured__container__row__item__image">
+								<img src={FeaturedPlaceholder} />
+							</div>
+							<div className="index__featured__container__row__item__title typo__head--4">Bestselling Fictional</div>
+						</div>
+						<div className="index__featured__container__row__item">
+							<div className="index__featured__container__row__item__image">
+								<img src={FeaturedPlaceholder} />
+							</div>
+							<div className="index__featured__container__row__item__title typo__head--4">Bestselling Non-Fiction</div>
+						</div>
 					</div>
 				</div>
 			</div>

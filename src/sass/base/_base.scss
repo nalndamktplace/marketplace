@@ -4,13 +4,14 @@
 	margin:0;
 	padding:0;
 	box-sizing: inherit;
+	-webkit-tap-highlight-color : transparent ;
 }
 
 html{ 
 	font-size: 62.5%;
 	scroll-behavior: smooth;
 	color: $color-black;
-	background-color: #ffffff;
+	background-color: $color-white ;
 	user-select: none;
 	overflow-x: hidden;
 	@include respond(desBig){ font-size: 62.5% ; }
@@ -23,19 +24,23 @@ html{
 
 body{ 
 	box-sizing: border-box; 
-	/* Required for disabling horizontal scrolling */
 	overflow-x: hidden ;
+	max-width: 100% ;
 }
 
 main{ min-height: 100vh; }
 
 textarea, input{
-	transition: all 0.4s ease-in-out;
-	border: 0.2rem solid $color-black;
-
+	transition: all 0.1s ease-in-out;
+	border: none ;
+	box-shadow: 0 0 0 2px $color-neutral-200 ; 
 	&:focus {
 		outline: none !important;
-		border: 0.2rem solid $color-primary;
+		box-shadow: 0 0 0 2px $color-primary;
+	}
+
+	&::placeholder {
+		color: $color-neutral-500 ;
 	}
 }
 
@@ -57,10 +62,6 @@ a{
 p{
 	&:not(:last-child){margin-bottom: 2.4rem;}
 }
-
-// .sc-eCImPb.bElhDP.web3modal-provider-wrapper{
-// 	&:first-child{display: none;}
-// }
 
 .web3modal-modal-lightbox {
 	z-index: 1000 !important ;

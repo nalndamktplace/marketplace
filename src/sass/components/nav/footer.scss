@@ -1,22 +1,24 @@
 .footer{
-	padding: 24rem 24rem 8rem;
+	padding: 20rem 8rem ;
 	width: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: flex-end;
-	background: url('../../../assets/images/background3.svg');
+	background-color: $color-blue ;
+	background-image: url('../../../assets/images/footer-bg-top.svg') , url('../../../assets/images/footer-bg-bottom.svg');
+	background-size: 100% auto,100% auto;
+	background-position: top,bottom;
 	background-repeat: no-repeat;
+	display: flex ;
+	align-items: center ; 
+	flex-direction: column ;
 
-	@include respond(tabLand){ padding: 10rem 4rem 4rem; }
-	@include respond(phone){background: url('../../../assets/images/background3phone.svg'); padding: 12rem 2rem 4rem;}
+	@include respond(tabLand){ padding: 20rem 4rem; }
+	@include respond(phone){ padding: 16rem 4rem ;}
 
 	&__row{
 		display: flex;
 		flex-direction: row;
-		align-items: flex-end;
 		justify-content: space-between;
-		width: 100%;
+		max-width: 96rem ;
+		width: 100% ;
 
 		&:not(:last-child){ margin-bottom: 4rem; }
 
@@ -40,17 +42,25 @@
 				display: flex;
 				flex-direction: row;
 				align-items: center;
-				justify-content: flex-end;
 
 				&__item{
 					cursor: pointer;
-					background-color: rgba($color-white, 0.12);
-					height: 4.8rem;
-					width: 4.8rem;
-					border-radius: 2.4rem;
+					border: 3px solid $color-white ;
+					height: 6rem;
+					width: 6rem;
+					border-radius: 100rem ;
 					display: flex;
 					align-items: center;
 					justify-content: center;
+					transition: transform 0.15s cubic-bezier(0,1.4,0.3,1.4);
+
+					&:hover {
+						transform: scale(1.1) ;
+						background-color: $color-white ;
+						>svg {
+							stroke : $color-blue ;
+						}
+					}
 
 					&:not(:last-child){margin-right: 2.4rem;}
 
@@ -59,21 +69,28 @@
 						width: 3.2rem;
 						object-fit: contain;
 					}
+				}
+			}
 
+			&__logo {
+				display: flex ;
+				align-items: center ;
+				> * + * {
+					margin-left: 2rem ;
 				}
 			}
 
 			&__links{
+				font-family: 'Josefin Sans', sans-serif;
+				font-size: 2rem ;
 				
 				&__head{
 					margin-bottom: 2.4rem;
-
 					@include respond(phone){margin-bottom: 1.2rem;}
 				}
 	
 				&__item{
-					margin-bottom: 0 !important;
-					font-weight: 300;
+					margin-bottom: 2rem !important;
 					cursor: pointer;
 				}
 			}
