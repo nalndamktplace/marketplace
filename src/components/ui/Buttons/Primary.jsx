@@ -1,21 +1,22 @@
 import React from 'react'
 
-const PrimaryButton = props => {
+const PrimaryButton = ({label,theme,onClick,disabled=false}) => {
 
 	const onClickHandler = () => {
-		props.onClick()
+		onClick()
 	}
 
 	const getClasses = () => {
 		let classes = ['button button--primary typo__act']
-		if(props.theme === 2) classes.push('button--primary--2')
-		else if(props.theme === 3) classes.push('button--primary--white')
+		if(disabled) classes.push("button--primary--disabled")
+		if(theme === 2) classes.push('button--primary--2')
+		else if(theme === 3) classes.push('button--primary--white')
 		return classes.join(' ')
 	}
 
 	return (
-		<button className={getClasses()} onClick={()=>onClickHandler()}>
-			{props.label}
+		<button className={getClasses()} onClick={()=>onClickHandler()} disabled={disabled}>
+			{label}
 		</button>
 	)
 }

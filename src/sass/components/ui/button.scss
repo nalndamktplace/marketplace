@@ -23,6 +23,12 @@
 			background-color: $color-white ;
 			color: $color-blue ;
 		}
+
+		&--disabled {
+			background: $color-neutral-200 ;
+			color: $color-neutral-500 ;
+			cursor: default ;
+		}
 	}
 
 	&--secondary{

@@ -114,6 +114,7 @@ const Header = ({showRibbion=true}) => {
 				});
 				domElements.push(
 					<Dropdown 
+						key={item.id}
 						button={<div key={item.id} className="header__content__navbar__link" onClick={()=>menuItemClickHandler(item)}>
 							{isUsable(item.icon) && <item.icon/>}
 							{item.id !== "NI4" && <span>{item.title}</span>}

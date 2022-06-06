@@ -1,7 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 import { useNavigate } from 'react-router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 
 import Page from '../components/hoc/Page/Page'
@@ -12,13 +12,15 @@ import Contracts from '../connections/contracts'
 import { IpfsClient } from '../connections/ipfs'
 
 import { setSnackbar } from '../store/actions/snackbar'
-import { isFilled, isUsable } from '../helpers/functions'
+import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
 import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 
 import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
+import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
+import ProgressBar from '../components/ui/ProgressBar/ProgressBar'
 
 const CreateNftPage = props => {
 
@@ -34,6 +36,7 @@ const CreateNftPage = props => {
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesCopies: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
+	const [formProgress, setFormProgress] = useState(0);
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -47,6 +50,11 @@ const CreateNftPage = props => {
 		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
 		setLoading(false)
 	}, [WalletState])
+
+	useEffect(()=>{
+		let filled = Object.values(FormInput).filter(v => !(v===""||v?.length===0||v===null)).length ;
+		setFormProgress(filled/14);
+	},[FormInput])
 
 	async function listNFTForSale() {
 		setLoading(true)
@@ -143,45 +151,69 @@ const CreateNftPage = props => {
 
 	return (
 		<Page noFooter={true} containerClass={'create create__bg'}>
-			<div className="create__head">
-				<h3 className='typo__head typo__head--2'>Publish eBook</h3>
-			</div>
 			<div className="create__data">
 				<div className="create__data__form utils__padding__bottom--s">
+					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Publish eBook</h3>
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} description="Enter name of the book"/>
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} description="Enter name of the author"/>
-					<p className='typo__head typo__head--2 utils__margin__top--m utils__margin__bottom--s'>Upload Files</p>
+					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Upload Files</h3>
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} description="Upload a picture of book cover. File types supported: JPG, PNG, GIF, SVG, WEBP"/>
 					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} description="Upload a sample of book for preview. File types supported: EPUB"/>
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} description="Upload a book. File types supported: EPUB"/>
-					<p className='typo__head typo__head--2 utils__margin__top--m utils__margin__bottom--s'>Meta Data</p>
-					<InputField type="string" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
+					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Meta Data</h3>
+					<InputField type="number" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher"/>
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
-					<p className='typo__head typo__head--2 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</p>
+					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</h3>
 					<InputField type="number" label="min. number of primary sales" onChange={e => setFormInput({ ...FormInput, primarySales: e.target.value })} description="How many books to be sold as primary sales before secondary sale starts"/>
 					<InputField type="date" label="open on" min={moment().add(90, 'days')} onChange={e => setFormInput({ ...FormInput, secondaryFrom: e.target.value })} description="From when to start secondary sales"/>
-					<div className="create__data__form__cta">
+					{/* <div className="create__data__form__cta">
 						<PrimaryButton label={"Publish"} onClick={()=>listNFTForSale()} />
-					</div>
+					</div> */}
 				</div>
 				<div className="create__data__preview">
 					<div className="create__data__preview__container">
-						<p className='typo__head typo__head--4 utils__margin__bottom--s'>Preview</p>
-						<div className='create__data__preview__item'onClick={()=>{}}>
-							{isUsable(CoverUrl)?<img className='create__data__preview__item__cover' src={CoverUrl} alt={FormInput.name+" cover"} />:<div className="create__data__preview__item__cover"/>}
-							<div className="create__data__preview__item__data">
-								<p className='create__data__preview__item__data__author typo__body typo__body--2'>{FormInput.author}</p>
-								<p className='create__data__preview__item__data__name typo__body typo__body--2'>{FormInput.name}</p>
+						<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Preview</h3>
+						<div className='create__data__preview__book' onClick={()=>{}}>
+							<div className="create__data__preview__book__cover">
+								{	isUsable(CoverUrl)
+									?<img className='create__data__preview__book__cover__img' src={CoverUrl} alt={FormInput.name+" cover"} />
+									: <div className='create__data__preview__book__cover__placeholder'>
+										<ImagePlaceholder stroke='currentColor'/>
+										<span className='utils__margin__top--m'>Select a image for the book cover</span>
+									</div>
+								}
 							</div>
-							<div className="create__data__preview__item__action">
-								<div onClick={()=>{}}>{isFilled(FormInput.price)?"Buy":null}</div>
-								<p className='create__data__preview__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{isFilled(FormInput.price)?<>{FormInput.price}<USDCIcon width={20} height={20} fill='currentColor'/></>:null}</p>
+							<div className="create__data__preview__book__data">
+								<div className="create__data__preview__book__data__title  typo__head--4">{FormInput.name}</div>
+								<div className="create__data__preview__book__data__author typo__head--6">{FormInput.author}</div>
+								{FormInput.price && <div className="create__data__preview__book__data__price"><USDCIcon fill="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
+								{FormInput.language && <div className="create__data__preview__book__data__field">
+									<div className="create__data__preview__book__data__field__label typo__head--6">Language</div>
+									<div className="create__data__preview__book__data__field__value">{FormInput.language}</div>
+								</div>}
+								{isFilled(FormInput.genres) && <div className="create__data__preview__book__data__field">
+									<div className="create__data__preview__book__data__field__label typo__head--6">Genres</div>
+									<div className="create__data__preview__book__data__field__chips">
+										{FormInput.genres.map(item => <div key={item} className="create__data__preview__book__data__field__chips__item">{item}</div>)}
+									</div>
+								</div>}
+								{FormInput.publication && <div className="create__data__preview__book__data__field">
+									<div className="create__data__preview__book__data__field__label typo__head--6">Publication</div>
+									<div className="create__data__preview__book__data__field__value">{FormInput.publication}</div>
+								</div>}
 							</div>
+						</div>
+						<div className='create__data__preview__progress'>
+							<div className='create__data__preview__progress__container'>
+								<div className='create__data__preview__progress__container__value'>{Math.round(formProgress*100)}%</div>
+								<ProgressBar progress={formProgress}/>
+							</div>
+							<PrimaryButton disabled={formProgress!==1} label={"Publish"} onClick={()=>listNFTForSale()} />
 						</div>
 					</div>
 				</div>

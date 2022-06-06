@@ -5,6 +5,7 @@
 	justify-content: flex-start;
 	min-height: max-content !important;
 	height: max-content !important;
+	padding: 1rem ;
 
 	&__bg{
 		position: absolute;
@@ -30,20 +31,26 @@
 	}
 
 	&__data{
-		width: 100%;
 		min-height: calc(100vh - 12rem);
 		display: flex;
 		flex-direction: row;
 		align-items: flex-start;
-		justify-content: center;
+		justify-content: flex-start;
 		width: 100%;
 		padding-bottom: 4.8rem;
 
-		@include respond(phone){flex-direction: column;}
+		@include respond(tabLand){
+			display: block ;
+		}
+
+		& > .typo__head {
+			color: $color-neutral-700;
+		}
 
 		&__form{
-			flex: 1;
+			flex: 1 0 ;
 			max-width: 80rem;
+			margin-right: 4rem ;
 
 			@include respond(phone){max-width: 100%; width: 100%;}
 
@@ -53,52 +60,109 @@
 		}
 
 		&__preview{
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
+			flex: 1 ;
+			right: 0 ;
+			padding: 2rem ;
+			background-color: $color-white ;
+			// width:calc(50% - 1rem);
+			// height: calc(100% - 14rem);
 
 			@include respond(tabPort){margin-top: 4.8rem;}
 
 			&>img{
-				height: calc(100vh - 28rem);
+				height: calc(75vh - 28rem);
 				width: 100%;
 				object-fit: contain;
 			}
 	
-			&__item{
+			&__book{
 				display: flex;
-				flex-direction: column;
 				align-items: flex-start;
 				justify-content: flex-start;
-				border-radius: 1.2rem;
-				overflow: hidden;
-				width: 40rem;
-				border: 0.1rem solid rgba($color-black, 0.08);
-				height: fit-content;
-				background-color: $color-white;
 
-				&__cover{
+				@include respond(tabLand){
+					display: block ;
+				}
+
+				&__cover  {
+					position: relative;
 					width: 100%;
-					height: 64rem;
-					min-height: 64rem;
-					width: 40rem;
+					height: 48rem;
+					min-height: 48rem;
+					max-width: 32rem;
+					flex: 1 0 32rem;
 					object-fit: cover;
+					background-color: #fff ;
+					border-radius: 1rem ;
+					box-shadow: $shadow-md ;
+
+					&__img {
+						width: 100% ;
+						height: 100% ;
+						border-radius: 1rem ;
+					}
+
+					&__placeholder {
+						width: 100% ;
+						height: 100% ;
+						display: flex ;
+						align-items: center ;
+						justify-content: center ;
+						flex-direction: column ;
+						background-color: $color-neutral-200;
+						color: $color-neutral-500;
+						&:hover {
+							color: $color-neutral-700;
+						}
+					}
 				}
 
 				&__data{
-					padding: 0.8rem;
-					&>p{margin-bottom: 0;}
-
-					&__author{
-						text-transform: uppercase;
-						font-size: 1.2rem;
-						font-weight: 600;
-						color: rgba($color-black, 0.64)
+					margin-left: 4rem ;
+					@include respond(tabLand){
+						margin-left: 0 ;
+						margin-top: 3rem ;
 					}
-
-					&__name{ text-transform: capitalize; }
+					&> * + * {margin-top: 2rem ;}
+					&__title  { color: $color-neutral-900; }
+					&__author { color: $color-neutral-600; margin-top: 0 ; }
+					&__price {
+						padding: 0.8rem 1.6rem ;
+						width: min-content ;
+						background-color: hsl(160,80%,40%) ;
+						color: #fff ;
+						display: flex ;
+						align-items: center ;
+						border-radius: 0.5rem ;
+						font-weight: 700 ;
+						font-size: 2rem ;
+ 
+						> svg {
+							margin-right: 0.5rem ;
+						}
+ 
+						&--free {
+							background-color: hsl(160,80%,40%) ;
+						}
+					}
+					&__field {
+						color: $color-neutral-700 ;
+						&__label {color: $color-neutral-700 ;}
+						&__chips {
+							position: relative ;
+							display: flex ;
+							flex-wrap: wrap ;
+							white-space: nowrap ;
+							margin-left: -0.5rem ;
+							&__item {
+								border-radius: 100rem ;
+								padding: 1rem 2rem ;
+								background-color: $color-neutral-200 ;
+								color: $color-neutral-700;
+								margin: 0.5rem ;
+							}
+						}
+					}
 				}
 
 				&__action{
@@ -111,6 +175,21 @@
 
 					&__price{
 						margin-bottom: 0 !important;
+					}
+				}
+			}
+
+			&__progress {
+				display: flex ;
+				align-items: center ;
+				margin-top: 3rem ;
+				&__container {
+					flex: 1 ;
+					position: relative ;
+					margin-right: 2rem ;
+					&__value {
+						position: absolute ;
+						bottom: 100% ;
 					}
 				}
 			}
