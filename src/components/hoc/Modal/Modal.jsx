@@ -1,9 +1,7 @@
 import { useEffect } from "react"
-
 import Backdrop from "../Backdrop/Backdrop";
-import IconButton from "../../ui/Buttons/IconButton"
-
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
+import Button from "../../ui/Buttons/Button";
 
 const Modal = ({ title = "", open = false, toggleModal, children }) => {
 	useEffect(() => {
@@ -23,12 +21,7 @@ const Modal = ({ title = "", open = false, toggleModal, children }) => {
 				<div className="modal__wrapper__header">
 					<div className="modal__wrapper__header__title typo__head--5">{title}</div>
 					<div className="modal__wrapper__header__close-button">
-						<IconButton
-							icon={<CloseIcon />}
-							onClick={() => {
-								toggleModal(false);
-							}}
-						/>
+						<Button type="icon" onClick={()=>toggleModal(false)}><CloseIcon/></Button>
 					</div>
 				</div>
 				<div className="modal__wrapper__content">{children}</div>

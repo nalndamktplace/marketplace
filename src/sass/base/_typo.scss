@@ -49,7 +49,6 @@
 			text-transform: uppercase;
 			color: $color-primary;
 		}
-
 		&--6{
 			font-weight: 500;
 			font-size: 1.8rem;
@@ -59,8 +58,8 @@
 
 	&__body{
 		font-weight: 400;
-		&--2 { font-size: 1.4rem;}
-		&--3 { font-size: 1.2rem;}
+		&--2 { font-size: 2rem;}
+		&--3 { font-size: 1.5rem;}
 	}
 
 	&__act{
@@ -101,6 +100,15 @@
 		&--info    { color: $color-blue    !important;}
 		&--white   { color: $color-white   !important;}
 		&--black   { color: $color-black   !important;}
+		&--n100	   { color: $color-neutral-100 !important;}
+		&--n200	   { color: $color-neutral-200 !important;}
+		&--n300	   { color: $color-neutral-300 !important;}
+		&--n400	   { color: $color-neutral-400 !important;}
+		&--n500	   { color: $color-neutral-500 !important;}
+		&--n600	   { color: $color-neutral-600 !important;}
+		&--n700	   { color: $color-neutral-700 !important;}
+		&--n800	   { color: $color-neutral-800 !important;}
+		&--n900	   { color: $color-neutral-900 !important;}
 	}
 	
 	&--nowrap   {white-space: nowrap;}

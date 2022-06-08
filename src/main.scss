@@ -25,6 +25,10 @@
 @import "./sass/components/ui/read-time";
 @import "./sass/components/ui/file-picker";
 @import "./sass/components/ui/progressbar";
+@import "./sass/components/ui/accordian";
+@import "./sass/components/ui/filterPanel";
+@import "./sass/components/ui/bookItem";
+@import "./sass/components/ui/stars";
 
 @import "./sass/pages/book";
 @import "./sass/pages/create";
@@ -33,3 +37,5 @@
 @import "./sass/pages/explore";
 @import "./sass/pages/account";
 @import "./sass/pages/reader";
+@import "./sass/pages/profile";
+@import "./sass/pages/debug";

@@ -1,6 +1,5 @@
 import Logo from "../../../assets/logo/logo.png" ;
 import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg";
-import PrimaryButton from "../../ui/Buttons/Primary";
 import Wallet from "../../../connections/wallet";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
@@ -15,8 +14,9 @@ import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-squar
 import { GaExternalTracker } from "../../../trackers/ga-tracker";
 import SideNavbar from "../SideNavbar/SideNavbar";
 import Dropdown from "../../ui/Dropdown/Dropdown" ;
+import Button from "../../ui/Buttons/Button";
 
-const Header = ({showRibbion=true}) => {
+const Header = ({showRibbion=true,noPadding=false}) => {
 	const dispatch = useDispatch()
 	const location = useLocation()
 	const navigate = useNavigate()
@@ -142,7 +142,7 @@ const Header = ({showRibbion=true}) => {
 	}
 
 	return (
-		<header className="header">
+		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
 				<div className="header__content__logo utils__cursor--pointer" onClick={()=>navigate('/')}>
 					<img className="header__content__logo__image" src={Logo}/>
@@ -156,7 +156,7 @@ const Header = ({showRibbion=true}) => {
 				</div>
 				<div className="header__content__navbar">
 					{renderNavItems()}
-					{!isUsable(WalletState.wallet) && <PrimaryButton type="primary" label="CONNECT WALLET" onClick={handleWalletConnect} />}
+					{!isUsable(WalletState.wallet) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
 				</div>
 				<div className={getSubMenuClasses()} onClick={()=>toggleMenu()}>
 					<div/><div/><div/>

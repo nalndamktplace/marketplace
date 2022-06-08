@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import Modal from '../../hoc/Modal/Modal'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
-import PrimaryButton from '../../ui/Buttons/Primary'
+
 
 import { isFilled, isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
@@ -13,6 +13,7 @@ import { hideModal, SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { BASE_URL } from '../../../config/env'
 import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
+import Button from '../../ui/Buttons/Button'
 
 const PurchaseModal = props => {
 
@@ -68,7 +69,7 @@ const PurchaseModal = props => {
 							<p className='utils__margin__bottom--n'>Address: {offer.book_address}</p>
 							<p className='utils__margin__bottom--n'>Seller: {offer.previous_owner}</p>
 							<div className="modal__purchase__data__offers__item__cta">
-								<PrimaryButton onClick={()=>props.onOldBookPurchase(offer)} label={"Buy Now"}/>
+								<Button type="primary" onClick={()=>props.onOldBookPurchase(offer)}>Buy Now</Button>
 							</div>
 						</div>
 					)
@@ -100,7 +101,7 @@ const PurchaseModal = props => {
 							</div>
 						</div>
 						<div className="modal__purchase__data__cta">
-							<PrimaryButton onClick={() => props.onNewBookPurchase()} label="Buy Now"/>
+							<Button type="primary" onClick={() => props.onNewBookPurchase()}>Buy Now</Button>
 						</div>
 					</React.Fragment>
 				)

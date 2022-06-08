@@ -7,8 +7,8 @@ import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg
 import { useEffect, useState } from "react"
 import { GaExternalTracker, GaSocialTracker } from "../../../trackers/ga-tracker"
 import { isUsable } from "../../../helpers/functions"
-import PrimaryButton from "../../ui/Buttons/Primary"
 import { useNavigate } from "react-router"
+import Button from "../../ui/Buttons/Button"
 
 const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
     const navigate = useNavigate();
@@ -122,14 +122,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
                     {SubMenuOpen && ActiveSubMenu && renderSubMenuItems(ActiveSubMenu)}
                 </div>
 				<div className="side-navbar__container__spacer"></div>
-                {!isUsable(WalletState.wallet) && (
-                    <PrimaryButton
-                        label="Connect Wallet"
-                        onClick={() => {
-                            handleWalletConnect();
-                        }}
-                    />
-                )}
+                {!isUsable(WalletState.wallet) && (<Button type="primary" size="xl" onClick={()=>handleWalletConnect()}>Connect Wallet</Button>)}
                 <div className="side-navbar__container__socials">{renderSocialIcons()}</div>
             </div>
         </div>

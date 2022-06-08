@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import Wallet from '../connections/wallet'
 
 import Page from '../components/hoc/Page/Page'
-import PrimaryButton from '../components/ui/Buttons/Primary'
-import SecondaryButton from '../components/ui/Buttons/Secondary'
 
 import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
@@ -19,7 +17,7 @@ import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 import FeaturedPlaceholder from "../assets/images/featured-placeholder.png"
 
 import { BASE_URL } from '../config/env'
-import IconButton from '../components/ui/Buttons/IconButton'
+import Button from '../components/ui/Buttons/Button'
 
 const IndexPage = props => {
 
@@ -177,8 +175,8 @@ const IndexPage = props => {
 						<h1 className="typo__display typo__transform--capital typo__color--white typo__transform--capital">experience<br/> books beyond<br/> reading</h1>
 						<h3 className="typo__head typo__head--3 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
 						<div className="index__content__container__row">
-							<PrimaryButton theme={3} onClick={()=>navigate('/explore')} label="Explore"/>
-							<SecondaryButton theme={2} onClick={()=>{handleCreate()}} label="Publish"/>
+							<Button size="xl" type="white" onClick={()=>navigate('/explore')}>Explore</Button>
+							<Button size="xl" type="outline-white" onClick={()=>{handleCreate()}}>Publish</Button>
 						</div>
 					</div>
 				</div>

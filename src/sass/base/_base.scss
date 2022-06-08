@@ -3,7 +3,7 @@
 *::before{
 	margin:0;
 	padding:0;
-	box-sizing: inherit;
+	box-sizing: border-box ;
 	-webkit-tap-highlight-color : transparent ;
 }
 
@@ -30,10 +30,11 @@ body{
 
 main{ min-height: 100vh; }
 
-textarea, input{
-	transition: all 0.1s ease-in-out;
+textarea, input[type="text"]{
+	transition: box-shadow 0.1s ease-in-out;
 	border: none ;
 	box-shadow: 0 0 0 2px $color-neutral-200 ; 
+
 	&:focus {
 		outline: none !important;
 		box-shadow: 0 0 0 2px $color-primary;

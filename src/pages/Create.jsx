@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux"
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
-import PrimaryButton from '../components/ui/Buttons/Primary'
 
 import Contracts from '../connections/contracts'
 import { IpfsClient } from '../connections/ipfs'
@@ -21,6 +20,7 @@ import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
 import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
 import ProgressBar from '../components/ui/ProgressBar/ProgressBar'
+import Button from '../components/ui/Buttons/Button'
 
 const CreateNftPage = props => {
 
@@ -171,9 +171,6 @@ const CreateNftPage = props => {
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</h3>
 					<InputField type="number" label="min. number of primary sales" onChange={e => setFormInput({ ...FormInput, primarySales: e.target.value })} description="How many books to be sold as primary sales before secondary sale starts"/>
 					<InputField type="date" label="open on" min={moment().add(90, 'days')} onChange={e => setFormInput({ ...FormInput, secondaryFrom: e.target.value })} description="From when to start secondary sales"/>
-					{/* <div className="create__data__form__cta">
-						<PrimaryButton label={"Publish"} onClick={()=>listNFTForSale()} />
-					</div> */}
 				</div>
 				<div className="create__data__preview">
 					<div className="create__data__preview__container">
@@ -213,7 +210,7 @@ const CreateNftPage = props => {
 								<div className='create__data__preview__progress__container__value'>{Math.round(formProgress*100)}%</div>
 								<ProgressBar progress={formProgress}/>
 							</div>
-							<PrimaryButton disabled={formProgress!==1} label={"Publish"} onClick={()=>listNFTForSale()} />
+							<Button disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>
 						</div>
 					</div>
 				</div>

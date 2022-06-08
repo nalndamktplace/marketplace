@@ -1,220 +1,105 @@
 .explore{
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: flex-start;
-
-	&__head{
-		height: 12rem;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-	}
-
+	--header-height:8rem;
+	position: relative ;
+	overflow: hidden ;
+	padding: 0 ;
+	margin: 0;
+	height: 100vh ;
+	padding-top: var(--header-height) ;
+	
 	&__data{
-		height: calc(100vh - 12rem);
 		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		justify-content: flex-start;
 		width: 100%;
+		height: 100% ;
 
-		&__filters{
-			width: 32rem;
-			overflow-y: scroll;
-			height: calc(100vh - 12rem);
-			border: 0.1rem solid rgba($color-black, 0.08);
-			border-right: none;
-			transition: all 0.4s ease-in-out;
+		&__filter-panel-container {
+			flex: 0 0 32rem;
+			max-width: 32rem ;
+			width: 32rem ;
+			border-right: 2px solid $color-neutral-200 ;
+			height: 100% ;
+			overflow-y: auto ;
+			transition: margin 100ms ease-out ;
 
-			@include respond(phone){
-				width: 5.6rem;
-				transition: all 0.4s ease-in-out;
-			}
-
-			&--expanded{
-				width: 32rem;
-				transition: all 0.4s ease-in-out;
-
-				.explore__data__filters__item{
-					@include respond(phone){
-						&:not(:first-of-type){
-							opacity: 1;
-							width: max-content;
-	
-						}
-						&:first-of-type{
-							h6.typo__head:nth-child(2){
-								opacity: 1;
-								width: max-content;
-							}
-						}
-					}
-				}
-			}
-
-			&__item{
-				padding: 1.6rem;
-				transition: all 0.4s ease-in-out;
-
-				&:not(:last-child){ border-bottom: 0.1rem solid rgba($color-black, 0.08); }
-
-				@include respond(phone){
-					&:not(:first-of-type){
-						opacity: 0;
-						width: 0;
-					}
-					&:first-of-type{
-						h6.typo__head:nth-child(2){
-							opacity: 0;
-							width: 0;
-						}
-					}
-				}
-
-				&__head{
-					padding-bottom: 1.6rem;
-				}
-
-				&__grid{
-					display: grid;
-					grid-template-columns: repeat(2, 1fr);
-					column-gap: 2.4rem;
-					row-gap: 2.4rem;
-
-					&__item{
-						height: 4.8rem;
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-						justify-content: center;
-						border-radius: 1.2rem;
-						text-transform: capitalize;
-						transition: 0.4s all ease-in-out;
-						background-color: rgba($color-black, 0.08);
-						white-space: nowrap;
-						cursor: pointer;
-
-						&--active{
-							background-color: $color-secondary;
-							color: $color-white;
-						}
-					}
-				}
-			}
-
-			&__head{
-				width: 100%;
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: flex-start;
-
-				&__icon{
-					height: 2.4rem;
-					width: 2.4rem;
-					object-fit: contain;
-					margin-right: 1.2rem;
+			@include respond(tabLand){
+				&[data-filter-open="false"] {
+					margin-left: -32rem ;
 				}
 			}
 		}
-	
-		&__books{
-			flex: 1;
-			height: calc(100vh - 12rem);
-			border: 0.1rem solid rgba($color-black, 0.08);
-			overflow-y: scroll;
 
-			&--empty{
-				width: 100%;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-			}
-
-			&__image{
-				height: 24rem;
-				object-fit: contain;
-				margin-bottom: 3.2rem;
-			}
+		&__books {
+			flex: 1 ;
+			height: 100% ;
+			position: relative ; 
+			display: flex ;
+			flex-direction: column ;
 			
-			&__wrapper{
-				height: fit-content;
-				display: grid;
-				grid-template-columns: repeat(5, 1fr);
-				column-gap: 4rem;
-				row-gap: 4rem;
-				padding: 2.4rem;
+			@include respond(phone) {
+				min-width: 100vw;
+			}
 
-				@include respond(tabLand){
-					grid-template-columns: repeat(4, 1fr);
-					column-gap: 2.4rem;
+			&__header {
+				display: flex ;
+				align-items: center ;
+				justify-content: space-between ;
+				flex: 0 0 7rem ;
+				padding: 0 1.5rem ;
+				border-bottom: 2px solid $color-neutral-200 ;
+
+				&__filter {
+					display: flex ;
+					align-items: center ;
+
+					.button {
+						display: none !important;
+						@include respond(tabLand){display: flex !important;}
+					}
+
+					>*+* {
+						margin-left: 1rem ;
+					}
 				}
 
-				@include respond(phone){
-					grid-template-columns: repeat(2, 1fr);
-					column-gap: 2.4rem;
+				&__layout {
+					display: flex ;
 				}
 			}
 
-			&__item{
-				display: flex;
-				flex-direction: column;
-				align-items: flex-start;
-				justify-content: flex-start;
-				border-radius: 1.2rem;
-				overflow: hidden;
-				width: 100%;
-				border: 0.1rem solid rgba($color-black, 0.08);
-				height: fit-content;
-				cursor: pointer;
-
-				@include respond(phone){
-					width: 100%;
-					height: 100%;
+			&__wrapper {
+				flex: 1 ;
+				overflow-y: auto ;
+				padding: 1rem ;
+				
+				&[data-layout="GRID"] {
+					display: flex ;
+					flex-wrap: wrap ;
+					gap: 2rem ;
+					justify-content: flex-start ;
 				}
 
-				&__cover{
-					width: 100%;
-					height: calc(((100vw - (32rem + 7.2rem))/5)*1.6);
-					object-fit: cover;
-
-					@include respond(tabLand){ height: calc(((100vw - (32rem + 7.2rem))/4)*1.6); }
-					@include respond(phone){ height: calc(((100vw - (5.6rem + 7.2rem))/2)*1.6); }
+				&[data-layout="LIST"] {
+					display: block ;
 				}
 
-				&__data{
-					padding: 0.8rem;
-					margin-bottom: auto;
-					&>p{margin-bottom: 0;}
-
-					&__author{
-						text-transform: uppercase;
-						font-size: 1.2rem;
-						font-weight: 600;
-						color: rgba($color-black, 0.64)
-					}
-
-					&__name{ text-transform: capitalize; }
-				}
-
-				&__action{
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					justify-content: space-between;
-					width: 100%;
-					padding: 0 0.8rem 0.8rem;
-
-					&__price{
-						margin-bottom: 0 !important;
+				&__empty {
+					position: absolute ;
+					top: 50% ;
+					left: 50% ;
+					transform: translate(-50%,-50%);
+					display: flex ;
+					align-items: center ;
+					justify-content: center ;
+					flex-direction: column ;
+					color: $color-neutral-600 ;
+	
+					&>img {
+						max-height: 24rem ;
 					}
 				}
+
 			}
+
 		}
 	}
-
 }

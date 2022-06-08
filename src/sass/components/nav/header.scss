@@ -4,7 +4,6 @@
 	left: 0 ;
 	width: 100% ;
 	background-color: #fff ;
-	box-shadow: $shadow-lg,$shadow-sm ;
 	z-index: 900 ;
 
 	&__content {
@@ -21,6 +20,7 @@
 		&__logo {
 			display: flex ;
 			align-items: center ;
+
 	
 			&__image {
 				width : 5rem ;
@@ -36,7 +36,7 @@
 			position: relative ;
 			width: 100% ;
 			max-width: 32rem ;
-			margin-left: 12rem ;
+			margin-left: rem ;
 			color: $color-neutral-500 ;
 
 			@include respond(tabLand){ display: none ; }
@@ -229,6 +229,7 @@
 		height: 6rem ;
 		color: $color-white ;
 		background: linear-gradient(to right,$color-primary,$color-primary-dark);
+		box-shadow: $shadow-lg,$shadow-sm ;
 
 		padding: 0rem 8rem;
 		@include respond(desk){ padding: 0rem 4rem; }
@@ -248,4 +249,12 @@
 		}
 	}
 
+}
+
+.header[data-nopadding="true"] {
+	border-bottom: 2px solid $color-neutral-200 ;
+	> .header__content {
+		padding-left: 1.5rem ;
+		padding-right: 1.5rem ;
+	}
 }
