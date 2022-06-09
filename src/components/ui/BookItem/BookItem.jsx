@@ -2,7 +2,6 @@ import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg" ;
 import Stars from "../Stars/Stars";
 
 const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID"}) => {
-    console.log(book)
     return (
         <div className='book-item' onClick={onOpen} data-layout={layout}>
             <img className='book-item__cover' src={book.cover} alt={book.name} />

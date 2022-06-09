@@ -11,6 +11,7 @@ import Contracts from '../connections/contracts'
 
 import ListModal from '../components/modal/List/List'
 import PurchaseModal from '../components/modal/Purchase/Purchase'
+import ReviewModal from '../components/modal/Review/ReviewModal'
 
 import Wallet from '../connections/wallet'
 
@@ -18,7 +19,7 @@ import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
-import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL } from '../store/actions/modal'
+import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from '../store/actions/modal'
 
 import StarEmptyIcon from '../assets/icons/star-empty.svg'
 import StarFilledIcon from '../assets/icons/star-filled.svg'
@@ -37,6 +38,7 @@ import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 
 import { BASE_URL } from '../config/env'
 import Button from '../components/ui/Buttons/Button'
+import QuoteModal from '../components/modal/Quote/QuoteModal'
 
 const BookPage = props => {
 
@@ -324,6 +326,10 @@ const BookPage = props => {
 
 	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
 
+	const reviewModalHandler = () => { dispatch(showModal(SHOW_REVIEW_MODAL)) }
+
+	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
+
 	const purchaseNewCopyHandler = () => {
 		if(walletStatus()){
 			setLoading(true)
@@ -444,28 +450,6 @@ const BookPage = props => {
 			case 'TAB01':
 				return <p className="typo__body typo__body--2 typo__color--n600">{NFT.synopsis}</p>
 			case 'TAB02':
-				const renderStarsInput = () => {
-					let starsDOM = []
-					for (let i = 1; i <= 5; i++) {
-						if(i <= ReviewForm.rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
-								<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__review__rating__item__icon" />
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-							</div>)
-						else if(ReviewForm.rating < i && ReviewForm.rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
-								<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__review__rating__item__icon book__data__container__desc__tabs__data__review__rating__item__icon--half" />
-								<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__review__rating__item__icon book__data__container__desc__tabs__data__review__rating__item__icon--half" />
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-							</div>)
-						else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
-								<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__review__rating__item__icon" />
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-							</div>)
-					}
-					return starsDOM
-				}
 
 				const renderReviews = reviews => {
 					let reviewsDOM = []
@@ -484,12 +468,13 @@ const BookPage = props => {
 				}
 				
 				return <>
-					{ !isUsable(Review) && (Created||Owner) && (
-						<div className="book__data__container__desc__tabs__data__review">
-							<div className="book__data__container__desc__tabs__data__review__rating">{renderStarsInput()}</div>
-							<InputField type="string" label="title" value={ReviewForm.title} onChange={e => setReviewForm({ ...ReviewForm, title: e.target.value })} />
-							<InputField type="text" label="body" value={ReviewForm.body} onChange={e => setReviewForm({ ...ReviewForm, body: e.target.value })} />
-							<Button type="primary" onClick={()=>reviewHandler()} >submit</Button>
+					{ (!isUsable(Review) && (Created||Owner)) || true && (
+						<div className="book__data__container__desc__tabs__data__action">
+							<div className="book__data__container__desc__tabs__data__action__icon">
+								<ReviewIcon width={32} height={32} stroke="currentColor"/>
+							</div>
+							<div className="book__data__container__desc__tabs__data__action__label typo__head--6">Write a Review</div>
+							<Button type="primary" onClick={()=>reviewModalHandler()}>Review</Button>
 						</div>
 					)}
 					<div className="book__data__container__desc__tabs__data__reviews">
@@ -518,10 +503,13 @@ const BookPage = props => {
 				}
 				
 				return <>
-					{ !isUsable(Quote) && (Created||Owner) && (
-						<div className="book__data__container__desc__tabs__data__quote">
-							<InputField type="string" label="quote" value={QuotesForm.quote} onChange={e => setQuotesForm({ ...QuotesForm, quote: e.target.value })} />
-							<Button type="primary" onClick={()=>quoteHandler()} >submit</Button>
+					{ (!isUsable(Review) && (Created||Owner)) || true && (
+						<div className="book__data__container__desc__tabs__data__action">
+							<div className="book__data__container__desc__tabs__data__action__icon">
+								<BlockQuoteIcon width={32} height={32} stroke="currentColor"/>
+							</div>
+							<div className="book__data__container__desc__tabs__data__action__label typo__head--6">Write a Quote</div>
+							<Button type="primary" onClick={()=>quoteModalHandler()}>Quote</Button>
 						</div>
 					)}
 					<div className="book__data__container__desc__tabs__data__quotes">
@@ -686,6 +674,8 @@ const BookPage = props => {
 					</div>
 					<PurchaseModal data={NFT} onNewBookPurchase={()=>purchaseNewCopyHandler()} onOldBookPurchase={offer=>purchaseOldCopyHandler(offer)}/>
 					<ListModal data={NFT} onListHandler={listPrice=>onListHandler(listPrice)} />
+					<ReviewModal ReviewForm={ReviewForm} setReviewForm={setReviewForm} reviewHandler={reviewHandler}/>
+					<QuoteModal QuotesForm={QuotesForm} setQuotesForm={setQuotesForm} quoteHandler={quoteHandler}/>
 				</>
 				:null
 			}

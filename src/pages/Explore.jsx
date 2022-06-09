@@ -16,6 +16,7 @@ import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import Button from '../components/ui/Buttons/Button'
+import Pagination from '../components/ui/Pagination/Pagination'
 
 const ExplorePage = () => {
 
@@ -30,6 +31,8 @@ const ExplorePage = () => {
 	const [Loading, setLoading] = useState(false)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false);
 	const [layout, setLayout] = useState("GRID");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [maxPage, setMaxPage] = useState(10);
 
 	useEffect(()=>{
 		console.log(Filters);
@@ -112,8 +115,8 @@ const ExplorePage = () => {
 							<div className="typo__color--n500">Found <span className="typo__color--n700" style={{fontWeight:"500"}}>{Nfts.length}</span> results</div>
 						</div>
 						<div className="explore__data__books__header__layout">
-							<Button onClick={()=>setLayout("LIST")}><ListViewIcon/>List</Button>
-							<Button onClick={()=>setLayout("GRID")}><GridViewIcon/>Grid</Button>
+							<Button className="account__data__books__header__layout__button" onClick={()=>setLayout("LIST")}><ListViewIcon/><span>List</span></Button>
+							<Button className="account__data__books__header__layout__button" onClick={()=>setLayout("GRID")}><GridViewIcon/><span>GRID</span></Button>
 						</div>
 					</div>
 					<div className="explore__data__books__wrapper" data-layout={layout}>
@@ -124,7 +127,11 @@ const ExplorePage = () => {
 									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 								</div>
 						}
+						<div className="explore__data__books__wrapper__pagination">
+							<Pagination max={maxPage} current={currentPage} onPageChange={(p)=>setCurrentPage(p)} />
+						</div>
 					</div>
+					
 				</div>
 			</div>
 		</Page>

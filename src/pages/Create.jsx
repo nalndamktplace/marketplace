@@ -210,7 +210,7 @@ const CreateNftPage = props => {
 								<div className='create__data__preview__progress__container__value'>{Math.round(formProgress*100)}%</div>
 								<ProgressBar progress={formProgress}/>
 							</div>
-							<Button disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>
+							<Button type="primary" disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>
 						</div>
 					</div>
 				</div>

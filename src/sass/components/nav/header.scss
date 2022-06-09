@@ -36,7 +36,7 @@
 			position: relative ;
 			width: 100% ;
 			max-width: 32rem ;
-			margin-left: rem ;
+			margin-left: 20rem ;
 			color: $color-neutral-500 ;
 
 			@include respond(tabLand){ display: none ; }

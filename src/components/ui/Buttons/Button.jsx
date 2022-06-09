@@ -1,4 +1,4 @@
-const Button = ({children,className="",type="default",size="md",icon="",disabled=false,onClick={}}) => {
+const Button = ({children,className="",type="",size="md",icon="",disabled=false,onClick={}}) => {
     
     const getButtonClasses = () => {
         const classList = ["button",className] ;

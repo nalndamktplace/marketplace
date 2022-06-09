@@ -11,30 +11,38 @@
 	position: fixed ;
 	top: 50% ;
 	left: 50% ;
+	width: 100% ;
 	min-width: 40vw ;
-	max-width: 90%;
+	max-width: 48rem ;
 	min-height: max-content ;
 	transform: translate(-50%,-50%);
-	padding: 2rem ;
 	background-color: $color-white ;
 	box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
 	z-index: 999 ;
 	border-radius: 2rem;
 	transition: all 200ms ease-out ;
 
+	@include respond(tabPort) {
+		max-width: 90%;
+	}
+
 	&__header {
 		display: flex ;
 		align-items: center ;
 		margin-bottom: 1rem ;
+		padding: 1.5rem ;
+		padding-left: 2.5rem ;
+		padding-bottom: 0 ;
 		&__title {
 			flex: 1 ;
-			color: $color-neutral-500 ;
+			color: $color-neutral-600 ;
 		}
 	}
 
 	&__content {
 		max-height: 60vh ;
 		overflow-y: auto ;
+		padding: 2rem ;
 	}
 
 	&--close {
@@ -58,28 +66,27 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		border-radius: 0.4rem 0.4rem 0 0;
 		overflow: hidden;
+		border: none ;
 
 		&__item{
 			flex: 1;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			transition: all 0.4s ease-in-out;
-			border: 0.1rem solid rgba($color-black, 0.24);
-			padding: 0.48rem 0;
+			transition: all 0.15s ease-out;
+			padding: 1rem 0;
+			border-radius: 4px ;
 
 			&--active{
-				background-color: $color-primary;
+				background: linear-gradient(to right,$color-primary,$color-primary-dark);
 				color: $color-white;
-				border: 0.1rem solid $color-primary;
 			}
 		}
 	}
 
 	&__data{
-		margin-top: 4rem;
+		margin-top: 2rem;
 		
 		&__book{
 			display: flex;

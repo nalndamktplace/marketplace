@@ -8,7 +8,7 @@ const Accordian = ({classNames="",header="",options=""}) => {
     return ( 
         <div className={"accordian " + classNames}>
             <div className="accordian__header" onClick={()=>setOpen(s=>!s)}>
-                <div className="accordian__header__custom">{header}</div>
+                <div className="accordian__header__custom typo__head--6">{header}</div>
                 <div className={"accordian__header__toggle " + (Open ? "accordian__header__toggle--open" : "")}>
                     <ChevronDownIcon width={32} height={32} stroke="currentColor" />
                 </div>

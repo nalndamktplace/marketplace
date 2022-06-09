@@ -19,7 +19,7 @@ const Modal = ({ title = "", open = false, toggleModal, children }) => {
 		<Backdrop show={open} hideOnClick={true}>
 			<div className={getClasses()}>
 				<div className="modal__wrapper__header">
-					<div className="modal__wrapper__header__title typo__head--5">{title}</div>
+					<div className="modal__wrapper__header__title typo__head--6">{title}</div>
 					<div className="modal__wrapper__header__close-button">
 						<Button type="icon" onClick={()=>toggleModal(false)}><CloseIcon/></Button>
 					</div>
