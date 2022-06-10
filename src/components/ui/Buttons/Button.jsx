@@ -8,7 +8,7 @@ const Button = ({children,className="",type="",size="md",icon="",disabled=false,
     }
     
     return ( 
-        <button className={getButtonClasses()} onClick={onClick} disabled={disabled}>{children}</button> 
+        <button className={getButtonClasses()} onClick={typeof onClick === "function" ? onClick : ()=>{}} disabled={disabled}>{children}</button> 
     );
 }
  

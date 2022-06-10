@@ -1,31 +1,29 @@
 import axios from 'axios'
 import moment from 'moment'
 import { useNavigate } from 'react-router'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
 import Contracts from '../connections/contracts'
-import { IpfsClient } from '../connections/ipfs'
 
 import { setSnackbar } from '../store/actions/snackbar'
-import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
+import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { BASE_URL } from '../config/env'
-import { PRIMARY_MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
 
 import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
 import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
 import ProgressBar from '../components/ui/ProgressBar/ProgressBar'
 import Button from '../components/ui/Buttons/Button'
+import { GENRES } from '../config/genres'
+import { LANGUAGES } from '../config/languages'
 
 const CreateNftPage = props => {
-
-	const GENRES = ['fantasy', 'science fiction', 'adventure', 'romance', 'mystery', 'horror', 'thriller', 'historical fiction', 'children\'s fiction', 'autobiography', 'biography', 'cooking', 'art', 'selfhelp', 'inspirational', 'health & fitness', 'history', 'humor', 'business', 'travel']
-	const LANGUAGES = ['ES - Espanol', 'EN - English', 'HN - Hindi']
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -58,6 +56,12 @@ const CreateNftPage = props => {
 
 	useEffect(()=>{
 		console.log(FormInput);
+		const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays());
+		const languageID = LANGUAGES[FormInput.language];
+		const genreIDs = FormInput.genres.map(g => GENRES[g]);
+		console.log("secondarysale",secondaryFromInDays);
+		console.log("languageID",languageID,);
+		console.log("genreIDs",genreIDs);
 	},[FormInput])
 
 	async function listNFTForSale() {
@@ -77,14 +81,20 @@ const CreateNftPage = props => {
 			const coverUrl = res.data.cover.url
 			console.log(res.data);
 			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, primarySales, secondaryFrom } = FormInput
-			if(isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){				
-				Contracts.listNftForSales(WalletAddress, coverUrl, price).then(tx => {
+			
+			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays());
+			const languageID = LANGUAGES[FormInput.language];
+			// const genreIDs = FormInput.genres.map(g => GENRES[g]);
+			const genreIDs = 10 ;
+			console.log(WalletAddress)
+			if(isUsable(languageID) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){				
+				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays,languageID,genreIDs).then(tx => {
 					const bookAddress = tx.events[0].address
 					const newOwner = tx.events[0].args.newOwner
 					const previousOwner = tx.events[0].args.previousOwner
 					const status = tx.status
 					const txHash = tx.transactionHash
-					if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === PRIMARY_MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
+					if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
 						let formData = new FormData()
 						formData.append("epub", FormInput.preview)
 						formData.append("ipfsPath", name)
@@ -118,6 +128,7 @@ const CreateNftPage = props => {
 								navigate('/account', {state: {tab: 'created'}})
 							}
 							else {
+								console.log(res4.data)
 								dispatch(setSnackbar('ERROR'))
 							}
 						})
@@ -132,6 +143,7 @@ const CreateNftPage = props => {
 						else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
 					}
 				}).catch((err => {
+					console.log(err);
 					dispatch(setSnackbar('NOT200'))
 					setLoading(false)
 				}))
@@ -141,6 +153,7 @@ const CreateNftPage = props => {
 				setLoading(false)
 			}
 		}).catch(err => {
+			console.log("HERE")
 			dispatch(setSnackbar('NOT200'))
 			setLoading(false)
 		})
@@ -159,11 +172,11 @@ const CreateNftPage = props => {
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} description="Upload a book. File types supported: EPUB"/>
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Meta Data</h3>
 					<InputField type="number" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
-					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
+					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={Object.keys(GENRES)} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher"/>
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
-					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
+					<InputField type="list" label="language" listType={'single'} values={Object.keys(LANGUAGES)} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</h3>
 					<InputField type="number" label="min. number of primary sales" onChange={e => setFormInput({ ...FormInput, primarySales: e.target.value })} description="How many books to be sold as primary sales before secondary sale starts"/>

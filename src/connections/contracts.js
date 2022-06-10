@@ -1,35 +1,39 @@
 
 import Wallet from "./wallet"
 
-import { PRIMARY_MARKET_CONTRACT_ADDRESS, SECONDARY_MARKET_CONTRACT_ADDRESS, NALNDA_TOKEN_CONTRACT_ADDRESS } from "../config/contracts"
+import { NALNDA_TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS } from "../config/contracts"
 
 const { ethers } = require('ethers')
 
-const primaryMarket = require('../artifacts/contracts/NalndaBooksPrimarySales.sol/NalndaBooksPrimarySales.json')
-const secondaryMarket = require('../artifacts/contracts/NalndaBooksSecondarySales.sol/NalndaBooksSecondarySales.json')
+// const marketplace = require('../artifacts/contracts/NalndaBooksPrimarySales.sol/NalndaBooksPrimarySales.json')
+// const marketplace = require('../artifacts/contracts/NalndaBooksSecondarySales.sol/NalndaBooksSecondarySales.json')
+const marketplace = require('../artifacts/contracts/NalndaMarketplace.sol/NalndaMarketplace.json')
 const nalndaToken = require('../artifacts/contracts/mocks/NALNDA.sol/Nalnda.json')
 const book = require('../artifacts/contracts/NalndaBook.sol/NalndaBook.json')
 
 const getBooksCount = async function getBooksCount(){
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
-	let primaryMarketContract = new ethers.Contract(PRIMARY_MARKET_CONTRACT_ADDRESS, primaryMarket.abi, provider)
-	const books = await primaryMarketContract.totalBooksCreated()
+	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, provider)
+	const books = await marketplaceContract.totalBooksCreated()
+	console.log("getBooksCount",books);
 	return books.toString()
 }
 
 const getBooks = async function getBooks (index){
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
-	let primaryMarketContract = new ethers.Contract(PRIMARY_MARKET_CONTRACT_ADDRESS, primaryMarket.abi, provider)
-	const books = await primaryMarketContract.bookAddresses(index)
+	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, provider)
+	const books = await marketplaceContract.bookAddresses(index)
 	return books
 }
 
-const listNftForSales = async function listNftForSale(authorAddress, coverUrl, price){
-	const connection = Wallet.web3Modal.connect()
-	const provider = new ethers.providers.Web3Provider(connection)
-	const signer = provider.getSigner()
-	let primaryMarketContract = new ethers.Contract(PRIMARY_MARKET_CONTRACT_ADDRESS, primaryMarket.abi, signer)
-	let transaction = await primaryMarketContract.createNewBook(authorAddress, coverUrl, ethers.utils.parseEther(price))
+// todo check 90 < daysForSecondarySale < 150
+// todo 1 <= language <= 100
+// todo 1 <= genre <= 60
+const listNftForSales = async function listNftForSales(authorAddress, coverUrl, price,daysForSecondarySale,language,genre){
+	await Wallet.connectWallet()
+	const signer = Wallet.getSigner()
+	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
+	let transaction = await marketplaceContract.createNewBook(authorAddress, coverUrl, ethers.utils.parseEther(price),daysForSecondarySale,language,genre)
 	let tx = await transaction.wait()
 	return tx
 }
@@ -61,12 +65,12 @@ const listBookToMarketplace = async function listBookToMarketplace(bookAddress, 
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 
-	const bookContract = new ethers.Contract(bookAddress, book.abi, signer)
-	const approval = await bookContract.setApprovalForAll(SECONDARY_MARKET_CONTRACT_ADDRESS, true)
-	const ap = await approval.wait()
+	// const bookContract = new ethers.Contract(bookAddress, book.abi, signer)
+	// const approval = await bookContract.setApprovalForAll(MARKET_CONTRACT_ADDRESS, true)
+	// const ap = await approval.wait()
 
-	const secondaryMarketContract = new ethers.Contract(SECONDARY_MARKET_CONTRACT_ADDRESS, secondaryMarket.abi, signer)
-	const listing = await secondaryMarketContract.listCover(bookAddress, bookTokenId, ethers.utils.parseEther(bookPrice))
+	const marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
+	const listing = await marketplaceContract.listCover(bookAddress, bookTokenId, ethers.utils.parseEther(bookPrice))
 	return await listing.wait()
 }
 
@@ -75,8 +79,8 @@ const unlistBookFromMarketplace = async function unlistBookFromMarketplace(bookO
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
 
-	const secondaryMarketContract = new ethers.Contract(SECONDARY_MARKET_CONTRACT_ADDRESS, secondaryMarket.abi, signer)
-	const unlisting = await secondaryMarketContract.unlistCover(bookOrderId)
+	const marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
+	const unlisting = await marketplaceContract.unlistCover(bookOrderId)
 	return await unlisting.wait()
 }
 
@@ -86,19 +90,19 @@ const buyListedCover = async function buyListedCover(bookOrderId, bookPrice) {
 	const signer = provider.getSigner()
 
 	const nalndaTokenContract = new ethers.Contract(NALNDA_TOKEN_CONTRACT_ADDRESS, nalndaToken.abi, signer)
-	const approval = await nalndaTokenContract.approve(SECONDARY_MARKET_CONTRACT_ADDRESS, ethers.utils.parseEther(bookPrice.toString()))
+	const approval = await nalndaTokenContract.approve(MARKET_CONTRACT_ADDRESS, ethers.utils.parseEther(bookPrice.toString()))
 	const ap = await approval.wait()
 
-	const secondaryMarketContract = new ethers.Contract(SECONDARY_MARKET_CONTRACT_ADDRESS, secondaryMarket.abi, signer)
-	const transaction = await secondaryMarketContract.buyCover(bookOrderId)
+	const marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
+	const transaction = await marketplaceContract.buyCover(bookOrderId)
 	const tx = await transaction.wait()
 	return tx
 }
 
 const Contracts = {
 	nalndaToken,
-	primaryMarket,
-	secondaryMarket,
+	marketplace,
+	marketplace,
 	book,
 	getBooksCount,
 	getBooks,
