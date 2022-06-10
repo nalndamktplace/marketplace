@@ -61,6 +61,7 @@ const PurchaseModal = props => {
 			let offersDOM = []
 			if(isFilled(Offers)){
 				Offers.forEach(offer => {
+					console.log(offer)
 					offersDOM.push(
 						<div className="modal__purchase__data__offers__item" key={offer.book_address+'-'+offer.order_id}>
 							<p className='utils__margin__bottom--n'>Order: {offer.order_id}</p>
@@ -95,7 +96,7 @@ const PurchaseModal = props => {
 								<img src={props.data.cover} alt={props.data.title + ' cover'}/>
 							</div>
 							<div className="modal__purchase__data__book__info">
-								<p className='utils__margin__bottom--n typo__transform--capital'>{props.data.title}</p>
+								<p className='utils__margin__bottom--n typo__head--6 typo__transform--capital'>{props.data.title}</p>
 								<p className='utils__margin__bottom--n typo__body--3 typo__transform--upper'>{props.data.author}</p>
 								<p className='utils__margin__bottom--n typo__body--2 typo__transform--upper utils__d__flex utils__align__center'>{props.data.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
 							</div>

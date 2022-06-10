@@ -8,7 +8,8 @@ export const EXPLORE_PAGE_FILTERS = [
             {value:"old",label:"Old Books"},
         ],
     },
-    { name: "price", label:"Price", type: "range", min: 0, max: 1000, step: 10 },
+    { name: "price", label:"Price", type: "range", min: 0, max: 1000, step: 10, unit:"USDC",default:1000 },
+    { name: "decayscore", label:"Decay Score", type: "range", min: 0, max: 5, step: 0.01, unit:"", default:5 },
     {
         name: "collections",
         label: "Collections",
@@ -62,7 +63,8 @@ export const EXPLORE_PAGE_FILTERS = [
 
 
 export const ACCOUNT_PAGE_FILTERS = [
-    { name: "price", label:"Price", type: "range", min: 0, max: 1000, step: 10 },
+    { name: "price", label:"Price", type: "range", min: 0, max: 1000, step: 10, unit:"USDC" },
+    { name: "decayscore", label:"Decay Score", type: "range", min: 0, max: 5, step: 0.01, unit:"" },
     {
         name: "genres",
         label: "Genres",

@@ -122,9 +122,9 @@ const IndexPage = props => {
 							<h4 className="typo__head typo__head--2 index__collection__header__title typo__transform--capital">
 								{collection.name}
 							</h4>
-							<div className='index__collection__header__button' >
-								View more <ArrowRight width={24} height={24} />
-							</div>
+							<Button>
+								<span>View more</span> <ArrowRight width={24} height={24} />
+							</Button>
 						</div>
 						
 						<div className="index__collection__books">

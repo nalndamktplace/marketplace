@@ -6,7 +6,7 @@ const Pagination = ({max=10,current=3,onPageChange=()=>{}}) => {
 
     const renderPageNumbers = () => {
         let pageNumbers = [] ;
-        let minVisible = Math.max(1,current-2);
+        let minVisible = Math.max(1,Math.min(current-2,max-4));
         let maxVisible = Math.min(max,current + 2 + (3-current > 0?3-current:0)) ;
         for(let i=minVisible;i<=maxVisible;i++) 
             pageNumbers.push(<Button onClick={()=>onPageChange(i)} type={current===i?"secondary":""} className="pagination__button" key={"PAGE"+i+Math.random()}>{i}</Button>)

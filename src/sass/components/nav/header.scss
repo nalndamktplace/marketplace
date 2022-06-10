@@ -246,6 +246,19 @@
 			font-family: 500 ;
 			font-size: 2rem ;
 			white-space: nowrap ;
+			cursor: pointer ;
+			padding: 1rem 1.75rem ;
+			border-radius: 8px ;
+
+			&:hover {
+				background-color: rgba($color-white,0.1);
+			}
+
+			&--label {
+				background-color: transparent ;
+				&:hover { background-color: transparent }
+				cursor: default ;
+			}
 		}
 	}
 

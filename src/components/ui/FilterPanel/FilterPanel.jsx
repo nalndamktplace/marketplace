@@ -62,10 +62,10 @@ const FilterPanel = ({config={},filters={},setFilters=()=>{}}) => {
         return <div className="filter-panel__body__range">
             <div className="filter-panel__body__range__header">
                 <div className="filter-panel__body__range__label typo__head typo__head--6">{filterData.label}</div>
-                <div className="filter-panel__body__range__value">{filters[filterData.name]||0} USDC</div>
+                <div className="filter-panel__body__range__value">{filters[filterData.name]||0} {filterData.unit}</div>
             </div>
             <div className="filter-panel__body__range__body">
-                <input onChange={(e)=>setFilterValue(filterData,e.target.value)} type="range" min={filterData.min||0} max={filterData.max||100} step={filterData.step||1} />
+                <input defaultValue={filterData.default} onChange={(e)=>setFilterValue(filterData,e.target.value)} type="range" min={filterData.min||0} max={filterData.max||100} step={filterData.step||1} />
             </div>
         </div>
     }

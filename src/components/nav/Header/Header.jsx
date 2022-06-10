@@ -57,10 +57,10 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	];
 
 	const RIBBION_ITEMS = [
-		{ id : "RI1" , title : "Bestsellers"},
-		{ id : "RI2" , title : "Fiction"},
-		{ id : "RI3" , title : "Non-Fiction"},
-		{ id : "RI4" , title : "New Release"}
+		{ id : "RI1",search:"?collection=bestselling" , title : "Bestsellers"},
+		{ id : "RI2",search:"?collection=bestoffiction" , title : "Fiction"},
+		{ id : "RI3",search:"?collection=bestofnonfiction" , title : "Non-Fiction"},
+		{ id : "RI4",search:"?collection=newrelease" , title : "New Release"}
 	]
 
 	const toggleMenu = () => {
@@ -164,7 +164,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			</div>
 			{showRibbion && <div className="header__ribbion">
 				<div className="header__ribbion__item header__ribbion__item--label">Browse Categories</div>
-				{ RIBBION_ITEMS.map(item=><div key={item.id} className="header__ribbion__item">{item.title}</div>)}
+				{ RIBBION_ITEMS.map(item=><div key={item.id} onClick={()=>navigate({pathname:'/explore',search: item.search})} className="header__ribbion__item">{item.title}</div>)}
 			</div>}
 			<SideNavbar 
 				MenuOpen={MenuOpen} 

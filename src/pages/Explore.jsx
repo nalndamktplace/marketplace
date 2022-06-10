@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
@@ -33,6 +33,11 @@ const ExplorePage = () => {
 	const [layout, setLayout] = useState("GRID");
 	const [currentPage, setCurrentPage] = useState(1);
 	const [maxPage, setMaxPage] = useState(10);
+	const location = useLocation();
+
+	useEffect(()=>{
+		console.log("location");
+	},[location])
 
 	useEffect(()=>{
 		console.log(Filters);
