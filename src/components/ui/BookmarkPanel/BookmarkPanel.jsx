@@ -35,7 +35,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'GET',
 				params: {
-					bid: bookMeta.book_address,
+					bid: bookMeta.id,
 					uid: WalletAddress
 				}
 			}).then(res => {
@@ -96,7 +96,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'POST',
 				data: {
-					bid: bookMeta.book_address,
+					bid: bookMeta.id,
 					uid: WalletAddress,
 					bookmarks: JSON.stringify(newBookmarks),
 				}
@@ -125,7 +125,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'POST',
 				data: {
-					bid: bookMeta.book_address,
+					bid: bookMeta.id,
 					uid: WalletAddress,
 					bookmarks: JSON.stringify(newBookmarks),
 				}
