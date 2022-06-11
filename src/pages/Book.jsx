@@ -6,12 +6,12 @@ import { useLocation, useNavigate } from 'react-router'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
-import PrimaryButton from '../components/ui/Buttons/Primary'
 
 import Contracts from '../connections/contracts'
 
 import ListModal from '../components/modal/List/List'
 import PurchaseModal from '../components/modal/Purchase/Purchase'
+import ReviewModal from '../components/modal/Review/ReviewModal'
 
 import Wallet from '../connections/wallet'
 
@@ -19,25 +19,30 @@ import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
-import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL } from '../store/actions/modal'
+import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from '../store/actions/modal'
 
-import PrintIcon from '../assets/icons/print.svg'
-import TargetIcon from '../assets/icons/target.svg'
-import CartAddIcon from '../assets/icons/cart-add.svg'
 import StarEmptyIcon from '../assets/icons/star-empty.svg'
 import StarFilledIcon from '../assets/icons/star-filled.svg'
-import BackgroundBook from '../assets/images/background-book.svg'
 import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
+import BackgroundBook from '../assets/images/background-book.svg'
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 import {ReactComponent as QuoteIcon} from "../assets/icons/quote.svg"
+import {ReactComponent as ReviewIcon} from "../assets/icons/message.svg"
+import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
+import {ReactComponent as CartIcon} from "../assets/icons/cart-add.svg"
+import {ReactComponent as PrintIcon} from "../assets/icons/print.svg"
+import {ReactComponent as SynopsisIcon} from "../assets/icons/text.svg"
+import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 
 import { BASE_URL } from '../config/env'
+import Button from '../components/ui/Buttons/Button'
+import QuoteModal from '../components/modal/Quote/QuoteModal'
 
 const BookPage = props => {
 
-	const TABS = [{id: 'TAB01', label: 'Synopsis'}, {id: 'TAB02', label: 'reviews'}, {id: 'TAB03', label: 'quotes'}]
+	const TABS = [{id: 'TAB01', label: 'Synopsis', icon : <SynopsisIcon />}, {id: 'TAB02', label: 'reviews',icon : <ReviewIcon />}, {id: 'TAB03', label: 'quotes',icon:<BlockQuoteIcon/>}]
 
 	const params = useLocation()
 	const dispatch = useDispatch()
@@ -71,6 +76,7 @@ const BookPage = props => {
 	const [avgReadTime, setAvgReadTime] = useState(0);
 
 	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
+	useEffect(() => { console.log(NFT)}, [NFT])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -352,6 +358,10 @@ const BookPage = props => {
 
 	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
 
+	const reviewModalHandler = () => { dispatch(showModal(SHOW_REVIEW_MODAL)) }
+
+	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
+
 	const purchaseNewCopyHandler = () => {
 		if(walletStatus()){
 			setLoading(true)
@@ -442,6 +452,7 @@ const BookPage = props => {
 		TABS.forEach(tab => {
 			tabsDOM.push(
 				<div onClick={()=>setActiveTab(tab.id)} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item utils__cursor--pointer"} key={tab.id}>
+					{isUsable(tab.icon) && tab.icon}
 					<h5 className="typo__head typo__head--5">{tab.label}</h5>
 				</div>
 			)
@@ -449,77 +460,59 @@ const BookPage = props => {
 		return tabsDOM
 	}
 
+	const renderStars = rating => {
+		let starsDOM = []
+		for (let i = 1; i <= 5; i++) {
+			if(i <= rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
+					<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
+				</div>)
+			else if(rating < i && rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
+					<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
+					<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
+				</div>)
+			else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
+					<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
+				</div>)
+		}
+		return starsDOM
+	}
+
 	const renderTabData = () => {
 		switch (ActiveTab) {
 			case 'TAB01':
-				return <p className="typo__body">{NFT.synopsis}</p>
+				return <p className="typo__body typo__body--2 typo__color--n600">{NFT.synopsis}</p>
 			case 'TAB02':
-				const renderStarsInput = () => {
-					let starsDOM = []
-					for (let i = 1; i <= 5; i++) {
-						if(i <= ReviewForm.rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
-								<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__review__rating__item__icon" />
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-							</div>)
-						else if(ReviewForm.rating < i && ReviewForm.rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
-								<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__review__rating__item__icon book__data__container__desc__tabs__data__review__rating__item__icon--half" />
-								<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__review__rating__item__icon book__data__container__desc__tabs__data__review__rating__item__icon--half" />
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-							</div>)
-						else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__review__rating__item">
-								<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__review__rating__item__icon" />
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i-0.5})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-								<div onClick={()=>setReviewForm({ ...ReviewForm, rating: i})} className="book__data__container__desc__tabs__data__review__rating__item__trigger"/>
-							</div>)
-					}
-					return starsDOM
-				}
-				const renderStars = rating => {
-					let starsDOM = []
-					for (let i = 1; i <= 5; i++) {
-						if(i <= rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
-								<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
-							</div>)
-						else if(rating < i && rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
-								<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
-								<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
-							</div>)
-						else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
-								<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
-							</div>)
-					}
-					return starsDOM
-				}
 
 				const renderReviews = reviews => {
 					let reviewsDOM = []
 					if(isFilled(reviews)) reviews.forEach(review => reviewsDOM.push(
 						<div className="book__data__container__desc__tabs__data__reviews__item">
+							<div className="book__data__container__desc__tabs__data__reviews__item__header">
+								<div className="book__data__container__desc__tabs__data__reviews__item__header__head typo__head--4 typo__transform--upper">{review.title}</div>
+								<div className="book__data__container__desc__tabs__data__reviews__item__header__time typo__color--n500">{moment(review.reviewed_at).format("D MMM, YYYY")}</div>
+							</div>
 							<div className="book__data__container__desc__tabs__data__reviews__item__rating">
 								{renderStars(review.rating)}
-								<p className="book__data__container__desc__tabs__data__reviews__item__rating__time typo__cap typo__cap--2">{moment(review.reviewed_at).format("D MMM, YYYY")}</p>
 							</div>
-							<p className="book__data__container__desc__tabs__data__reviews__item__head typo__body typo__transform--upper">{review.title}</p>
-							<p className="book__data__container__desc__tabs__data__reviews__item__body typo__body typo__body--2">{review.body}</p>
+							<div className="book__data__container__desc__tabs__data__reviews__item__body typo__body typo__body--2">{review.body}</div>
 						</div>))
 					return reviewsDOM
 				}
 				
-				return <React.Fragment>
-					{ !isUsable(Review) && (Created||Owner) && (
-						<div className="book__data__container__desc__tabs__data__review">
-							<div className="book__data__container__desc__tabs__data__review__rating">{renderStarsInput()}</div>
-							<InputField type="string" label="title" value={ReviewForm.title} onChange={e => setReviewForm({ ...ReviewForm, title: e.target.value })} />
-							<InputField type="text" label="body" value={ReviewForm.body} onChange={e => setReviewForm({ ...ReviewForm, body: e.target.value })} />
-							<PrimaryButton onClick={()=>reviewHandler()} label="submit"/>
+				return <>
+					{ (!isUsable(Review) && (Created||Owner)) || true && (
+						<div className="book__data__container__desc__tabs__data__action">
+							<div className="book__data__container__desc__tabs__data__action__icon">
+								<ReviewIcon width={32} height={32} stroke="currentColor"/>
+							</div>
+							<div className="book__data__container__desc__tabs__data__action__label typo__head--6">Write a Review</div>
+							<Button type="primary" onClick={()=>reviewModalHandler()}>Review</Button>
 						</div>
 					)}
 					<div className="book__data__container__desc__tabs__data__reviews">
 						{renderReviews(Reviews)}
 					</div>
-				</React.Fragment>
+				</>
 			case 'TAB03':
 				const renderQuotes = quotes => {
 					let quotesDOM = []
@@ -541,17 +534,20 @@ const BookPage = props => {
 					return quotesDOM
 				}
 				
-				return <React.Fragment>
-					{ !isUsable(Quote) && (Created||Owner) && (
-						<div className="book__data__container__desc__tabs__data__quote">
-							<InputField type="string" label="quote" value={QuotesForm.quote} onChange={e => setQuotesForm({ ...QuotesForm, quote: e.target.value })} />
-							<PrimaryButton onClick={()=>quoteHandler()} label="submit"/>
+				return <>
+					{ (!isUsable(Review) && (Created||Owner)) || true && (
+						<div className="book__data__container__desc__tabs__data__action">
+							<div className="book__data__container__desc__tabs__data__action__icon">
+								<BlockQuoteIcon width={32} height={32} stroke="currentColor"/>
+							</div>
+							<div className="book__data__container__desc__tabs__data__action__label typo__head--6">Write a Quote</div>
+							<Button type="primary" onClick={()=>quoteModalHandler()}>Quote</Button>
 						</div>
 					)}
 					<div className="book__data__container__desc__tabs__data__quotes">
 						{renderQuotes(Quotes)}
 					</div>
-				</React.Fragment>
+				</>
 			default:
 				break
 		}
@@ -598,99 +594,107 @@ const BookPage = props => {
 		})
 	}
 
+	const getPriceTagClass = (book) => {
+		let classes = ["book__data__container__meta__price typo-head--6"]
+		if(book.price === 0) classes.push("book__data__container__meta__price--free")
+		return classes.join(" ");
+	}
+
 	return (
 		<Page>
 			<div className="book__bg">
 				<img src={BackgroundBook} alt="background"/>
 			</div>
 			{isUsable(NFT)?
-				<React.Fragment>
+				<>
 					<div className="book__data">
-						<div className="book__data__background">
-						</div>
+						<div className="book__data__background"></div>
 						<div className="book__data__container">
 							<div>
 								<div className='book__data__container__cover'>
-									<img className='book__data__container__cover__container' src={NFT.cover} alt={NFT.name} />
+									<img className='book__data__container__cover__image' src={NFT.cover} alt={NFT.name} />
 								</div>
 								<div className='book__data__container__meta'>
-									<h3 className="typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
-									<h5 className="typo__head typo__head--5">{NFT.author}</h5>
-									<div className="book__data__container__meta__row">
-										<div className="book__data__container__meta__row__item">
-											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">publication</p>
-											<img src={TargetIcon} alt="publisher icon" className="book__data__container__meta__row__item__icon" />
-											<p className="book__data__container__meta__row__item__value typo__body">{NFT.publication}</p>
+									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
+									<h5 className="typo__color--n500 typo__head typo__head--5">{NFT.author}</h5>
+									<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{NFT.price}</>}</div>
+									<div className="book__data__container__meta__rating">
+										<div className="book__data__container__meta__rating__stars">
+											{renderStars(Rating)}
 										</div>
-										<div className="book__data__container__meta__row__item">
-											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">print pages</p>
-											<img src={PrintIcon} alt="pages icon" className="book__data__container__meta__row__item__icon" />
-											<p className="book__data__container__meta__row__item__value typo__body">{NFT.print}</p>
+										<div className='book__data__container__meta__rating__count'>
+											out of {TotalReveiws} reviews
 										</div>
-										<div className="book__data__container__meta__row__item">
-											<p className="book__data__container__meta__row__item__head typo__body typo__body--2">Sold</p>
-											<img src={CartAddIcon} alt="ISBN icon" className="book__data__container__meta__row__item__icon" />
-											<p className="book__data__container__meta__row__item__value typo__body">{NFT.copies}</p>
-										</div>
+									</div>
+									<div className="book__data__container__meta__cta">
+										{Listed
+											?
+												<Button type="primary" size="lg" onClick={()=>unlistHandler()}>Unlist</Button>
+											:Created
+												?<>
+													<Button type="primary" size="lg" onClick={()=>readHandler()}>Read</Button>
+												</>
+												:Owner
+													?<>
+														<Button type="primary" size="lg" onClick={()=>readHandler()}>Read</Button>
+														<Button onClick={()=>listHandler()}>List</Button>
+													</>
+													:<>
+														<Button type="primary" size="lg" onClick={()=>purchaseHandler()}>Buy Now</Button>
+														<Button onClick={()=>previewHandler()}>Preview</Button>
+													</>
+										}
 									</div>
 								</div>
 							</div>
 							<div className='book__data__container__desc'>
-								<div className="book__data__container__desc__cta">
-									{Listed
-										?
-											<PrimaryButton label={'Unlist'} onClick={()=>unlistHandler()}/>
-										:Created
-											?<React.Fragment>
-												<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
-											</React.Fragment>
-											:Owner
-												?<React.Fragment>
-													<PrimaryButton label={'Read'} onClick={()=>readHandler()}/>
-													<PrimaryButton label={'List'} onClick={()=>listHandler()}/>
-												</React.Fragment>
-												:<React.Fragment>
-													<PrimaryButton label={'Preview'} onClick={()=>previewHandler()}/>
-													<PrimaryButton label={'Buy Now'} onClick={()=>purchaseHandler()}/>
-												</React.Fragment>
-									}
-								</div>
-								<div className="book__data__container__desc__row">
-									<div className="book__data__container__desc__interacts">
-										<div className="book__data__container__desc__interacts__space"/>
-										<div className="book__data__container__desc__interacts__item">
-											{/* {Liked?<img onClick={()=>likeHandler(false)} className='book__data__container__desc__interacts__item__icon' src={LikedIcon} alt="liked"/>:<img onClick={()=>likeHandler(true)} className='book__data__container__desc__interacts__item__icon' src={LikeIcon} alt="like"/>} */}
-											<LikeIcon className="book__data__container__desc__interacts__item__icon" fill={Liked?"#ff5722":"transparent"} onClick={()=>(Created||Owner) && likeHandler(!Liked)}/>
-											<p>{Likes}</p>
-										</div>
-										<div className="book__data__container__desc__interacts__item">
-											<img onClick={()=>setActiveTab('TAB02')} className='book__data__container__desc__interacts__item__icon' src={StarFilledIcon} alt="rating"/>
-											<p>{Rating}&nbsp;({TotalReveiws})</p>
-										</div>
-									</div>
-								</div>
-								<div className="book__data__container__desc__row book__data__container__desc__row--fluid">
+								<div className="book__data__container__desc__left">
 									<div className="book__data__container__desc__summary">
-										<p className='book__data__container__desc__summary__head typo__body--3'>contract address</p>
-										<p className='book__data__container__desc__summary__data utils__cursor--pointer' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,4)}…{(NFT.book_address||"").slice((NFT.contract||"").length-4)}</p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>DA score</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.da_score}</p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>Live Readers Count</p>
+										<div className="book__data__container__desc__summary__contract">
+											<div className='book__data__container__desc__summary__contract__data'>
+												<div className='book__data__container__desc__summary__contract__label typo__color--n700'>Contract Address</div>
+												<div className='book__data__container__desc__summary__contract__value typo__color--n700' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,4)}…{(NFT.book_address||"").slice((NFT.contract||"").length-4)}</div>
+											</div>
+											<div className='book__data__container__desc__summary__contract__icon'>
+												<ExternalLinkIcon />
+											</div>
+										</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
+										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
+										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
+										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price}&nbsp;<USDCIcon width={24} height={24} fill='currentColor'/></div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Publication date</div>
+										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
+                    <p className='book__data__container__desc__summary__head typo__body--3'>Live Readers Count</p>
 										<p className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</p>
 										<p className='book__data__container__desc__summary__head typo__body--3'>Average Read Time</p>
 										<p className='book__data__container__desc__summary__data'>{moment.utc(avgReadTime*1000).format('HH:mm:ss')} </p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>genres</p>
-										<p className='book__data__container__desc__summary__data typo__transform--capital'>{JSON.parse(NFT.genres).join(', ')}</p>
-										{/* <p className='book__data__container__desc__summary__head typo__body--3'>ISBN Code</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.isbn}</p> */}
-										<p className='book__data__container__desc__summary__head typo__body--3'>language</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.language}</p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>price</p>
-										<p className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price}&nbsp;<USDCIcon width={24} height={24} fill='currentColor'/></p>
-										<p className='book__data__container__desc__summary__head typo__body--3'>publication date</p>
-										<p className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</p>
-										{/* <p className='book__data__container__desc__summary__head typo__body--3'>rating</p>
-										<p className='book__data__container__desc__summary__data'>{NFT.rating}</p> */}
+									</div>
+								</div>
+								<div className="book__data__container__desc__right">
+									<div className="book__data__container__desc__interacts">
+										<div className="book__data__container__desc__interacts__item">
+											<LikeIcon width={32} height={32} className="book__data__container__desc__interacts__item__icon" stroke="currentColor" fill={Liked?"#ff5722":"transparent"} onClick={()=>(Created||Owner) && likeHandler(!Liked)}/>
+											<div className='typo__head--6 typo__color--n500'>Likes</div>
+											<div className='typo__head--3 typo__color--n600'>{Likes||"0"}</div>
+										</div>
+										<div className="book__data__container__desc__interacts__item">
+											<ReviewIcon width={32} height={32} stroke="currentColor"/>
+											<div className='typo__head--6 typo__color--n500'>Reviews</div>
+											<div className='typo__head--3 typo__color--n600'>{TotalReveiws||"0"}</div>
+										</div>
+										<div className="book__data__container__desc__interacts__item">
+											<PrintIcon width={32} height={32} stroke="currentColor"/>
+											<div className='typo__head--6 typo__color--n500'>Print Pages</div>
+											<div className='typo__head--3 typo__color--n600'>{NFT.print||"00"}</div>
+										</div>
+										<div className="book__data__container__desc__interacts__item">
+											<CartIcon width={32} height={32} stroke="currentColor"/>
+											<div className='typo__head--6 typo__color--n500'>Sold</div>
+											<div className='typo__head--3 typo__color--n600'>{NFT.copies||"00"}</div>
+										</div>
 									</div>
 									<div className="book__data__container__desc__tabs">
 										<div className="book__data__container__desc__tabs__container">
@@ -706,7 +710,9 @@ const BookPage = props => {
 					</div>
 					<PurchaseModal data={NFT} onNewBookPurchase={()=>purchaseNewCopyHandler()} onOldBookPurchase={offer=>purchaseOldCopyHandler(offer)}/>
 					<ListModal data={NFT} onListHandler={listPrice=>onListHandler(listPrice)} />
-				</React.Fragment>
+					<ReviewModal ReviewForm={ReviewForm} setReviewForm={setReviewForm} reviewHandler={reviewHandler}/>
+					<QuoteModal QuotesForm={QuotesForm} setQuotesForm={setQuotesForm} quoteHandler={quoteHandler}/>
+				</>
 				:null
 			}
 		</Page>

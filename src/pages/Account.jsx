@@ -2,29 +2,24 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useState } from 'react'
-
 import Wallet from '../connections/wallet'
-
 import Page from '../components/hoc/Page/Page'
-import InputField from '../components/ui/Input/Input'
-
 import { isUsable } from '../helpers/functions'
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
-
-import FilterIcon from '../assets/icons/filter.svg'
 import BooksShelf from '../assets/images/books-shelf.png'
-import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg";
-
 import { BASE_URL } from '../config/env'
+import Button from '../components/ui/Buttons/Button'
+import Pagination from '../components/ui/Pagination/Pagination'
+import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
+import { ACCOUNT_PAGE_FILTERS } from '../config/filters'
+import BookItem from '../components/ui/BookItem/BookItem'
+import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
+import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
+import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 
 const AccountPage = props => {
-
-	const FILTERS = [
-		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'price', type: 'range', min: 0, max: 1000, step: 10 }],
-		[{ name: 'genres', type: 'options', values: ['adventure', 'art', 'autobiography', 'biography', 'business', 'children\'s fiction', 'cooking', 'fantasy', 'health & fitness', 'historical fiction', 'history', 'horror', 'humor', 'inspirational', 'mystery', 'romance', 'selfhelp', 'science fiction', 'thriller', 'travel'] }, { name: 'status', type: 'options', values: ['sold', 'listed'] }, { name: 'price', type: 'range', min: 0, max: 1000, step: 10 }],
-	]
 
 	const params = useLocation()
 	const navigate = useNavigate()
@@ -37,9 +32,11 @@ const AccountPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [ActiveFilters, setActiveFilters] = useState([{name: 'status', active: null},{name: 'price', active: null}])
-	const [PriceRange, setPriceRange] = useState(null)
-
+	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false);
+	const [layout, setLayout] = useState("GRID");
+	const [currentPage, setCurrentPage] = useState(1);
+	const [maxPage, setMaxPage] = useState(10);
+	
 	const connectWallet = useCallback(
 		() => {
 			Wallet.connectWallet().then(res => {
@@ -106,142 +103,46 @@ const AccountPage = props => {
 	const renderNfts = () => {
 		let nftDOM = []
 		let nfts = Nfts
-
-		if(ActiveFilters.indexOf(v => isUsable(v['active']))){
-			const activeFilters = ActiveFilters.filter(v => isUsable(v['active']))
-			activeFilters.forEach(filter => {
-				switch (filter.name) {
-					case 'status':
-						if(filter.active === 0) nfts = nfts.filter(v => v.sold)
-						else if(filter.active === 1) nfts = nfts.filter(v => !v.sold)
-						break
-					case 'price':
-						if(isUsable(filter.active)) nfts = nfts.filter(v => v.price <= filter.active)
-						break
-					case 'genres':
-						nfts = nfts.filter(v => {
-							if(isUsable(v.genres)) return v.genres.indexOf(FILTERS[ActiveTab].filter(v => v.name === 'genres')[0].values[filter.active]) > -1
-							else {
-								return false
-							}
-						})
-						break
-					default:
-				}
-			})
-		}
-
 		nfts.forEach(nft => {
-			nftDOM.push(
-				<div className='account__data__books__item' key={nft.tokenId} onClick={()=>openHandler(nft)}>
-					<img className='account__data__books__item__cover' src={nft.cover} alt={nft.name} />
-					<div className="account__data__books__item__data">
-						{ActiveTab!==1?<p className='account__data__books__item__data__author typo__body typo__body--2'>{nft.author}</p>:null}
-						<p className='account__data__books__item__data__name typo__body typo__body--2'>{nft.title}</p>
-					</div>
-					<div className="account__data__books__item__action">
-						<div onClick={()=>readHandler(nft)}>Read</div>
-						<p className='account__data__books__item__action__price typo__body typo__body--2 utils__d__flex utils__align__center'>{nft.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></p>
-					</div>
-				</div>
-			)
+			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>);
 		})
 		return nftDOM
 	}
 
-	const renderTabs = () => {
-		let tabs = ['library', 'published']
-		let tabsDOM = []
-		tabs.forEach((tab, index) => {
-			if(index === ActiveTab) tabsDOM.push(
-				<div key={tab} className="account__tabs__item">
-					<p className="account__tabs__item__label account__tabs__item__label--active typo__body">{tab}</p>
-				</div>
-			)
-			else tabsDOM.push(
-				<div key={tab} onClick={()=>setActiveTab(index)} className="account__tabs__item">
-					<p className="account__tabs__item__label typo__body">{tab}</p>
-				</div>
-			)
-		})
-		return tabsDOM
-	}
-
-	const filterHandler = (filter, index) => {
-		setActiveFilters(old => {
-			const activeFilter = old.filter(v => v['name'] === filter.name)
-			const otherFilters = old.filter(v => v['name'] !== filter.name)
-			if(filter.type === 'options'){
-				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index) return [...otherFilters, {name: filter.name, active: null}]
-				return [...otherFilters, {name: filter.name, active: index}]
-			}
-			else if(filter.type === 'range'){
-				setPriceRange(index)
-				return [...otherFilters, {name: filter.name, active: index}]
-			}
-		})
-	}
-
-	const renderFilters = () => {
-
-		const renderFilterValues = filter => {
-			let valuesDOM = []
-			filter.values.forEach((value, index) => {
-				const activeFilter = ActiveFilters.filter(v => v['name'] === filter.name)
-				if(isUsable(activeFilter) && activeFilter.length === 1 && activeFilter[0].active === index)
-				valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="typo__body--2 typo__align--center account__data__filters__item__grid__item account__data__filters__item__grid__item--active" key={filter.name+index.toString()}>{value}</div> )
-				else valuesDOM.push( <div onClick={()=>filterHandler(filter, index)} className="typo__body--2 typo__align--center account__data__filters__item__grid__item" key={filter.name+index.toString()}>{value}</div> )
-			} )
-			return valuesDOM
-		}
-
-		let filtersDOM = []
-		FILTERS[ActiveTab].forEach((filter, index) => {
-			if(filter.type === 'options') filtersDOM.push(
-				<div className="account__data__filters__item" key={"filter"+index.toString()}>
-					<div className="account__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
-					<div className="account__data__filters__item__grid">{renderFilterValues(filter)}</div>
-				</div>
-			)
-			else if(filter.type === 'range') filtersDOM.push(
-				<div className="account__data__filters__item" key={"filter"+index.toString()}>
-					<div className="account__data__filters__item__head"><h6 className="typo__head typo__head--6">{filter.name}</h6></div>
-					<p className="typo__body typo__body--2">{isUsable(PriceRange)?"≤ "+PriceRange:"Showing all books"}</p>
-					<InputField type="range" min={filter.min} max={filter.max} step={filter.step} onChange={e=>filterHandler(filter, e.target.value)}/>
-				</div>
-			)
-		})
-		return filtersDOM
-	}
-
 	return (
-		<Page noFooter={true} fluid={true} containerClass={'explore'}>
-			<div className="account__head">
-				<h3 className='typo__head typo__head--3'>{WalletAddress?WalletAddress:"John Doe"}</h3>
-			</div>
-			<div className="account__tabs">
-				{renderTabs()}
-			</div>
+		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="account__data">
-				<div className={Filters?"account__data__filters account__data__filters--expanded":"account__data__filters"} onClick={()=>setFilters(old => !old)}>
-					<div className="account__data__filters__head account__data__filters__item">
-						<img className='account__data__filters__head__icon' src={FilterIcon} alt="filters"/>
-						<h6 className="typo__head typo__head--6">Filters</h6>
-					</div>
-					{renderFilters()}
+				<div className="account__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
+					<FilterPanel config={ACCOUNT_PAGE_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
-				{isUsable(Nfts) && Nfts.length>0?
-					<div className="account__data__books">
-						<div className="account__data__books__wrapper">
-							{renderNfts()}
+				<div className="account__data__books" data-filter-open={FiltersPanelOpen}> 
+					<div className="account__data__books__header">
+						<div className='account__data__books__header__filter'>
+							<Button type="icon" onClick={()=>setFiltersPanelOpen(s=>!s)}><FilterIcon fill={FiltersPanelOpen?"currentColor":"transparent"} /></Button>
+							<div className="account__data__books__header__filter__tabs">
+								<div onClick={()=>setActiveTab(0)} className="account__data__books__header__filter__tabs__item typo__head--6" data-state={ActiveTab===0}>Library</div>
+								<div onClick={()=>setActiveTab(1)} className="account__data__books__header__filter__tabs__item typo__head--6" data-state={ActiveTab===1}>Published</div>
+							</div>
+						</div>
+						<div className="account__data__books__header__layout">
+							<Button className="account__data__books__header__layout__button" onClick={()=>setLayout("LIST")}><ListViewIcon/><span>List</span></Button>
+							<Button className="account__data__books__header__layout__button" onClick={()=>setLayout("GRID")}><GridViewIcon/><span>GRID</span></Button>
 						</div>
 					</div>
-					:
-					<div className="account__data__books account__data__books--empty">
-						<img src={BooksShelf} alt="books shelf" className="account__data__books__image" />
-						<h4 className="typo__head typo__head--4">No eBooks yet</h4>
+					<div className="account__data__books__wrapper" data-layout={layout}>
+						{isUsable(Nfts) && Nfts.length > 0
+							? 	renderNfts()
+							: 	<div className='account__data__books__empty'>
+									<img src={BooksShelf} alt="books shelf" className="account__data__books__image" />
+									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
+								</div>
+						}
+						<div className="account__data__books__wrapper__pagination">
+							<Pagination max={maxPage} current={currentPage} onPageChange={(p)=>setCurrentPage(p)} />
+						</div>
 					</div>
-				}
+					
+				</div>
 			</div>
 		</Page>
 	)

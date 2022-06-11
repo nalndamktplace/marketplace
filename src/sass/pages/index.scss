@@ -1,13 +1,40 @@
 .index{
+	--header-height : 14rem ;
+	margin-top: var(--header-height) ;
 	
 	&__hero{
-		min-height: calc(100vh - 6.4rem);
+		min-height: calc(100vh - var(--header-height)) ;
 		width: 100%;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: flex-start;
-		@include respond(phone){ flex-direction: column; }
+		@include respond(tabLand){ 
+			flex-direction: column; 
+			margin-bottom: 16rem ;
+		}
+		@include respond(phone){
+			--header-height : 8rem ;
+			min-height: calc(100vh - var(--header-height) - 4rem) ;
+		}
+		margin-bottom: 32rem ;
+	}
+
+	&__bg{
+		z-index: -100;
+		position: absolute;
+		top: var(--header-height) ;
+		left:0;
+		width: 100vw;
+		height: 120% ;
+		overflow: hidden;
+		background-color: $color-blue ;
+		background-image: url('../../assets/images/banner-top.svg') , url('../../assets/images/banner-bottom.svg');
+		background-size: 100% auto,100% auto;
+		background-position: top,bottom;
+		background-repeat: no-repeat;
+
+		@include respond(phone){ height: calc(100vh - 6.4rem); }
 	}
 
 	&__section{
@@ -16,14 +43,51 @@
 
 	&__collection{
 		width: 100%;
+		padding: 8rem 0 4rem 0;
 
-		&:not(:last-child){margin-bottom: 4.8rem;}
+		// &:not(:last-child){margin-bottom: 8rem;}
 
-		&__head{ margin-bottom: 2.4rem; }
+		&__header {
+			display: flex ;
+			justify-content: space-between ;
+			align-items: center ;
+			margin-bottom: 4rem ;
+
+			&__button {
+				position: relative ;
+				min-width: 0 ;
+				padding: 1.5rem 2rem ;
+				display: flex ;
+				align-items: center ;
+				justify-content: center ;
+				color: $color-neutral-500;
+				border-radius: 4px ;
+				white-space: nowrap ;
+				cursor: pointer ;
+				font-weight: 500 ;
+		
+				&>svg {
+					width: 75% ;
+					stroke: currentColor ;
+				}
+		
+				&:hover {
+					background-color: $color-neutral-200 ;
+					color: $color-neutral-700;
+				}
+			}
+		}
+
 
 		&__books{
 			width: 100%;
-			overflow: scroll;
+			overflow: auto ;
+
+			-ms-overflow-style: none; /* Internet Explorer 10+ */
+			scrollbar-width: none; /* Firefox */
+			overflow: -moz-scrollbars-none; /* Old Firefox */
+			
+			&::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
 			
 			&__wrapper{
 				display: flex;
@@ -31,58 +95,85 @@
 				align-items: flex-start;
 				justify-content: flex-start;
 				width: max-content;
-
 			}
-			-ms-overflow-style: none; /* Internet Explorer 10+ */
-			scrollbar-width: none; /* Firefox */
-			overflow: -moz-scrollbars-none; /* Old Firefox */
-			&::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+			
 
 			&__item{
+				--cover-size : 26rem ;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
 				justify-content: flex-start;
-				border-radius: 1.2rem;
-				overflow: hidden;
-				border: 0.1rem solid rgba($color-black, 0.08);
 				height: fit-content;
 				cursor: pointer;
+				position: relative ;
+				width  : calc(var(--cover-size));
 
 				&:not(:last-child){ margin-right: 4rem; }
 
 				&__cover{
-					width: calc(((100vw - (32rem + ((4rem)*4)))/5));
-					height: calc(((100vw - (32rem + ((4rem)*4)))/5)*1.6);
+					border-radius: 0.5rem ;
+					width  : calc(var(--cover-size));
+					height : calc(var(--cover-size) * 1.6);
 					object-fit: cover;
 
-					@include respond(desk){
-						width: calc(((100vw - (16rem + ((4rem)*4)))/5));
-						height: calc(((100vw - (16rem + ((4rem)*4)))/5)*1.6);
-					}
-					@include respond(retinaBig){
-						width: calc(((100vw - (24rem + ((4rem)*4)))/5));
-						height: calc(((100vw - (24rem + ((4rem)*4)))/5)*1.6);
-					}
-					@include respond(tabLand){
-						width: calc(((100vw - (8rem + ((4rem)*4)))/1.5));
-						height: calc(((100vw - (8rem + ((4rem)*4)))/1.5)*1.6);
-					}
+					// width : calc(((100vw - (32rem + ((4rem)*4)))/5));
+					// height: calc(((100vw - (32rem + ((4rem)*4)))/5)*1.6);
+					
+					// @include respond(desk){
+					// 	width: calc(((100vw - (16rem + ((4rem)*4)))/5));
+					// 	height: calc(((100vw - (16rem + ((4rem)*4)))/5)*1.6);
+					// }
+					// @include respond(retinaBig){
+					// 	width: calc(((100vw - (24rem + ((4rem)*4)))/5));
+					// 	height: calc(((100vw - (24rem + ((4rem)*4)))/5)*1.6);
+					// }
+					// @include respond(tabLand){
+					// 	width: calc(((100vw - (8rem + ((4rem)*4)))/1.5));
+					// 	height: calc(((100vw - (8rem + ((4rem)*4)))/1.5)*1.6);
+					// }
 				}
 
 				&__data{
-					padding: 0.8rem;
+					width: 100% ;
+					padding: 1rem 0;
 					margin-bottom: auto;
 					&>p{margin-bottom: 0;}
 
-					&__author{
-						text-transform: uppercase;
-						font-size: 1.2rem;
-						font-weight: 600;
-						color: rgba($color-black, 0.64)
+					&__price {
+						padding: 0.8rem 1.6rem ;
+						width: min-content ;
+						background-color: hsl(160,80%,40%) ;
+						color: #fff ;
+						display: flex ;
+						align-items: center ;
+						border-radius: 0.5rem ;
+						font-weight: 700 ;
+						font-size: 2rem ;
+ 
+						> svg {
+							margin-right: 0.5rem ;
+						}
+ 
+						&--free {
+							background-color: hsl(160,80%,40%) ;
+						}
 					}
 
-					&__name{ text-transform: capitalize; }
+					&__author{
+						text-transform: uppercase;
+						font-size: 1.75rem; 
+						font-weight: 400;
+						color: $color-neutral-400
+					}
+
+					&__name{ 
+						text-transform: capitalize; 
+						word-break: break-all ;
+						line-height: 1.25 ;
+						margin-top: 0.8rem ;
+						font-weight: 700 ;
+					}
 				}
 
 				&__action{
@@ -101,49 +192,26 @@
 		}
 	}
 
-	&__bg{
-		z-index: -100;
-		position: absolute;
-		top:0;
-		left:0;
-		width: 100vw;
-		overflow: hidden;
-
-		@include respond(phone){ height: calc(100vh - 6.4rem); }
-
-		&>img{
-			object-fit: contain;
-			width: 100%;
-			background-size: cover ;
-			content: url('../../assets/images/background-hero.png');
-			
-			@include respond(phone){
-				height: 100%;
-				width: unset;
-				background-size: cover ;
-				object-fit: cover;
-				content: url('../../assets/images/background-hero-phone.svg');
-			}
-		}
-	}
-
 	&__content{
 		flex: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 
-		@include respond(phone){ margin-bottom: 4.8rem; }
+		@include respond(phone){ margin-bottom: 0rem; }
 
 		&__container{
+			text-shadow: 0 0 4px rgba($color-black,0.3), 0 0 16px rgba($color-black,0.2);
 			&__row{
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 				justify-content: flex-start;
 				margin-top: 4rem;
-	
-				&>div{ &:not(:last-child){ margin-right: 2.4rem; } }
+				
+				&> * + * {
+					margin-left: 1.5rem ;
+				}
 			}
 		}
 
@@ -164,9 +232,14 @@
 			min-height: 48rem;
 			min-width: 75rem;
 
+			@include respond(tabPort){
+				margin-top: 8rem ;
+			}
+
 			@include respond(phone){
 				min-height: 32rem;
 				min-width: 50rem;
+				margin-top: 0 ;
 			}
 
 			&__item{
@@ -181,7 +254,7 @@
 				height: fit-content;
 				box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
 				cursor: pointer;
-				transition: all 0.4s ease-in-out;
+				transition: transform 0.4s 0.025s cubic-bezier(0,1.4,0.3,1.4) ;
 
 				@include respond(phone){width: 20rem;}
 
@@ -245,6 +318,59 @@
 
 					&__name{ text-transform: capitalize; }
 				}
+			}
+		}
+	}
+
+	&__featured {
+		display: flex ;
+		align-items: center ;
+		justify-content: center ;
+		padding: 4rem 1rem ;
+
+		&__container {
+			&__row {
+				display: flex ;
+
+				&__item {
+					flex: 1 ;
+					background-color: $color-neutral-200 ;
+					border-radius: 1rem ;
+					padding: 2rem ;
+					display: flex ;
+					flex-direction: column ;
+					align-items: center ;
+					text-align: center ;
+
+					&__image {
+						display: flex ;
+						align-items: center ;
+						justify-content: center ;
+						img {
+							height: 24rem ;
+						}
+					}
+
+					&__title {
+						color: $color-neutral-700;
+					}
+				}
+
+				&> * + * {
+					margin-left: 2rem ;
+				}
+
+				@include respond(tabPort){
+					display: block ;
+					&> * + * {
+						margin-left: 0 ;
+						margin-top: 2rem ;
+					}
+				}
+			}
+
+			&> * + * {
+				margin-top: 2rem ;
 			}
 		}
 	}

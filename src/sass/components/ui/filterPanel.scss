@@ -1,0 +1,92 @@
+.filter-panel {
+    display: flex ;
+    flex-direction: column ;
+    height: 100% ;
+
+    &__header {
+        display: flex ;
+        align-items: center ;
+        border-bottom: 2px solid $color-neutral-200 ;
+        color: $color-neutral-600 ;
+        padding: 0 1rem ;
+        height: 7rem ;
+
+        &>button {
+            margin-left: auto ;
+        }
+    }
+
+    &__body {
+        flex: 1 ;
+        height: 100% ;
+        overflow-y: auto ;
+        
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+        scrollbar-width: none; /* Firefox */
+        overflow: -moz-scrollbars-none; /* Old Firefox */
+        &::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+
+        &__accordian {
+            max-height: 48rem ;
+        }
+
+        &__tabs {
+            display: flex ;
+            padding: 0.5rem ;
+            border-bottom: 2px solid $color-neutral-200 ;
+            &__item {
+                flex: 1 ;
+                margin: 0.5rem ;
+
+                &--active {
+                    background: $color-neutral-200 ;
+                    color: $color-neutral-700 ;
+                }
+            }
+        }
+
+        &__range {
+            border-bottom: 2px solid $color-neutral-200 ;
+            &__header {
+                padding: 1.75rem ;
+                display: flex ;
+                align-items: center ;
+                justify-content: space-between ;
+                color: $color-neutral-600 ;
+            }
+
+            &__body {
+                padding: 1.27rem ;
+                > input {
+                    width: 100% ;
+                }
+            }
+        }
+
+        &__item {
+            padding: 1rem ;
+            color: $color-neutral-600 ;
+            text-transform: capitalize ;
+            font-size: 1.75rem;
+
+            &>label {
+                display: flex ;
+                align-items: center ;
+                cursor: pointer ;
+
+                &>input {
+                    display: block ;
+                    margin-right: 1rem ;
+
+                    &:checked + span {
+                        color: $color-neutral-700 ;
+                    }
+                }
+            }
+
+            &:hover {
+                color: $color-neutral-700 ;
+            }
+        }
+    }
+}

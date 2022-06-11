@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import Modal from '../../hoc/Modal/Modal'
 import InputField from '../../ui/Input/Input'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
-import PrimaryButton from '../../ui/Buttons/Primary'
 
 import { hideModal, SHOW_LIST_MODAL } from '../../../store/actions/modal'
+import Button from '../../ui/Buttons/Button'
 
 const ListModal = props => {
 	const dispatch = useDispatch()
@@ -31,7 +31,7 @@ const ListModal = props => {
 				<p className='typo__transform--capital'>DA Score: {props.data.da_score}</p>
 				<InputField type="string" label="listing price in USDC" onChange={e => setListPrice(e.target.value)} />
 				<div style={{flex: 1}}/>
-				<PrimaryButton label="List eBook" onClick={()=>props.onListHandler(ListPrice)}/>
+				<Button type="primary" onClick={()=>props.onListHandler(ListPrice)}>List eBook</Button>
 			</Modal>
 		</Backdrop>
 	)

@@ -7,7 +7,6 @@ import useDebounce from "../hook/useDebounce";
 import ReadTimer from "../components/ui/ReadTime/ReadTime";
 import SidePanel from "../components/hoc/SidePanel/SidePanel";
 import Customizer from "../components/ui/Customizer/Customizer";
-import IconButton from "../components/ui/Buttons/IconButton";
 import BookMarkPanel from "../components/ui/BookmarkPanel/BookmarkPanel";
 import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel";
 import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu";
@@ -26,6 +25,7 @@ import { BASE_URL } from '../config/env'
 import { useDispatch } from "react-redux";
 import { hideSpinner, showSpinner } from "../store/actions/spinner";
 import { setSnackbar } from "../store/actions/snackbar";
+import Button from "../components/ui/Buttons/Button";
 
 const ReaderPage = () => {
 
@@ -348,7 +348,7 @@ const ReaderPage = () => {
 		<div className="reader">
 			<div className="reader__header">
 				<div className="reader__header__left">
-					<IconButton icon={<ChevronLeftIcon stroke="currentColor" />} onClick={()=>{navigate(-1)}}/>
+					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 					<ReadTimer bookMeta={bookMeta}/>
 					{/* <button onClick={()=>{
 						console.log(rendition);
@@ -358,12 +358,16 @@ const ReaderPage = () => {
 					<div className="reader__header__center__title">{bookMeta.title||"Untitled"}</div>
 				</div> 
 				<div className="reader__header__right">
-					<IconButton icon={fullscreen?<MinimizeIcon stroke="currentColor"/>:<MaximizeIcon stroke="currentColor"/>} onClick={()=>setFullscreen(s=>!s)}/>
-					<IconButton className={annotaionPanel?"reader__header__right__button--active":""} icon={<BlockquoteIcon stroke="currentColor"/>} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} />
+					<Button type="icon" onClick={()=>setFullscreen(s=>!s)}>
+						{fullscreen?<MinimizeIcon/>:<MaximizeIcon/>}
+					</Button>
+					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} >
+						<BlockquoteIcon/>
+					</Button>
 					<SidePanel show={annotaionPanel} position="right">
 						<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
 					</SidePanel>
-					<IconButton className={bookmarkPanel?"reader__header__right__button--active":""} icon={<BookmarkIcon stroke="currentColor"/>} onClick={()=>{hideAllPanel({bookmark:false});setBookmarkPanel(s=>!s)}} />
+					<Button type="icon" className={bookmarkPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({bookmark:false});setBookmarkPanel(s=>!s)}} ><BookmarkIcon /></Button>
 					<SidePanel show={bookmarkPanel} position="right">
 						<BookMarkPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={bookmarkPanel}
 							onAdd={()=>{
@@ -378,7 +382,7 @@ const ReaderPage = () => {
 						/>
 					</SidePanel>
 
-					<IconButton className={customizerPanel?"reader__header__right__button--active":""} icon={<LetterCaseIcon stroke="currentColor"/>} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s)}} />
+					<Button type="icon" className={customizerPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s)}}><LetterCaseIcon /></Button>
 					<SidePanel show={customizerPanel} position="right">
 						<Customizer rendition={rendition}/>
 					</SidePanel>

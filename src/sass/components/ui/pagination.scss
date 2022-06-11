@@ -1,0 +1,19 @@
+.pagination {
+    display: flex ;
+
+    &>*+* {
+        margin-left: 1.5rem ;
+    }
+
+    &__button {
+        width : 5rem ;
+        height: 5rem ;
+    }
+    
+    &__nav {
+        @include respond(phone) {
+            &>span { display: none !important ;}
+            &>svg { margin: 0 ;}
+        }
+    }
+}

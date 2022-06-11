@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { isFilled } from "../../../helpers/functions";
-import PrimaryButton from "../Buttons/Primary";
+import Button from "../Buttons/Button";
 
 const FilePicker = (props) => {
 	const fileInputRef = useRef();
@@ -21,7 +21,7 @@ const FilePicker = (props) => {
 
 	return (
 		<div className="file-input">
-			<PrimaryButton label="Upload" onClick={handleUploadButton} />
+			<Button type="primary" onClick={handleUploadButton} >Upload</Button>
 			<input
 				className="file-input__hidden-input"
 				type="file"

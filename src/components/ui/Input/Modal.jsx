@@ -4,9 +4,7 @@ import { useDispatch } from 'react-redux'
 import { isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
 
-import InputField from './Input'
-import TextButton from '../Buttons/Text'
-import PrimaryButton from '../Buttons/Primary'
+import Button from '../Buttons/Button'
 
 const InputModal = props => {
 
@@ -63,12 +61,8 @@ const InputModal = props => {
 			</div>
 			<div className="input__modal__space"/>
 			<div className="input__modal__actions">
-				<TextButton label={"Cancel"} onClick={()=>props.onCancel()}/>
-				{props.listType==='multiple'?
-					<PrimaryButton label={"Save"} onClick={()=>props.onSave(SelectedValues)}/>
-					:
-					<PrimaryButton label={"Save"} onClick={()=>props.onSave(SelectedValue)}/>
-				}
+				<Button label={"Cancel"} onClick={()=>props.onCancel()}/>
+				<Button onClick={()=>props.onSave(props.listType==='multiple'?SelectedValues:SelectedValue)}>Save</Button>
 			</div>
 		</div>
 	)

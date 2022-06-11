@@ -1,255 +1,155 @@
-.account{
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: flex-start;
-
-	&__head{
-		height: 8rem;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-
-		@include respond(phone){
-			height: unset;
-			padding: 2.4rem;
-		}
-
-		>h3{
-			line-break:anywhere;
-			text-align: center;
-		}
-
-	}
-
-	&__tabs{
-		height: 4rem;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-
-		&__item{
-			padding: 1.2rem 1.6rem;
-
-			&:not(:last-child){
-				margin-right: 2.4rem;
-			}
-
-			&__label{
-				text-transform: capitalize;
-				transition: 0.4s all ease-in-out;
-
-				&--active{ font-weight: 600; }
-			}
-		}
-	}
-
-	&__data{
-		height: calc(100vh - 12rem);
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		justify-content: flex-start;
-		width: 100%;
-
-		&__filters{
-			width: 32rem;
-			overflow-y: scroll;
-			height: calc(100vh - 12rem);
-			border: 0.1rem solid rgba($color-black, 0.08);
-			border-right: none;
-			transition: all 0.4s ease-in-out;
-
-			@include respond(phone){
-				width: 5.6rem;
-				transition: all 0.4s ease-in-out;
-			}
-
-			&--expanded{
-				width: 32rem;
-				transition: all 0.4s ease-in-out;
-
-				.account__data__filters__item{
-					@include respond(phone){
-						&:not(:first-of-type){
-							opacity: 1;
-							width: max-content;
+.account {
+	--header-height:8rem;
+	position: relative ;
+	overflow: hidden ;
+	padding: 0 ;
+	margin: 0;
+	height: 100vh ;
+	padding-top: var(--header-height) ;
 	
-						}
-						&:first-of-type{
-							h6.typo__head:nth-child(2){
-								opacity: 1;
-								width: max-content;
+	&__data{
+		display: flex;
+		width: 100%;
+		height: 100% ;
+
+		&__filter-panel-container {
+			--size:40rem;
+			flex: 0 0 var(--size);
+			max-width: var(--size) ;
+			width: var(--size) ;
+			border-right: 2px solid $color-neutral-200 ;
+			height: 100% ;
+			overflow-y: auto ;
+			transition: margin 100ms ease-out ;
+
+			@include respond(tabLand){
+				&[data-filter-open="false"] {
+					margin-left: calc(var(--size) * -1) ;
+				}
+			}
+		}
+
+		&__books {
+			flex: 1 ;
+			height: 100% ;
+			position: relative ; 
+			display: flex ;
+			flex-direction: column ;
+			
+			@include respond(phone) {
+				min-width: 100vw;
+			}
+
+			&__header {
+				display: flex ;
+				align-items: center ;
+				justify-content: space-between ;
+				flex: 0 0 7rem ;
+				height: 7rem ;
+				padding: 0 1.5rem ;
+				border-bottom: 2px solid $color-neutral-200 ;
+
+				&__filter {
+					display: flex ;
+					align-items: center ;
+					position: relative ;
+
+					.button {
+						display: none !important;
+						@include respond(tabLand){display: flex !important;}
+					}
+
+					>*+* {
+						margin-left: 1rem ;
+					}
+
+					&__tabs {
+						display: flex ;
+						height: 100% ;
+						position: relative ;
+
+						&__item {
+							display: flex ;
+							align-items: center ;
+							justify-content: center ;
+							padding: 0 1.75rem ;
+							height: 7rem ;
+							flex: 1 ;
+							border-top: 3px solid transparent ;
+							border-bottom: 3px solid transparent ;
+							cursor: pointer ;
+							color: $color-neutral-600 ;
+
+							&:hover {
+								background-color: $color-neutral-200 ;
+								color: $color-neutral-700;
+							}
+
+							&[data-state="true"]{
+								color: $color-primary ;
+								border-bottom: 3px solid $color-primary ;
 							}
 						}
 					}
 				}
-			}
 
-			&__item{
-				padding: 1.6rem;
-				transition: all 0.4s ease-in-out;
+				&__layout {
+					display: flex ;
 
-				&:not(:last-child){ border-bottom: 0.1rem solid rgba($color-black, 0.08); }
-
-				@include respond(phone){
-					&:not(:first-of-type){
-						opacity: 0;
-						width: 0;
-					}
-					&:first-of-type{
-						h6.typo__head:nth-child(2){
-							opacity: 0;
-							width: 0;
-						}
-					}
-				}
-
-				&__head{
-					padding-bottom: 1.6rem;
-				}
-
-				&__grid{
-					display: grid;
-					grid-template-columns: repeat(2, 1fr);
-					column-gap: 2.4rem;
-					row-gap: 2.4rem;
-
-					&__item{
-						height: 4.8rem;
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-						justify-content: center;
-						border-radius: 1.2rem;
-						text-transform: capitalize;
-						transition: 0.4s all ease-in-out;
-						background-color: rgba($color-black, 0.08);
-						white-space: nowrap;
-						cursor: pointer;
-
-						&--active{
-							background-color: $color-secondary;
-							color: $color-white;
+					&__button {
+						@include respond(phone) {
+							&>span {display: none ;}
+							&>svg {margin: 0 ;}
 						}
 					}
 				}
 			}
 
-			&__head{
-				width: 100%;
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				justify-content: flex-start;
-
-				&__icon{
-					height: 2.4rem;
-					width: 2.4rem;
-					object-fit: contain;
-					margin-right: 1.2rem;
+			&__wrapper {
+				flex: 1 ;
+				overflow-y: auto ;
+				padding: 1rem ;
+				
+				&[data-layout="GRID"] {
+					display: flex ;
+					flex-wrap: wrap ;
+					gap: 2rem ;
+					justify-content: center ;
 				}
-			}
-		}
+
+				&[data-layout="LIST"] {
+					display: block ;
+				}
+
+				&__empty {
+					position: absolute ;
+					top: 50% ;
+					left: 50% ;
+					transform: translate(-50%,-50%);
+					display: flex ;
+					align-items: center ;
+					justify-content: center ;
+					flex-direction: column ;
+					color: $color-neutral-600 ;
 	
-		&__books{
-			flex: 1;
-			height: calc(100vh - 12rem);
-			border: 0.1rem solid rgba($color-black, 0.08);
-			overflow-y: scroll;
-
-			&--empty{
-				width: 100%;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-			}
-
-			&__image{
-				height: 24rem;
-				object-fit: contain;
-				margin-bottom: 3.2rem;
-			}
-			
-			&__wrapper{
-				height: fit-content;
-				display: grid;
-				grid-template-columns: repeat(5, 1fr);
-				column-gap: 4rem;
-				row-gap: 4rem;
-				padding: 2.4rem;
-
-				@include respond(tabLand){
-					grid-template-columns: repeat(4, 1fr);
-					column-gap: 2.4rem;
-				}
-
-				@include respond(phone){
-					grid-template-columns: repeat(2, 1fr);
-					column-gap: 2.4rem;
-				}
-			}
-
-			&__item{
-				display: flex;
-				flex-direction: column;
-				align-items: flex-start;
-				justify-content: flex-start;
-				border-radius: 1.2rem;
-				overflow: hidden;
-				width: 100%;
-				border: 0.1rem solid rgba($color-black, 0.08);
-				height: fit-content;
-				cursor: pointer;
-
-				@include respond(phone){
-					width: 100%;
-					height: 100%;
-				}
-
-				&__cover{
-					width: 100%;
-					height: calc(((100vw - (32rem + 7.2rem))/5)*1.6);
-					object-fit: cover;
-
-					@include respond(tabLand){ height: calc(((100vw - (32rem + 7.2rem))/4)*1.6); }
-					@include respond(phone){ height: calc(((100vw - (5.6rem + 7.2rem))/2)*1.6); }
-				}
-
-				&__data{
-					padding: 0.8rem;
-					margin-bottom: auto;
-					&>p{margin-bottom: 0;}
-
-					&__author{
-						text-transform: uppercase;
-						font-size: 1.2rem;
-						font-weight: 600;
-						color: rgba($color-black, 0.64)
+					&>img {
+						max-height: 24rem ;
 					}
-
-					&__name{ text-transform: capitalize; }
 				}
 
-				&__action{
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					justify-content: space-between;
-					width: 100%;
-					padding: 0 0.8rem 0.8rem;
+				&__pagination {
+					padding: 4rem 0 ;
+					width: 100% ;
+					display: flex ;
+					align-items: center ;
+					justify-content: center ;
 
-					&__price{
-						margin-bottom: 0 !important;
+					@include respond(phone) {
+						padding: 1.75rem 0;
 					}
 				}
 			}
+
 		}
 	}
-
 }

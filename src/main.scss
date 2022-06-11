@@ -12,6 +12,7 @@
 @import "./sass/components/hoc/sidepanel";
 @import "./sass/components/nav/footer";
 @import "./sass/components/nav/header";
+@import "./sass/components/nav/side-navbar.scss";
 @import "./sass/components/ui/button";
 @import "./sass/components/ui/input";
 @import "./sass/components/ui/snackbar";
@@ -23,6 +24,12 @@
 @import "./sass/components/ui/annotation-context-menu";
 @import "./sass/components/ui/read-time";
 @import "./sass/components/ui/file-picker";
+@import "./sass/components/ui/progressbar";
+@import "./sass/components/ui/accordian";
+@import "./sass/components/ui/filterPanel";
+@import "./sass/components/ui/bookItem";
+@import "./sass/components/ui/stars";
+@import "./sass/components/ui/pagination";
 
 @import "./sass/pages/book";
 @import "./sass/pages/create";
@@ -31,3 +38,5 @@
 @import "./sass/pages/explore";
 @import "./sass/pages/account";
 @import "./sass/pages/reader";
+@import "./sass/pages/profile";
+@import "./sass/pages/debug";

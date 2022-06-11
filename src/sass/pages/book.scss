@@ -30,12 +30,7 @@
 	&__data{
 		width: 100%;
 		min-height: calc(100vh - 12rem);
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		justify-content: center;
-		width: 100%;
-		margin: 8rem 0;
+		margin: 24rem 0;
 
 		@include respond(phone){
 			flex-direction: column;
@@ -44,41 +39,39 @@
 
 		&__container{
 			flex: 1;
-			max-width: 144rem;
-
-			@include respond(tabLand){ max-width: 100%; }
-			@include respond(phone){ max-width: 100%; }
 
 			&>div:nth-child(1){
 				display: flex;
 				flex-direction: row;
 				align-items: flex-start;
-				justify-content: space-between;
-				padding: 0 10rem;
-
-				@include respond(tabLand){ padding: 0 6rem; }
-				@include respond(tabPort){ padding: 0 4rem; }
+				
 				@include respond(phone){
 					flex-direction: column;
-					padding: 2.4rem;
+					padding: 0 ;
+					margin-bottom: 2rem  ;
 				}
 			}
 
 			&__cover{
 				z-index: 20;
+				flex: 0 0 48rem ;
+				display: flex ;
+				align-items: center ;
+				justify-content: center ;
 				
 				@include respond(phone){
 					width: 100%;
-					display: flex;
-					align-items: center;
-					justify-content: center;
+				}
+
+				@include respond(tabPort){
+					flex: 0 0 auto ;
 				}
 				
-				&__container{
-					width: 30rem;
+				&__image {
+					width : 30rem;
 					height: 48rem;
 					object-fit: cover;
-					z-index: 100;
+					z-index: 1;
 					box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.2);
 
 					@include respond(phone){
@@ -89,57 +82,63 @@
 			}
 
 			&__meta{
-				margin-left: 16rem;
 				flex: 1;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
 				justify-content: flex-start;
 
-				@include respond(tabLand){margin-left: 10rem;}
-				@include respond(tabPort){margin-left: 8rem;}
-				@include respond(phone){
-					margin-left: 0;
-					margin-top: 2.4rem;
+				@include respond(tabPort) {
+					margin-left: 4rem ;
 				}
 
-				&__row{
-					display: flex;
-					flex-direction: row;
-					align-items: flex-start;
-					justify-content: center;
-					margin-top: 6.4rem;
+				@include respond(phone) {
+					margin-left: 0 ;
+					margin-top: 4rem ;
+				}
 
-					&__item{
-						display: flex;
-						flex-direction: column;
+				&__cta{
+					display: flex ;
+				}
+
+				&__cta > * + * {
+					margin-left: 1rem ;
+				}
+
+				&__rating {
+					display: flex ;
+					align-items: center ;
+					margin: 1rem 0;
+					&__stars {
+						display: flex ;
 						align-items: center;
-						justify-content: center;
-	
-						&:not(:last-child){
-							margin-right: 6.4rem;
+					}
 
-							@include respond(phone){ margin-right: 4.8rem; }
-						}
-	
-						&__head{
-							text-transform: uppercase;
-							margin-bottom: 0 !important;
-							text-align: center;
-							white-space: nowrap;
-						}
-	
-						&__icon{
-							height: 4.8rem;
-							width: 4.8rem;
-							object-fit: contain;
-							margin: 0.8rem 0;
-						}
-	
-						&__value{
-							text-transform: capitalize;
-							text-align: center;
-						}
+					&__count {
+						color: $color-neutral-500 ;
+						font-weight: 500 ;
+						margin-left: 2rem ;
+					}
+				}
+
+				&__price {
+					padding: 0.8rem 1.6rem ;
+					width: min-content ;
+					background-color: hsl(160,80%,40%) ;
+					color: #fff ;
+					display: flex ;
+					align-items: center ;
+					border-radius: 0.5rem ;
+					font-weight: 700 ;
+					font-size: 2rem ;
+					margin-top: 1rem ;
+
+					> svg {
+						margin-right: 0.5rem ;
+					}
+
+					&--free {
+						background-color: hsl(160,80%,40%) ;
 					}
 				}
 
@@ -147,75 +146,43 @@
 
 			&__desc{
 				display: flex;
-				flex-direction: column;
-				align-items: flex-start;
-				justify-content: flex-start;
 				background-color: $color-white;
 				border-radius: 1.2rem;
-				box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.25);
-				margin-top: -16vh;
+				box-shadow: $shadow-md ;
+				margin-top: -24vh;
 				min-height: 50vh;
-				padding: 8rem 10rem 10rem;
 				position: relative;
 				z-index: 0;
 
-				@include respond(tabLand){
-					min-height: unset;
-					padding: 6rem;
-					max-width: 100%;
+				@include respond(tabPort) {
+					margin: 0 ;
+					flex-direction: column ;
+					padding: 0 ;
+					box-shadow: none ;
+					background-color: transparent ;
+					margin-top: 2rem ;
 				}
-				@include respond(tabPort){
-					margin-top: -10rem;
-					width: 100%;
-					min-height: unset;
+
+				@include respond(phone) {
+					width: 100% ;
+				}
+
+				&__left {
+					flex: 0 0 48rem ;
 					padding: 4rem;
-					max-width: 100%;
-				}
-				@include respond(phone){
-					min-height: unset;
-					height: max-content;
-					margin-top: 4.8rem;
-					z-index: inherit;
-					flex-direction: column;
-					padding: 2.4rem;
-				}
+					margin-top: 22rem ;
+					position: relative ;
+					box-sizing: border-box ;
 
-				&__row{
-					display: flex;
-					flex-direction: row;
-					align-items: flex-start;
-					justify-content: flex-start;
-					&:not(:last-child){margin-bottom: 3.6rem;}
-
-					&--fluid{
-						@include respond(phone){flex-direction: column;}
+					@include respond(tabPort) {
+						margin: 0 ;
+						padding: 0 ;
 					}
 				}
 
-				&__cta{
-					display: flex ;
-					position: absolute;
-					top: 0;
-					left: 58rem;
-					transform: translate(0%, -50%);
-
-					> .button {
-						min-width: 0 ;
-						padding-left: 2rem ;
-						padding-right: 2rem ;
-					}
-
-					@include respond(tabLand){
-						left: 46rem;
-					}
-					@include respond(phone){
-						left: 50%;
-						transform: translate(-50%, -50%);
-					}
-				}
-
-				&__cta > * + * {
-					margin-left: 1rem ;
+				&__right {
+					flex: 1 ;
+					padding-right: 4rem ;
 				}
 
 				&__interacts{
@@ -223,62 +190,67 @@
 					display: flex;
 					flex-direction: row;
 					align-items: center;
-					justify-content: flex-start;
-
-					@include respond(phone){margin-top: 4.8rem;}
-
-					&__space{
-						width: 38rem;
-						margin-right: 10rem;
-						
-						@include respond(phone){display: none;}
-					}
+					justify-content: flex-start ;
+					padding: 2rem 0 ;
 					
 					&__item{
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-						justify-content: flex-start;
-						&:not(:last-child){margin-right: 2.4rem;}
-
-						&__icon{
-							height: 3.2rem;
-							width: 3.2rem;
-							object-fit: contain;
-							margin-right: 1.2rem;
-						}
+						color: $color-neutral-500 ;
+						flex: 1 ;
+						max-width: 16rem ;
+						white-space: nowrap;
 					}
 				}
 
 				&__summary{
-					width: 38rem;
-					margin-right: 10rem;
-					padding-top: 12rem;
+					&__contract {
+						display: flex ;
+						align-items: center ;
+						padding: 2rem ;
+						background-color: $color-neutral-200 ;
+						border-radius: 1rem ;
+						cursor: pointer ;
+						max-width: 48rem ;
 
-					@include respond(tabLand){
-						padding-top: 10rem;
-						width: 34rem;
-						margin-right: 6rem;
-					}
-					@include respond(tabPort){
-						padding-top: 10rem;
-						width: 32rem;
-						margin-right: 6rem;
-					}
-					@include respond(phone){
-						width: unset;
-						margin-right: 0;
-						padding-top: 0;
+						&__label {
+							font-weight: 500 ;
+						}
+
+						&__data {
+							flex: 1 ;
+						}
+
+						&__icon {
+							width : 3rem ;
+							height: 3rem ;
+							display: flex ;
+							align-items: center ;
+							justify-content: center ;
+						}
 					}
 
-					&__head{
-						text-transform: uppercase;
-						color: $color-primary;
-						margin-bottom: 0 !important;
+					&__head {
+						text-transform: capitalize ;
+						margin: 0 ;
+						margin-top: 2rem ;
+						font-weight: 500 ;
 					}
 
-					&__data{
-						margin-bottom: 1.2rem !important;
+					&__data {
+						color: $color-neutral-500;
+					}
+
+					&__chips {
+						display: flex ;
+						position: relative ;
+						margin-left: -0.75rem ;
+						flex-wrap: wrap ;
+						&__item {
+							padding: 0.75rem 1.5rem ;
+							background-color: $color-neutral-200 ;
+							color: $color-neutral-700 ;
+							margin: 0.5rem ;
+							border-radius: 500px ;
+						}
 					}
 				}
 
@@ -292,32 +264,70 @@
 						align-items: center;
 						justify-content: flex-start;
 						margin-bottom: 2.4rem;
+						border-bottom: 2px solid $color-neutral-200 ;
 
 						&__item{
+							display: flex ;
+							align-items: center ;
+							justify-content: center ;
 							padding: 1.2rem 1.6rem;
 							border-bottom: 0.2rem solid $color-white;
-							transition: all 0.4s ease-in-out;
-							
-							&--active{
-								border-bottom: 0.2rem solid $color-primary; 
-								&>h5{font-weight: 600 !important;}
+							transition: all 0.15s ease-in-out;
+							color: $color-neutral-500 ;
+							border-bottom: 4px solid transparent ; 
+
+							&>svg {
+								width : 3rem ;
+								height: 3rem ;
+								margin-right: 1rem ;
+								stroke: currentColor ;
 							}
-							
+
 							&>h5{
 								text-transform: capitalize !important;
-								font-weight: 400;
+								font-weight: 600;
+								color: currentColor ;
 							}
+							
+							&--active{
+								border-bottom: 4px solid $color-primary; 
+								color: $color-primary ;
+							}
+
+							@include respond(phone) {
+								flex: 1 ;
+								padding: 1.2rem 0rem ;
+							}
+
 						}
 					}
 
 					&__data{
-						white-space: break-spaces;
-						width: 100%;
+						&__action{
+							border: 2px solid $color-neutral-200;
+							width: 100% ;
+							padding: 1rem ;
+							border-radius: 1rem ;
+							color: $color-neutral-500;
+							display: flex ;
+							align-items: center ;
 
-						&__review{
-							width: 40rem;
-							margin-bottom: 4rem;
-							
+							&__icon {
+								width : 5rem ;
+								height: 5rem ;
+								flex: 0 0 5rem;
+								display: flex ;
+								align-items: center ;
+								justify-content: center ;
+							}
+
+							&__label {
+								flex: 1 ;
+							}
+
+						}
+
+						&__review {
 							&__rating{
 								display: flex;
 								flex-direction: row;
@@ -362,10 +372,15 @@
 
 						&__reviews{
 							width: 100%;
-							height: 80rem;
-							overflow-y: scroll;
+							min-height: 80rem;
+							padding: 2rem ;
+							padding-left: 0 ;
 
 							&__item{
+								&__header {
+									display: flex ;
+									justify-content: space-between ;
+								}
 
 								&__rating{
 									display: flex;
@@ -377,13 +392,13 @@
 									&__time{margin-left: 0.8rem;}
 
 									&__item{
-										height: 1.6rem;
-										width: 1.6rem;
+										height: 3rem;
+										width: 3rem;
 										position: relative;
 	
 										&__icon{
-											height: 1.6rem;
-											width: 1.6rem;
+											height: 3rem;
+											width: 3rem;
 											object-fit: contain;
 											position: absolute;
 											top: 0;
@@ -430,6 +445,7 @@
 					}
 				}
 
+				
 			}
 
 			&__space{

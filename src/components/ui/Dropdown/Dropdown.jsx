@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Dropdown = ({ title = "", options = "" }) => {
+const Dropdown = ({ button = "", options = "" }) => {
 	const [DropdownOpen, setDropdownOpen] = useState(false)
 
 	const toggleDropdown = (state) => {
@@ -20,9 +20,9 @@ const Dropdown = ({ title = "", options = "" }) => {
 	}
 
 	return (
-		<div className={getDropdownClasses()} onMouseEnter={()=>toggleDropdown(true)} onMouseLeave={()=>toggleDropdown(false)}>
-			<div className="dropdown__title">
-				{title}
+		<div className={getDropdownClasses()}>
+			<div className="dropdown__title" onClick={()=>setDropdownOpen(s=>!s)}>
+				{button}
 			</div>
 			<div className={getClasses()}>{options}</div>
 		</div>

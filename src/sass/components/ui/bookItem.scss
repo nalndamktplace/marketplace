@@ -1,0 +1,84 @@
+.book-item {
+    --cover-size : 26rem ;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: fit-content;
+    cursor: pointer;
+    position: relative ;
+    width: var(--cover-size);
+
+    &[data-layout="LIST"] {
+        flex-direction: row ;
+        --cover-size : 16rem ;
+        width: 100% ;
+        padding: 1.5rem ;
+        .book-item__data {
+            margin-left: 3rem ;
+            &__synopsis{
+                display: block ;
+                max-width: 80ch ;
+            }
+        }
+    }
+
+    @include respond(phone) {
+        --cover-size : calc(50vw - 3rem) ;
+    }
+
+    &__cover{
+        border-radius: 0.5rem ;
+        width  : calc(var(--cover-size));
+        height : calc(var(--cover-size) * 1.6);
+        object-fit: cover;
+        box-shadow: $shadow-lg;
+    }
+
+    &__data{
+        width: 100% ;
+        padding: 1rem 0;
+        margin-bottom: auto;
+        &>p{margin-bottom: 0;}
+
+        &__price {
+            padding: 0.8rem 1.6rem ;
+            width: min-content ;
+            background-color: hsl(160,80%,40%) ;
+            color: #fff ;
+            display: flex ;
+            align-items: center ;
+            border-radius: 0.5rem ;
+            font-weight: 700 ;
+            font-size: 2rem ;
+
+            > svg {
+                margin-right: 0.5rem ;
+            }
+
+            &--free {
+                background-color: hsl(160,80%,40%) ;
+            }
+        }
+
+        &__author{
+            text-transform: uppercase;
+            // font-size: 1.75rem; 
+            // font-weight: 400;
+            color: $color-neutral-600
+        }
+
+        &__name{ 
+            text-transform: capitalize; 
+            word-break: break-all ;
+            line-height: 1.25 ;
+            margin-top: 0.8rem ;
+            font-weight: 700 ;
+        }
+
+        &__synopsis{
+            display: none ;
+        }
+    }
+
+}

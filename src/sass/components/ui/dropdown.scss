@@ -1,22 +1,6 @@
 
 .dropdown {
 	position: relative ;
-	height: 3.5rem ;
-	display: flex ;
-	align-items: center ;
-
-	&__title {
-		display: flex ;
-		align-items: center ;
-		cursor: pointer ;
-
-		&>svg {
-			width : 3.5rem ;
-			height : 3.5rem ;
-			padding: 0 ;
-			margin: 0 ;
-		}
-	}
 
 	&__options {
 		position: absolute ;
@@ -29,10 +13,10 @@
 		transform: scale(0);
 		opacity: 0 ;
 		color: $color-black ;
-		transition: all 100ms ease-out ;
+		transition: all 200ms cubic-bezier(0,1.2,0.3,1.2) ;
 		transform-origin: 100% 0% ;
 		cursor: pointer ;
-		min-width: 16rem ;
+		min-width:24rem ;
 		
 		&--open {
 			transform: scale(1);
@@ -41,7 +25,7 @@
 		}
 
 		&__item {
-			padding: 1rem ;
+			padding: 2rem ;
 			border-radius: 4px ;
 			color: $color-neutral-500 ;
 
@@ -49,19 +33,6 @@
 				background-color: $color-neutral-200;
 				color: $color-neutral-900 ;
 			}
-		}
-
-		&::before {
-			content: "" ;
-			position: absolute ;
-			right: 0.8rem ;
-			top: -0.5rem ;
-			width: 2rem ;
-			height: 2rem ;
-			border-radius: 2px ;
-			transform: rotate(45deg);
-			background-color: inherit ;
-			z-index: -1 ;
 		}
 	}
 
