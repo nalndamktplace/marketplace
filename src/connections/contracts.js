@@ -5,8 +5,6 @@ import { NALNDA_TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS } from "../confi
 
 const { ethers } = require('ethers')
 
-// const marketplace = require('../artifacts/contracts/NalndaBooksPrimarySales.sol/NalndaBooksPrimarySales.json')
-// const marketplace = require('../artifacts/contracts/NalndaBooksSecondarySales.sol/NalndaBooksSecondarySales.json')
 const marketplace = require('../artifacts/contracts/NalndaMarketplace.sol/NalndaMarketplace.json')
 const nalndaToken = require('../artifacts/contracts/mocks/NALNDA.sol/Nalnda.json')
 const book = require('../artifacts/contracts/NalndaBook.sol/NalndaBook.json')
@@ -15,7 +13,6 @@ const getBooksCount = async function getBooksCount(){
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
 	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, provider)
 	const books = await marketplaceContract.totalBooksCreated()
-	console.log("getBooksCount",books);
 	return books.toString()
 }
 
@@ -29,11 +26,11 @@ const getBooks = async function getBooks (index){
 // todo check 90 < daysForSecondarySale < 150
 // todo 1 <= language <= 100
 // todo 1 <= genre <= 60
-const listNftForSales = async function listNftForSales(authorAddress, coverUrl, price,daysForSecondarySale,language,genre){
+const listNftForSales = async function listNftForSales(authorAddress, coverUrl, price, daysForSecondarySale, language, genres){
 	await Wallet.connectWallet()
 	const signer = Wallet.getSigner()
 	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
-	let transaction = await marketplaceContract.createNewBook(authorAddress, coverUrl, ethers.utils.parseEther(price),daysForSecondarySale,language,genre)
+	let transaction = await marketplaceContract.createNewBook(authorAddress, coverUrl, ethers.utils.parseEther(price), daysForSecondarySale, language, genres)
 	let tx = await transaction.wait()
 	return tx
 }
@@ -101,7 +98,6 @@ const buyListedCover = async function buyListedCover(bookOrderId, bookPrice) {
 
 const Contracts = {
 	nalndaToken,
-	marketplace,
 	marketplace,
 	book,
 	getBooksCount,
