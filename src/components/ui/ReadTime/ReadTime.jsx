@@ -38,7 +38,7 @@ const ReadTime = ({bookMeta}) => {
 		if(currentReadTime - lastUpdate > 10) {
 			axios({
 				url: `${BASE_URL}/api/reader/read-time`,
-				method: 'PATCH',
+				method: 'PUT',
 				data : {
 					uid : WalletAddress,
 					bid : bookMeta.id,
@@ -49,7 +49,7 @@ const ReadTime = ({bookMeta}) => {
 				else console.error("READ TIME UPDATE ERROR")
 			}).catch(err => {dispatch(setSnackbar('ERROR'))})
 		}
-	},[bookMeta,readTime,WalletAddress,lastUpdate])
+	},[bookMeta, readTime, WalletAddress, lastUpdate, dispatch])
 
 	return ( 
 		<div className="readtime">
