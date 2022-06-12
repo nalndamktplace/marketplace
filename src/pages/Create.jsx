@@ -33,7 +33,7 @@ const CreateNftPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesCopies: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
 	const [formProgress, setFormProgress] = useState(0);
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
@@ -54,16 +54,6 @@ const CreateNftPage = props => {
 		setFormProgress(filled/14);
 	},[FormInput])
 
-	useEffect(()=>{
-		console.log(FormInput);
-		const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays());
-		const languageID = LANGUAGES[FormInput.language];
-		const genreIDs = FormInput.genres.map(g => GENRES[g]);
-		console.log("secondarysale",secondaryFromInDays);
-		console.log("languageID",languageID,);
-		console.log("genreIDs",genreIDs);
-	},[FormInput])
-
 	async function listNFTForSale() {
 		setLoading(true)
 
@@ -71,6 +61,7 @@ const CreateNftPage = props => {
 		formData.append("book",FormInput.book)
 		formData.append("cover",FormInput.cover)
 		formData.append("bookTitle",FormInput.title)
+		formData.append("synopsis", FormInput.synopsis)
 
 		axios({
 			url : BASE_URL + "/api/book/submarine",
@@ -79,16 +70,14 @@ const CreateNftPage = props => {
 		}).then(res => {
 			const bookUrl = res.data.book.url ;
 			const coverUrl = res.data.cover.url
-			console.log(res.data);
-			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, primarySales, secondaryFrom } = FormInput
+			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
 			
 			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays());
 			const languageID = LANGUAGES[FormInput.language];
 			// const genreIDs = FormInput.genres.map(g => GENRES[g]);
-			const genreIDs = 10 ;
-			console.log(WalletAddress)
+			const genreIDs = "10" ;
 			if(isUsable(languageID) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){				
-				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays,languageID,genreIDs).then(tx => {
+				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageID, genreIDs).then(tx => {
 					const bookAddress = tx.events[0].address
 					const newOwner = tx.events[0].args.newOwner
 					const previousOwner = tx.events[0].args.previousOwner
@@ -110,7 +99,6 @@ const CreateNftPage = props => {
 						formData.append("synopsis", synopsis)
 						formData.append("language", language)
 						formData.append("published", published)
-						formData.append("minPrimarySales", primarySales)
 						formData.append("secondarySalesFrom", secondaryFrom)
 						formData.append("publisherAddress", WalletAddress)
 						formData.append("bookAddress", bookAddress)
@@ -128,7 +116,6 @@ const CreateNftPage = props => {
 								navigate('/account', {state: {tab: 'created'}})
 							}
 							else {
-								console.log(res4.data)
 								dispatch(setSnackbar('ERROR'))
 							}
 						})
@@ -143,7 +130,6 @@ const CreateNftPage = props => {
 						else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
 					}
 				}).catch((err => {
-					console.log(err);
 					dispatch(setSnackbar('NOT200'))
 					setLoading(false)
 				}))
@@ -153,7 +139,6 @@ const CreateNftPage = props => {
 				setLoading(false)
 			}
 		}).catch(err => {
-			console.log("HERE")
 			dispatch(setSnackbar('NOT200'))
 			setLoading(false)
 		})
@@ -179,7 +164,6 @@ const CreateNftPage = props => {
 					<InputField type="list" label="language" listType={'single'} values={Object.keys(LANGUAGES)} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</h3>
-					<InputField type="number" label="min. number of primary sales" onChange={e => setFormInput({ ...FormInput, primarySales: e.target.value })} description="How many books to be sold as primary sales before secondary sale starts"/>
 					<InputField type="date" label="open on" min={moment().add(90, 'days')} onChange={e => setFormInput({ ...FormInput, secondaryFrom: e.target.value })} description="From when to start secondary sales"/>
 				</div>
 				<div className="create__data__preview">
