@@ -51,7 +51,7 @@ const CreateNftPage = props => {
 
 	useEffect(()=>{
 		let filled = Object.values(FormInput).filter(v => !(v===""||v?.length===0||v===null)).length ;
-		setFormProgress(filled/14);
+		setFormProgress(filled/13);
 	},[FormInput])
 
 	async function listNFTForSale() {
@@ -68,22 +68,19 @@ const CreateNftPage = props => {
 			method : "POST",
 			data : formData
 		}).then(res => {
-			const bookUrl = res.data.book.url ;
+			const bookUrl = res.data.book.url
 			const coverUrl = res.data.cover.url
 			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
-			
 			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays());
-			const languageID = LANGUAGES[FormInput.language];
-			// const genreIDs = FormInput.genres.map(g => GENRES[g]);
-			const genreIDs = "10" ;
-			if(isUsable(languageID) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){				
-				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageID, genreIDs).then(tx => {
+			let genreIDs = []
+			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
+			const languageId = LANGUAGES.indexOf(language).toString()
+			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
+				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs).then(tx => {
 					const bookAddress = tx.events[0].address
-					const newOwner = tx.events[0].args.newOwner
-					const previousOwner = tx.events[0].args.previousOwner
 					const status = tx.status
 					const txHash = tx.transactionHash
-					if(isUsable(bookAddress) && isUsable(newOwner) && newOwner === MARKET_CONTRACT_ADDRESS && isUsable(status) && status === 1 && isUsable(txHash)){
+					if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
 						let formData = new FormData()
 						formData.append("epub", FormInput.preview)
 						formData.append("ipfsPath", name)
@@ -102,8 +99,6 @@ const CreateNftPage = props => {
 						formData.append("secondarySalesFrom", secondaryFrom)
 						formData.append("publisherAddress", WalletAddress)
 						formData.append("bookAddress", bookAddress)
-						formData.append("previousOwner", previousOwner)
-						formData.append("newOwner", newOwner)
 						formData.append("status", status)
 						formData.append("txHash", txHash)
 						axios({
@@ -130,6 +125,7 @@ const CreateNftPage = props => {
 						else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
 					}
 				}).catch((err => {
+					console.log({err})
 					dispatch(setSnackbar('NOT200'))
 					setLoading(false)
 				}))
@@ -157,25 +153,25 @@ const CreateNftPage = props => {
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} description="Upload a book. File types supported: EPUB"/>
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Meta Data</h3>
 					<InputField type="number" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
-					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={Object.keys(GENRES)} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
+					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher"/>
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
-					<InputField type="list" label="language" listType={'single'} values={Object.keys(LANGUAGES)} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
+					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</h3>
 					<InputField type="date" label="open on" min={moment().add(90, 'days')} onChange={e => setFormInput({ ...FormInput, secondaryFrom: e.target.value })} description="From when to start secondary sales"/>
 				</div>
 				<div className="create__data__preview">
 					<div className="create__data__preview__container">
-						<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Preview</h3>
+						<h3 className='typo__head typo__head--3 utils__margin__top--n utils__margin__bottom--s'>Preview</h3>
 						<div className='create__data__preview__book' onClick={()=>{}}>
 							<div className="create__data__preview__book__cover">
 								{	isUsable(CoverUrl)
 									?<img className='create__data__preview__book__cover__img' src={CoverUrl} alt={FormInput.name+" cover"} />
 									: <div className='create__data__preview__book__cover__placeholder'>
 										<ImagePlaceholder stroke='currentColor'/>
-										<span className='utils__margin__top--m'>Select a image for the book cover</span>
+										<span className='utils__margin__top--m'>Book Cover</span>
 									</div>
 								}
 							</div>
