@@ -12,9 +12,11 @@ import StarFilledHalfIcon from '../../../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../../../assets/icons/star-empty-half-rtl.svg'
 
 const ReviewModal = ({ReviewForm,setReviewForm,reviewHandler}) => {
+
 	const dispatch = useDispatch()
 
 	const ModalState = useSelector(state => state.ModalState)
+
     const [Show, setShow] = useState(false);
 
 	useEffect(() => {
