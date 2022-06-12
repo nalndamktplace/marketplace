@@ -89,7 +89,7 @@ const ReaderPage = () => {
 			setPreview(true)
 		}
 		else{
-			bookURL = navParams.book.book
+			bookURL = navParams.book.submarineURL
 			setBookMeta(navParams.book)
 			setPreview(false)
 		}
