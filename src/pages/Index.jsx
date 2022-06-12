@@ -84,7 +84,6 @@ const IndexPage = props => {
 	const renderCollections = () => {
 
 		const renderNfts = (books,collection) => {
-			console.log(books);
 			let booksDOM = []
 
 			const getPriceTagClass = (book) => {

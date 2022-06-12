@@ -61,7 +61,6 @@ const PurchaseModal = props => {
 			let offersDOM = []
 			if(isFilled(Offers)){
 				Offers.forEach(offer => {
-					console.log(offer)
 					offersDOM.push(
 						<div className="modal__purchase__data__offers__item" key={offer.book_address+'-'+offer.order_id}>
 							<p className='utils__margin__bottom--n'>Order: {offer.order_id}</p>
