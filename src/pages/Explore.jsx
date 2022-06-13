@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
-import { isUsable } from '../helpers/functions'
+import { isFilled, isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { BASE_URL } from '../config/env'
@@ -20,6 +20,8 @@ import Pagination from '../components/ui/Pagination/Pagination'
 
 const ExplorePage = () => {
 
+	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
+
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
@@ -27,19 +29,31 @@ const ExplorePage = () => {
 
 	const [Nfts, setNfts] = useState([])
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [Filters, setFilters] = useState({})
+	const [Filters, setFilters] = useState(DEFAULT_FILTERS)
 	const [Loading, setLoading] = useState(false)
-	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false);
-	const [layout, setLayout] = useState("GRID");
-	const [currentPage, setCurrentPage] = useState(1);
-	const [maxPage, setMaxPage] = useState(10);
+	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
+	const [layout, setLayout] = useState("GRID")
+	const [currentPage, setCurrentPage] = useState(1)
+	const [maxPage, setMaxPage] = useState(10)
+	const [AllNfts, setAllNfts] = useState([])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
 
-	useEffect(() => { loadNftHandler() }, [])
+	useEffect(() => {
+		setLoading(true)
+		axios({
+			url: BASE_URL + '/api/book/all',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setAllNfts(res.data)
+			else dispatch(setSnackbar('NOT200'))
+		}).catch(err => {
+			dispatch(setSnackbar('ERROR'))
+		}).finally(() => setLoading(false))
+	}, [dispatch])
 
 	useEffect(() => {
 		setLoading(true)
@@ -47,18 +61,46 @@ const ExplorePage = () => {
 		setLoading(false)
 	}, [WalletState])
 
-	const loadNftHandler = () => {
-		setLoading(true)
-		axios({
-			url: BASE_URL + '/api/book/all',
-			method: 'GET'
-		}).then(res => {
-			if(res.status === 200) setNfts(res.data)
-			else dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
-	}
+	useEffect(() => {
+		let nfts = AllNfts
+		if(isUsable(nfts)){
+			Filters.forEach(filter => {
+				switch (filter.type) {
+					case 'range':
+						if(isUsable(filter.value))
+						nfts = nfts.filter(nft => nft[filter.key] <= filter.value)
+						break;
+					case 'multiselect':
+						if(isFilled(filter.value))
+						filter.value.forEach(filterValue => nfts = nfts.filter(nft => nft[filter.key].indexOf(filterValue)>-1))
+						break
+					case 'select':
+						if(filter.key === 'orderby'){
+							switch (filter.value) {
+								case 'PRICE_L_H':
+									nfts.sort((a,b) => a.price<b.price)
+									break;
+								case 'PRICE_H_L':
+									nfts.sort((a,b) => a.price>b.price)
+									break;
+								case 'RATING_L_H':
+									nfts.sort((a,b) => a.rating<b.rating)
+									break;
+								case 'RATING_H_L':
+									nfts.sort((a,b) => a.rating>b.rating)
+									break;
+								default:
+									break;
+							}
+						}
+						break
+					default:
+						break;
+				}
+			})
+			setNfts(nfts)
+		}
+	}, [Filters, AllNfts])
 
 	const buyHandler = nft => {
 		setLoading(true)
@@ -91,8 +133,7 @@ const ExplorePage = () => {
 
 	const renderNfts = () => {
 		let nftDOM = []
-		let nfts = Nfts
-		nfts.forEach(nft => {
+		Nfts.forEach(nft => {
 			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>);
 		})
 		return nftDOM
@@ -102,7 +143,7 @@ const ExplorePage = () => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel config={EXPLORE_PAGE_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="explore__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="explore__data__books__header">

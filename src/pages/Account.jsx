@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useState } from 'react'
 import Wallet from '../connections/wallet'
 import Page from '../components/hoc/Page/Page'
-import { isUsable } from '../helpers/functions'
+import { isFilled, isUsable } from '../helpers/functions'
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -21,6 +21,8 @@ import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 
 const AccountPage = props => {
 
+	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}, {key: 'decayscore', value: null, type: 'range'}]
+
 	const params = useLocation()
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
@@ -28,7 +30,8 @@ const AccountPage = props => {
 	const WalletState = useSelector(state => state.WalletState.wallet)
 
 	const [Nfts, setNfts] = useState([])
-	const [Filters, setFilters] = useState(false)
+	const [AllNfts, setAllNfts] = useState([])
+	const [Filters, setFilters] = useState(DEFAULT_FILTERS)
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [WalletAddress, setWalletAddress] = useState(null)
@@ -48,6 +51,47 @@ const AccountPage = props => {
 			}).finally(() => setLoading(false))
 		},[dispatch],
 	)
+
+	useEffect(() => {
+		let nfts = AllNfts
+		if(isUsable(nfts)){
+			Filters.forEach(filter => {
+				switch (filter.type) {
+					case 'range':
+						if(isUsable(filter.value))
+						nfts = nfts.filter(nft => nft[filter.key] <= filter.value)
+						break;
+					case 'multiselect':
+						if(isFilled(filter.value))
+						filter.value.forEach(filterValue => nfts = nfts.filter(nft => nft[filter.key].indexOf(filterValue)>-1))
+						break
+					case 'select':
+						if(filter.key === 'orderby'){
+							switch (filter.value) {
+								case 'PRICE_L_H':
+									nfts.sort((a,b) => a.price<b.price)
+									break;
+								case 'PRICE_H_L':
+									nfts.sort((a,b) => a.price>b.price)
+									break;
+								case 'RATING_L_H':
+									nfts.sort((a,b) => a.rating<b.rating)
+									break;
+								case 'RATING_H_L':
+									nfts.sort((a,b) => a.rating>b.rating)
+									break;
+								default:
+									break;
+							}
+						}
+						break
+					default:
+						break;
+				}
+			})
+			setNfts(nfts)
+		}
+	}, [Filters, AllNfts])
 
 	useEffect(() => {
 		if(isUsable(params.state)){
@@ -78,7 +122,7 @@ const AccountPage = props => {
 				method: 'GET',
 				params: {userAddress: WalletAddress}
 			}).then(res => {
-				if(res.status === 200) setNfts(res.data)
+				if(res.status === 200) setAllNfts(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
@@ -89,7 +133,7 @@ const AccountPage = props => {
 				method: 'GET',
 				params: {userAddress: WalletAddress}
 			}).then(res => {
-				if(res.status === 200) setNfts(res.data)
+				if(res.status === 200) setAllNfts(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
@@ -113,7 +157,7 @@ const AccountPage = props => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="account__data">
 				<div className="account__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel config={ACCOUNT_PAGE_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="account__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="account__data__books__header">
