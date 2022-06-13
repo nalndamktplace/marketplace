@@ -125,7 +125,6 @@ const CreateNftPage = props => {
 						else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
 					}
 				}).catch((err => {
-					console.log({err})
 					dispatch(setSnackbar('NOT200'))
 					setLoading(false)
 				}))
