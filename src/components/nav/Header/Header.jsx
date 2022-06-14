@@ -3,7 +3,7 @@ import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg";
 import Wallet from "../../../connections/wallet";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { clearWallet, setWallet } from "../../../store/actions/wallet";
 import { setSnackbar } from "../../../store/actions/snackbar";
 import { isUsable } from "../../../helpers/functions";
@@ -15,16 +15,45 @@ import { GaExternalTracker } from "../../../trackers/ga-tracker";
 import SideNavbar from "../SideNavbar/SideNavbar";
 import Dropdown from "../../ui/Dropdown/Dropdown" ;
 import Button from "../../ui/Buttons/Button";
+import axios from "axios";
+import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
+import { BASE_URL } from '../../../config/env'
 
 const Header = ({showRibbion=true,noPadding=false}) => {
+
 	const dispatch = useDispatch()
 	const location = useLocation()
 	const navigate = useNavigate()
+
 	const WalletState = useSelector(state=>state.WalletState)
+
 	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
+	const [SearchQuery, setSearchQuery] = useState('')
+	const [SearchResults, setSearchResults] = useState([])
+
+	useEffect(() => {
+		if(Loading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [Loading, dispatch])
+
+	useEffect(() => {
+		setLoading(true)
+		axios({
+			url: BASE_URL+'/api/book/search',
+			method: 'GET',
+			params: {query: SearchQuery}
+		}).then(res => {
+			if(res.status === 200)
+				console.log({results: res.data})
+			else dispatch(setSnackbar('NOT200'))
+		}).catch(err => {
+			console.error({err})
+			dispatch(setSnackbar('ERROR'))
+		}).finally(() => setLoading(false))
+	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
 		setLoading(true)
@@ -67,7 +96,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		SubMenuOpen && setSubMenuOpen(false)
 		setMenuOpen(old => !old)
 	}
-				
+
 	const menuItemClickHandler = navItem => {
 		if(isUsable(navItem.action)) {
 			setMenuOpen(false)
@@ -149,7 +178,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
 				<div className="header__content__search">
-					<input className="header__content__search__input" type="text" placeholder="Search books and authors"/>
+					<input value={SearchQuery} onChange={e => setSearchQuery(e.target.value)} className="header__content__search__input" type="text" placeholder="Search books and authors"/>
 					<div className="header__content__search__icon">
 						<SearchIcon width={24} height={24} stroke="currentColor"/>
 					</div>
