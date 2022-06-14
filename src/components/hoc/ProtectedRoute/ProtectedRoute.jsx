@@ -21,7 +21,7 @@ const ProtectedRoute = ({element}) => {
 		}
 		else if(!isUsable(WalletState.support) || WalletState.support === false){
 			window.open("https://metamask.io/download/", '_blank')
-			return false
+			navigate('/')
 		}
 		else {
 			dispatch(showSpinner())
