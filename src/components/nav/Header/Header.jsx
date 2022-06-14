@@ -2,11 +2,11 @@ import Logo from "../../../assets/logo/logo.png" ;
 import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg";
 import Wallet from "../../../connections/wallet";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { clearWallet, setWallet } from "../../../store/actions/wallet";
 import { setSnackbar } from "../../../store/actions/snackbar";
-import { isUsable } from "../../../helpers/functions";
+import { isFilled, isUsable } from "../../../helpers/functions";
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg"
@@ -22,7 +22,6 @@ import { BASE_URL } from '../../../config/env'
 const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const dispatch = useDispatch()
-	const location = useLocation()
 	const navigate = useNavigate()
 
 	const WalletState = useSelector(state=>state.WalletState)
@@ -40,19 +39,21 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		setLoading(true)
-		axios({
-			url: BASE_URL+'/api/book/search',
-			method: 'GET',
-			params: {query: SearchQuery}
-		}).then(res => {
-			if(res.status === 200)
-				console.log({results: res.data})
-			else dispatch(setSnackbar('NOT200'))
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => setLoading(false))
+		if(SearchQuery.length>3 && SearchQuery.length<16){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/search',
+				method: 'GET',
+				params: {query: SearchQuery}
+			}).then(res => {
+				if(res.status === 200)
+					setSearchResults(res.data)
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
 	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
@@ -170,17 +171,48 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		return classes.join(' ')
 	}
 
+	const renderSearchResults = () => {
+		let searchResultsDOM = []
+		SearchResults.forEach(result => {
+			searchResultsDOM.push(
+				<div onClick={() => {navigate('/book', {state: result}); setSearchQuery('')}} className="header__content__search__result" key={result.id}>
+					<img src={result.cover} alt={result.title+"'s Cover"} className="header__content__search__result__cover"/>
+					<div className="header__content__search__result__info">
+						<div className='header__content__search__result__info__author typo__body typo__body--2'>{result.author}</div>
+						<div className='header__content__search__result__info__name typo__body typo__body--2'>{result.title}</div>
+					</div>
+				</div>
+			)
+		})
+		return searchResultsDOM
+	}
+
+	const getSearchBarClasses = () => {
+		let classes = ["header__content__search dropdown"]
+		if(isFilled(SearchQuery)) classes.push("dropdown--open")
+		return classes.join(' ')
+	}
+
+	const getSearchResultsClasses = () => {
+		let classes = ["dropdown__options"]
+		if(isFilled(SearchQuery)) classes.push("dropdown__options--open")
+		return classes.join(' ')
+	}
+
 	return (
 		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
 				<div className="header__content__logo utils__cursor--pointer" onClick={()=>navigate('/')}>
-					<img className="header__content__logo__image" src={Logo}/>
+					<img className="header__content__logo__image" src={Logo} alt={'Nalnda Logo'}/>
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
-				<div className="header__content__search">
+				<div className={getSearchBarClasses()}>
 					<input value={SearchQuery} onChange={e => setSearchQuery(e.target.value)} className="header__content__search__input" type="text" placeholder="Search books and authors"/>
 					<div className="header__content__search__icon">
 						<SearchIcon width={24} height={24} stroke="currentColor"/>
+					</div>
+					<div className={getSearchResultsClasses()}>
+						{renderSearchResults()}
 					</div>
 				</div>
 				<div className="header__content__navbar">
