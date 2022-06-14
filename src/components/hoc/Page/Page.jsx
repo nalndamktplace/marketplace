@@ -14,9 +14,9 @@ const Page = props => {
 	return (
 		<div className='page'>
 			<Header showRibbion={props.showRibbion} noPadding={props.noPadding}/>
-				<div className={getClasses()}>
-					{props.children}
-				</div>
+			<div className={getClasses()}>
+				{props.children}
+			</div>
 			{props.noFooter?null:<Footer/>}
 		</div>
 	)

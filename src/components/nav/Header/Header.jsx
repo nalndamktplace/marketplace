@@ -1,40 +1,57 @@
-import Logo from "../../../assets/logo/logo.png" ;
-import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg";
-import Wallet from "../../../connections/wallet";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router";
-import { useState } from "react";
-import { clearWallet, setWallet } from "../../../store/actions/wallet";
-import { setSnackbar } from "../../../store/actions/snackbar";
-import { isUsable } from "../../../helpers/functions";
+import { useState } from "react"
+import { useNavigate } from "react-router"
+import { useDispatch, useSelector } from "react-redux"
+
+import Wallet from "../../../connections/wallet"
+
+import { isUsable } from "../../../helpers/functions"
+import { setSnackbar } from "../../../store/actions/snackbar"
+import { GaExternalTracker } from "../../../trackers/ga-tracker"
+import { clearWallet, setWallet } from "../../../store/actions/wallet"
+
+import Button from "../../ui/Buttons/Button"
+import SideNavbar from "../SideNavbar/SideNavbar"
+import Dropdown from "../../ui/Dropdown/Dropdown"
+
+import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
+import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
-import { GaExternalTracker } from "../../../trackers/ga-tracker";
-import SideNavbar from "../SideNavbar/SideNavbar";
-import Dropdown from "../../ui/Dropdown/Dropdown" ;
-import Button from "../../ui/Buttons/Button";
 
 const Header = ({showRibbion=true,noPadding=false}) => {
+
 	const dispatch = useDispatch()
-	const location = useLocation()
 	const navigate = useNavigate()
+
 	const WalletState = useSelector(state=>state.WalletState)
+
 	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 
 	const handleWalletConnect = () => {
-		setLoading(true)
-		Wallet.connectWallet().then(res => {
-			dispatch(setWallet(res.selectedAddress))
-			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-		}).finally(() => setLoading(false))
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+			return true
+		}
+		else if(!isUsable(WalletState.support) || WalletState.support === false){
+			window.open("https://metamask.io/download/", '_blank')
+			return false
+		}
+		else {
+			setLoading(true)
+			Wallet.connectWallet().then(res => {
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				return true
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				return false
+			}).finally(() => setLoading(false))
+		}
 	}
 
 	const NAV_ITEMS = [
@@ -145,7 +162,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
 				<div className="header__content__logo utils__cursor--pointer" onClick={()=>navigate('/')}>
-					<img className="header__content__logo__image" src={Logo}/>
+					<img className="header__content__logo__image" src={Logo} alt={'N'}/>
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
 				<div className="header__content__search">

@@ -16,9 +16,14 @@ const ProtectedRoute = ({element}) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
 
 	useEffect(()=>{
-		if(isUsable(WalletState.wallet)){
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
 			setIsAuthenticated(true)
-		} else {
+		}
+		else if(!isUsable(WalletState.support) || WalletState.support === false){
+			window.open("https://metamask.io/download/", '_blank')
+			return false
+		}
+		else {
 			dispatch(showSpinner())
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet(res.selectedAddress))

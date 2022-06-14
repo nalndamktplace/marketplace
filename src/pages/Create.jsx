@@ -13,14 +13,14 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-import { BASE_URL } from '../config/env'
-import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+import Button from '../components/ui/Buttons/Button'
+import ProgressBar from '../components/ui/ProgressBar/ProgressBar'
 
 import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
 import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
-import ProgressBar from '../components/ui/ProgressBar/ProgressBar'
-import Button from '../components/ui/Buttons/Button'
+
 import { GENRES } from '../config/genres'
+import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
 
 const CreateNftPage = props => {
