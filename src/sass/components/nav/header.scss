@@ -77,6 +77,10 @@
 					margin-bottom: 1.6rem;
 				}
 
+				&--none{
+					&>ul{margin-left: 2rem;}
+				}
+
 				&__cover{
 					height: 20rem;
 					width: 12.5rem;

@@ -173,29 +173,41 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const renderSearchResults = () => {
 		let searchResultsDOM = []
-		SearchResults.forEach(result => {
-			searchResultsDOM.push(
-				<div onClick={() => {navigate('/book', {state: result}); setSearchQuery('')}} className="header__content__search__result" key={result.id}>
-					<img src={result.cover} alt={result.title+"'s Cover"} className="header__content__search__result__cover"/>
-					<div className="header__content__search__result__info">
-						<div className='header__content__search__result__info__author typo__body typo__body--2'>{result.author}</div>
-						<div className='header__content__search__result__info__name typo__body typo__body--2'>{result.title}</div>
+		if(isFilled(SearchResults))
+			SearchResults.forEach(result => {
+				searchResultsDOM.push(
+					<div onClick={() => {navigate('/book', {state: result}); setSearchQuery('')}} className="header__content__search__result" key={result.id}>
+						<img src={result.cover} alt={result.title+"'s Cover"} className="header__content__search__result__cover"/>
+						<div className="header__content__search__result__info">
+							<div className='header__content__search__result__info__author typo__body typo__body--2'>{result.author}</div>
+							<div className='header__content__search__result__info__name typo__body typo__body--2'>{result.title}</div>
+						</div>
 					</div>
-				</div>
-			)
-		})
+				)
+			})
+		else return(
+			<div className="header__content__search__result--none">
+				Your search did not match any books.
+				Suggestions:
+				<ul>
+					<li>Make sure that all words are spelled correctly.</li>
+					<li>Try different keywords.</li>
+					<li>Try more general keywords.</li>
+				</ul>
+			</div>
+		)
 		return searchResultsDOM
 	}
 
 	const getSearchBarClasses = () => {
 		let classes = ["header__content__search dropdown"]
-		if(isFilled(SearchQuery)) classes.push("dropdown--open")
+		if(isFilled(SearchQuery) && SearchQuery.length>3) classes.push("dropdown--open")
 		return classes.join(' ')
 	}
 
 	const getSearchResultsClasses = () => {
 		let classes = ["dropdown__options"]
-		if(isFilled(SearchQuery)) classes.push("dropdown__options--open")
+		if(isFilled(SearchQuery) && SearchQuery.length>3) classes.push("dropdown__options--open")
 		return classes.join(' ')
 	}
 
