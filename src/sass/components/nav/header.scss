@@ -66,6 +66,43 @@
 				align-items: center ;
 				justify-content: center;
 			}
+
+			&__result{
+				display: flex;
+				flex-direction: row;
+				align-items: flex-start;
+				justify-content: center;
+
+				&:not(:last-child){
+					margin-bottom: 1.6rem;
+				}
+
+				&--none{
+					&>ul{margin-left: 2rem;}
+				}
+
+				&__cover{
+					height: 20rem;
+					width: 12.5rem;
+					object-fit: cover;
+				}
+
+				&__info{
+					margin-left: 1.2rem;
+
+					&__name{
+						text-transform: capitalize;
+						word-break: break-all;
+						line-height: 1.25;
+						margin-top: 0.8rem;
+					}
+
+					&__author{
+						text-transform: uppercase;
+						color: #586274;
+					}
+				}
+			}
 		}
 	
 		&__navbar {
