@@ -30,6 +30,31 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
+	const [SearchQuery, setSearchQuery] = useState('')
+	const [SearchResults, setSearchResults] = useState([])
+
+	useEffect(() => {
+		if(Loading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [Loading, dispatch])
+
+	useEffect(() => {
+		if(SearchQuery.length>3 && SearchQuery.length<16){
+			setLoading(true)
+			axios({
+				url: BASE_URL+'/api/book/search',
+				method: 'GET',
+				params: {query: SearchQuery}
+			}).then(res => {
+				if(res.status === 200)
+					setSearchResults(res.data)
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
@@ -82,7 +107,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		SubMenuOpen && setSubMenuOpen(false)
 		setMenuOpen(old => !old)
 	}
-				
+
 	const menuItemClickHandler = navItem => {
 		if(isUsable(navItem.action)) {
 			setMenuOpen(false)
@@ -155,6 +180,46 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		return classes.join(' ')
 	}
 
+	const renderSearchResults = () => {
+		let searchResultsDOM = []
+		if(isFilled(SearchResults))
+			SearchResults.forEach(result => {
+				searchResultsDOM.push(
+					<div onClick={() => {navigate('/book', {state: result}); setSearchQuery('')}} className="header__content__search__result" key={result.id}>
+						<img src={result.cover} alt={result.title+"'s Cover"} className="header__content__search__result__cover"/>
+						<div className="header__content__search__result__info">
+							<div className='header__content__search__result__info__author typo__body typo__body--2'>{result.author}</div>
+							<div className='header__content__search__result__info__name typo__body typo__body--2'>{result.title}</div>
+						</div>
+					</div>
+				)
+			})
+		else return(
+			<div className="header__content__search__result--none">
+				Your search did not match any books.
+				Suggestions:
+				<ul>
+					<li>Make sure that all words are spelled correctly.</li>
+					<li>Try different keywords.</li>
+					<li>Try more general keywords.</li>
+				</ul>
+			</div>
+		)
+		return searchResultsDOM
+	}
+
+	const getSearchBarClasses = () => {
+		let classes = ["header__content__search dropdown"]
+		if(isFilled(SearchQuery) && SearchQuery.length>3) classes.push("dropdown--open")
+		return classes.join(' ')
+	}
+
+	const getSearchResultsClasses = () => {
+		let classes = ["dropdown__options"]
+		if(isFilled(SearchQuery) && SearchQuery.length>3) classes.push("dropdown__options--open")
+		return classes.join(' ')
+	}
+
 	return (
 		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
@@ -162,10 +227,13 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					<img className="header__content__logo__image" src={Logo} alt={'N'}/>
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
-				<div className="header__content__search">
-					<input className="header__content__search__input" type="text" placeholder="Search books and authors"/>
+				<div className={getSearchBarClasses()}>
+					<input value={SearchQuery} onChange={e => setSearchQuery(e.target.value)} className="header__content__search__input" type="text" placeholder="Search books and authors"/>
 					<div className="header__content__search__icon">
 						<SearchIcon width={24} height={24} stroke="currentColor"/>
+					</div>
+					<div className={getSearchResultsClasses()}>
+						{renderSearchResults()}
 					</div>
 				</div>
 				<div className="header__content__navbar">
