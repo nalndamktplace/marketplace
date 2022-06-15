@@ -329,6 +329,9 @@
 		padding: 4rem 1rem ;
 
 		&__container {
+			max-width: 90%;
+			width: 100rem;
+
 			&__row {
 				display: flex ;
 
@@ -348,6 +351,47 @@
 						justify-content: center ;
 						img {
 							height: 24rem ;
+						}
+					}
+
+					&__container{
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						height: 24rem;
+						position: relative;
+
+						&__image{
+							object-fit: cover;
+							border-radius: 1rem;
+							box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
+
+							&:nth-child(1){
+								height: 20rem;
+								width: 12.5rem;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-16%, -50%);
+								z-index: 3;
+							}
+							&:nth-child(2){
+								height: 18rem;
+								width: 11.25rem;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-55%, -50%);
+								z-index: 2;
+							}
+							&:nth-child(3){
+								height: 16rem;
+								width: 10rem;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-100%, -50%);
+							}
 						}
 					}
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
@@ -11,7 +11,6 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
-import FeaturedPlaceholder from "../assets/images/featured-placeholder.png"
 import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 
 import { BASE_URL } from '../config/env'
@@ -20,8 +19,6 @@ const IndexPage = props => {
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
-
-	const WalletState = useSelector(state=>state.WalletState)
 
 	const [IsLoading, setIsLoading] = useState(false)
 	const [Highlights, setHighlights] = useState([])
@@ -147,6 +144,22 @@ const IndexPage = props => {
 		return highlightsDOM
 	}
 
+	const renderCollection = () => {
+		let collectionDOM = []
+		if(isFilled(CollectionBooks) && CollectionBooks.length>2){
+			CollectionBooks[0].books.forEach(book => {
+				collectionDOM.push(<img src={book.cover} alt={book.title} className="index__featured__container__row__item__container__image"/>)
+			})
+			CollectionBooks[1].books.forEach(book => {
+				collectionDOM.push(<img src={book.cover} alt={book.title} className="index__featured__container__row__item__container__image"/>)
+			})
+			CollectionBooks[0].books.forEach(book => {
+				collectionDOM.push(<img src={book.cover} alt={book.title} className="index__featured__container__row__item__container__image"/>)
+			})
+		}
+		return collectionDOM
+	}
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
@@ -172,34 +185,34 @@ const IndexPage = props => {
 				<div className="index__featured__container">
 					<div className="index__featured__container__row">
 						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
+							<div className="index__featured__container__row__item__container">
+								{renderCollection()}
 							</div>
 							<div className="index__featured__container__row__item__title typo__head--4">Motivational Books</div>
 						</div>
 						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
+							<div className="index__featured__container__row__item__container">
+								{renderCollection()}
 							</div>
 							<div className="index__featured__container__row__item__title typo__head--4">Bestsellers</div>
 						</div>
 						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
+							<div className="index__featured__container__row__item__container">
+								{renderCollection()}
 							</div>
 							<div className="index__featured__container__row__item__title typo__head--4">Cooking</div>
 						</div>
 					</div>
 					<div className="index__featured__container__row">
 						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
+							<div className="index__featured__container__row__item__container">
+								{renderCollection()}
 							</div>
 							<div className="index__featured__container__row__item__title typo__head--4">Bestselling Fictional</div>
 						</div>
 						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
+							<div className="index__featured__container__row__item__container">
+								{renderCollection()}
 							</div>
 							<div className="index__featured__container__row__item__title typo__head--4">Bestselling Non-Fiction</div>
 						</div>
