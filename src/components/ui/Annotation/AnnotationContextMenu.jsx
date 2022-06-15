@@ -1,5 +1,6 @@
-import {ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg";
-import Button from "../Buttons/Button";
+import Button from "../Buttons/Button"
+
+import {ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
 
 const AnnotationContextMenu = ({onColorSelect=()=>{},onClose=()=>{}}) => {
 
@@ -24,7 +25,7 @@ const AnnotationContextMenu = ({onColorSelect=()=>{},onClose=()=>{}}) => {
 				<Button type="icon" onClick={onClose}><CloseIcon/></Button>
 			</div>
 		</div>
-	);
-};
+	)
+}
 
-export default AnnotationContextMenu;
+export default AnnotationContextMenu

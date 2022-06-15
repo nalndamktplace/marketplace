@@ -23,7 +23,7 @@ import { GENRES } from '../config/genres'
 import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
 
-const CreateNftPage = props => {
+const PublishNftPage = props => {
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -34,7 +34,7 @@ const CreateNftPage = props => {
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
-	const [formProgress, setFormProgress] = useState(0);
+	const [formProgress, setFormProgress] = useState(0)
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -50,14 +50,14 @@ const CreateNftPage = props => {
 	}, [WalletState])
 
 	useEffect(()=>{
-		let filled = Object.values(FormInput).filter(v => !(v===""||v?.length===0||v===null)).length ;
-		setFormProgress(filled/13);
+		let filled = Object.values(FormInput).filter(v => !(v===""||v?.length===0||v===null)).length - 1
+		setFormProgress(filled/12)
 	},[FormInput])
 
 	async function listNFTForSale() {
 		setLoading(true)
 
-		let formData = new FormData();
+		let formData = new FormData()
 		formData.append("book",FormInput.book)
 		formData.append("cover",FormInput.cover)
 		formData.append("bookTitle",FormInput.title)
@@ -71,7 +71,7 @@ const CreateNftPage = props => {
 			const bookUrl = res.data.book.url
 			const coverUrl = res.data.cover.url
 			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
-			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays());
+			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays())
 			let genreIDs = []
 			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
 			const languageId = LANGUAGES.indexOf(language).toString()
@@ -108,7 +108,7 @@ const CreateNftPage = props => {
 						}).then(res4 => {
 							if(res4.status === 200){
 								setLoading(false)
-								navigate('/account', {state: {tab: 'created'}})
+								navigate('/account', {state: {tab: 'published'}})
 							}
 							else {
 								dispatch(setSnackbar('ERROR'))
@@ -140,9 +140,9 @@ const CreateNftPage = props => {
 	}
 
 	return (
-		<Page noFooter={true} containerClass={'create create__bg'}>
-			<div className="create__data">
-				<div className="create__data__form utils__padding__bottom--s">
+		<Page noFooter={true} containerClass={'publish publish__bg'}>
+			<div className="publish__data">
+				<div className="publish__data__form utils__padding__bottom--s">
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Publish eBook</h3>
 					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} description="Enter name of the book"/>
 					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} description="Enter name of the author"/>
@@ -161,42 +161,42 @@ const CreateNftPage = props => {
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Secondary Sales Conditions</h3>
 					<InputField type="date" label="open on" min={moment().add(90, 'days')} onChange={e => setFormInput({ ...FormInput, secondaryFrom: e.target.value })} description="From when to start secondary sales"/>
 				</div>
-				<div className="create__data__preview">
-					<div className="create__data__preview__container">
+				<div className="publish__data__preview">
+					<div className="publish__data__preview__container">
 						<h3 className='typo__head typo__head--3 utils__margin__top--n utils__margin__bottom--s'>Preview</h3>
-						<div className='create__data__preview__book' onClick={()=>{}}>
-							<div className="create__data__preview__book__cover">
+						<div className='publish__data__preview__book' onClick={()=>{}}>
+							<div className="publish__data__preview__book__cover">
 								{	isUsable(CoverUrl)
-									?<img className='create__data__preview__book__cover__img' src={CoverUrl} alt={FormInput.name+" cover"} />
-									: <div className='create__data__preview__book__cover__placeholder'>
+									?<img className='publish__data__preview__book__cover__img' src={CoverUrl} alt={FormInput.name+" cover"} />
+									: <div className='publish__data__preview__book__cover__placeholder'>
 										<ImagePlaceholder stroke='currentColor'/>
 										<span className='utils__margin__top--m'>Book Cover</span>
 									</div>
 								}
 							</div>
-							<div className="create__data__preview__book__data">
-								<div className="create__data__preview__book__data__title  typo__head--4">{FormInput.name}</div>
-								<div className="create__data__preview__book__data__author typo__head--6">{FormInput.author}</div>
-								{FormInput.price && <div className="create__data__preview__book__data__price"><USDCIcon fill="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
-								{FormInput.language && <div className="create__data__preview__book__data__field">
-									<div className="create__data__preview__book__data__field__label typo__head--6">Language</div>
-									<div className="create__data__preview__book__data__field__value">{FormInput.language}</div>
+							<div className="publish__data__preview__book__data">
+								<div className="publish__data__preview__book__data__title  typo__head--4">{FormInput.name}</div>
+								<div className="publish__data__preview__book__data__author typo__head--6">{FormInput.author}</div>
+								{FormInput.price && <div className="publish__data__preview__book__data__price"><USDCIcon fill="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
+								{FormInput.language && <div className="publish__data__preview__book__data__field">
+									<div className="publish__data__preview__book__data__field__label typo__head--6">Language</div>
+									<div className="publish__data__preview__book__data__field__value">{FormInput.language}</div>
 								</div>}
-								{isFilled(FormInput.genres) && <div className="create__data__preview__book__data__field">
-									<div className="create__data__preview__book__data__field__label typo__head--6">Genres</div>
-									<div className="create__data__preview__book__data__field__chips">
-										{FormInput.genres.map(item => <div key={item} className="create__data__preview__book__data__field__chips__item">{item}</div>)}
+								{isFilled(FormInput.genres) && <div className="publish__data__preview__book__data__field">
+									<div className="publish__data__preview__book__data__field__label typo__head--6">Genres</div>
+									<div className="publish__data__preview__book__data__field__chips">
+										{FormInput.genres.map(item => <div key={item} className="publish__data__preview__book__data__field__chips__item">{item}</div>)}
 									</div>
 								</div>}
-								{FormInput.publication && <div className="create__data__preview__book__data__field">
-									<div className="create__data__preview__book__data__field__label typo__head--6">Publication</div>
-									<div className="create__data__preview__book__data__field__value">{FormInput.publication}</div>
+								{FormInput.publication && <div className="publish__data__preview__book__data__field">
+									<div className="publish__data__preview__book__data__field__label typo__head--6">Publication</div>
+									<div className="publish__data__preview__book__data__field__value">{FormInput.publication}</div>
 								</div>}
 							</div>
 						</div>
-						<div className='create__data__preview__progress'>
-							<div className='create__data__preview__progress__container'>
-								<div className='create__data__preview__progress__container__value'>{Math.round(formProgress*100)}%</div>
+						<div className='publish__data__preview__progress'>
+							<div className='publish__data__preview__progress__container'>
+								<div className='publish__data__preview__progress__container__value'>{Math.round(formProgress*100)}%</div>
 								<ProgressBar progress={formProgress}/>
 							</div>
 							<Button type="primary" disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>
@@ -208,4 +208,4 @@ const CreateNftPage = props => {
 	)
 }
 
-export default CreateNftPage
+export default PublishNftPage

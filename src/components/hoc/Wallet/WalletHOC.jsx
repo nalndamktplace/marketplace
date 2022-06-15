@@ -1,10 +1,9 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { setWallet, web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
-import { setSnackbar } from '../../../store/actions/snackbar'
-
 import { isUsable } from '../../../helpers/functions'
+import { setSnackbar } from '../../../store/actions/snackbar'
+import { setWallet, web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
 
 const WalletHOC = props => {
 

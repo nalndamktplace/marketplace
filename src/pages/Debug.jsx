@@ -1,5 +1,6 @@
-import Button from "../components/ui/Buttons/Button";
-import {ReactComponent as Icon} from "../assets/icons/wallet.svg" ;
+import Button from "../components/ui/Buttons/Button"
+
+import {ReactComponent as Icon} from "../assets/icons/wallet.svg"
 
 const DebugPage = () => {
     return (
@@ -60,7 +61,7 @@ const DebugPage = () => {
                 </div>
             </section>
         </div>
-    );
-};
+    )
+}
 
-export default DebugPage;
+export default DebugPage

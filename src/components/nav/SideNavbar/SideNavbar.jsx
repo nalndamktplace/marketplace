@@ -1,17 +1,20 @@
+import { useNavigate } from "react-router"
+import { useEffect, useState } from "react"
+
+import Button from "../../ui/Buttons/Button"
+
+import { isUsable } from "../../../helpers/functions"
+import { GaExternalTracker, GaSocialTracker } from "../../../trackers/ga-tracker"
+
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg"
 import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
 import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
 import {ReactComponent as BackIcon} from "../../../assets/icons/back-arrow.svg"
 import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg"
 import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
-import { useEffect, useState } from "react"
-import { GaExternalTracker, GaSocialTracker } from "../../../trackers/ga-tracker"
-import { isUsable } from "../../../helpers/functions"
-import { useNavigate } from "react-router"
-import Button from "../../ui/Buttons/Button"
 
 const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 
@@ -85,9 +88,9 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
     const toggleSubMenu = () => { setSubMenuOpen(old => !old) }
 
 	const renderNavItems = () => {
-		const domElements = [] ;
+		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet) && item.id === "NI4") return ;
+			if(!isUsable(WalletState.wallet) && item.id === "NI4") return
 			domElements.push(
 				<div key={item.id} className="side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer" onClick={()=>menuItemClickHandler(item)}>
 					{isUsable(item.icon) && <item.icon/>}
@@ -95,7 +98,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 				</div>
 			)
 		})
-		return domElements ;
+		return domElements
 	}
 
     return (
@@ -126,7 +129,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
                 <div className="side-navbar__container__socials">{renderSocialIcons()}</div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default SideNavbar;
+export default SideNavbar

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
 
 import Modal from '../../hoc/Modal/Modal'
+import Button from '../../ui/Buttons/Button'
 import InputField from '../../ui/Input/Input'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
+
 import { hideModal, SHOW_REVIEW_MODAL } from '../../../store/actions/modal'
-import Button from '../../ui/Buttons/Button'
+
 import StarEmptyIcon from '../../../assets/icons/star-empty.svg'
 import StarFilledIcon from '../../../assets/icons/star-filled.svg'
 import StarFilledHalfIcon from '../../../assets/icons/star-filled-half.svg'
@@ -17,7 +19,7 @@ const ReviewModal = ({ReviewForm,setReviewForm,reviewHandler}) => {
 
 	const ModalState = useSelector(state => state.ModalState)
 
-    const [Show, setShow] = useState(false);
+    const [Show, setShow] = useState(false)
 
 	useEffect(() => {
 		if(ModalState.show === true && ModalState.type === SHOW_REVIEW_MODAL) setShow(true)

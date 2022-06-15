@@ -1,39 +1,39 @@
-import { useState } from "react";
+import { useState } from "react"
 
-import { isUsable } from "../../../helpers/functions";
+import { isUsable } from "../../../helpers/functions"
 
-import {ReactComponent as FontSizeIncreaseIcon } from "../../../assets/icons/fontsize-increase.svg" ;
-import {ReactComponent as FontSizeDecreaseIcon } from "../../../assets/icons/fontsize-decrease.svg" ;
+import {ReactComponent as FontSizeIncreaseIcon } from "../../../assets/icons/fontsize-increase.svg"
+import {ReactComponent as FontSizeDecreaseIcon } from "../../../assets/icons/fontsize-decrease.svg"
 
-const minFontSize = 50 ;
-const maxFontSize = 200 ;
-const fontDeltaStep = 10 ;
+const minFontSize = 50
+const maxFontSize = 200
+const fontDeltaStep = 10
 
 const Customizer = ({rendition}) => {
-	const [fontSize, setFontSize] = useState(100);
+	const [fontSize, setFontSize] = useState(100)
 
 	const rerender = () => {
-		let location = rendition.currentLocation();
-		rendition.clear();
-		rendition.display(location.start.cfi);
+		let location = rendition.currentLocation()
+		rendition.clear()
+		rendition.display(location.start.cfi)
 	}
 
 	const updateFontSize = (newFontSize) => {
-		if(!isUsable(rendition)) return ;
-		rendition.themes.fontSize(`${newFontSize}%`);
-		setFontSize(newFontSize);
-		rerender();
+		if(!isUsable(rendition)) return
+		rendition.themes.fontSize(`${newFontSize}%`)
+		setFontSize(newFontSize)
+		rerender()
 	}
 
 	const setTheme = (theme="light") => {
-		rendition.themes.select(theme);
-		window.document.body.setAttribute("data-theme",theme);
-		rerender();
-	};
+		rendition.themes.select(theme)
+		window.document.body.setAttribute("data-theme",theme)
+		rerender()
+	}
 
 	const setFont = (fontFamily) => {
 		rendition.themes.override("font-family", fontFamily)
-		rerender();
+		rerender()
 	}
 
 	return (
@@ -57,7 +57,7 @@ const Customizer = ({rendition}) => {
 				<div className="customizer__fontfamily__font customizer__fontfamily__font--cursive" onClick={()=>{setFont("'Brush Script MT', cursive")}}>Brush Script MT</div>
 			</div>
 		</div>
-	);
-};
+	)
+}
 
-export default Customizer;
+export default Customizer

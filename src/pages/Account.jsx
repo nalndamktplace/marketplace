@@ -2,22 +2,26 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useState } from 'react'
+
 import Wallet from '../connections/wallet'
-import Page from '../components/hoc/Page/Page'
-import { isFilled, isUsable } from '../helpers/functions'
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
+import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
-import BooksShelf from '../assets/images/books-shelf.png'
-import { BASE_URL } from '../config/env'
+
+import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
 import Pagination from '../components/ui/Pagination/Pagination'
 import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
+
+import { BASE_URL } from '../config/env'
 import { ACCOUNT_PAGE_FILTERS } from '../config/filters'
+
 import BookItem from '../components/ui/BookItem/BookItem'
+import BooksShelf from '../assets/images/books-shelf.png'
+import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
-import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 
 const AccountPage = props => {
 
@@ -35,10 +39,10 @@ const AccountPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false);
-	const [layout, setLayout] = useState("GRID");
-	const [currentPage, setCurrentPage] = useState(1);
-	const [maxPage, setMaxPage] = useState(10);
+	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
+	const [layout, setLayout] = useState("GRID")
+	const [currentPage, setCurrentPage] = useState(1)
+	const [maxPage, setMaxPage] = useState(10)
 	
 	const connectWallet = useCallback(
 		() => {
@@ -60,7 +64,7 @@ const AccountPage = props => {
 					case 'range':
 						if(isUsable(filter.value))
 						nfts = nfts.filter(nft => nft[filter.key] <= filter.value)
-						break;
+						break
 					case 'multiselect':
 						if(isFilled(filter.value))
 						filter.value.forEach(filterValue => nfts = nfts.filter(nft => nft[filter.key].indexOf(filterValue)>-1))
@@ -70,23 +74,23 @@ const AccountPage = props => {
 							switch (filter.value) {
 								case 'PRICE_L_H':
 									nfts.sort((a,b) => a.price<b.price)
-									break;
+									break
 								case 'PRICE_H_L':
 									nfts.sort((a,b) => a.price>b.price)
-									break;
+									break
 								case 'RATING_L_H':
 									nfts.sort((a,b) => a.rating<b.rating)
-									break;
+									break
 								case 'RATING_H_L':
 									nfts.sort((a,b) => a.rating>b.rating)
-									break;
+									break
 								default:
-									break;
+									break
 							}
 						}
 						break
 					default:
-						break;
+						break
 				}
 			})
 			setNfts(nfts)
@@ -96,7 +100,7 @@ const AccountPage = props => {
 	useEffect(() => {
 		if(isUsable(params.state)){
 			const tab = params.state.tab
-			if(tab === 'created') setActiveTab(1)
+			if(tab === 'published') setActiveTab(1)
 			else setActiveTab(0)
 		}
 	}, [params])
@@ -129,7 +133,7 @@ const AccountPage = props => {
 			}).finally(() => setLoading(false))
 		else if(ActiveTab === 1)
 			axios({
-				url: BASE_URL+'/api/user/books/created',
+				url: BASE_URL+'/api/user/books/published',
 				method: 'GET',
 				params: {userAddress: WalletAddress}
 			}).then(res => {
@@ -148,7 +152,7 @@ const AccountPage = props => {
 		let nftDOM = []
 		let nfts = Nfts
 		nfts.forEach(nft => {
-			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>);
+			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>)
 		})
 		return nftDOM
 	}

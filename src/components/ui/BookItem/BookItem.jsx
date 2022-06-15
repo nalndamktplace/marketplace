@@ -1,5 +1,6 @@
-import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg" ;
-import Stars from "../Stars/Stars";
+import Stars from "../Stars/Stars"
+
+import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
 
 const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID"}) => {
     return (
@@ -13,7 +14,7 @@ const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID"}) => {
                 <Stars rating={book.rating}/>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default BookItem;
+export default BookItem

@@ -1,22 +1,26 @@
-import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
 import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
-import { isFilled, isUsable } from '../helpers/functions'
+import { useDispatch, useSelector } from 'react-redux'
+
 import { setSnackbar } from '../store/actions/snackbar'
+import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+
 import { BASE_URL } from '../config/env'
 import { EXPLORE_PAGE_FILTERS } from '../config/filters'
-import axios from 'axios'
-import Contracts from '../connections/contracts'
+
 import Page from '../components/hoc/Page/Page'
-import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
+import Contracts from '../connections/contracts'
+import Button from '../components/ui/Buttons/Button'
 import BookItem from '../components/ui/BookItem/BookItem'
+import Pagination from '../components/ui/Pagination/Pagination'
+import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
+
 import BooksShelf from '../assets/images/books-shelf.png'
+import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
-import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
-import Button from '../components/ui/Buttons/Button'
-import Pagination from '../components/ui/Pagination/Pagination'
 
 const ExplorePage = () => {
 
@@ -69,7 +73,7 @@ const ExplorePage = () => {
 					case 'range':
 						if(isUsable(filter.value))
 						nfts = nfts.filter(nft => nft[filter.key] <= filter.value)
-						break;
+						break
 					case 'multiselect':
 						if(isFilled(filter.value))
 						filter.value.forEach(filterValue => nfts = nfts.filter(nft => nft[filter.key].indexOf(filterValue)>-1))
@@ -79,23 +83,23 @@ const ExplorePage = () => {
 							switch (filter.value) {
 								case 'PRICE_L_H':
 									nfts.sort((a,b) => a.price<b.price)
-									break;
+									break
 								case 'PRICE_H_L':
 									nfts.sort((a,b) => a.price>b.price)
-									break;
+									break
 								case 'RATING_L_H':
 									nfts.sort((a,b) => a.rating<b.rating)
-									break;
+									break
 								case 'RATING_H_L':
 									nfts.sort((a,b) => a.rating>b.rating)
-									break;
+									break
 								default:
-									break;
+									break
 							}
 						}
 						break
 					default:
-						break;
+						break
 				}
 			})
 			setNfts(nfts)
@@ -134,7 +138,7 @@ const ExplorePage = () => {
 	const renderNfts = () => {
 		let nftDOM = []
 		Nfts.forEach(nft => {
-			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>);
+			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>)
 		})
 		return nftDOM
 	}

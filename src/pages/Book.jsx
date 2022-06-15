@@ -56,7 +56,7 @@ const BookPage = props => {
 	const [NFT, setNFT] = useState(null)
 	const [Owner, setOwner] = useState(null)
 	const [Listed, setListed] = useState(null)
-	const [Created, setCreated] = useState(null)
+	const [Published, setPublished] = useState(null)
 	// Likes
 	const [Likes, setLikes] = useState(0)
 	const [Liked, setLiked] = useState(false)
@@ -67,12 +67,12 @@ const BookPage = props => {
 	const [TotalReveiws, setTotalReveiws] = useState(0)
 	const [ReviewForm, setReviewForm] = useState({title: '', body: '', rating: 0})
 	// Quotes
-	const [Quote, setQuote] = useState(null);
-	const [Quotes, setQuotes] = useState([]);
+	const [Quote, setQuote] = useState(null)
+	const [Quotes, setQuotes] = useState([])
 	const [QuotesForm, setQuotesForm] = useState({quote: ''})
 	// live reader count
-	const [liveReaderCount, setLiveReaderCount] = useState(0);
-	const [avgReadTime, setAvgReadTime] = useState(0);
+	const [liveReaderCount, setLiveReaderCount] = useState(0)
+	const [avgReadTime, setAvgReadTime] = useState(0)
 
 	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
 
@@ -238,8 +238,8 @@ const BookPage = props => {
 			const book = params.state
 			if(book.new_owner === WalletAddress) setOwner(true)
 			else setOwner(false)
-			if(book.publisher_address === WalletAddress) setCreated(true)
-			else setCreated(false)
+			if(book.publisher_address === WalletAddress) setPublished(true)
+			else setPublished(false)
 			axios({
 				url: BASE_URL+'/api/book/owner',
 				method: 'GET',
@@ -255,7 +255,7 @@ const BookPage = props => {
 		}
 	}, [params, dispatch, WalletAddress])
 
-	useEffect(() => { if(isUsable(NFT) && isUsable(Created) && isUsable(Owner)) setLoading(false) }, [NFT, Created, Owner])
+	useEffect(() => { if(isUsable(NFT) && isUsable(Published) && isUsable(Owner)) setLoading(false) }, [NFT, Published, Owner])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -376,14 +376,14 @@ const BookPage = props => {
 
 	const readHandler = async () => { 
 		try {
-			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address);
+			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address)
 			// todo replace with web3modal
-			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-			const account = accounts[0];
+			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
+			const account = accounts[0]
 			const signedData = await window.ethereum.request({
 				method: "personal_sign",
 				params: [JSON.stringify(messageToSign.data), account, messageToSign.data.id],
-			});
+			})
 			axios({
 				url : BASE_URL + '/api/verify',
 				method : "POST",
@@ -400,12 +400,12 @@ const BookPage = props => {
 					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
 				}
 			}).catch(err => {
-				console.error(err);
-			});
+				console.error(err)
+			})
 			
 			
 		} catch (err) {
-			console.error(err);
+			console.error(err)
 		}
 		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
 	}
@@ -590,7 +590,7 @@ const BookPage = props => {
 					return quotesDOM
 				}
 				return <React.Fragment>
-					{ !isUsable(Quote) && ( Created || Owner ) ?
+					{ !isUsable(Quote) && ( Published || Owner ) ?
 						<div className="book__data__container__desc__tabs__data__action">
 							<div className="book__data__container__desc__tabs__data__action__icon">
 								<BlockQuoteIcon width={32} height={32} stroke="currentColor"/>
@@ -669,7 +669,7 @@ const BookPage = props => {
 	const getPriceTagClass = (book) => {
 		let classes = ["book__data__container__meta__price typo-head--6"]
 		if(book.price === 0) classes.push("book__data__container__meta__price--free")
-		return classes.join(" ");
+		return classes.join(" ")
 	}
 
 	return (
@@ -689,7 +689,7 @@ const BookPage = props => {
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__color--n500 typo__head typo__head--5">{NFT.author}</h5>
-									{Owner||Created?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{NFT.price}</>}</div>}
+									{Owner||Published?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{NFT.price}</>}</div>}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
 											{renderStars(Rating)}
@@ -702,7 +702,7 @@ const BookPage = props => {
 										{Listed
 											?
 												<Button type="primary" size="lg" onClick={()=>unlistHandler()}>Unlist</Button>
-											:Created
+											:Published
 												?<>
 													<Button type="primary" size="lg" onClick={()=>readHandler()}>Read</Button>
 												</>

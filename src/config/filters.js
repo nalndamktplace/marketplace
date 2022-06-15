@@ -61,7 +61,7 @@ export const EXPLORE_PAGE_FILTERS = [
             {value:"RATING_H_L",label:"Rating - High to Low"},
         ],
     }
-];
+]
 
 
 export const ACCOUNT_PAGE_FILTERS = [
@@ -119,4 +119,4 @@ export const ACCOUNT_PAGE_FILTERS = [
             {value:"RATING_H_L",label:"Rating - High to Low"},
         ],
     }
-];
+]

@@ -62,7 +62,7 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults }) => 
                 </label>
             </div>)
         })
-        return <Accordian classNames="filter-panel__body__accordian" key={filterData.name} header={filterData.label} options={options}/> ;
+        return <Accordian classNames="filter-panel__body__accordian" key={filterData.name} header={filterData.label} options={options}/>
     }
 
     const renderTab = (filterData) => {
@@ -95,18 +95,18 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults }) => 
                 {
                     config.map(filterItem => {
                         switch(filterItem.type) {
-                            case "multiselect" : return renderMultiselect(filterItem) ;
-                            case "select" : return renderSelect(filterItem) ;
-                            case "tab" : return renderTab(filterItem) ;
-                            case "range" : return renderRange(filterItem) ;
-                            default : return "" ;
+                            case "multiselect" : return renderMultiselect(filterItem)
+                            case "select" : return renderSelect(filterItem)
+                            case "tab" : return renderTab(filterItem)
+                            case "range" : return renderRange(filterItem)
+                            default : return ""
                         }
                     })
                 }
             
             </div>
         </div> 
-    );
+    )
 }
 
-export default FilterPanel;
+export default FilterPanel

@@ -1,22 +1,24 @@
-import { useRef, useState } from "react";
-import { isFilled } from "../../../helpers/functions";
-import Button from "../Buttons/Button";
+import { useRef, useState } from "react"
+
+import Button from "../Buttons/Button"
+
+import { isFilled } from "../../../helpers/functions"
 
 const FilePicker = (props) => {
-	const fileInputRef = useRef();
-	const [file, setFile] = useState(null);
+	const fileInputRef = useRef()
+	const [file, setFile] = useState(null)
 
 	const handleUploadButton = () => {
-		fileInputRef.current?.click();
-	};
+		fileInputRef.current?.click()
+	}
 
 	const handleFileChange = (e) => {
 		if(isFilled(e.target.files)){
 			setFile(e.target.files[0].name)
 		} else {
-			setFile("");
+			setFile("")
 		}
-		(typeof props.onChange === "function") && props.onChange(e);
+		(typeof props.onChange === "function") && props.onChange(e)
 	}
 
 	return (
@@ -31,7 +33,7 @@ const FilePicker = (props) => {
 			/>
 			<div className="file-input__file-name">{file ? file : props.placeholder || "Upload File"}</div>
 		</div>
-	);
-};
+	)
+}
 
-export default FilePicker;
+export default FilePicker

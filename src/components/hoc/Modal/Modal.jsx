@@ -1,7 +1,9 @@
 import { useEffect } from "react"
-import Backdrop from "../Backdrop/Backdrop";
+
+import Button from "../../ui/Buttons/Button"
+import Backdrop from "../Backdrop/Backdrop"
+
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
-import Button from "../../ui/Buttons/Button";
 
 const Modal = ({ title = "", open = false, toggleModal, children }) => {
 	useEffect(() => {
@@ -27,7 +29,7 @@ const Modal = ({ title = "", open = false, toggleModal, children }) => {
 				<div className="modal__wrapper__content">{children}</div>
 			</div>
 		</Backdrop>
-	);
-};
+	)
+}
 
 export default Modal

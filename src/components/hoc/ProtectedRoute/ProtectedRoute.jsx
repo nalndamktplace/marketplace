@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+
 import Wallet from "../../../connections/wallet"
+
 import { isUsable } from "../../../helpers/functions"
 import { setWallet } from "../../../store/actions/wallet"
-import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 import { setSnackbar } from "../../../store/actions/snackbar"
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 
 const ProtectedRoute = ({element}) => {
 	const dispatch = useDispatch()
