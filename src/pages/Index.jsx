@@ -3,21 +3,18 @@ import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Wallet from '../connections/wallet'
-
 import Page from '../components/hoc/Page/Page'
+import Button from '../components/ui/Buttons/Button'
 
+import { isFilled } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
-import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-// import HeroBackground from '../assets/images/background-hero.png'
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
-import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 import FeaturedPlaceholder from "../assets/images/featured-placeholder.png"
+import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 
 import { BASE_URL } from '../config/env'
-import Button from '../components/ui/Buttons/Button'
 
 const IndexPage = props => {
 
@@ -89,7 +86,7 @@ const IndexPage = props => {
 			const getPriceTagClass = (book) => {
 				let classes = ["index__collection__books__item__data__price typo-head--6"]
 				if(book.price === 0) classes.push("index__collection__books__item__data__price--free")
-				return classes.join(" ");
+				return classes.join(" ")
 			}
 
 			if(isFilled(books)){
@@ -150,32 +147,18 @@ const IndexPage = props => {
 		return highlightsDOM
 	}
 
-	const handleCreate = async () => {
-		if(isUsable(WalletState.wallet)) navigate('/create')
-		else {
-			Wallet.connectWallet().then(res => {
-				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-				navigate('/create')
-			}).catch(err => {
-				console.error({err})
-				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-			}).finally(() => setIsLoading(false))
-		}
-	}
-
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
 				<div className="index__bg">
-					{/* <img src={HeroBackground} alt="Background"/> */}
 				</div>
 				<div className="index__content">
 					<div className="index__content__container">
 						<h1 className="typo__display typo__transform--capital typo__color--white typo__transform--capital">experience<br/> books beyond<br/> reading</h1>
 						<h3 className="typo__head typo__head--3 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
 						<div className="index__content__container__row">
-							<Button size="xl" type="white" onClick={()=>navigate('/explore')}>Explore</Button>
-							<Button size="xl" type="outline-white" onClick={()=>{handleCreate()}}>Publish</Button>
+							<Button size="xl" type="white" onClick={() => navigate('/explore')}>Explore</Button>
+							<Button size="xl" type="outline-white" onClick={() => navigate('/publish')}>Publish</Button>
 						</div>
 					</div>
 				</div>

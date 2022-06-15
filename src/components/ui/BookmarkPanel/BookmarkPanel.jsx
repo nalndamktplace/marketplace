@@ -1,15 +1,15 @@
-import axios from "axios";
-import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import axios from "axios"
+import { useNavigate } from "react-router"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 
-import { isUsable } from "../../../helpers/functions";
-import { setSnackbar } from "../../../store/actions/snackbar";
-import { hideSpinner, showSpinner } from "../../../store/actions/spinner";
+import { isUsable } from "../../../helpers/functions"
+import { setSnackbar } from "../../../store/actions/snackbar"
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 
-import { BASE_URL } from "../../../config/env";
+import { BASE_URL } from "../../../config/env"
 
-import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg";
+import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg"
 
 const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=()=>{}}) => {
 
@@ -18,10 +18,10 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 
 	const WalletState = useSelector(state => state.WalletState)
 
-	const [Loading, setLoading] = useState(true);
+	const [Loading, setLoading] = useState(true)
 	const [bookmarks, setBookmarks] = useState([])
-	const [bookmarkTitle, setBookmarkTitle] = useState("");
-	const [WalletAddress, setWalletAddress] = useState(null);
+	const [bookmarkTitle, setBookmarkTitle] = useState("")
+	const [WalletAddress, setWalletAddress] = useState(null)
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -40,10 +40,10 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				}
 			}).then(res => {
 				if(res.status === 200) {
-					let parsedBookmarks = JSON.parse(res.data.bookmarks)||[] ;
-					setBookmarks(parsedBookmarks);
+					let parsedBookmarks = JSON.parse(res.data.bookmarks)||[]
+					setBookmarks(parsedBookmarks)
 					const bookKey = `${bookMeta.id}:bookmarks`
-					localStorage.setItem(bookKey,JSON.stringify(parsedBookmarks));
+					localStorage.setItem(bookKey,JSON.stringify(parsedBookmarks))
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -60,9 +60,9 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 	}, [WalletState, navigate, preview])
 
 	const renderBookmarkedItems = () => {
-		let domItems = [] ;
-		if(!isUsable(rendition)) return "";
-		if(!isUsable(bookMeta)) return "";
+		let domItems = []
+		if(!isUsable(rendition)) return ""
+		if(!isUsable(bookMeta)) return ""
 		bookmarks.forEach((item,i)=>{
 			domItems.push(
 				<div key={i} className="bookmark-panel__container__item" onClick={()=>gotoBookmarkedPage(`${item.cfi}`)}>
@@ -77,21 +77,21 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 			)
 		})
 		if(domItems.length===0)
-			domItems.push(<div key="empty" className="bookmark-panel__container__empty">No Items</div>);
-		return domItems;
+			domItems.push(<div key="empty" className="bookmark-panel__container__empty">No Items</div>)
+		return domItems
 	}
 
 	const addBookMark = () => {
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
-			if(!isUsable(rendition)) return;
-			if(!isUsable(bookMeta)) return;
-			if(!bookmarkTitle) return;
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
+			if(!bookmarkTitle) return
 			setLoading(true)
 			let newBookmarks = [...bookmarks,{
 				title : bookmarkTitle || "Untitled",
 				cfi : rendition.currentLocation().start.cfi,
 				percent : rendition.currentLocation().start.percentage
-			}];
+			}]
 			axios({
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'POST',
@@ -102,11 +102,11 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				}
 			}).then(res => {
 				if(res.status === 200) {
-					setBookmarkTitle("");
-					setBookmarks(newBookmarks);
+					setBookmarkTitle("")
+					setBookmarks(newBookmarks)
 					const bookKey = `${bookMeta.id}:bookmarks`
-					localStorage.setItem(bookKey,JSON.stringify(newBookmarks));
-					onAdd();
+					localStorage.setItem(bookKey,JSON.stringify(newBookmarks))
+					onAdd()
 				} 
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -117,10 +117,10 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 
 	const removeBookMark = (itemIndex) => {
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
-			if(!isUsable(rendition)) return;
-			if(!isUsable(bookMeta)) return;
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
 			setLoading(true)
-			let newBookmarks = bookmarks.filter((item,i) => i != itemIndex );
+			let newBookmarks = bookmarks.filter((item,i) => i != itemIndex )
 			axios({
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'POST',
@@ -131,11 +131,11 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				}
 			}).then(res => {
 				if(res.status === 200) {
-					setBookmarkTitle("");
-					setBookmarks(newBookmarks);
+					setBookmarkTitle("")
+					setBookmarks(newBookmarks)
 					const bookKey = `${bookMeta.id}:bookmarks`
-					localStorage.setItem(bookKey,JSON.stringify(newBookmarks));
-					onRemove();
+					localStorage.setItem(bookKey,JSON.stringify(newBookmarks))
+					onRemove()
 				} 
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -145,10 +145,10 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 	}
 
 	const gotoBookmarkedPage = (cfi) => {
-		if(!isUsable(rendition)) return;
-		rendition.display(cfi);
-		rendition.display(cfi);
-		onGoto();
+		if(!isUsable(rendition)) return
+		rendition.display(cfi)
+		rendition.display(cfi)
+		onGoto()
 	}
 
 	return (
@@ -164,7 +164,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				{Loading && "Loading..."}
 			</div>
 		</div>
-	);
-};
+	)
+}
 
-export default BookMarkPanel;
+export default BookMarkPanel

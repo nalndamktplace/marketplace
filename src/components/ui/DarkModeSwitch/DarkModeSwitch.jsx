@@ -1,9 +1,12 @@
 import React from 'react'
 import { useDispatch, useSelector } from "react-redux"
+
+import Button from '../Buttons/Button'
+
+import { SET_DARKMODE, SET_LIGHTMODE } from "../../../store/actions/darkmode"
+
 import { ReactComponent as SunIcon } from "../../../assets/icons/sun.svg"
 import { ReactComponent as MoonIcon } from "../../../assets/icons/moon.svg"
-import { SET_DARKMODE, SET_LIGHTMODE } from "../../../store/actions/darkmode"
-import Button from '../Buttons/Button'
 
 const DarkModeSwitch = () => {
 	let DarkModeState = useSelector((state) => state.DarkModeState)

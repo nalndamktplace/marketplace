@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+
 import Wallet from "../../../connections/wallet"
+
 import { isUsable } from "../../../helpers/functions"
 import { setWallet } from "../../../store/actions/wallet"
-import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 import { setSnackbar } from "../../../store/actions/snackbar"
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 
 const ProtectedRoute = ({element}) => {
 	const dispatch = useDispatch()
@@ -16,9 +18,14 @@ const ProtectedRoute = ({element}) => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
 
 	useEffect(()=>{
-		if(isUsable(WalletState.wallet)){
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
 			setIsAuthenticated(true)
-		} else {
+		}
+		else if(!isUsable(WalletState.support) || WalletState.support === false){
+			window.open("https://metamask.io/download/", '_blank')
+			navigate('/')
+		}
+		else {
 			dispatch(showSpinner())
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet(res.selectedAddress))

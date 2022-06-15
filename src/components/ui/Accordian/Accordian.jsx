@@ -1,9 +1,10 @@
-import { useState } from "react";
-import {ReactComponent as ChevronDownIcon} from "../../../assets/icons/chevron-down.svg";
+import { useState } from "react"
+
+import {ReactComponent as ChevronDownIcon} from "../../../assets/icons/chevron-down.svg"
 
 const Accordian = ({classNames="",header="",options=""}) => {
 
-    const [Open, setOpen] = useState(false);
+    const [Open, setOpen] = useState(false)
 
     return ( 
         <div className={"accordian " + classNames}>
@@ -15,7 +16,7 @@ const Accordian = ({classNames="",header="",options=""}) => {
             </div>
             {Open && (<div className="accordian__options">{options}</div>)}
         </div> 
-    );
+    )
 }
- 
-export default Accordian;
+
+export default Accordian

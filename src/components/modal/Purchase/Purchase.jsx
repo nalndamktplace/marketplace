@@ -3,17 +3,17 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Modal from '../../hoc/Modal/Modal'
+import Button from '../../ui/Buttons/Button'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
 
-
-import { isFilled, isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
+import { isFilled, isUsable } from '../../../helpers/functions'
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import { hideModal, SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { BASE_URL } from '../../../config/env'
+
 import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
-import Button from '../../ui/Buttons/Button'
 
 const PurchaseModal = props => {
 

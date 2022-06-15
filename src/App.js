@@ -19,12 +19,14 @@ import BookPage from './pages/Book'
 import ReaderPage from './pages/Reader'
 import AccountPage from './pages/Account'
 import ExplorePage from './pages/Explore'
-import CreateNftPage from './pages/Create'
+import ProfilePage from './pages/Profile'
+import PublishNftPage from './pages/Publish'
+//	/*	Page to debug App
+//		Uncomment the line below to activate page	*/
+// import DebugPage from './pages/Debug'
 
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
-import ProfilePage from './pages/Profile'
-import DebugPage from './pages/Debug'
 
 const rootReducer = combineReducers({
 	ModalState: ModalReducer,
@@ -46,7 +48,7 @@ function App() {
 						<Route path='/' element={<IndexPage/>}/>
 						<Route path='/book' element={<BookPage/>}/>
 						<Route path='/book/preview' element={<ReaderPage/>}/>
-						<Route path='/create' element={<ProtectedRoute element={<CreateNftPage/>} />}/>
+						<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
 						<Route path='/explore' element={<ExplorePage/>}/>
 						<Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />}/>
 						<Route path='/account' element={<ProtectedRoute element={<AccountPage />} />}/>

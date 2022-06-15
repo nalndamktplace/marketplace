@@ -1,15 +1,15 @@
-import axios from "axios";
-import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { useCallback, useEffect, useState } from "react";
+import axios from "axios"
+import { useNavigate } from "react-router"
+import { useDispatch, useSelector } from "react-redux"
+import { useCallback, useEffect, useState } from "react"
 
-import { isUsable } from "../../../helpers/functions";
-import { setSnackbar } from "../../../store/actions/snackbar";
+import { isUsable } from "../../../helpers/functions"
+import { setSnackbar } from "../../../store/actions/snackbar"
 import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 
-import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg";
+import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg"
 
-import { BASE_URL } from "../../../config/env";
+import { BASE_URL } from "../../../config/env"
 
 const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hideModal=()=>{}}) => {
 
@@ -18,9 +18,9 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 
 	const WalletState = useSelector(state => state.WalletState)
 
-	const [WalletAddress, setWalletAddress] = useState(null);
-	const [Loading, setLoading] = useState(false);
-	const [Annotations, setAnnotations] = useState([]);
+	const [WalletAddress, setWalletAddress] = useState(null)
+	const [Loading, setLoading] = useState(false)
+	const [Annotations, setAnnotations] = useState([])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -46,8 +46,8 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 				}
 			}).then(res => {
 				if(res.status === 200) {
-					let parsedAnnotations = JSON.parse(res.data.annotations)||[] ;
-					setAnnotations(parsedAnnotations);
+					let parsedAnnotations = JSON.parse(res.data.annotations)||[]
+					setAnnotations(parsedAnnotations)
 					parsedAnnotations.forEach((item)=>{
 						rendition.annotations.add(
 							"highlight",
@@ -56,7 +56,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 							()=>{},
 							"",
 							{"fill": item.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-						);
+						)
 					})
 				}
 				else dispatch(setSnackbar('NOT200'))
@@ -67,9 +67,9 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	}, [bookMeta, WalletAddress, dispatch, rendition, preview])
 
 	const renderAnnotationItems = () => {
-		let domItems = [] ;
-		if(!isUsable(rendition)) return "";
-		if(!isUsable(bookMeta)) return "";
+		let domItems = []
+		if(!isUsable(rendition)) return ""
+		if(!isUsable(bookMeta)) return ""
 		Annotations.forEach((item,i)=>{
 			domItems.push(
 				<div key={i} className="annotation-panel__container__item" onClick={()=>gotoPage(item.cfiRange)}>
@@ -81,16 +81,16 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 				</div>
 			)
 		})
-		if(domItems.length===0) domItems.push(<div key="empty" className="bookmark-panel__container__empty">No Items</div>);
-		return domItems;
+		if(domItems.length===0) domItems.push(<div key="empty" className="bookmark-panel__container__empty">No Items</div>)
+		return domItems
 	}
 
 	const removeAnnotation = (itemIndex,item) => {
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
-			if(!isUsable(rendition)) return;
-			if(!isUsable(bookMeta)) return;
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
 			setLoading(true)
-			let newAnnotations = Annotations.filter((item,i) => i != itemIndex );
+			let newAnnotations = Annotations.filter((item,i) => i != itemIndex )
 			axios({
 				url: BASE_URL+'/api/reader/annotations',
 				method: 'POST',
@@ -101,9 +101,9 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 				}
 			}).then(res => {
 				if(res.status === 200) {
-					setAnnotations(newAnnotations);
-					rendition.annotations.remove(item.cfiRange,"highlight");
-					onRemove();
+					setAnnotations(newAnnotations)
+					rendition.annotations.remove(item.cfiRange,"highlight")
+					onRemove()
 				} 
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -113,19 +113,19 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	}
 
 	const gotoPage = (cfi) => {
-		if(!isUsable(rendition)) return;
-		rendition.display(cfi);
-		rendition.display(cfi);
-		hideModal();
+		if(!isUsable(rendition)) return
+		rendition.display(cfi)
+		rendition.display(cfi)
+		hideModal()
 	}
 
 	const addAnnotaion = useCallback(
 		(annotation) => {
 			if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
-				if(!isUsable(rendition)) return;
-				if(!isUsable(bookMeta)) return;
+				if(!isUsable(rendition)) return
+				if(!isUsable(bookMeta)) return
 				setLoading(true)
-				let newAnnotations = [...Annotations,annotation];
+				let newAnnotations = [...Annotations,annotation]
 				axios({
 					url: BASE_URL+'/api/reader/annotations',
 					method: 'POST',
@@ -136,7 +136,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 					}
 				}).then(res => {
 					if(res.status === 200) {
-						setAnnotations(newAnnotations);
+						setAnnotations(newAnnotations)
 						rendition.annotations.add(
 							"highlight",
 							annotation.cfiRange,
@@ -144,7 +144,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 							()=>{},
 							"",
 							{"fill": annotation.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-						);
+						)
 					} 
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
@@ -156,8 +156,8 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	)
 
 	useEffect(()=>{
-		addAnnotationRef.current = addAnnotaion ;
-	},[addAnnotationRef,addAnnotaion]);
+		addAnnotationRef.current = addAnnotaion
+	},[addAnnotationRef,addAnnotaion])
 
 	return (
 		<div className="bookmark-panel">
@@ -166,7 +166,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 				{ renderAnnotationItems() }
 			</div>
 		</div>
-	);
-};
+	)
+}
 
-export default AnnotationPanel;
+export default AnnotationPanel

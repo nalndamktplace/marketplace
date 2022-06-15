@@ -1,52 +1,53 @@
-import Epub, { EpubCFI } from "epubjs";
-import { useLocation, useNavigate } from "react-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux"
+import { useLocation, useNavigate } from "react-router"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 
-import useDebounce from "../hook/useDebounce";
+import Epub, { EpubCFI } from "epubjs"
 
-import ReadTimer from "../components/ui/ReadTime/ReadTime";
-import SidePanel from "../components/hoc/SidePanel/SidePanel";
-import Customizer from "../components/ui/Customizer/Customizer";
-import BookMarkPanel from "../components/ui/BookmarkPanel/BookmarkPanel";
-import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel";
-import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu";
+import useDebounce from "../hook/useDebounce"
 
-import { isUsable } from "../helpers/functions";
+import Button from "../components/ui/Buttons/Button"
+import ReadTimer from "../components/ui/ReadTime/ReadTime"
+import SidePanel from "../components/hoc/SidePanel/SidePanel"
+import Customizer from "../components/ui/Customizer/Customizer"
+import BookMarkPanel from "../components/ui/BookmarkPanel/BookmarkPanel"
+import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel"
+import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu"
 
-import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.svg";
-import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg";
-import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg";
-import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.svg";
-import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg";
-import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg";
-import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg";
+import { isUsable } from "../helpers/functions"
+import { setSnackbar } from "../store/actions/snackbar"
+import { hideSpinner, showSpinner } from "../store/actions/spinner"
+
+import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.svg"
+import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg"
+import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg"
+import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.svg"
+import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg"
+import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg"
+import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
 
 import { BASE_URL } from '../config/env'
-import { useDispatch } from "react-redux";
-import { hideSpinner, showSpinner } from "../store/actions/spinner";
-import { setSnackbar } from "../store/actions/snackbar";
-import Button from "../components/ui/Buttons/Button";
 
 const ReaderPage = () => {
 
-	const params = useLocation();
+	const params = useLocation()
 	const dispatch = useDispatch()
-	const navigate = useNavigate();
+	const navigate = useNavigate()
 
 	const [Preview, setPreview] = useState(null)
 	const [Loading, setLoading] = useState(false)
-	const [bookMeta, setBookMeta] = useState({});
-	const [progress, setProgress] = useState(0);
-	const [readTime, setReadTime] = useState(0);
-	const [rendition, setRendition] = useState();
-	const [fullscreen, setFullscreen] = useState(false);
-	const [bookmarkPanel, setBookmarkPanel] = useState(false);
-	const [annotaionPanel, setAnnotaionPanel] = useState(false);
-	const [pageBookmarked, setPageBookmarked] = useState(false);
-	const [totalLocations, setTotalLocations] = useState(0);
-	const [customizerPanel, setCustomizerPanel] = useState(false);
+	const [bookMeta, setBookMeta] = useState({})
+	const [progress, setProgress] = useState(0)
+	const [readTime, setReadTime] = useState(0)
+	const [rendition, setRendition] = useState()
+	const [fullscreen, setFullscreen] = useState(false)
+	const [bookmarkPanel, setBookmarkPanel] = useState(false)
+	const [annotaionPanel, setAnnotaionPanel] = useState(false)
+	const [pageBookmarked, setPageBookmarked] = useState(false)
+	const [totalLocations, setTotalLocations] = useState(0)
+	const [customizerPanel, setCustomizerPanel] = useState(false)
 
-	const debouncedProgress = useDebounce(progress, 300);
+	const debouncedProgress = useDebounce(progress, 300)
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -59,24 +60,24 @@ const ReaderPage = () => {
 	}, [progress, totalLocations])
 
 	const hideAllPanel = ({customizer=true,bookmark=true,annotation=true}) => {
-		customizer && setCustomizerPanel(false);
-		bookmark && setBookmarkPanel(false);
-		annotation && setAnnotaionPanel(false);
+		customizer && setCustomizerPanel(false)
+		bookmark && setBookmarkPanel(false)
+		annotation && setAnnotaionPanel(false)
 	}
 
 	useEffect(()=>{
-		if(!isUsable(rendition)) return ;
-		const handleResize = () => rendition.manager.resize(window.innerWidth-8*16,"100%");
+		if(!isUsable(rendition)) return
+		const handleResize = () => rendition.manager.resize(window.innerWidth-8*16,"100%")
 		const handleFullscreen = () => {
-			if(isUsable(window.document.fullscreenElement)) setFullscreen(true);
-			else setFullscreen(false);
-			handleResize();
+			if(isUsable(window.document.fullscreenElement)) setFullscreen(true)
+			else setFullscreen(false)
+			handleResize()
 		}
-		window.addEventListener("resize",handleResize);
-		window.addEventListener("fullscreenchange",handleFullscreen);
+		window.addEventListener("resize",handleResize)
+		window.addEventListener("fullscreenchange",handleFullscreen)
 		return () => {
-			window.removeEventListener("resize",handleResize);
-			window.removeEventListener("fullscreenchange",handleFullscreen);
+			window.removeEventListener("resize",handleResize)
+			window.removeEventListener("fullscreenchange",handleFullscreen)
 		}
 	},[rendition])
 
@@ -93,10 +94,10 @@ const ReaderPage = () => {
 			setBookMeta(navParams.book)
 			setPreview(false)
 		}
-		const book = Epub(bookURL,{openAs:"epub"});
+		const book = Epub(bookURL,{openAs:"epub"})
 		book.ready.then(()=>{
-			document.querySelector("#book__reader").innerHTML = "" ;
-			const rendition = book.renderTo("book__reader", { width: window.innerWidth-8*16,height: "100%" });
+			document.querySelector("#book__reader").innerHTML = ""
+			const rendition = book.renderTo("book__reader", { width: window.innerWidth-8*16,height: "100%" })
 			rendition.themes.registerThemes({
 				dark : {
 					body : {
@@ -117,161 +118,161 @@ const ReaderPage = () => {
 					}
 				}
 			})
-			rendition.themes.select("light");
-			rendition.display();
-			setRendition(rendition);
+			rendition.themes.select("light")
+			rendition.display()
+			setRendition(rendition)
 		}).catch(err => {
 			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
 		})
-	},[params, dispatch]);
+	},[params, dispatch])
 
 	const saveLastReadPage = useCallback(
 		(cfi) => {
-			if(!isUsable(window.localStorage)) return;
-			if(!isUsable(bookMeta)) return;
-			const bookKey = `${bookMeta.id}:lastread` ;
-			localStorage.setItem(bookKey,cfi);
+			if(!isUsable(window.localStorage)) return
+			if(!isUsable(bookMeta)) return
+			const bookKey = `${bookMeta.id}:lastread`
+			localStorage.setItem(bookKey,cfi)
 		},
 		[bookMeta],
 	)
 
 	useEffect(()=>{
-		if (!isUsable(rendition)) return;
-		if (!isUsable(bookMeta)) return;
+		if (!isUsable(rendition)) return
+		if (!isUsable(bookMeta)) return
 		rendition.on("relocated", (event)=>{
-			setProgress(event.start.location);
-			saveLastReadPage(event.start.cfi);
-		});
+			setProgress(event.start.location)
+			saveLastReadPage(event.start.cfi)
+		})
 	},[bookMeta,rendition, saveLastReadPage])
 
 	useEffect(()=>{
-		if (!isUsable(rendition)) return;
-		if (!isUsable(bookMeta)) return;
-		const bookKey = `${bookMeta.id}:locations` ;
-		let stored = localStorage.getItem(bookKey);
+		if (!isUsable(rendition)) return
+		if (!isUsable(bookMeta)) return
+		const bookKey = `${bookMeta.id}:locations`
+		let stored = localStorage.getItem(bookKey)
 		if (stored) {
-			rendition.book.locations.load(stored);
+			rendition.book.locations.load(stored)
 			setTotalLocations(JSON.parse(stored).length)
 		} else {
 			rendition.book.locations.generate().then(()=>{
-				setTotalLocations(rendition.book.locations.total);
-				localStorage.setItem(bookKey, rendition.book.locations.save());
+				setTotalLocations(rendition.book.locations.total)
+				localStorage.setItem(bookKey, rendition.book.locations.save())
 			}).catch((err)=>{
-				console.error(err);
-			});
+				console.error(err)
+			})
 		}
-	},[rendition,bookMeta]);
+	},[rendition,bookMeta])
 
 	useEffect(() => {
-		if(!isUsable(rendition)) return ;
-		rendition.display(rendition.book.locations.cfiFromLocation(debouncedProgress));
-	}, [debouncedProgress, rendition]);
+		if(!isUsable(rendition)) return
+		rendition.display(rendition.book.locations.cfiFromLocation(debouncedProgress))
+	}, [debouncedProgress, rendition])
 
 	const handlePageUpdate = (e) => {
-		setProgress(e.target.value);
-	};
+		setProgress(e.target.value)
+	}
 
 	// todo move loading to server
 	useEffect(() => {
-		if(!isUsable(window.localStorage)) return;
-		if(!isUsable(bookMeta)) return;
-		if(!isUsable(rendition)) return ;
-		const bookKey = `${bookMeta.id}:lastread` ;
-		let lastPageCfi = localStorage.getItem(bookKey);
+		if(!isUsable(window.localStorage)) return
+		if(!isUsable(bookMeta)) return
+		if(!isUsable(rendition)) return
+		const bookKey = `${bookMeta.id}:lastread`
+		let lastPageCfi = localStorage.getItem(bookKey)
 		if(isUsable(lastPageCfi)) {
-			rendition.display(lastPageCfi);
+			rendition.display(lastPageCfi)
 		}
-	}, [bookMeta, rendition]); 
+	}, [bookMeta, rendition]) 
 	
 	function openFullscreen() {
-		var elem = document.documentElement;
+		var elem = document.documentElement
 		if (elem.requestFullscreen) {
-			elem.requestFullscreen();
+			elem.requestFullscreen()
 		} else if (elem.webkitRequestFullscreen) { /* Safari */
-			elem.webkitRequestFullscreen();
+			elem.webkitRequestFullscreen()
 		} else if (elem.msRequestFullscreen) { /* IE11 */
-			elem.msRequestFullscreen();
+			elem.msRequestFullscreen()
 		}
 	}
 
 	function closeFullscreen() {
-		if(!document.fullscreenElement) return ;
+		if(!document.fullscreenElement) return
 		if (document.exitFullscreen) {
-			document.exitFullscreen();
+			document.exitFullscreen()
 		} else if (document.webkitExitFullscreen) { /* Safari */
-			document.webkitExitFullscreen();
+			document.webkitExitFullscreen()
 		} else if (document.msExitFullscreen) { /* IE11 */
-			document.msExitFullscreen();
+			document.msExitFullscreen()
 		}
 	}
 
 	useEffect(()=>{
-		if(fullscreen===true) openFullscreen();
-		else closeFullscreen();
+		if(fullscreen===true) openFullscreen()
+		else closeFullscreen()
 	},[fullscreen])
 
 	const isCurrentPageBookmarked = useCallback(
 		() => {
-			if(!isUsable(rendition)) return;
-			if(!isUsable(bookMeta)) return;
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
 			const bookKey = `${bookMeta.id}:bookmarks`
-			let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
-			let epubcfi = new EpubCFI();
-			let current = rendition.currentLocation();
+			let stored = JSON.parse(window.localStorage.getItem(bookKey)) || []
+			let epubcfi = new EpubCFI()
+			let current = rendition.currentLocation()
 			try{
 				for(let bookmark of stored){
-					if(epubcfi.compare(bookmark.cfi,current.start.cfi)===0) return true;
-					if(epubcfi.compare(bookmark.cfi,current.end.cfi)===0) return true;
-					if(epubcfi.compare(bookmark.cfi,current.start.cfi)===1 && epubcfi.compare(bookmark.cfi,current.end.cfi)===-1) return true;
+					if(epubcfi.compare(bookmark.cfi,current.start.cfi)===0) return true
+					if(epubcfi.compare(bookmark.cfi,current.end.cfi)===0) return true
+					if(epubcfi.compare(bookmark.cfi,current.start.cfi)===1 && epubcfi.compare(bookmark.cfi,current.end.cfi)===-1) return true
 				}
-				return false ;	 
+				return false	 
 			} catch(err){
-				console.error(err);
-				return false;
+				console.error(err)
+				return false
 			}
 		},[bookMeta, rendition]
 	)
 
 	const updateBookmarkedStatus = useCallback(
 		() => {
-			const pageBookmarked = isCurrentPageBookmarked() ;
-			setPageBookmarked(pageBookmarked);
+			const pageBookmarked = isCurrentPageBookmarked()
+			setPageBookmarked(pageBookmarked)
 		},[isCurrentPageBookmarked]
 	)
 
-	const [annotationSelection, setAnnotationSelection] = useState({});
-	const [showContextMenu, setShowContextMenu] = useState(false);
-	// const [contextMenuPosition, setContextMenuPosition] = useState({x:0,y:0});
-	// const contextMenuContainerRef = useRef();
+	const [annotationSelection, setAnnotationSelection] = useState({})
+	const [showContextMenu, setShowContextMenu] = useState(false)
+	// const [contextMenuPosition, setContextMenuPosition] = useState({x:0,y:0})
+	// const contextMenuContainerRef = useRef()
 
 	// useEffect(()=>{
-	//	 if(!isUsable(contextMenuContainerRef.current)) return ;
+	//	 if(!isUsable(contextMenuContainerRef.current)) return
 	//	 contextMenuContainerRef.current.style.setProperty("--x",contextMenuPosition.x)
 	//	 contextMenuContainerRef.current.style.setProperty("--y",contextMenuPosition.y)
 	// },[contextMenuContainerRef,contextMenuPosition])
 	
 	useEffect(()=>{
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
-		const handleRelocated = ()=>{updateBookmarkedStatus();}
-		rendition.on("relocated",handleRelocated);
-		return ()=>{rendition.off("relocated",handleRelocated);}
-	},[rendition,bookMeta, updateBookmarkedStatus]);
+		if(!isUsable(rendition)) return
+		if(!isUsable(bookMeta)) return
+		const handleRelocated = ()=>{updateBookmarkedStatus()}
+		rendition.on("relocated",handleRelocated)
+		return ()=>{rendition.off("relocated",handleRelocated)}
+	},[rendition,bookMeta, updateBookmarkedStatus])
 
 	useEffect(()=>{
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
+		if(!isUsable(rendition)) return
+		if(!isUsable(bookMeta)) return
 		const handleSelected = (cfiRange,contents)=>{
 			// console.log(cfiRange,contents)
-			// const selection = contents.window.getSelection() ;
-			// const anchorNodeCoords = selection.anchorNode.parentElement.getBoundingClientRect() ;
-			// const extentNodeCoords = selection.extentNode.parentElement.getBoundingClientRect() ;
+			// const selection = contents.window.getSelection()
+			// const anchorNodeCoords = selection.anchorNode.parentElement.getBoundingClientRect()
+			// const extentNodeCoords = selection.extentNode.parentElement.getBoundingClientRect()
 
 			// let coords = {
 			//	 y : (Math.min(anchorNodeCoords.y,extentNodeCoords.y) + Math.max(anchorNodeCoords.y+anchorNodeCoords.height,extentNodeCoords.y+extentNodeCoords.height))/2,
 			//	 x : (Math.min(anchorNodeCoords.x,extentNodeCoords.x) + Math.max(anchorNodeCoords.x+anchorNodeCoords.width,extentNodeCoords.x+extentNodeCoords.width))/2,
-			// };
+			// }
 
 			// coords = {
 			//	 x : window.innerWidth / 2,
@@ -290,48 +291,48 @@ const ReaderPage = () => {
 					cfiRange,
 					text : range?.toString()
 				})
-				// setContextMenuPosition(coords);
-				setShowContextMenu(true);
+				// setContextMenuPosition(coords)
+				setShowContextMenu(true)
 			}).catch(()=>{
-				setAnnotationSelection({});
+				setAnnotationSelection({})
 			})
 		}
-		rendition.on("selected",handleSelected);
-		return ()=>{rendition.off("selected",handleSelected);}
-	},[rendition,bookMeta]);
+		rendition.on("selected",handleSelected)
+		return ()=>{rendition.off("selected",handleSelected)}
+	},[rendition,bookMeta])
 
 	useEffect(()=>{
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
+		if(!isUsable(rendition)) return
+		if(!isUsable(bookMeta)) return
 		const handleMarkClicked = (cfiRange,data,contents)=>{
-			setAnnotaionPanel(true);
+			setAnnotaionPanel(true)
 		}
-		rendition.on("markClicked",handleMarkClicked);
-		return ()=>{rendition.off("markClicked",handleMarkClicked);}
-	},[rendition,bookMeta]);
+		rendition.on("markClicked",handleMarkClicked)
+		return ()=>{rendition.off("markClicked",handleMarkClicked)}
+	},[rendition,bookMeta])
 
 	useEffect(()=>{
-		if(!isUsable(rendition)) return;
-		if(!isUsable(bookMeta)) return;
-		updateAnnotation();
-	},[rendition,bookMeta]);
+		if(!isUsable(rendition)) return
+		if(!isUsable(bookMeta)) return
+		updateAnnotation()
+	},[rendition,bookMeta])
 
-	const addAnnotationRef = useRef();
+	const addAnnotationRef = useRef()
 
 	const handleAnnotationColorSelect = (color) => {
-		if(!isUsable(annotationSelection)) return ;
-		if(!isUsable(rendition)) return ;
-		if(!isUsable(bookMeta)) return ;
+		if(!isUsable(annotationSelection)) return
+		if(!isUsable(rendition)) return
+		if(!isUsable(bookMeta)) return
 		if(isUsable(addAnnotationRef.current) && typeof addAnnotationRef.current === "function")
-			addAnnotationRef.current({...annotationSelection,color});
+			addAnnotationRef.current({...annotationSelection,color})
 	}
 
 	const updateAnnotation = () => {
-		// if(!isUsable(rendition)) return "";
-		// if(!isUsable(bookMeta)) return "";
+		// if(!isUsable(rendition)) return ""
+		// if(!isUsable(bookMeta)) return ""
 		// const bookKey = `${bookMeta.id}:annotations`
-		// let stored = JSON.parse(window.localStorage.getItem(bookKey)) || [];
-		// console.log(stored);
+		// let stored = JSON.parse(window.localStorage.getItem(bookKey)) || []
+		// console.log(stored)
 		// stored.forEach((item)=>{
 		//	 rendition.annotations.add(
 		//		 "highlight",
@@ -340,7 +341,7 @@ const ReaderPage = () => {
 		//		 ()=>{},
 		//		 "",
 		//		 {"fill": item.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-		//	 );
+		//	 )
 		// })
 	}
 
@@ -351,7 +352,7 @@ const ReaderPage = () => {
 					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 					<ReadTimer bookMeta={bookMeta}/>
 					{/* <button onClick={()=>{
-						console.log(rendition);
+						console.log(rendition)
 					}}>Debug</button> */}
 				</div>
 				<div className="reader__header__center">
@@ -371,12 +372,12 @@ const ReaderPage = () => {
 					<SidePanel show={bookmarkPanel} position="right">
 						<BookMarkPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={bookmarkPanel}
 							onAdd={()=>{
-								updateBookmarkedStatus();
-								setBookmarkPanel(s=>false);
+								updateBookmarkedStatus()
+								setBookmarkPanel(s=>false)
 							}}
 							onRemove={()=>{
-								updateBookmarkedStatus();
-								setBookmarkPanel(s=>false);
+								updateBookmarkedStatus()
+								setBookmarkPanel(s=>false)
 							}}
 							onGoto={()=>setBookmarkPanel(s=>false)}
 						/>
@@ -408,11 +409,11 @@ const ReaderPage = () => {
 				}>
 					<AnnotationContextMenu 
 						onColorSelect={(color)=>{
-							handleAnnotationColorSelect(color);
-							setShowContextMenu(false);
+							handleAnnotationColorSelect(color)
+							setShowContextMenu(false)
 						}} 
 						onClose={()=>{
-							setShowContextMenu(false);
+							setShowContextMenu(false)
 						}}
 					/>
 				</div>
@@ -422,7 +423,7 @@ const ReaderPage = () => {
 				<div className="reader__nav__progress-value">{Math.floor(progress*100/totalLocations)}%</div>
 			</nav>
 		</div>
-	);
-};
+	)
+}
 
-export default ReaderPage;
+export default ReaderPage

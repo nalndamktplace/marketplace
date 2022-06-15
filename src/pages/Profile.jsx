@@ -1,15 +1,17 @@
-import { useState } from "react";
-import Page from "../components/hoc/Page/Page";
-import InputField from "../components/ui/Input/Input";
-import {ReactComponent as WalletIcon} from "../assets/icons/wallet.svg" ;
-import {ReactComponent as TwitterIcon} from "../assets/icons/twitter.svg" ;
-import {ReactComponent as SaveIcon} from "../assets/icons/save.svg" ;
-import {ReactComponent as CameraIcon} from "../assets/icons/camera.svg" ;
-import Button from "../components/ui/Buttons/Button";
+import { useState } from "react"
+
+import Page from "../components/hoc/Page/Page"
+import Button from "../components/ui/Buttons/Button"
+import InputField from "../components/ui/Input/Input"
+
+import {ReactComponent as SaveIcon} from "../assets/icons/save.svg"
+import {ReactComponent as CameraIcon} from "../assets/icons/camera.svg"
+import {ReactComponent as WalletIcon} from "../assets/icons/wallet.svg"
+import {ReactComponent as TwitterIcon} from "../assets/icons/twitter.svg"
 
 const ProfilePage = () => {
 
-    const [FormInput, setFormInput] = useState({});
+    const [FormInput, setFormInput] = useState({})
 
     return ( 
         <Page containerClass='profile'>
@@ -52,7 +54,7 @@ const ProfilePage = () => {
                 <div className="profile__spacer"></div>
             </div>
         </Page> 
-    );
+    )
 }
  
-export default ProfilePage;
+export default ProfilePage

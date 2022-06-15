@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Wallet from "../connections/wallet";
-import { isUsable } from "../helpers/functions";
-import { setSnackbar } from "../store/actions/snackbar";
-import { setWallet } from "../store/actions/wallet";
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+
+import Wallet from "../connections/wallet"
+import { isUsable } from "../helpers/functions"
+import { setWallet } from "../store/actions/wallet"
+import { setSnackbar } from "../store/actions/snackbar"
 
 const useWalletAddress = () => {
+
+    const dispatch = useDispatch()
+
 	const WalletState = useSelector(state => state.WalletState)
+
 	const [WalletAddress, setWalletAddress] = useState(null)
-    const dispatch = useDispatch();
 
     useEffect(() => {
 		if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
@@ -22,9 +26,9 @@ const useWalletAddress = () => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			})
 		}
-	}, [WalletState])
+	}, [WalletState, dispatch])
 
-    return WalletAddress ;
+    return WalletAddress
 }
- 
-export default useWalletAddress;
+
+export default useWalletAddress

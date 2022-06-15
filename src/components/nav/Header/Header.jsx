@@ -1,23 +1,24 @@
-import Logo from "../../../assets/logo/logo.png" ;
-import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg";
-import Wallet from "../../../connections/wallet";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import { clearWallet, setWallet } from "../../../store/actions/wallet";
-import { setSnackbar } from "../../../store/actions/snackbar";
-import { isFilled, isUsable } from "../../../helpers/functions";
+import { useState } from "react"
+import { useNavigate } from "react-router"
+import { useDispatch, useSelector } from "react-redux"
+
+import Wallet from "../../../connections/wallet"
+
+import { isUsable } from "../../../helpers/functions"
+import { setSnackbar } from "../../../store/actions/snackbar"
+import { GaExternalTracker } from "../../../trackers/ga-tracker"
+import { clearWallet, setWallet } from "../../../store/actions/wallet"
+
+import Button from "../../ui/Buttons/Button"
+import Dropdown from "../../ui/Dropdown/Dropdown"
+import SideNavbar from "../SideNavbar/SideNavbar"
+
+import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
+import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
-import { GaExternalTracker } from "../../../trackers/ga-tracker";
-import SideNavbar from "../SideNavbar/SideNavbar";
-import Dropdown from "../../ui/Dropdown/Dropdown" ;
-import Button from "../../ui/Buttons/Button";
-import axios from "axios";
-import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
-import { BASE_URL } from '../../../config/env'
 
 const Header = ({showRibbion=true,noPadding=false}) => {
 
@@ -26,7 +27,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const WalletState = useSelector(state=>state.WalletState)
 
-	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
@@ -57,19 +57,29 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
-		setLoading(true)
-		Wallet.connectWallet().then(res => {
-			dispatch(setWallet(res.selectedAddress))
-			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-		}).catch(err => {
-			console.error({err})
-			dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-		}).finally(() => setLoading(false))
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+			return true
+		}
+		else if(!isUsable(WalletState.support) || WalletState.support === false){
+			window.open("https://metamask.io/download/", '_blank')
+			return false
+		}
+		else {
+			Wallet.connectWallet().then(res => {
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				return true
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+				return false
+			})
+		}
 	}
 
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore" ,url: "/explore",uri: null, icon: CompassIcon ,action: null, subMenu: null },
-		{ id: "NI2",title: "Publish" ,url: "/create" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
+		{ id: "NI2",title: "Publish" ,url: "/publish" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
 		{ id: "NI3",title: "Resources",url: null ,uri: null, icon: FileTextIcon ,action: null,
 			subMenu: [
 				{id: "NI3SMI1",title: "Blog" ,url: null,uri: "https://nalndamktplace.medium.com/",icon: null,action: null,},
@@ -84,7 +94,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
 		},
-	];
+	]
 
 	const RIBBION_ITEMS = [
 		{ id : "RI1",search:"?collection=bestselling" , title : "Bestsellers"},
@@ -116,7 +126,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}
 
 	const handleWalletDisconnect = () => {
-		setLoading(true)
 		Wallet.disconnectWallet().then(res => {
 			window.localStorage.clear()
 			dispatch(clearWallet())
@@ -125,15 +134,15 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}).catch(err => {
 			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
-		}).finally(() => setLoading(false))
+		})
 	}
 
 	const renderNavItems = () => {
-		const domElements = [] ;
+		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet) && item.id === "NI4") return ;
+			if(!isUsable(WalletState.wallet) && item.id === "NI4") return
 			if(isUsable(item.subMenu)){
-				const subMenuitems = [] ;
+				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
 					subMenuitems.push(
 						<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__content__navbar__link__subitem typo__head--6'>
@@ -141,7 +150,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 							{navItem.id !== "NI4" && <span>{navItem.title}</span>}
 						</div>
 					)
-				});
+				})
 				domElements.push(
 					<Dropdown 
 						key={item.id}
@@ -162,7 +171,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			}
 			
 		})
-		return domElements ;
+		return domElements
 	}
 
 	const getSubMenuClasses = () => {
@@ -215,7 +224,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
 				<div className="header__content__logo utils__cursor--pointer" onClick={()=>navigate('/')}>
-					<img className="header__content__logo__image" src={Logo} alt={'Nalnda Logo'}/>
+					<img className="header__content__logo__image" src={Logo} alt={'N'}/>
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
 				<div className={getSearchBarClasses()}>
