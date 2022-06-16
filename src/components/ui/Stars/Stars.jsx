@@ -3,7 +3,7 @@ import StarFilledIcon from "../../../assets/icons/star-filled.svg"
 import StarFilledHalfIcon from "../../../assets/icons/star-filled-half.svg"
 import StarEmptyHalfRtlIcon from "../../../assets/icons/star-empty-half-rtl.svg"
 
-const Stars = ({rating,size="small"}) => {
+const Stars = ({rating,size}) => {
     const renderStars = (rating) => {
         let starsDOM = []
         for (let i = 1; i <= 5; i++) {
