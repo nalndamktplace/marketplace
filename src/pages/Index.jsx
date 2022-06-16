@@ -1,17 +1,16 @@
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
 
-import { isFilled } from '../helpers/functions'
+import { isFilled, isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
-import FeaturedPlaceholder from "../assets/images/featured-placeholder.png"
 import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 
 import { BASE_URL } from '../config/env'
@@ -21,12 +20,11 @@ const IndexPage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-	const WalletState = useSelector(state=>state.WalletState)
-
 	const [IsLoading, setIsLoading] = useState(false)
 	const [Highlights, setHighlights] = useState([])
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
+	const [Genres, setGenres] = useState([])
 
 	useEffect(() => {
 		if(IsLoading) dispatch(showSpinner())
@@ -40,27 +38,36 @@ const IndexPage = props => {
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setHighlights(res.data)
-			else if(res.status !== 500) dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
-			// Do Nothing
 		}).finally(() => setIsLoading(false))
 	}, [dispatch])
 
 	useEffect(() => {
 		setIsLoading(true)
 		axios({
+			url: BASE_URL+'/api/collections/genres',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setGenres(res.data)
+		}).catch(err => {
+		}).finally(() => setIsLoading(false))
+	}, [])
+
+	useEffect(() => {
+		setCollections([])
+		setIsLoading(true)
+		axios({
 			url: BASE_URL+'/api/collections',
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setCollections(res.data)
-			else if(res.status !== 500) dispatch(setSnackbar('NOT200'))
 		}).catch(err => {
-			// Do Nothing
 		}).finally(() => setIsLoading(false))
 	}, [dispatch])
 
 	useEffect(() => {
 		if(isFilled(Collections)){
+			setCollectionBooks([])
 			Collections.forEach(collection => {
 				setIsLoading(true)
 				axios({
@@ -78,7 +85,7 @@ const IndexPage = props => {
 
 	const openHandler = nft => { navigate('/book', {state: nft}) }
 
-	const renderCollections = () => {
+	const renderGenres = () => {
 
 		const renderNfts = (books,collection) => {
 			let booksDOM = []
@@ -110,17 +117,17 @@ const IndexPage = props => {
 		}
 
 		let collectionsDOM = []
-		if(isFilled(CollectionBooks)){
-			CollectionBooks.sort((a,b)=> a.order<b.order).forEach(collection => {
+		if(isFilled(Genres)){
+			Genres.forEach(collection => {
 				collectionsDOM.push(
 					<div className="index__collection" key={collection.id}>
 						<div className="index__collection__header">
 							<h4 className="typo__head typo__head--2 index__collection__header__title typo__transform--capital">
 								{collection.name}
 							</h4>
-							<Button>
+							{/* <Button>
 								<span>View more</span> <ArrowRight width={24} height={24} />
-							</Button>
+							</Button> */}
 						</div>
 						
 						<div className="index__collection__books">
@@ -147,6 +154,35 @@ const IndexPage = props => {
 		return highlightsDOM
 	}
 
+	const renderCollections2 = () => {
+
+		const renderCollection = collection => {
+			let collectionDOM = []
+			if(isUsable(collection) && isFilled(collection.books)){
+				collection.books.forEach(book => {
+					if(collectionDOM.length<3)
+						collectionDOM.push(<img src={book.cover} alt={book.title} className="index__featured__container__row__item__container__image"/>)
+				})
+			}
+			return collectionDOM
+		}
+
+		let collectionsDOM = []
+		if(isFilled(CollectionBooks)){
+			CollectionBooks.sort((a,b) => a.order > b.order).forEach(collection => {
+				collectionsDOM.push(
+					<div className="index__featured__container__row__item" key={collection.id}>
+						<div className="index__featured__container__row__item__container">
+							{renderCollection(collection)}
+						</div>
+						<div className="index__featured__container__row__item__title typo__head--4 typo__transform--capital">{collection.name}</div>
+					</div>
+				)
+			})
+		}
+		return collectionsDOM
+	}
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
@@ -171,43 +207,12 @@ const IndexPage = props => {
 			<div className="index__featured">
 				<div className="index__featured__container">
 					<div className="index__featured__container__row">
-						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
-							</div>
-							<div className="index__featured__container__row__item__title typo__head--4">Motivational Books</div>
-						</div>
-						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
-							</div>
-							<div className="index__featured__container__row__item__title typo__head--4">Bestsellers</div>
-						</div>
-						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
-							</div>
-							<div className="index__featured__container__row__item__title typo__head--4">Cooking</div>
-						</div>
-					</div>
-					<div className="index__featured__container__row">
-						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
-							</div>
-							<div className="index__featured__container__row__item__title typo__head--4">Bestselling Fictional</div>
-						</div>
-						<div className="index__featured__container__row__item">
-							<div className="index__featured__container__row__item__image">
-								<img src={FeaturedPlaceholder} />
-							</div>
-							<div className="index__featured__container__row__item__title typo__head--4">Bestselling Non-Fiction</div>
-						</div>
+						{renderCollections2()}
 					</div>
 				</div>
 			</div>
 			<div className="index__section">
-				{renderCollections()}
+				{renderGenres()}
 			</div>
 		</Page>
 	)

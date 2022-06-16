@@ -8,6 +8,7 @@ import Page from '../components/hoc/Page/Page'
 
 import Contracts from '../connections/contracts'
 
+import Stars from '../components/ui/Stars/Stars'
 import Button from '../components/ui/Buttons/Button'
 import ListModal from '../components/modal/List/List'
 import QuoteModal from '../components/modal/Quote/QuoteModal'
@@ -22,11 +23,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from '../store/actions/modal'
 
-import StarEmptyIcon from '../assets/icons/star-empty.svg'
-import StarFilledIcon from '../assets/icons/star-filled.svg'
 import BackgroundBook from '../assets/images/background-book.svg'
-import StarFilledHalfIcon from '../assets/icons/star-filled-half.svg'
-import StarEmptyHalfRtlIcon from '../assets/icons/star-empty-half-rtl.svg'
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
 import {ReactComponent as PrintIcon} from "../assets/icons/print.svg"
 import {ReactComponent as QuoteIcon} from "../assets/icons/quote.svg"
@@ -518,23 +515,6 @@ const BookPage = props => {
 		return tabsDOM
 	}
 
-	const renderStars = rating => {
-		let starsDOM = []
-		for (let i = 1; i <= 5; i++) {
-			if(i <= rating) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
-					<img src={StarFilledIcon} alt="star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
-				</div>)
-			else if(rating < i && rating > i-1) starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
-					<img src={StarFilledHalfIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
-					<img src={StarEmptyHalfRtlIcon} alt="half star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon book__data__container__desc__tabs__data__reviews__item__rating__item__icon--half" />
-				</div>)
-			else starsDOM.push(<div key={'STAR'+i} className="book__data__container__desc__tabs__data__reviews__item__rating__item">
-					<img src={StarEmptyIcon} alt="empty star" className="book__data__container__desc__tabs__data__reviews__item__rating__item__icon" />
-				</div>)
-		}
-		return starsDOM
-	}
-
 	const renderTabData = () => {
 		switch (ActiveTab) {
 			case 'TAB01':
@@ -548,9 +528,7 @@ const BookPage = props => {
 								<div className="book__data__container__desc__tabs__data__reviews__item__header__head typo__head--4 typo__transform--upper">{review.title}</div>
 								<div className="book__data__container__desc__tabs__data__reviews__item__header__time typo__color--n500">{moment(review.reviewed_at).format("D MMM, YYYY")}</div>
 							</div>
-							<div className="book__data__container__desc__tabs__data__reviews__item__rating">
-								{renderStars(review.rating)}
-							</div>
+							<Stars rating={review.rating} size={'small'}/>
 							<div className="book__data__container__desc__tabs__data__reviews__item__body typo__body typo__body--2">{review.body}</div>
 						</div>))
 					return reviewsDOM
@@ -692,7 +670,7 @@ const BookPage = props => {
 									{Owner||Published?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{NFT.price}</>}</div>}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
-											{renderStars(Rating)}
+											<Stars rating={Rating}/>
 										</div>
 										<div className='book__data__container__meta__rating__count'>
 											{TotalReveiws} reviews

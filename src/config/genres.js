@@ -1,4 +1,13 @@
 export const GENRES = [
+	"Crime Fiction",
+	"Business",
+	"Entrepreneurship",
+	"Management",
+	"Health",
+	"Family",
+	"Personal Development",
+	"Relationships",
+	"Analysis & Strategy",
 	"Fantasy",
 	"Science Fiction",
 	"Dystopian",

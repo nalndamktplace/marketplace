@@ -381,6 +381,9 @@
 							padding-left: 0 ;
 
 							&__item{
+
+								&:not(:last-child){margin-bottom: 1.2rem;}
+
 								&__header {
 									display: flex ;
 									justify-content: space-between ;

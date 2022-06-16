@@ -75,8 +75,11 @@ const ExplorePage = () => {
 						nfts = nfts.filter(nft => nft[filter.key] <= filter.value)
 						break
 					case 'multiselect':
-						if(isFilled(filter.value))
-						filter.value.forEach(filterValue => nfts = nfts.filter(nft => nft[filter.key].indexOf(filterValue)>-1))
+						if(isFilled(filter.value)){
+							let tempNfts = []
+							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft.genres.indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
+							nfts = tempNfts
+						}
 						break
 					case 'select':
 						if(filter.key === 'orderby'){

@@ -1,4 +1,5 @@
-import { useState } from "react"
+import axios from "axios"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -12,6 +13,11 @@ import { clearWallet, setWallet } from "../../../store/actions/wallet"
 import Button from "../../ui/Buttons/Button"
 import Dropdown from "../../ui/Dropdown/Dropdown"
 import SideNavbar from "../SideNavbar/SideNavbar"
+
+import { isFilled } from "../../../helpers/functions"
+import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
+
+import { BASE_URL } from '../../../config/env'
 
 import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
@@ -27,6 +33,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const WalletState = useSelector(state=>state.WalletState)
 
+	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)

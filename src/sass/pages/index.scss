@@ -169,7 +169,7 @@
 
 					&__name{ 
 						text-transform: capitalize; 
-						word-break: break-all ;
+						word-break: break-word ;
 						line-height: 1.25 ;
 						margin-top: 0.8rem ;
 						font-weight: 700 ;
@@ -329,11 +329,16 @@
 		padding: 4rem 1rem ;
 
 		&__container {
+			max-width: 90%;
+
 			&__row {
-				display: flex ;
+				display: grid;
+				grid-template-columns: repeat(3, auto);
+				column-gap: 4rem;
+				row-gap: 4rem;
 
 				&__item {
-					flex: 1 ;
+					min-width: 32rem;
 					background-color: $color-neutral-200 ;
 					border-radius: 1rem ;
 					padding: 2rem ;
@@ -348,6 +353,47 @@
 						justify-content: center ;
 						img {
 							height: 24rem ;
+						}
+					}
+
+					&__container{
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						height: 24rem;
+						position: relative;
+
+						&__image{
+							object-fit: cover;
+							border-radius: 1rem;
+							box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
+
+							&:nth-child(1){
+								height: 20rem;
+								width: 12.5rem;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-16%, -50%);
+								z-index: 3;
+							}
+							&:nth-child(2){
+								height: 18rem;
+								width: 11.25rem;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-55%, -50%);
+								z-index: 2;
+							}
+							&:nth-child(3){
+								height: 16rem;
+								width: 10rem;
+								position: absolute;
+								top: 50%;
+								left: 50%;
+								transform: translate(-100%, -50%);
+							}
 						}
 					}
 
