@@ -350,7 +350,7 @@ const ReaderPage = () => {
 			<div className="reader__header">
 				<div className="reader__header__left">
 					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
-					<ReadTimer bookMeta={bookMeta}/>
+					<ReadTimer preview={Preview} bookMeta={bookMeta}/>
 					{/* <button onClick={()=>{
 						console.log(rendition)
 					}}>Debug</button> */}
