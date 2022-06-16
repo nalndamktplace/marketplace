@@ -35,6 +35,7 @@ import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
 
 import { BASE_URL } from '../config/env'
+import GaTracker from '../trackers/ga-tracker'
 
 const BookPage = props => {
 
@@ -70,6 +71,14 @@ const BookPage = props => {
 	// live reader count
 	const [liveReaderCount, setLiveReaderCount] = useState(0)
 	const [avgReadTime, setAvgReadTime] = useState(0)
+
+	useEffect(() => { GaTracker('page_view_book') }, [])
+
+	useEffect(() => {
+		if(ActiveTab === 'TAB01') GaTracker('tab_view_book_synopsis')
+		else if(ActiveTab === 'TAB02') GaTracker('tab_view_book_reviews')
+		else GaTracker('tab_view_book_quotes')
+	}, [ActiveTab])
 
 	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
 
@@ -284,6 +293,7 @@ const BookPage = props => {
 	}
 
 	const unlistHandler = () => {
+		GaTracker('event_book_unlist')
 		if(isUsable(WalletAddress)){
 			setLoading(true)
 			axios({
@@ -339,6 +349,7 @@ const BookPage = props => {
 	}
 
 	const onListHandler = listPrice => {
+		GaTracker('event_book_list')
 		if(isUsable(WalletAddress)){
 			setLoading(true)
 			Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice).then(res => {
@@ -371,7 +382,8 @@ const BookPage = props => {
 		}
 	}
 
-	const readHandler = async () => { 
+	const readHandler = async () => {
+		GaTracker('attempt_event_book_reader')
 		try {
 			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address)
 			// todo replace with web3modal
@@ -407,7 +419,10 @@ const BookPage = props => {
 		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
 	}
 
-	const previewHandler = () => { navigate('/book/preview', {state: {book: NFT, preview: true}}) }
+	const previewHandler = () => {
+		GaTracker('navigate_book_preview')
+		navigate('/book/preview', {state: {book: NFT, preview: true}})
+	}
 
 	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
 
@@ -416,6 +431,7 @@ const BookPage = props => {
 	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
 
 	const purchaseNewCopyHandler = () => {
+		GaTracker('event_book_purchase_new')
 		if(walletStatus()){
 			setLoading(true)
 			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString()).then(res => {
@@ -451,6 +467,7 @@ const BookPage = props => {
 	}
 
 	const purchaseOldCopyHandler = offer => {
+		GaTracker('event_book_purchase_old')
 		if(walletStatus()){
 			setLoading(true)
 			Contracts.buyListedCover(offer.order_id, offer.price).then(res => {
@@ -480,8 +497,14 @@ const BookPage = props => {
 	const likeHandler = () => {
 		if(walletStatus()){
 			if(Owner){
-				if(!Liked) setLikes(old => old+1)
-				else setLikes(old => old-1)
+				if(!Liked){
+					setLikes(old => old+1)
+					GaTracker('event_book_like')
+				}
+				else{
+					setLikes(old => old-1)
+					GaTracker('event_book_unlike')
+				}
 				axios({
 					url: BASE_URL+'/api/book/likes',
 					method: 'POST',

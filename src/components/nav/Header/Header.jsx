@@ -7,7 +7,7 @@ import Wallet from "../../../connections/wallet"
 
 import { isUsable } from "../../../helpers/functions"
 import { setSnackbar } from "../../../store/actions/snackbar"
-import { GaExternalTracker } from "../../../trackers/ga-tracker"
+import GaTracker from "../../../trackers/ga-tracker"
 import { clearWallet, setWallet } from "../../../store/actions/wallet"
 
 import Button from "../../ui/Buttons/Button"
@@ -125,7 +125,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		} else if(isUsable(navItem.uri)){
 			window.open(navItem.uri, "_blank")
 			setMenuOpen(false)
-			GaExternalTracker(navItem.title)
+			GaTracker('external_link_'+navItem.title)
 		} else if(isUsable(navItem.subMenu)){
 			setActiveSubMenu(navItem)
 			setSubMenuOpen(true)

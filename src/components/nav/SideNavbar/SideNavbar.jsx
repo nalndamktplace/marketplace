@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Button from "../../ui/Buttons/Button"
 
 import { isUsable } from "../../../helpers/functions"
-import { GaExternalTracker, GaSocialTracker } from "../../../trackers/ga-tracker"
+import GaTracker from "../../../trackers/ga-tracker"
 
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg"
 import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
@@ -40,7 +40,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		} else if(isUsable(navItem.uri)){
 			window.open(navItem.uri, "_blank")
 			setMenuOpen(false)
-			GaExternalTracker(navItem.title)
+			GaTracker('nav_item_'+navItem.title)
 		} else if(isUsable(navItem.subMenu)){
 			setActiveSubMenu(navItem)
 			setSubMenuOpen(true)
@@ -79,7 +79,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
     const renderSocialIcons = () => {
 		const domItems = []
 		SOCIAL_LINKS.forEach(item => domItems.push(
-			<div key={item.name} onClick={()=>{GaSocialTracker(item.name);window.open(item.url, "_blank")}} className="side-navbar__container__socials__item">
+			<div key={item.name} onClick={()=>{GaTracker('social_link_'+item.name);window.open(item.url, "_blank")}} className="side-navbar__container__socials__item">
 				{item.icon}
 			</div>))
 		return domItems

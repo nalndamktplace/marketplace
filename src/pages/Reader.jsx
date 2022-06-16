@@ -27,6 +27,7 @@ import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg"
 import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
 
 import { BASE_URL } from '../config/env'
+import GaTracker from "../trackers/ga-tracker"
 
 const ReaderPage = () => {
 
@@ -48,6 +49,8 @@ const ReaderPage = () => {
 	const [customizerPanel, setCustomizerPanel] = useState(false)
 
 	const debouncedProgress = useDebounce(progress, 300)
+
+	useEffect(() => { GaTracker('page_view_reader') }, [])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())

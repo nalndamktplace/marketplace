@@ -14,6 +14,7 @@ import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
 import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 
 import { BASE_URL } from '../config/env'
+import GaTracker from '../trackers/ga-tracker'
 
 const IndexPage = props => {
 
@@ -25,6 +26,8 @@ const IndexPage = props => {
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
 	const [Genres, setGenres] = useState([])
+
+	useEffect(() => { GaTracker('page_view_index') }, [])
 
 	useEffect(() => {
 		if(IsLoading) dispatch(showSpinner())
