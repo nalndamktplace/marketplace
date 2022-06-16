@@ -12,14 +12,14 @@ import useWalletAddress from "../../../hook/useWalletAddress"
 
 import { ReactComponent as ClockIcon } from "../../../assets/icons/clock.svg"
 
-const ReadTime = ({bookMeta}) => {
+const ReadTime = ({bookMeta, preview}) => {
 	const [readTime, setReadTime] = useState(0)
 	const [lastUpdate, setLastUpdate] = useState(0)
 	const WalletAddress = useWalletAddress()
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		if(isUsable(bookMeta) && isUsable(WalletAddress)){
+		if(!preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			axios(`${BASE_URL}/api/reader/read-time?bid=${bookMeta.id}&uid=${WalletAddress}`)
 			.then(res => {
 				if(res.status === 200) {
@@ -28,7 +28,7 @@ const ReadTime = ({bookMeta}) => {
 				}
 			}).catch(err => {dispatch(setSnackbar('ERROR'))})
 		}
-	}, [bookMeta, dispatch, WalletAddress])
+	}, [bookMeta, dispatch, WalletAddress, preview])
 
 	useEffect(()=>{
 		if(!isUsable(bookMeta) && !isUsable(WalletAddress)) return
@@ -38,22 +38,24 @@ const ReadTime = ({bookMeta}) => {
 	},[bookMeta,WalletAddress])
 
 	useEffect(()=>{
-		const currentReadTime = readTime
-		if(currentReadTime - lastUpdate > 10) {
-			axios({
-				url: `${BASE_URL}/api/reader/read-time`,
-				method: 'PUT',
-				data : {
-					uid : WalletAddress,
-					bid : bookMeta.id,
-					read_time : currentReadTime
-				}
-			}).then(res => {
-				if(res.status === 200) { setLastUpdate(res.data.read_time) }
-				else console.error("READ TIME UPDATE ERROR")
-			}).catch(err => {dispatch(setSnackbar('ERROR'))})
+		if(!preview){
+			const currentReadTime = readTime
+			if(currentReadTime - lastUpdate > 10) {
+				axios({
+					url: `${BASE_URL}/api/reader/read-time`,
+					method: 'PUT',
+					data : {
+						uid : WalletAddress,
+						bid : bookMeta.id,
+						read_time : currentReadTime
+					}
+				}).then(res => {
+					if(res.status === 200) { setLastUpdate(res.data.read_time) }
+					else console.error("READ TIME UPDATE ERROR")
+				}).catch(err => {dispatch(setSnackbar('ERROR'))})
+			}
 		}
-	},[bookMeta, readTime, WalletAddress, lastUpdate, dispatch])
+	},[bookMeta, readTime, WalletAddress, lastUpdate, dispatch, preview])
 
 	return ( 
 		<div className="readtime">
