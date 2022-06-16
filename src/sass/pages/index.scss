@@ -169,7 +169,7 @@
 
 					&__name{ 
 						text-transform: capitalize; 
-						word-break: break-all ;
+						word-break: break-word ;
 						line-height: 1.25 ;
 						margin-top: 0.8rem ;
 						font-weight: 700 ;
@@ -330,13 +330,15 @@
 
 		&__container {
 			max-width: 90%;
-			width: 100rem;
 
 			&__row {
-				display: flex ;
+				display: grid;
+				grid-template-columns: repeat(3, auto);
+				column-gap: 4rem;
+				row-gap: 4rem;
 
 				&__item {
-					flex: 1 ;
+					min-width: 32rem;
 					background-color: $color-neutral-200 ;
 					border-radius: 1rem ;
 					padding: 2rem ;
