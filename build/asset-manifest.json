@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.04fded69.css",
-    "main.js": "/static/js/main.18fb7d60.js",
+    "main.js": "/static/js/main.2f133e28.js",
     "static/js/787.c23b093c.chunk.js": "/static/js/787.c23b093c.chunk.js",
     "static/media/books-shelf.png": "/static/media/books-shelf.5798758d99f224745f08.png",
     "static/media/background-publish.svg": "/static/media/background-publish.cc210a253ef28ba82acf.svg",
@@ -41,7 +41,6 @@
     "static/media/user.svg": "/static/media/user.b34992bb76bbbfc855710c3fdc030615.svg",
     "static/media/plus-square.svg": "/static/media/plus-square.54a478418e46ccdc9b6d7c449ca2f652.svg",
     "static/media/text.svg": "/static/media/text.7c0ad0a6eaa6eb9b27a1b4ee17cd283e.svg",
-    "static/media/arrow-right.svg": "/static/media/arrow-right.1e85bedb2df0a0ebf951e67949c9c54f.svg",
     "static/media/like.svg": "/static/media/like.8e192d1bdcf00442911796d97bb7d2d7.svg",
     "static/media/letter-case.svg": "/static/media/letter-case.8319f81460a14cdad4d56524f4cd3ab3.svg",
     "static/media/layout-list.svg": "/static/media/layout-list.00934f19a3d13c8e9ae12db0cfa5bbb0.svg",
@@ -62,11 +61,11 @@
     "static/media/chevron-right.svg": "/static/media/chevron-right.3adaea03ea95c561b56cdc87e6ff3c0a.svg",
     "static/media/back-arrow.svg": "/static/media/back-arrow.2747221f9954d25f9caeb19d39b335c1.svg",
     "main.04fded69.css.map": "/static/css/main.04fded69.css.map",
-    "main.18fb7d60.js.map": "/static/js/main.18fb7d60.js.map",
+    "main.2f133e28.js.map": "/static/js/main.2f133e28.js.map",
     "787.c23b093c.chunk.js.map": "/static/js/787.c23b093c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.04fded69.css",
-    "static/js/main.18fb7d60.js"
+    "static/js/main.2f133e28.js"
   ]
 }
