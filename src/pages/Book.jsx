@@ -383,7 +383,6 @@ const BookPage = props => {
 	}
 
 	const readHandler = async () => {
-		GaTracker('attempt_event_book_reader')
 		try {
 			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address)
 			// todo replace with web3modal
@@ -404,6 +403,7 @@ const BookPage = props => {
 				}
 			}).then(res=>{
 				if(res.status === 200) {
+					GaTracker('navigate_book_reader')
 					navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
 				} else {
 					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
@@ -411,8 +411,6 @@ const BookPage = props => {
 			}).catch(err => {
 				console.error(err)
 			})
-			
-			
 		} catch (err) {
 			console.error(err)
 		}
@@ -610,6 +608,7 @@ const BookPage = props => {
 	}
 
 	const reviewHandler = () => {
+		GaTracker('event_book_review')
 		if(isUsable(WalletAddress)){
 			if(isNotEmpty(ReviewForm.body) && isNotEmpty(ReviewForm.rating) && isNotEmpty(ReviewForm.title)){
 				setLoading(true)
@@ -639,6 +638,7 @@ const BookPage = props => {
 	}
 
 	const quoteHandler = () => {
+		GaTracker('event_book_quote')
 		if(isUsable(WalletAddress)){
 			if(isNotEmpty(QuotesForm.quote)){
 				setLoading(true)

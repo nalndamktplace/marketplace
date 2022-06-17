@@ -39,7 +39,6 @@ const ReaderPage = () => {
 	const [Loading, setLoading] = useState(false)
 	const [bookMeta, setBookMeta] = useState({})
 	const [progress, setProgress] = useState(0)
-	const [readTime, setReadTime] = useState(0)
 	const [rendition, setRendition] = useState()
 	const [fullscreen, setFullscreen] = useState(false)
 	const [bookmarkPanel, setBookmarkPanel] = useState(false)
@@ -70,10 +69,19 @@ const ReaderPage = () => {
 
 	useEffect(()=>{
 		if(!isUsable(rendition)) return
-		const handleResize = () => rendition.manager.resize(window.innerWidth-8*16,"100%")
+		const handleResize = () => {
+			GaTracker('event_reader_resize')
+			rendition.manager.resize(window.innerWidth-8*16,"100%")
+		}
 		const handleFullscreen = () => {
-			if(isUsable(window.document.fullscreenElement)) setFullscreen(true)
-			else setFullscreen(false)
+			if(isUsable(window.document.fullscreenElement)){
+				GaTracker('event_reader_fullscreen')
+				setFullscreen(true)
+			}
+			else{
+				GaTracker('event_reader_window')
+				setFullscreen(false)
+			}
 			handleResize()
 		}
 		window.addEventListener("resize",handleResize)
@@ -254,7 +262,7 @@ const ReaderPage = () => {
 	//	 contextMenuContainerRef.current.style.setProperty("--x",contextMenuPosition.x)
 	//	 contextMenuContainerRef.current.style.setProperty("--y",contextMenuPosition.y)
 	// },[contextMenuContainerRef,contextMenuPosition])
-	
+
 	useEffect(()=>{
 		if(!isUsable(rendition)) return
 		if(!isUsable(bookMeta)) return

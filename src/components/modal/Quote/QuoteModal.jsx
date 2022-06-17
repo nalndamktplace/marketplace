@@ -7,6 +7,7 @@ import InputField from '../../ui/Input/Input'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
 
 import { hideModal, SHOW_QUOTE_MODAL } from '../../../store/actions/modal'
+import GaTracker from '../../../trackers/ga-tracker'
 
 const QuoteModal = ({QuotesForm,setQuotesForm,quoteHandler}) => {
 	const dispatch = useDispatch()
@@ -15,7 +16,10 @@ const QuoteModal = ({QuotesForm,setQuotesForm,quoteHandler}) => {
     const [Show, setShow] = useState(false)
 
 	useEffect(() => {
-		if(ModalState.show === true && ModalState.type === SHOW_QUOTE_MODAL) setShow(true)
+		if(ModalState.show === true && ModalState.type === SHOW_QUOTE_MODAL){
+			GaTracker('modal_view_quote')
+			setShow(true)
+		}
 		else setShow(false)
 	}, [ModalState])
 

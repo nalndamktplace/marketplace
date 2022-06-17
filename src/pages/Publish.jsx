@@ -58,6 +58,8 @@ const PublishNftPage = props => {
 	},[FormInput])
 
 	async function listNFTForSale() {
+		GaTracker('event_publish_list')
+
 		setLoading(true)
 
 		let formData = new FormData()

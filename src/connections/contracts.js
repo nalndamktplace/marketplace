@@ -1,5 +1,6 @@
 
 import Wallet from "./wallet"
+import GaTracker from '../trackers/ga-tracker'
 
 import { NALNDA_TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS } from "../config/contracts"
 
@@ -10,6 +11,7 @@ const nalndaToken = require('../artifacts/contracts/mocks/NALNDA.sol/Nalnda.json
 const book = require('../artifacts/contracts/NalndaBook.sol/NalndaBook.json')
 
 const getBooksCount = async function getBooksCount(){
+	GaTracker('event_contracts_get_books_count')
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
 	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, provider)
 	const books = await marketplaceContract.totalBooksCreated()
@@ -17,6 +19,7 @@ const getBooksCount = async function getBooksCount(){
 }
 
 const getBooks = async function getBooks (index){
+	GaTracker('event_contracts_get_books')
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
 	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, provider)
 	const books = await marketplaceContract.bookAddresses(index)
@@ -27,6 +30,7 @@ const getBooks = async function getBooks (index){
 // todo 1 <= language <= 100
 // todo 1 <= genre <= 60
 const listNftForSales = async function listNftForSales(authorAddress, coverUrl, price, daysForSecondarySale, language, genres){
+	GaTracker('event_contracts_list_nft')
 	await Wallet.connectWallet()
 	const signer = Wallet.getSigner()
 	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
@@ -36,6 +40,7 @@ const listNftForSales = async function listNftForSales(authorAddress, coverUrl, 
 }
 
 const purchaseNft = async function purchaseNft(buyer, bookAddress, amount){
+	GaTracker('event_contracts_purchase_nft')
 	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
@@ -49,6 +54,7 @@ const purchaseNft = async function purchaseNft(buyer, bookAddress, amount){
 }
 
 const getBookUri = async function getBookUri(bookAddress){
+	GaTracker('event_contracts_get_book_uri')
 	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
@@ -58,6 +64,7 @@ const getBookUri = async function getBookUri(bookAddress){
 }
 
 const listBookToMarketplace = async function listBookToMarketplace(bookAddress, bookTokenId, bookPrice) {
+	GaTracker('event_contracts_list_book')
 	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
@@ -72,6 +79,7 @@ const listBookToMarketplace = async function listBookToMarketplace(bookAddress, 
 }
 
 const unlistBookFromMarketplace = async function unlistBookFromMarketplace(bookOrderId) {
+	GaTracker('event_contracts_unlist_book')
 	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()
@@ -82,6 +90,7 @@ const unlistBookFromMarketplace = async function unlistBookFromMarketplace(bookO
 }
 
 const buyListedCover = async function buyListedCover(bookOrderId, bookPrice) {
+	GaTracker('event_contracts_buy_cover')
 	const connection = await Wallet.web3Modal.connect()
 	const provider = new ethers.providers.Web3Provider(connection)
 	const signer = provider.getSigner()

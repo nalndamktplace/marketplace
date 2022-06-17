@@ -113,6 +113,7 @@ const ExplorePage = () => {
 	}, [Filters, AllNfts])
 
 	const buyHandler = nft => {
+		GaTracker('event_explore_purchase_book')
 		setLoading(true)
 		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
@@ -139,7 +140,10 @@ const ExplorePage = () => {
 		})
 	}
 
-	const openHandler = nft => { navigate('/book', {state: nft}) }
+	const openHandler = nft => {
+		GaTracker('navigate_explore_book')
+		navigate('/book', {state: nft})
+	}
 
 	const renderNfts = () => {
 		let nftDOM = []

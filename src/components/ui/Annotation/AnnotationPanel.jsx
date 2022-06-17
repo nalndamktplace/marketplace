@@ -3,6 +3,7 @@ import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 import { useCallback, useEffect, useState } from "react"
 
+import GaTracker from '../../../trackers/ga-tracker'
 import { isUsable } from "../../../helpers/functions"
 import { setSnackbar } from "../../../store/actions/snackbar"
 import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
@@ -86,6 +87,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	}
 
 	const removeAnnotation = (itemIndex,item) => {
+		GaTracker('event_annotationpanel_remove')
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
@@ -113,6 +115,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	}
 
 	const gotoPage = (cfi) => {
+		GaTracker('event_annotationpanel_goto_page')
 		if(!isUsable(rendition)) return
 		rendition.display(cfi)
 		rendition.display(cfi)
@@ -121,6 +124,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 
 	const addAnnotaion = useCallback(
 		(annotation) => {
+			GaTracker('event_annotationpanel_annotate')
 			if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
 				if(!isUsable(rendition)) return
 				if(!isUsable(bookMeta)) return

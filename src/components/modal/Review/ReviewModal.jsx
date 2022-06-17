@@ -12,6 +12,7 @@ import StarEmptyIcon from '../../../assets/icons/star-empty.svg'
 import StarFilledIcon from '../../../assets/icons/star-filled.svg'
 import StarFilledHalfIcon from '../../../assets/icons/star-filled-half.svg'
 import StarEmptyHalfRtlIcon from '../../../assets/icons/star-empty-half-rtl.svg'
+import GaTracker from '../../../trackers/ga-tracker'
 
 const ReviewModal = ({ReviewForm,setReviewForm,reviewHandler}) => {
 
@@ -22,7 +23,10 @@ const ReviewModal = ({ReviewForm,setReviewForm,reviewHandler}) => {
     const [Show, setShow] = useState(false)
 
 	useEffect(() => {
-		if(ModalState.show === true && ModalState.type === SHOW_REVIEW_MODAL) setShow(true)
+		if(ModalState.show === true && ModalState.type === SHOW_REVIEW_MODAL){
+			GaTracker('modal_view_review')
+			setShow(true)
+		}
 		else setShow(false)
 	}, [ModalState])
 

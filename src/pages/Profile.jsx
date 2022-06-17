@@ -59,5 +59,5 @@ const ProfilePage = () => {
         </Page> 
     )
 }
- 
+
 export default ProfilePage

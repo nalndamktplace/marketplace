@@ -11,7 +11,6 @@ import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
-import {ReactComponent as ArrowRight} from "../assets/icons/arrow-right.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from '../trackers/ga-tracker'
@@ -86,7 +85,10 @@ const IndexPage = props => {
 		}
 	}, [Collections, dispatch])
 
-	const openHandler = nft => { navigate('/book', {state: nft}) }
+	const openHandler = nft => {
+		GaTracker('navigate_index_book')
+		navigate('/book', {state: nft})
+	}
 
 	const renderGenres = () => {
 

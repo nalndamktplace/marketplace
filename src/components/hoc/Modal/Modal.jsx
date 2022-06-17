@@ -6,6 +6,7 @@ import Backdrop from "../Backdrop/Backdrop"
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
 
 const Modal = ({ title = "", open = false, toggleModal, children }) => {
+
 	useEffect(() => {
 		window.document.documentElement.style.overflowY = open ? "hidden" : "auto"
 	}, [open])

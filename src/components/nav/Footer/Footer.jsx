@@ -26,8 +26,8 @@ const Footer = props => {
 				<div className="footer__row__item">
 					<div className="footer__row__item__links">
 						<p onClick={()=>{GaTracker('external_link_about');window.open("https://about.nalnda.com", "_blank")}} className='footer__row__item__links__item'>About Project</p>
-						<p onClick={()=>navigate('/explore')} className='footer__row__item__links__item'>Explore eBook</p>
-						<p onClick={()=>navigate('/publish')} className='footer__row__item__links__item'>Publish eBook</p>
+						<p onClick={()=>{GaTracker('navigate_footer_explore');navigate('/explore')}} className='footer__row__item__links__item'>Explore eBook</p>
+						<p onClick={()=>{GaTracker('navigate_footer_publish');navigate('/publish')}} className='footer__row__item__links__item'>Publish eBook</p>
 						<p onClick={()=>{GaTracker('external_link_whitepaper');window.open("https://docs.nalnda.com/", "_blank")}} className='footer__row__item__links__item'>Whitepaper</p>
 					</div>
 				</div>

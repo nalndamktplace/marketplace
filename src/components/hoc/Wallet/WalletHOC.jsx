@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { setWallet, web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
+import GaTracker from '../../../trackers/ga-tracker'
 
 const WalletHOC = props => {
 
@@ -27,9 +28,15 @@ const WalletHOC = props => {
 				}
 			}
 
+			const onAccountChange = () => {
+				GaTracker('event_wallet_change')
+				getAccount()
+			}
+
 			window.ethereum.on('connect', (connectInfo) => { })
 
 			window.ethereum.on('chainChanged', (chainId) => {
+				GaTracker('event_wallet_chain_change')
 				// We recommend reloading the page unless you have good reason not to.
 				if(chainId !== "0x13881"){
 					let chain
@@ -43,10 +50,10 @@ const WalletHOC = props => {
 				}
 			})
 
-			window.ethereum.on('accountsChanged', () => getAccount())
+			window.ethereum.on('accountsChanged', () => onAccountChange())
 
 			return () => {
-				window.ethereum.removeListener('accountsChanged', () => getAccount())
+				window.ethereum.removeListener('accountsChanged', () => onAccountChange())
 				window.ethereum.removeListener('chainChanged', ()=>{})
 			}
 		}

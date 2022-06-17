@@ -36,7 +36,10 @@ const PurchaseModal = props => {
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		if(ModalState.show === true && ModalState.type === SHOW_PURCHASE_MODAL) setShow(true)
+		if(ModalState.show === true && ModalState.type === SHOW_PURCHASE_MODAL){
+			GaTracker('modal_view_purchase')
+			setShow(true)
+		}
 		else setShow(false)
 	}, [ModalState])
 
@@ -119,8 +122,8 @@ const PurchaseModal = props => {
 
 	const switchTab = index => {
 		setActiveTab(index)
-		if(index === 0) GaTracker('tab_view_purchase_new')
-		else GaTracker('tab_view_purchase_old')
+		if(index === 0) GaTracker('tab_view_purchase_modal_new')
+		else GaTracker('tab_view_purchase_modal_old')
 	}
 
 	return (
