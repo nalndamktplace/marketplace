@@ -10,6 +10,7 @@ import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 import { BASE_URL } from "../../../config/env"
 
 import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg"
+import GaTracker from "../../../trackers/ga-tracker"
 
 const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=()=>{}}) => {
 
@@ -82,6 +83,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 	}
 
 	const addBookMark = () => {
+		GaTracker('event_bookmarkpanel_bookmark')
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
@@ -116,6 +118,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 	}
 
 	const removeBookMark = (itemIndex) => {
+		GaTracker('event_bookmarkpanel_bookmark_remove')
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
@@ -145,6 +148,7 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 	}
 
 	const gotoBookmarkedPage = (cfi) => {
+		GaTracker('event_bookmarkpanel_bookmark_goto')
 		if(!isUsable(rendition)) return
 		rendition.display(cfi)
 		rendition.display(cfi)

@@ -21,6 +21,7 @@ import BooksShelf from '../assets/images/books-shelf.png'
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
+import GaTracker from '../trackers/ga-tracker'
 
 const ExplorePage = () => {
 
@@ -40,6 +41,8 @@ const ExplorePage = () => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [maxPage, setMaxPage] = useState(10)
 	const [AllNfts, setAllNfts] = useState([])
+
+	useEffect(() => { GaTracker('page_view_explore') }, [])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -110,6 +113,7 @@ const ExplorePage = () => {
 	}, [Filters, AllNfts])
 
 	const buyHandler = nft => {
+		GaTracker('event_explore_purchase_book')
 		setLoading(true)
 		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString()).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
@@ -136,7 +140,10 @@ const ExplorePage = () => {
 		})
 	}
 
-	const openHandler = nft => { navigate('/book', {state: nft}) }
+	const openHandler = nft => {
+		GaTracker('navigate_explore_book')
+		navigate('/book', {state: nft})
+	}
 
 	const renderNfts = () => {
 		let nftDOM = []

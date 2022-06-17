@@ -7,7 +7,7 @@ import Wallet from "../../../connections/wallet"
 
 import { isUsable } from "../../../helpers/functions"
 import { setSnackbar } from "../../../store/actions/snackbar"
-import { GaExternalTracker } from "../../../trackers/ga-tracker"
+import GaTracker from "../../../trackers/ga-tracker"
 import { clearWallet, setWallet } from "../../../store/actions/wallet"
 
 import Button from "../../ui/Buttons/Button"
@@ -121,11 +121,12 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			navItem.action()
 		} else if(isUsable(navItem.url)) {
 			setMenuOpen(false)
+			GaTracker('navigate_header_'+navItem.title)
 			navigate(navItem.url)
 		} else if(isUsable(navItem.uri)){
 			window.open(navItem.uri, "_blank")
 			setMenuOpen(false)
-			GaExternalTracker(navItem.title)
+			GaTracker('external_link_header_'+navItem.title)
 		} else if(isUsable(navItem.subMenu)){
 			setActiveSubMenu(navItem)
 			setSubMenuOpen(true)
@@ -133,6 +134,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}
 
 	const handleWalletDisconnect = () => {
+		GaTracker('event_header_wallet_disconnect')
 		Wallet.disconnectWallet().then(res => {
 			window.localStorage.clear()
 			dispatch(clearWallet())

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import Page from "../components/hoc/Page/Page"
 import Button from "../components/ui/Buttons/Button"
@@ -8,10 +8,13 @@ import {ReactComponent as SaveIcon} from "../assets/icons/save.svg"
 import {ReactComponent as CameraIcon} from "../assets/icons/camera.svg"
 import {ReactComponent as WalletIcon} from "../assets/icons/wallet.svg"
 import {ReactComponent as TwitterIcon} from "../assets/icons/twitter.svg"
+import GaTracker from "../trackers/ga-tracker"
 
 const ProfilePage = () => {
 
     const [FormInput, setFormInput] = useState({})
+
+	useEffect(() => { GaTracker('page_view_profile') }, [])
 
     return ( 
         <Page containerClass='profile'>
@@ -56,5 +59,5 @@ const ProfilePage = () => {
         </Page> 
     )
 }
- 
+
 export default ProfilePage

@@ -22,6 +22,7 @@ import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
 import { GENRES } from '../config/genres'
 import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
+import GaTracker from '../trackers/ga-tracker'
 
 const PublishNftPage = props => {
 
@@ -35,6 +36,8 @@ const PublishNftPage = props => {
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
 	const [formProgress, setFormProgress] = useState(0)
+
+	useEffect(() => { GaTracker('page_view_publish') }, [])
 
 	useEffect(() => { if(isUsable(FormInput.cover)) setCoverUrl(URL.createObjectURL(FormInput.cover)) }, [FormInput])
 
@@ -55,6 +58,8 @@ const PublishNftPage = props => {
 	},[FormInput])
 
 	async function listNFTForSale() {
+		GaTracker('event_publish_list')
+
 		setLoading(true)
 
 		let formData = new FormData()

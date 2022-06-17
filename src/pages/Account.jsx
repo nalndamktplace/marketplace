@@ -22,6 +22,7 @@ import BooksShelf from '../assets/images/books-shelf.png'
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
+import GaTracker from '../trackers/ga-tracker'
 
 const AccountPage = props => {
 
@@ -43,7 +44,14 @@ const AccountPage = props => {
 	const [layout, setLayout] = useState("GRID")
 	const [currentPage, setCurrentPage] = useState(1)
 	const [maxPage, setMaxPage] = useState(10)
-	
+
+	useEffect(() => { GaTracker('page_view_account') }, [])
+
+	useEffect(() => {
+		if(ActiveTab === 0) GaTracker('tab_view_account_owned')
+		else GaTracker('tab_view_account_published')
+	}, [ActiveTab])
+
 	const connectWallet = useCallback(
 		() => {
 			Wallet.connectWallet().then(res => {
@@ -147,9 +155,15 @@ const AccountPage = props => {
 			}).finally(() => setLoading(false))
 	}, [ActiveTab, WalletAddress, dispatch])
 
-	const readHandler = nft => { navigate('/account/reader', {state: nft}) }
+	const readHandler = nft => {
+		GaTracker('navigate_account_reader')
+		navigate('/account/reader', {state: nft})
+	}
 
-	const openHandler = nft => { navigate('/book', {state: nft}) }
+	const openHandler = nft => {
+		GaTracker('navigate_account_book')
+		navigate('/book', {state: nft})
+	}
 
 	const renderNfts = () => {
 		let nftDOM = []

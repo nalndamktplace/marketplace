@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Button from "../../ui/Buttons/Button"
 
 import { isUsable } from "../../../helpers/functions"
-import { GaExternalTracker, GaSocialTracker } from "../../../trackers/ga-tracker"
+import GaTracker from "../../../trackers/ga-tracker"
 
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg"
 import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
@@ -14,15 +14,16 @@ import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg"
 import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
 
 const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
+
     const navigate = useNavigate()
     const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 
     const SOCIAL_LINKS = [
-		{name:"twitter",url:"https://twitter.com/nalndamktplace",icon:<TwitterIcon />},
-		{name:"medium",url:"https://nalndamktplace.medium.com",icon:<MediumIcon />},
-		{name:"telegram",url:"https://t.me/nalndamktplace",icon:<TelegramIcon />},
-		{name:"github",url:"https://github.com/nalndamktplace",icon:<GithubIcon />}
+		{name:"twitter",uri:"https://twitter.com/nalndamktplace",icon:<TwitterIcon />},
+		{name:"medium",uri:"https://nalndamktplace.medium.com",icon:<MediumIcon />},
+		{name:"telegram",uri:"https://t.me/nalndamktplace",icon:<TelegramIcon />},
+		{name:"github",uri:"https://github.com/nalndamktplace",icon:<GithubIcon />}
 	]
 
 	useEffect(()=>{
@@ -36,11 +37,12 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 			navItem.action()
 		} else if(isUsable(navItem.url)) {
 			setMenuOpen(false)
-			navigate(navItem.url)
+			GaTracker('navigate_sidenav_'+navItem.title)
+			navigate(navItem.uri)
 		} else if(isUsable(navItem.uri)){
 			window.open(navItem.uri, "_blank")
 			setMenuOpen(false)
-			GaExternalTracker(navItem.title)
+			GaTracker('external_link_sidenav_'+navItem.title)
 		} else if(isUsable(navItem.subMenu)){
 			setActiveSubMenu(navItem)
 			setSubMenuOpen(true)
@@ -79,7 +81,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
     const renderSocialIcons = () => {
 		const domItems = []
 		SOCIAL_LINKS.forEach(item => domItems.push(
-			<div key={item.name} onClick={()=>{GaSocialTracker(item.name);window.open(item.url, "_blank")}} className="side-navbar__container__socials__item">
+			<div key={item.name} onClick={()=>{GaTracker('social_link_'+item.name);window.open(item.uri, "_blank")}} className="side-navbar__container__socials__item">
 				{item.icon}
 			</div>))
 		return domItems

@@ -6,6 +6,8 @@ import Modal from '../../hoc/Modal/Modal'
 import Button from '../../ui/Buttons/Button'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
 
+import GaTracker from '../../../trackers/ga-tracker'
+
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { isFilled, isUsable } from '../../../helpers/functions'
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
@@ -34,7 +36,10 @@ const PurchaseModal = props => {
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		if(ModalState.show === true && ModalState.type === SHOW_PURCHASE_MODAL) setShow(true)
+		if(ModalState.show === true && ModalState.type === SHOW_PURCHASE_MODAL){
+			GaTracker('modal_view_purchase')
+			setShow(true)
+		}
 		else setShow(false)
 	}, [ModalState])
 
@@ -115,15 +120,21 @@ const PurchaseModal = props => {
 		return classes.join(' ')
 	}
 
+	const switchTab = index => {
+		setActiveTab(index)
+		if(index === 0) GaTracker('tab_view_purchase_modal_new')
+		else GaTracker('tab_view_purchase_modal_old')
+	}
+
 	return (
 		<Backdrop show={Show}>
 			<Modal title='Purchase eBook' open={Show} toggleModal={modalCloseHandler}>
 				<div className="modal__purchase">
 					<div className="modal__purchase__tabs">
-						<div onClick={()=>setActiveTab(0)} className={getTabsClasses(0)}>
+						<div onClick={()=>switchTab(0)} className={getTabsClasses(0)}>
 							New Copy
 						</div>
-						<div onClick={()=>setActiveTab(1)} className={getTabsClasses(1)}>
+						<div onClick={()=>switchTab(1)} className={getTabsClasses(1)}>
 							Old Copy
 						</div>
 					</div>

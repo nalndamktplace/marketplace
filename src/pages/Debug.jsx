@@ -1,8 +1,15 @@
+import { useEffect } from "react"
+
 import Button from "../components/ui/Buttons/Button"
+
+import GaTracker from '../trackers/ga-tracker'
 
 import {ReactComponent as Icon} from "../assets/icons/wallet.svg"
 
 const DebugPage = () => {
+
+	useEffect(() => { GaTracker('page_view_debug') }, [])
+
     return (
         <div className="debug">
             <section className="debug__typography">
