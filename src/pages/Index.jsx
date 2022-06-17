@@ -171,7 +171,7 @@ const IndexPage = props => {
 		if(isFilled(CollectionBooks)){
 			CollectionBooks.sort((a,b) => a.order > b.order).forEach(collection => {
 				collectionsDOM.push(
-					<div className="index__featured__container__row__item" key={collection.id}>
+					<div onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="index__featured__container__row__item" key={collection.id}>
 						<div className="index__featured__container__row__item__container">
 							{renderCollection(collection)}
 						</div>
