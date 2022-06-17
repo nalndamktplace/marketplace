@@ -38,7 +38,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		} else if(isUsable(navItem.url)) {
 			setMenuOpen(false)
 			GaTracker('navigate_sidenav_'+navItem.title)
-			navigate(navItem.uri)
+			navigate(navItem.url)
 		} else if(isUsable(navItem.uri)){
 			window.open(navItem.uri, "_blank")
 			setMenuOpen(false)
