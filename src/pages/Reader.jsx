@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 
@@ -10,11 +10,10 @@ import Button from "../components/ui/Buttons/Button"
 import ReadTimer from "../components/ui/ReadTime/ReadTime"
 import SidePanel from "../components/hoc/SidePanel/SidePanel"
 import Customizer from "../components/ui/Customizer/Customizer"
-import BookMarkPanel from "../components/ui/BookmarkPanel/BookmarkPanel"
 import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel"
 import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu"
 
-import { isUsable } from "../helpers/functions"
+import { isFilled, isUsable } from "../helpers/functions"
 import { setSnackbar } from "../store/actions/snackbar"
 import { hideSpinner, showSpinner } from "../store/actions/spinner"
 
@@ -28,12 +27,16 @@ import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
+import { setWallet } from "../store/actions/wallet"
+import Wallet from "../connections/wallet"
+import axios from "axios"
 
 const ReaderPage = () => {
 
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
+	const WalletState = useSelector(state => state.WalletState.wallet)
 
 	const [Preview, setPreview] = useState(null)
 	const [Loading, setLoading] = useState(false)
@@ -41,13 +44,33 @@ const ReaderPage = () => {
 	const [progress, setProgress] = useState(0)
 	const [rendition, setRendition] = useState()
 	const [fullscreen, setFullscreen] = useState(false)
-	const [bookmarkPanel, setBookmarkPanel] = useState(false)
 	const [annotaionPanel, setAnnotaionPanel] = useState(false)
 	const [pageBookmarked, setPageBookmarked] = useState(false)
 	const [totalLocations, setTotalLocations] = useState(0)
 	const [customizerPanel, setCustomizerPanel] = useState(false)
+	const [WalletAddress, setWalletAddress] = useState(null);
 
 	const debouncedProgress = useDebounce(progress, 300)
+
+	const connectWallet = useCallback(
+		() => {
+			Wallet.connectWallet().then(res => {
+				dispatch(setWallet(res.selectedAddress))
+				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+			}).finally(() => setLoading(false))
+		},[dispatch],
+	)
+
+	useEffect(() => {
+		setLoading(true)
+		if(isUsable(WalletState))
+			setWalletAddress(WalletState)
+		else connectWallet()
+		setLoading(false)
+	}, [WalletState, connectWallet])
 
 	useEffect(() => { GaTracker('page_view_reader') }, [])
 
@@ -61,9 +84,8 @@ const ReaderPage = () => {
 		else setLoading(false)
 	}, [progress, totalLocations])
 
-	const hideAllPanel = ({customizer=true,bookmark=true,annotation=true}) => {
+	const hideAllPanel = ({customizer=true,annotation=true}) => {
 		customizer && setCustomizerPanel(false)
-		bookmark && setBookmarkPanel(false)
 		annotation && setAnnotaionPanel(false)
 	}
 
@@ -228,15 +250,15 @@ const ReaderPage = () => {
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
 			const bookKey = `${bookMeta.id}:bookmarks`
-			let stored = JSON.parse(window.localStorage.getItem(bookKey)) || []
+			let item = window.localStorage.getItem(bookKey) ;
+			if(!isFilled(item)) return false ;
+			let stored = JSON.parse(item) || {}
 			let epubcfi = new EpubCFI()
 			let current = rendition.currentLocation()
 			try{
-				for(let bookmark of stored){
-					if(epubcfi.compare(bookmark.cfi,current.start.cfi)===0) return true
-					if(epubcfi.compare(bookmark.cfi,current.end.cfi)===0) return true
-					if(epubcfi.compare(bookmark.cfi,current.start.cfi)===1 && epubcfi.compare(bookmark.cfi,current.end.cfi)===-1) return true
-				}
+				if(epubcfi.compare(stored.cfi,current.start.cfi)===0) return true
+				if(epubcfi.compare(stored.cfi,current.end.cfi)===0) return true
+				if(epubcfi.compare(stored.cfi,current.start.cfi)===1 && epubcfi.compare(stored.cfi,current.end.cfi)===-1) return true
 				return false	 
 			} catch(err){
 				console.error(err)
@@ -356,15 +378,77 @@ const ReaderPage = () => {
 		// })
 	}
 
+	const addBookMark = () => {
+		GaTracker('event_bookmarkpanel_bookmark')
+		if(isUsable(Preview) && !!Preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
+			setLoading(true)
+			let newBookmarks = {
+				cfi : rendition.currentLocation().start.cfi,
+				percent : rendition.currentLocation().start.percentage
+			};
+			console.log(newBookmarks)
+			axios({
+				url: BASE_URL+'/api/reader/bookmarks',
+				method: 'POST',
+				data: {
+					bid: bookMeta.id,
+					uid: WalletAddress,
+					bookmarks: JSON.stringify(newBookmarks),
+				}
+			}).then(res => {
+				if(res.status === 200) {
+					const bookKey = `${bookMeta.id}:bookmarks`
+					localStorage.setItem(bookKey,JSON.stringify(newBookmarks))
+					updateBookmarkedStatus()
+				} 
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}
+
+	const removeBookMark = () => {
+		GaTracker('event_bookmarkpanel_bookmark_remove')
+		if(isUsable(Preview) && !!Preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
+			setLoading(true)
+			let newBookmarks = "" ;
+			axios({
+				url: BASE_URL+'/api/reader/bookmarks',
+				method: 'POST',
+				data: {
+					bid: bookMeta.id,
+					uid: WalletAddress,
+					bookmarks: "",
+				}
+			}).then(res => {
+				if(res.status === 200) {
+					const bookKey = `${bookMeta.id}:bookmarks`
+					localStorage.setItem(bookKey,"")
+					updateBookmarkedStatus()
+				} 
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}
+
+	const toggleBookMark = () => {
+		if(isCurrentPageBookmarked()===true) removeBookMark();
+		else addBookMark();
+	}
+
 	return (
 		<div className="reader">
 			<div className="reader__header">
 				<div className="reader__header__left">
 					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 					<ReadTimer preview={Preview} bookMeta={bookMeta}/>
-					{/* <button onClick={()=>{
-						console.log(rendition)
-					}}>Debug</button> */}
 				</div>
 				<div className="reader__header__center">
 					<div className="reader__header__center__title">{bookMeta.title||"Untitled"}</div>
@@ -379,21 +463,7 @@ const ReaderPage = () => {
 					<SidePanel show={annotaionPanel} position="right">
 						<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
 					</SidePanel>
-					<Button type="icon" className={bookmarkPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({bookmark:false});setBookmarkPanel(s=>!s)}} ><BookmarkIcon /></Button>
-					<SidePanel show={bookmarkPanel} position="right">
-						<BookMarkPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={bookmarkPanel}
-							onAdd={()=>{
-								updateBookmarkedStatus()
-								setBookmarkPanel(s=>false)
-							}}
-							onRemove={()=>{
-								updateBookmarkedStatus()
-								setBookmarkPanel(s=>false)
-							}}
-							onGoto={()=>setBookmarkPanel(s=>false)}
-						/>
-					</SidePanel>
-
+					<Button type="icon" className={pageBookmarked?"reader__header__right__button--active":""} onClick={toggleBookMark} ><BookmarkIcon /></Button>
 					<Button type="icon" className={customizerPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s)}}><LetterCaseIcon /></Button>
 					<SidePanel show={customizerPanel} position="right">
 						<Customizer rendition={rendition}/>
