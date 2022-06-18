@@ -25,9 +25,11 @@ import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.sv
 import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg"
 import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg"
 import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
+import { ReactComponent as ListIcon } from "../assets/icons/list.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
+import TocPanel from "../components/ui/TocPanel/TocPanel"
 
 const ReaderPage = () => {
 
@@ -46,6 +48,7 @@ const ReaderPage = () => {
 	const [pageBookmarked, setPageBookmarked] = useState(false)
 	const [totalLocations, setTotalLocations] = useState(0)
 	const [customizerPanel, setCustomizerPanel] = useState(false)
+	const [tocPanel, setTocPanel] = useState(false);
 
 	const debouncedProgress = useDebounce(progress, 300)
 
@@ -61,10 +64,11 @@ const ReaderPage = () => {
 		else setLoading(false)
 	}, [progress, totalLocations])
 
-	const hideAllPanel = ({customizer=true,bookmark=true,annotation=true}) => {
+	const hideAllPanel = ({customizer=true,bookmark=true,annotation=true,toc=true}) => {
 		customizer && setCustomizerPanel(false)
 		bookmark && setBookmarkPanel(false)
 		annotation && setAnnotaionPanel(false)
+		toc && setTocPanel(false)
 	}
 
 	useEffect(()=>{
@@ -373,6 +377,10 @@ const ReaderPage = () => {
 					<Button type="icon" onClick={()=>setFullscreen(s=>!s)}>
 						{fullscreen?<MinimizeIcon/>:<MaximizeIcon/>}
 					</Button>
+					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s)}} >
+						<ListIcon/>
+					</Button>
+					<SidePanel show={tocPanel} position="right"><TocPanel rendition={rendition}/></SidePanel>
 					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} >
 						<BlockquoteIcon/>
 					</Button>
