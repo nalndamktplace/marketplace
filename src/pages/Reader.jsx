@@ -380,7 +380,7 @@ const ReaderPage = () => {
 
 	const addBookMark = () => {
 		GaTracker('event_bookmarkpanel_bookmark')
-		if(isUsable(Preview) && !!Preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+		if(isUsable(Preview) && !Preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
 			setLoading(true)
@@ -412,7 +412,7 @@ const ReaderPage = () => {
 
 	const removeBookMark = () => {
 		GaTracker('event_bookmarkpanel_bookmark_remove')
-		if(isUsable(Preview) && !!Preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+		if(isUsable(Preview) && !Preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
 			setLoading(true)
