@@ -27,6 +27,10 @@
 					margin-left: calc(var(--size) * -1) ;
 				}
 			}
+
+			@include respond(phone){
+				--size:100vw;
+			}
 		}
 
 		&__books {
