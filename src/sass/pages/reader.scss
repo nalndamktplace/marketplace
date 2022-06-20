@@ -149,6 +149,28 @@
 		
 		&__progress {
 			width: 100% ;
+			-webkit-appearance: none;
+			appearance: none;
+			height: 4px ;
+			background-color: $color-neutral-300 ;
+
+			&::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width : 2rem ; 
+				height: 2rem ; 
+				border-radius: 50% ;
+				background-color: $color-secondary ;
+			}
+
+			&::-moz-slider-thumb {
+				-webkit-appearance: none;
+				appearance: none;
+				width : 2rem ; 
+				height: 2rem ; 
+				border-radius: 50% ;
+				background-color:  $color-secondary ;
+			}
 		}
 
 		&__progress-value {

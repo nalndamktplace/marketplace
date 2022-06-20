@@ -30,6 +30,7 @@ import { ReactComponent as ListIcon } from "../assets/icons/list.svg"
 import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
 import TocPanel from "../components/ui/TocPanel/TocPanel"
+import RangeSlider from "../components/ui/RangeSlider/RangeSlider"
 
 const ReaderPage = () => {
 
@@ -438,7 +439,7 @@ const ReaderPage = () => {
 				</div>
 			</div>
 			<nav className="reader__nav">
-				<input type="range" value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
+				<RangeSlider value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
 				<div className="reader__nav__progress-value">{Math.floor(progress*100/totalLocations)}%</div>
 			</nav>
 		</div>
