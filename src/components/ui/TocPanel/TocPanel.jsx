@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { isUsable } from "../../../helpers/functions"
 import GaTracker from "../../../trackers/ga-tracker"
 
-const TocPanel = ({rendition,onGoto=()=>{}}) => {
+const TocPanel = ({rendition, onGoto=()=>{}, onSelect=()=>{}}) => {
 
 	const [tocItems, setTocItems] = useState([]);
 
@@ -12,8 +12,8 @@ const TocPanel = ({rendition,onGoto=()=>{}}) => {
 		if(!isUsable(rendition.book)) return ;
 		rendition.book.loaded.navigation.then(({ toc }) => {
 			const toc_ = toc.map(t => ({ 
-			  label: t.label, 
-			  href: t.href 
+				label: t.label, 
+				href: t.href 
 			}));
 			setTocItems(toc_);
 		});
@@ -35,6 +35,7 @@ const TocPanel = ({rendition,onGoto=()=>{}}) => {
 	}
 
 	const gotoTOCItem = (cfi) => {
+		onSelect()
 		GaTracker('event_toc_panel_goto')
 		if(!isUsable(rendition)) return
 		rendition.display(cfi)

@@ -380,7 +380,7 @@ const ReaderPage = () => {
 					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s)}} >
 						<ListIcon/>
 					</Button>
-					<SidePanel show={tocPanel} position="right"><TocPanel rendition={rendition}/></SidePanel>
+					<SidePanel show={tocPanel} position="right"><TocPanel onSelect={()=>{hideAllPanel({toc: false});setTocPanel(false)}} rendition={rendition}/></SidePanel>
 					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} >
 						<BlockquoteIcon/>
 					</Button>
