@@ -155,9 +155,39 @@ const AccountPage = props => {
 			}).finally(() => setLoading(false))
 	}, [ActiveTab, WalletAddress, dispatch])
 
-	const readHandler = nft => {
-		GaTracker('navigate_account_reader')
-		navigate('/account/reader', {state: nft})
+	const readHandler = async (NFT) => {
+		try {
+			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address)
+
+			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
+			const account = accounts[0]
+			const signedData = await window.ethereum.request({
+				method: "personal_sign",
+				params: [JSON.stringify(messageToSign.data), account, messageToSign.data.id],
+			})
+			axios({
+				url : BASE_URL + '/api/verify',
+				method : "POST",
+				data : {
+					accountAddress:account,
+					bookAddress: NFT.book_address,
+					signedData,
+					cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1)
+				}
+			}).then(res=>{
+				if(res.status === 200) {
+					GaTracker('navigate_account_reader')
+					navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
+				} else {
+					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+				}
+			}).catch(err => {
+				console.error(err)
+			})
+		} catch (err) {
+			console.error(err)
+		}
+		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
 	}
 
 	const openHandler = nft => {
@@ -168,9 +198,7 @@ const AccountPage = props => {
 	const renderNfts = () => {
 		let nftDOM = []
 		let nfts = Nfts
-		nfts.forEach(nft => {
-			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>)
-		})
+		nfts.forEach(nft => { nftDOM.push(<BookItem state='owned' layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>) })
 		return nftDOM
 	}
 
