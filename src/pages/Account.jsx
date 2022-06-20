@@ -26,7 +26,7 @@ import GaTracker from '../trackers/ga-tracker'
 
 const AccountPage = props => {
 
-	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}, {key: 'decayscore', value: null, type: 'range'}]
+	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}, {key: 'decayscore', value: null, type: 'range'}]
 
 	const params = useLocation()
 	const navigate = useNavigate()
@@ -76,7 +76,7 @@ const AccountPage = props => {
 					case 'multiselect':
 						if(isFilled(filter.value)){
 							let tempNfts = []
-							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft.genres.indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
+							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft[filter.key].indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
 							nfts = tempNfts
 						}
 						break
