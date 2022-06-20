@@ -59,6 +59,18 @@ export const EXPLORE_PAGE_FILTERS = [
 			{value: "Science & Technology", label: "Science & Technology"},
         ],
     },
+	{
+		name: "age_group",
+		label: "Age Groups",
+		type: "multiselect",
+		values: [
+			{value: "Children (0-14 years)", label: "Children (0-14 years)"},
+			{value: "Youth (15-24 years)", label: "Youth (15-24 years)"},
+			{value: "Adults (25-64 years)", label: "Adults (25-64 years)"},
+			{value: "Seniors 65+", label: "Seniors 65+"},
+			
+		],
+	},
     {
         name: "orderby",
         label: "Order By",
@@ -124,6 +136,18 @@ export const ACCOUNT_PAGE_FILTERS = [
 			{value: "Humanities & Social Sciences", label: "Humanities & Social Sciences"},
 			{value: "Parenting & Families", label: "Parenting & Families"},
 			{value: "Science & Technology", label: "Science & Technology"},
+        ],
+    },
+	{
+        name: "age_group",
+        label: "Age Groups",
+        type: "multiselect",
+        values: [
+			{value: "Children (0-14 years)", label: "Children (0-14 years)"},
+			{value: "Youth (15-24 years)", label: "Youth (15-24 years)"},
+			{value: "Adults (25-64 years)", label: "Adults (25-64 years)"},
+			{value: "Seniors 65+", label: "Seniors 65+"},
+			
         ],
     },
     {
