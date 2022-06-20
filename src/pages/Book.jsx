@@ -675,13 +675,6 @@ const BookPage = props => {
 		return classes.join(" ")
 	}
 
-	const getAgeGroup = () => {
-		const ageGroup = AGE_GROUPS.filter(ageGroup => ageGroup.code === NFT.age_group)
-		if(isFilled(ageGroup))
-			return ageGroup[0].label
-		return null
-	}
-
 	return (
 		<Page>
 			<div className="book__bg">
@@ -744,7 +737,7 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
-										<div className='book__data__container__desc__summary__data typo__transform--capital'>{getAgeGroup()}</div>
+										<div className='book__data__container__desc__summary__data typo__transform--capital'>{NFT.age_group}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
