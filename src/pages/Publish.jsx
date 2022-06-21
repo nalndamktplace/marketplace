@@ -182,7 +182,7 @@ const PublishNftPage = props => {
 							<div className="publish__data__preview__book__data">
 								<div className="publish__data__preview__book__data__title  typo__head--4">{FormInput.name}</div>
 								<div className="publish__data__preview__book__data__author typo__head--6">{FormInput.author}</div>
-								{FormInput.price && <div className="publish__data__preview__book__data__price"><USDCIcon fill="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
+								{FormInput.price && <div className="publish__data__preview__book__data__price"><USDCIcon stroke="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
 								{FormInput.language && <div className="publish__data__preview__book__data__field">
 									<div className="publish__data__preview__book__data__field__label typo__head--6">Language</div>
 									<div className="publish__data__preview__book__data__field__value">{FormInput.language}</div>
