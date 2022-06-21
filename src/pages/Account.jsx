@@ -178,7 +178,7 @@ const AccountPage = props => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="account__data">
 				<div className="account__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="account__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="account__data__books__header">
