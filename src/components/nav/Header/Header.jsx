@@ -39,11 +39,23 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 	const [SearchQuery, setSearchQuery] = useState('')
 	const [SearchResults, setSearchResults] = useState([])
+	const [Collections, setCollections] = useState([])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
+
+	useEffect(() => {
+		setCollections([])
+		axios({
+			url: BASE_URL+'/api/collections',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setCollections(res.data)
+		}).catch(err => {
+		})
+	}, [])
 
 	useEffect(() => {
 		if(SearchQuery.length>3 && SearchQuery.length<16){
@@ -101,13 +113,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
 		},
-	]
-
-	const RIBBION_ITEMS = [
-		{ id : "RI1",search:"?collection=bestselling" , title : "Bestsellers"},
-		{ id : "RI2",search:"?collection=bestoffiction" , title : "Fiction"},
-		{ id : "RI3",search:"?collection=bestofnonfiction" , title : "Non-Fiction"},
-		{ id : "RI4",search:"?collection=newrelease" , title : "New Release"}
 	]
 
 	const toggleMenu = () => {
@@ -253,10 +258,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					<div/><div/><div/>
 				</div>
 			</div>
-			{showRibbion && <div className="header__ribbion">
-				<div className="header__ribbion__item header__ribbion__item--label">Browse Categories</div>
-				{ RIBBION_ITEMS.map(item=><div key={item.id} onClick={()=>navigate({pathname:'/explore',search: item.search})} className="header__ribbion__item">{item.title}</div>)}
-			</div>}
+			{showRibbion && isFilled(Collections) && <div className="header__ribbion">
+				{/* <div className="header__ribbion__item header__ribbion__item--label">Browse Categories</div> */}
+				{ Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
+				</div>
+			}
 			<SideNavbar 
 				MenuOpen={MenuOpen} 
 				setMenuOpen={setMenuOpen}
