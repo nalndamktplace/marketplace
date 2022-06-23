@@ -156,7 +156,7 @@ const CollectionPage = () => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="explore__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="explore__data__books__header">
