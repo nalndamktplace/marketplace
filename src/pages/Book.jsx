@@ -35,6 +35,8 @@ import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
 
 import { BASE_URL } from '../config/env'
+import { AGE_GROUPS } from '../config/ages'
+
 import GaTracker from '../trackers/ga-tracker'
 
 const BookPage = props => {
@@ -734,6 +736,8 @@ const BookPage = props => {
 										</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
+										<div className='book__data__container__desc__summary__data typo__transform--capital'>{NFT.age_group}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>

@@ -24,7 +24,7 @@ import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 
 const CollectionPage = () => {
 
-	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
+	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
 
 	const params = useLocation()
 	const navigate = useNavigate()
@@ -83,7 +83,7 @@ const CollectionPage = () => {
 					case 'multiselect':
 						if(isFilled(filter.value)){
 							let tempNfts = []
-							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft.genres.indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
+							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft[filter.key].indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
 							nfts = tempNfts
 						}
 						break
