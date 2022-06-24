@@ -22,7 +22,7 @@ const WalletHOC = props => {
 	// 	}
 	// }, [WalletState, dispatch])
 
-	useEffect(() => {
+	// useEffect(() => {
 		// if(isUsable(window.ethereum)){
 		// 	dispatch(web3IsSupported())
 
@@ -46,30 +46,30 @@ const WalletHOC = props => {
 
 			// window.ethereum.on('connect', (connectInfo) => { })
 
-			window.ethereum.on('chainChanged', (chainId) => {
-				GaTracker('event_wallet_chain_change')
-				// We recommend reloading the page unless you have good reason not to.
-				if(chainId !== "0x13881"){
-					let chain
-					if(chainId === "0x1") chain = "Main Network"
-					else if(chainId === "0x3") chain = "Ropsten Network"
-					else if(chainId === "0x2a") chain = "Kava Network"
-					else if(chainId === "0x4") chain = "Rinkeby Network"
-					else if(chainId === "0x5") chain = "Goerli Network"
-					else chain = null
-					dispatch(setSnackbar({show: true, message: (chain!==null?`You are currently on ${chain}. `:null)+"Please switch to Mumbai Test Network to continue.", type: 3}))
-				}
-			})
+			// window.ethereum.on('chainChanged', (chainId) => {
+			// 	GaTracker('event_wallet_chain_change')
+			// 	// We recommend reloading the page unless you have good reason not to.
+			// 	if(chainId !== "0x13881"){
+			// 		let chain
+			// 		if(chainId === "0x1") chain = "Main Network"
+			// 		else if(chainId === "0x3") chain = "Ropsten Network"
+			// 		else if(chainId === "0x2a") chain = "Kava Network"
+			// 		else if(chainId === "0x4") chain = "Rinkeby Network"
+			// 		else if(chainId === "0x5") chain = "Goerli Network"
+			// 		else chain = null
+			// 		dispatch(setSnackbar({show: true, message: (chain!==null?`You are currently on ${chain}. `:null)+"Please switch to Mumbai Test Network to continue.", type: 3}))
+			// 	}
+			// })
 
 			// window.ethereum.on('accountsChanged', () => onAccountChange())
 
-			return () => {
+			// return () => {
 				// window.ethereum.removeListener('accountsChanged', () => onAccountChange())
-				window.ethereum.removeListener('chainChanged', ()=>{})
-			}
+				// window.ethereum.removeListener('chainChanged', ()=>{})
+			// }
 		// }
 		// else dispatch(web3IsNotSupported())
-	}, [dispatch])
+	// }, [dispatch])
 
 	return null
 }
