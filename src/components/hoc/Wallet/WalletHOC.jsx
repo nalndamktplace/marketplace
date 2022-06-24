@@ -1,39 +1,50 @@
 import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 
-import { isUsable } from '../../../helpers/functions'
+import { isFilled, isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { setWallet, web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
 import GaTracker from '../../../trackers/ga-tracker'
+import jc from 'json-cycle'
 
 const WalletHOC = props => {
 
 	const dispatch = useDispatch()
 
+	const WalletState = useSelector(state => state.WalletState)
+
+	// useEffect(() => {
+	// 	if(!isUsable(WalletState.wallet.provider)){
+	// 		if(isFilled(localStorage.getItem('wallet'))){
+	// 			dispatch(setWallet({ wallet: jc.retrocycle(JSON.parse(localStorage.getItem('wallet'))), provider: jc.retrocycle(JSON.parse(localStorage.getItem('provider'))), signer: jc.retrocycle(JSON.parse(localStorage.getItem('signer'))), address: JSON.parse(localStorage.getItem('address')) }))
+	// 		}
+	// 	}
+	// }, [WalletState, dispatch])
+
 	useEffect(() => {
-		if(isUsable(window.ethereum)){
-			dispatch(web3IsSupported())
+		// if(isUsable(window.ethereum)){
+		// 	dispatch(web3IsSupported())
 
-			const getAccount = async () => {
-				try{
-					const accounts = await window.ethereum.enable()
-					if(accounts.length>0){
-						const account = accounts[0]
-						dispatch(setWallet(account))
-					}
-				} catch (error) {
-					console.error({error})
-					if(error.indexOf('wallet_requestPermissions')>-1) dispatch(setSnackbar({show: true, message: "Please connect a wallet.", type: 3}))
-					else dispatch(setSnackbar({show: true, message: error,type: 4}))
-				}
-			}
+			// const getAccount = async () => {
+			// 	try{
+			// 		const accounts = await window.ethereum.enable()
+			// 		if(accounts.length>0){
+			// 			const account = accounts[0]
+			// 			dispatch(setWallet(account))
+			// 		}
+			// 	} catch (error) {
+			// 		if(error.indexOf('wallet_requestPermissions')>-1) dispatch(setSnackbar({show: true, message: "Please connect a wallet.", type: 3}))
+			// 		else dispatch(setSnackbar({show: true, message: error,type: 4}))
+			// 	}
+			// }
 
-			const onAccountChange = () => {
-				GaTracker('event_wallet_change')
-				getAccount()
-			}
+			// const onAccountChange = () => {
+			// 	GaTracker('event_wallet_change')
+			// 	getAccount()
+			// }
 
-			window.ethereum.on('connect', (connectInfo) => { })
+			// window.ethereum.on('connect', (connectInfo) => { })
 
 			window.ethereum.on('chainChanged', (chainId) => {
 				GaTracker('event_wallet_chain_change')
@@ -50,14 +61,14 @@ const WalletHOC = props => {
 				}
 			})
 
-			window.ethereum.on('accountsChanged', () => onAccountChange())
+			// window.ethereum.on('accountsChanged', () => onAccountChange())
 
 			return () => {
-				window.ethereum.removeListener('accountsChanged', () => onAccountChange())
+				// window.ethereum.removeListener('accountsChanged', () => onAccountChange())
 				window.ethereum.removeListener('chainChanged', ()=>{})
 			}
-		}
-		else dispatch(web3IsNotSupported())
+		// }
+		// else dispatch(web3IsNotSupported())
 	}, [dispatch])
 
 	return null

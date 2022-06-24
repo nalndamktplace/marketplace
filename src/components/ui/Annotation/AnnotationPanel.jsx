@@ -30,7 +30,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 
 	useEffect(() => {
 		if(isUsable(preview) && !preview){
-			if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
+			if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 			else navigate(-1)
 		}
 	}, [WalletState, navigate, preview])

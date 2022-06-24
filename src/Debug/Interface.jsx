@@ -6,7 +6,7 @@ import GaTracker from '../trackers/ga-tracker'
 
 import {ReactComponent as Icon} from "../assets/icons/wallet.svg"
 
-const DebugPage = () => {
+const InterfaceDebugPage = () => {
 
 	useEffect(() => { GaTracker('page_view_debug') }, [])
 
@@ -71,4 +71,4 @@ const DebugPage = () => {
     )
 }
 
-export default DebugPage
+export default InterfaceDebugPage

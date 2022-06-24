@@ -8,15 +8,27 @@ import { isUsable } from "../../../helpers/functions"
 import { toHHMMSS } from "../../../helpers/time-formator"
 import { setSnackbar } from "../../../store/actions/snackbar"
 
-import useWalletAddress from "../../../hook/useWalletAddress"
-
 import { ReactComponent as ClockIcon } from "../../../assets/icons/clock.svg"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
 
 const ReadTime = ({bookMeta, preview}) => {
+
+	const WalletState = useSelector(state => state.WalletState)
+
 	const [readTime, setReadTime] = useState(0)
 	const [lastUpdate, setLastUpdate] = useState(0)
-	const WalletAddress = useWalletAddress()
+	const [WalletAddress, setWalletAddress] = useState(null)
+
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if(isUsable(preview) && !preview){
+			if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+			else navigate(-1)
+		}
+	}, [WalletState, navigate, preview])
 
 	useEffect(() => {
 		if(!preview && isUsable(bookMeta) && isUsable(WalletAddress)){
@@ -51,7 +63,6 @@ const ReadTime = ({bookMeta, preview}) => {
 					}
 				}).then(res => {
 					if(res.status === 200) { setLastUpdate(res.data.read_time) }
-					else console.error("READ TIME UPDATE ERROR")
 				}).catch(err => {dispatch(setSnackbar('ERROR'))})
 			}
 		}

@@ -148,7 +148,6 @@ const ReaderPage = () => {
 			rendition.themes.font("Arial,sans-serif");
 			setRendition(rendition)
 		}).catch(err => {
-			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
 		})
 	},[params, dispatch])
@@ -185,7 +184,6 @@ const ReaderPage = () => {
 				setTotalLocations(rendition.book.locations.total)
 				localStorage.setItem(bookKey, rendition.book.locations.save())
 			}).catch((err)=>{
-				console.error(err)
 			})
 		}
 	},[rendition,bookMeta])
@@ -254,7 +252,6 @@ const ReaderPage = () => {
 				}
 				return false	 
 			} catch(err){
-				console.error(err)
 				return false
 			}
 		},[bookMeta, rendition]

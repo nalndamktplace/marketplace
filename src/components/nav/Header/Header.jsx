@@ -1,4 +1,5 @@
 import axios from "axios"
+import jc from 'json-cycle'
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
@@ -53,8 +54,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setCollections(res.data)
-		}).catch(err => {
-		})
+		}).catch(err => {})
 	}, [])
 
 	useEffect(() => {
@@ -69,27 +69,21 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					setSearchResults(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
 	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
-		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
 			return true
-		}
-		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			window.open("https://metamask.io/download/", '_blank')
-			return false
 		}
 		else {
 			Wallet.connectWallet().then(res => {
-				dispatch(setWallet(res.selectedAddress))
+				dispatch(setWallet({ wallet: res.wallet, provider: jc.decycle(res.provider), signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				return false
 			})
@@ -140,13 +134,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const handleWalletDisconnect = () => {
 		GaTracker('event_header_wallet_disconnect')
-		Wallet.disconnectWallet().then(res => {
-			window.localStorage.clear()
+		Wallet.disconnectWallet(WalletState.wallet.provider).then(res => {
 			dispatch(clearWallet())
 			navigate('/')
 			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
 		}).catch(err => {
-			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
 		})
 	}
@@ -154,7 +146,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const renderNavItems = () => {
 		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet) && item.id === "NI4") return
+			if(!isUsable(WalletState.wallet.provider) && item.id === "NI4") return
 			if(isUsable(item.subMenu)){
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
@@ -252,7 +244,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				</div>
 				<div className="header__content__navbar">
 					{renderNavItems()}
-					{!isUsable(WalletState.wallet) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
+					{!isUsable(WalletState.wallet.provider) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
 				</div>
 				<div className={getSubMenuClasses()} onClick={()=>toggleMenu()}>
 					<div/><div/><div/>
