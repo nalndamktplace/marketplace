@@ -11,6 +11,7 @@ import providerOptions from "./providerOptions"
 configureLogger({ logLevel: 'DISABLED' })
 
 const web3Modal = new Web3Modal({
+	network: 'polygon',
 	cacheProvider: true,
 	providerOptions,
 })
@@ -20,7 +21,7 @@ const Wallet = {
 	connectWallet: async () => {
 		if (web3Modal.cachedProvider) web3Modal.clearCachedProvider()
 		GaTracker('event_wallet_connection_connect')
-		const wallet = await web3Modal.connect()
+		const wallet = await web3Modal.connectTo('sequence')
 		const localProvider = new ethers.providers.Web3Provider(wallet)
 		if (wallet.sequence) localProvider.sequence = wallet.sequence
 		const provider = localProvider
