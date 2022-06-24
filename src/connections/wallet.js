@@ -31,10 +31,10 @@ const Wallet = {
 	disconnectWallet: async (provider) => {
 		GaTracker('event_wallet_connection_disconnect')
 		web3Modal.clearCachedProvider()
-		if (provider && provider.sequence) {
-			const wallet = provider.sequence
-			wallet.disconnect()
-		}
+		// if (provider && provider.sequence) {
+		// 	const wallet = provider.sequence.wallet
+		// 	wallet.disconnect()
+		// }
 	},
 	getChainID: async (signer) => {
 		return signer.getChainId()
