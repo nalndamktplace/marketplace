@@ -233,7 +233,7 @@ const BookPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
+		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 		setLoading(false)
 	}, [WalletState])
 
@@ -258,7 +258,7 @@ const BookPage = props => {
 			}).then(res => { if(res.status === 200) setOwner(true)
 			}).catch(err => {
 				if(!isUsable(err.response.status))
-					console.error({err})
+				console.error({err})
 			}).finally(() => setLoading(false))
 		}
 	}, [params, dispatch, WalletAddress])
@@ -271,19 +271,19 @@ const BookPage = props => {
 	}, [Loading, dispatch])
 
 	const walletStatus = () => {
-		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
-			setWalletAddress(WalletState.wallet)
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
+			setWalletAddress(WalletState.wallet.address)
 			return true
 		}
 		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			window.open("https://metamask.io/download/", '_blank')
+			dispatch(setSnackbar({show: true, message: "Your browser does not supports web3.", type: 3}))
 			return false
 		}
 		else {
 			setLoading(true)
 			Wallet.connectWallet().then(res => {
-				setWalletAddress(res.selectedAddress)
-				dispatch(setWallet(res.selectedAddress))
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+				setWalletAddress(res.address)
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {
@@ -310,7 +310,7 @@ const BookPage = props => {
 				if(res.status === 200){
 					setLoading(true)
 					const orderId = res.data.order_id
-					Contracts.unlistBookFromMarketplace(orderId).then(res => {
+					Contracts.unlistBookFromMarketplace(orderId, WalletState.wallet.signer).then(res => {
 						setLoading(true)
 						axios({
 							url: BASE_URL + '/api/book/unlist',
@@ -354,7 +354,7 @@ const BookPage = props => {
 		GaTracker('event_book_list')
 		if(isUsable(WalletAddress)){
 			setLoading(true)
-			Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice).then(res => {
+			Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice, WalletState.wallet.signer).then(res => {
 				setLoading(true)
 				const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
 				axios({
@@ -385,38 +385,49 @@ const BookPage = props => {
 	}
 
 	const readHandler = async () => {
+		setLoading(true)
 		try {
-			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address)
-			// todo replace with web3modal
-			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
-			const account = accounts[0]
-			const signedData = await window.ethereum.request({
-				method: "personal_sign",
-				params: [JSON.stringify(messageToSign.data), account, messageToSign.data.id],
-			})
 			axios({
-				url : BASE_URL + '/api/verify',
-				method : "POST",
-				data : {
-					accountAddress:account,
-					bookAddress: NFT.book_address,
-					signedData,
-					cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1)
+				url: BASE_URL+'/api/verify',
+				method: 'GET',
+				params: {
+					bid: NFT.book_address,
+					uid: WalletAddress
 				}
-			}).then(res=>{
-				if(res.status === 200) {
-					GaTracker('navigate_book_reader')
-					navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
-				} else {
-					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+			}).then(res => {
+				if(res.status === 200){
+					const messageToSign = res.data
+					Wallet.signMessage(WalletState.wallet.provider, JSON.stringify(messageToSign)).then(res => {
+						if(res.isValid === true){
+							axios({
+								url : BASE_URL + '/api/verify',
+								method : "POST",
+								data : {
+									accountAddress: WalletAddress,
+									bookAddress: NFT.book_address,
+									signedData: res.signedData,
+									cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1),
+								}
+							}).then(res=>{
+								if(res.status === 200) {
+									GaTracker('navigate_book_reader')
+									navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
+								} else {
+									dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+								}
+							}).catch(err => {
+								console.error({err})
+							}).finally( () => setLoading(false))
+						}
+						else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
+					})
 				}
-			}).catch(err => {
-				console.error(err)
+				else dispatch(setSnackbar('NOT200'))
 			})
 		} catch (err) {
-			console.error(err)
+			console.error({err})
+			setLoading(false)
 		}
-		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
 	}
 
 	const previewHandler = () => {
@@ -432,9 +443,9 @@ const BookPage = props => {
 
 	const purchaseNewCopyHandler = () => {
 		GaTracker('event_book_purchase_new')
-		if(walletStatus()){
-			setLoading(true)
-			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString()).then(res => {
+		setLoading(true)
+		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)){
+			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString(), WalletState.wallet.signer).then(res => {
 				dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 				dispatch(hideModal())
 				const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
@@ -464,13 +475,14 @@ const BookPage = props => {
 				else dispatch(setSnackbar('ERROR'))
 			})
 		}
+		else dispatch(setSnackbar({show: true, message: "Please connect your wallet", type: 2}))
 	}
 
 	const purchaseOldCopyHandler = offer => {
 		GaTracker('event_book_purchase_old')
 		if(walletStatus()){
 			setLoading(true)
-			Contracts.buyListedCover(offer.order_id, offer.price).then(res => {
+			Contracts.buyListedCover(offer.order_id, offer.price, WalletState.wallet.signer).then(res => {
 				axios({
 					url: BASE_URL+'/api/book/purchase/secondary',
 					method: 'POST',

@@ -53,8 +53,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setCollections(res.data)
-		}).catch(err => {
-		})
+		}).catch(err => {})
 	}, [])
 
 	useEffect(() => {
@@ -76,16 +75,16 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
-		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
 			return true
 		}
 		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			window.open("https://metamask.io/download/", '_blank')
+			dispatch(setSnackbar({show: true, message: "Your browser does not supports web3.", type: 2}))
 			return false
 		}
 		else {
 			Wallet.connectWallet().then(res => {
-				dispatch(setWallet(res.selectedAddress))
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {
@@ -140,8 +139,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const handleWalletDisconnect = () => {
 		GaTracker('event_header_wallet_disconnect')
-		Wallet.disconnectWallet().then(res => {
-			window.localStorage.clear()
+		Wallet.disconnectWallet(WalletState.wallet.provider).then(res => {
 			dispatch(clearWallet())
 			navigate('/')
 			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
@@ -154,7 +152,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const renderNavItems = () => {
 		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet) && item.id === "NI4") return
+			if(!isUsable(WalletState.wallet.provider) && item.id === "NI4") return
 			if(isUsable(item.subMenu)){
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
@@ -252,7 +250,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				</div>
 				<div className="header__content__navbar">
 					{renderNavItems()}
-					{!isUsable(WalletState.wallet) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
+					{!isUsable(WalletState.wallet.provider) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
 				</div>
 				<div className={getSubMenuClasses()} onClick={()=>toggleMenu()}>
 					<div/><div/><div/>

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import { isUsable } from '../../../helpers/functions'
 import { setSnackbar } from '../../../store/actions/snackbar'
-import { setWallet, web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
+import { web3IsNotSupported, web3IsSupported } from '../../../store/actions/wallet'
 import GaTracker from '../../../trackers/ga-tracker'
 
 const WalletHOC = props => {
@@ -14,26 +14,26 @@ const WalletHOC = props => {
 		if(isUsable(window.ethereum)){
 			dispatch(web3IsSupported())
 
-			const getAccount = async () => {
-				try{
-					const accounts = await window.ethereum.enable()
-					if(accounts.length>0){
-						const account = accounts[0]
-						dispatch(setWallet(account))
-					}
-				} catch (error) {
-					console.error({error})
-					if(error.indexOf('wallet_requestPermissions')>-1) dispatch(setSnackbar({show: true, message: "Please connect a wallet.", type: 3}))
-					else dispatch(setSnackbar({show: true, message: error,type: 4}))
-				}
-			}
+			// const getAccount = async () => {
+			// 	try{
+			// 		const accounts = await window.ethereum.enable()
+			// 		if(accounts.length>0){
+			// 			const account = accounts[0]
+			// 			dispatch(setWallet(account))
+			// 		}
+			// 	} catch (error) {
+			// 		console.error({error})
+			// 		if(error.indexOf('wallet_requestPermissions')>-1) dispatch(setSnackbar({show: true, message: "Please connect a wallet.", type: 3}))
+			// 		else dispatch(setSnackbar({show: true, message: error,type: 4}))
+			// 	}
+			// }
 
-			const onAccountChange = () => {
-				GaTracker('event_wallet_change')
-				getAccount()
-			}
+			// const onAccountChange = () => {
+			// 	GaTracker('event_wallet_change')
+			// 	getAccount()
+			// }
 
-			window.ethereum.on('connect', (connectInfo) => { })
+			// window.ethereum.on('connect', (connectInfo) => { })
 
 			window.ethereum.on('chainChanged', (chainId) => {
 				GaTracker('event_wallet_chain_change')
@@ -50,10 +50,10 @@ const WalletHOC = props => {
 				}
 			})
 
-			window.ethereum.on('accountsChanged', () => onAccountChange())
+			// window.ethereum.on('accountsChanged', () => onAccountChange())
 
 			return () => {
-				window.ethereum.removeListener('accountsChanged', () => onAccountChange())
+				// window.ethereum.removeListener('accountsChanged', () => onAccountChange())
 				window.ethereum.removeListener('chainChanged', ()=>{})
 			}
 		}

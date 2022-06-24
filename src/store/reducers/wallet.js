@@ -1,23 +1,38 @@
 import { CLEAR_WALLET, SET_WALLET, WEB3_IS_NOT_SUPPORTED, WEB3_IS_SUPPORTED } from "../actions/wallet"
 
 const initState = {
-	wallet: null,
+	wallet: {
+		wallet: null,
+		provider: null,
+		signer: null,
+		address: null
+	},
 	support: null
 }
 
 const handleData = (state = initState, action) => {
 	switch (action.type) {
 		case SET_WALLET:
+			localStorage.setItem("wallet", action.data.wallet)
+			localStorage.setItem("provider", action.data.provider)
+			localStorage.setItem("signer", action.data.signer)
+			localStorage.setItem("address", action.data.address)
 			return {
 				...state,
-				wallet: action.data,
+				wallet: {
+					wallet: action.data.wallet,
+					provider: action.data.provider,
+					signer: action.data.signer,
+					address: action.data.address
+				},
 				support: true
 			}
 		case CLEAR_WALLET:
-			return {
-				...state,
-				wallet: null
-			}
+			localStorage.removeItem("wallet")
+			localStorage.removeItem("provider")
+			localStorage.removeItem("signer")
+			localStorage.removeItem("address")
+			return initState
 		case WEB3_IS_SUPPORTED:
 			return {
 				...state,
@@ -25,9 +40,8 @@ const handleData = (state = initState, action) => {
 			}
 		case WEB3_IS_NOT_SUPPORTED:
 			return {
-				...state,
-				support: false,
-				wallet: undefined
+				...initState,
+				support: false
 			}
 		default:
 			return state
