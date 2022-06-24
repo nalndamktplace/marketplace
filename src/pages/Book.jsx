@@ -257,8 +257,7 @@ const BookPage = props => {
 				}
 			}).then(res => { if(res.status === 200) setOwner(true)
 			}).catch(err => {
-				if(!isUsable(err.response.status))
-				console.error({err})
+				// if(!isUsable(err.response.status))
 			}).finally(() => setLoading(false))
 		}
 	}, [params, dispatch, WalletAddress])
@@ -275,10 +274,6 @@ const BookPage = props => {
 			setWalletAddress(WalletState.wallet.address)
 			return true
 		}
-		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			dispatch(setSnackbar({show: true, message: "Your browser does not supports web3.", type: 3}))
-			return false
-		}
 		else {
 			setLoading(true)
 			Wallet.connectWallet().then(res => {
@@ -287,7 +282,6 @@ const BookPage = props => {
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				return false
 			}).finally(() => setLoading(false))
@@ -374,11 +368,9 @@ const BookPage = props => {
 					}
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
-					console.error({err})
 					dispatch(setSnackbar('ERROR'))
 				}).finally( ()=> { setLoading(false) })
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
@@ -416,7 +408,6 @@ const BookPage = props => {
 									dispatch(setSnackbar({show:true,message : "Error", type : 4}))
 								}
 							}).catch(err => {
-								console.error({err})
 							}).finally( () => setLoading(false))
 						}
 						else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
@@ -425,7 +416,6 @@ const BookPage = props => {
 				else dispatch(setSnackbar('NOT200'))
 			})
 		} catch (err) {
-			console.error({err})
 			setLoading(false)
 		}
 	}
@@ -442,9 +432,8 @@ const BookPage = props => {
 	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
 
 	const purchaseNewCopyHandler = () => {
-		GaTracker('event_book_purchase_new')
-		setLoading(true)
-		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)){
+
+		const purchase = () => {
 			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString(), WalletState.wallet.signer).then(res => {
 				dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 				dispatch(hideModal())
@@ -475,7 +464,23 @@ const BookPage = props => {
 				else dispatch(setSnackbar('ERROR'))
 			})
 		}
-		else dispatch(setSnackbar({show: true, message: "Please connect your wallet", type: 2}))
+
+		GaTracker('event_book_purchase_new')
+		setLoading(true)
+		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)) purchase()
+		else{
+			setLoading(true)
+			Wallet.connectWallet().then(res => {
+				console.log({res})
+				setLoading(false)
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+				setWalletAddress(res.address)
+				purchase()
+			}).catch(err => {
+				dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
+				setLoading(false)
+			})
+		}
 	}
 
 	const purchaseOldCopyHandler = offer => {
@@ -496,12 +501,10 @@ const BookPage = props => {
 					if(res.status === 200) setOwner(true)
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
-					console.error({err})
 					dispatch(setSnackbar('ERROR'))
 				}).finally(() => setLoading(false))
 			}).catch(err => {
 				setLoading(false)
-				console.error({err})
 			})
 		}
 	}

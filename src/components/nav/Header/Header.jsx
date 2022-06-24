@@ -1,4 +1,5 @@
 import axios from "axios"
+import jc from 'json-cycle'
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
@@ -68,7 +69,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					setSearchResults(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
@@ -78,17 +78,12 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
 			return true
 		}
-		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			dispatch(setSnackbar({show: true, message: "Your browser does not supports web3.", type: 2}))
-			return false
-		}
 		else {
 			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+				dispatch(setWallet({ wallet: res.wallet, provider: jc.decycle(res.provider), signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				return false
 			})
@@ -144,7 +139,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			navigate('/')
 			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
 		}).catch(err => {
-			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
 		})
 	}

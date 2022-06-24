@@ -21,10 +21,6 @@ const ProtectedRoute = ({element}) => {
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
 			setIsAuthenticated(true)
 		}
-		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			dispatch(setSnackbar({show: true, message: "Your browser does not supports web3.", type: 2}))
-			navigate('/')
-		}
 		else {
 			dispatch(showSpinner())
 			Wallet.connectWallet().then(res => {
@@ -32,7 +28,6 @@ const ProtectedRoute = ({element}) => {
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				setIsAuthenticated(true)
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				navigate('/')
 			}).finally(() => dispatch(hideSpinner()))
