@@ -80,7 +80,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 		else {
 			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: jc.decycle(res.provider), signer: res.signer, address: res.address }))
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {

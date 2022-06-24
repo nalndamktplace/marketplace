@@ -471,7 +471,6 @@ const BookPage = props => {
 		else{
 			setLoading(true)
 			Wallet.connectWallet().then(res => {
-				console.log({res})
 				setLoading(false)
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				setWalletAddress(res.address)
