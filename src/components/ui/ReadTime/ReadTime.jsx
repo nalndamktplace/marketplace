@@ -63,7 +63,6 @@ const ReadTime = ({bookMeta, preview}) => {
 					}
 				}).then(res => {
 					if(res.status === 200) { setLastUpdate(res.data.read_time) }
-					else console.error("READ TIME UPDATE ERROR")
 				}).catch(err => {dispatch(setSnackbar('ERROR'))})
 			}
 		}

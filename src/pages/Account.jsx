@@ -58,7 +58,6 @@ const AccountPage = props => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			}).finally(() => setLoading(false))
 		},[dispatch]
@@ -181,10 +180,8 @@ const AccountPage = props => {
 					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
 				}
 			}).catch(err => {
-				console.error(err)
 			})
 		} catch (err) {
-			console.error(err)
 		}
 		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
 	}

@@ -1,4 +1,5 @@
 import { CLEAR_WALLET, SET_WALLET, WEB3_IS_NOT_SUPPORTED, WEB3_IS_SUPPORTED } from "../actions/wallet"
+// import jc from 'json-cycle'
 
 const initState = {
 	wallet: {
@@ -13,10 +14,10 @@ const initState = {
 const handleData = (state = initState, action) => {
 	switch (action.type) {
 		case SET_WALLET:
-			localStorage.setItem("wallet", action.data.wallet)
-			localStorage.setItem("provider", action.data.provider)
-			localStorage.setItem("signer", action.data.signer)
-			localStorage.setItem("address", action.data.address)
+			// localStorage.setItem("wallet", JSON.stringify(jc.decycle(action.data.wallet)))
+			// localStorage.setItem("provider", JSON.stringify(jc.decycle(action.data.provider)))
+			// localStorage.setItem("signer", JSON.stringify(jc.decycle(action.data.signer)))
+			// localStorage.setItem("address", JSON.stringify(action.data.address))
 			return {
 				...state,
 				wallet: {
