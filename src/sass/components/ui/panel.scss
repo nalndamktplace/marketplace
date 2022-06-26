@@ -1,4 +1,4 @@
-.annotation-panel {
+.panel {
 	background-color: $color-white ;
 	width: calc(100vw - 4rem);
 	max-width: 48rem ;
@@ -68,13 +68,13 @@
 
 			&:hover {
 				background-color: $color-neutral-200 ;
-				color: $color-neutral-500 ;
+				color: $color-neutral-700 ;
 			}
 		} 
 	}
 }
 
-[data-theme="dark"] .annotation-panel {
+[data-theme="dark"] .panel {
 	background-color: $color-neutral-900 ;
 
 	&__title {

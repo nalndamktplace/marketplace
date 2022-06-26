@@ -24,12 +24,15 @@ import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.sv
 import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg"
 import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg"
 import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
+import { ReactComponent as ListIcon } from "../assets/icons/list.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
 import { setWallet } from "../store/actions/wallet"
 import Wallet from "../connections/wallet"
 import axios from "axios"
+import TocPanel from "../components/ui/TocPanel/TocPanel"
+import RangeSlider from "../components/ui/RangeSlider/RangeSlider"
 
 const ReaderPage = () => {
 
@@ -49,6 +52,7 @@ const ReaderPage = () => {
 	const [totalLocations, setTotalLocations] = useState(0)
 	const [customizerPanel, setCustomizerPanel] = useState(false)
 	const [WalletAddress, setWalletAddress] = useState(null);
+	const [tocPanel, setTocPanel] = useState(false);
 
 	const debouncedProgress = useDebounce(progress, 300)
 
@@ -84,9 +88,10 @@ const ReaderPage = () => {
 		else setLoading(false)
 	}, [progress, totalLocations])
 
-	const hideAllPanel = ({customizer=true,annotation=true}) => {
+	const hideAllPanel = ({customizer=true,bookmark=true,annotation=true,toc=true}) => {
 		customizer && setCustomizerPanel(false)
 		annotation && setAnnotaionPanel(false)
+		toc && setTocPanel(false)
 	}
 
 	useEffect(()=>{
@@ -135,27 +140,36 @@ const ReaderPage = () => {
 				dark : {
 					body : {
 						"background-color" : "black",
-						"color" : "white"
+						"color" : "white",
+						"--font-family" : "inherit",
+						"--line-height" : "1.6"
 					},
 					p : {
-						"text-align": "justify" 
+						"text-align": "justify" ,
+						"font-family" : "var(--font-family) !important",
+						"line-height" : "var(--line-height) !important"
 					}
 				},
 				light : {
 					body : {
 						"background-color" : "white",
-						"color" : "black"
+						"color" : "black",
+						"--font-family" : "inherit",
+						"--line-height" : "1.6"
 					},
 					p : {
-						"text-align": "justify" 
+						"text-align": "justify" ,
+						"font-family" : "var(--font-family) !important",
+						"line-height" : "var(--line-height) !important"
 					}
 				}
 			})
 			rendition.themes.select("light")
 			rendition.display()
+			rendition.themes.fontSize("150%");
+			rendition.themes.font("Arial,sans-serif");
 			setRendition(rendition)
 		}).catch(err => {
-			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
 		})
 	},[params, dispatch])
@@ -192,7 +206,6 @@ const ReaderPage = () => {
 				setTotalLocations(rendition.book.locations.total)
 				localStorage.setItem(bookKey, rendition.book.locations.save())
 			}).catch((err)=>{
-				console.error(err)
 			})
 		}
 	},[rendition,bookMeta])
@@ -261,7 +274,6 @@ const ReaderPage = () => {
 				if(epubcfi.compare(stored.cfi,current.start.cfi)===1 && epubcfi.compare(stored.cfi,current.end.cfi)===-1) return true
 				return false	 
 			} catch(err){
-				console.error(err)
 				return false
 			}
 		},[bookMeta, rendition]
@@ -457,6 +469,10 @@ const ReaderPage = () => {
 					<Button type="icon" onClick={()=>setFullscreen(s=>!s)}>
 						{fullscreen?<MinimizeIcon/>:<MaximizeIcon/>}
 					</Button>
+					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s)}} >
+						<ListIcon/>
+					</Button>
+					<SidePanel show={tocPanel} position="right"><TocPanel onSelect={()=>{hideAllPanel({toc: false});setTocPanel(false)}} rendition={rendition}/></SidePanel>
 					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} >
 						<BlockquoteIcon/>
 					</Button>
@@ -500,7 +516,7 @@ const ReaderPage = () => {
 				</div>
 			</div>
 			<nav className="reader__nav">
-				<input type="range" value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
+				<RangeSlider value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
 				<div className="reader__nav__progress-value">{Math.floor(progress*100/totalLocations)}%</div>
 			</nav>
 		</div>

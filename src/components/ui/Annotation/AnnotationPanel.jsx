@@ -30,7 +30,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 
 	useEffect(() => {
 		if(isUsable(preview) && !preview){
-			if(isUsable(WalletState.wallet)) setWalletAddress(WalletState.wallet)
+			if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 			else navigate(-1)
 		}
 	}, [WalletState, navigate, preview])
@@ -73,10 +73,10 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 		if(!isUsable(bookMeta)) return ""
 		Annotations.forEach((item,i)=>{
 			domItems.push(
-				<div key={i} className="annotation-panel__container__item" onClick={()=>gotoPage(item.cfiRange)}>
-					<div className="annotation-panel__container__item__color" style={{backgroundColor:item.color}}></div>
-					<div className="annotation-panel__container__item__name">{item.text}</div>
-					<div className="annotation-panel__container__item__delete" onClick={(e)=>{e.stopPropagation();removeAnnotation(i,item)}}>
+				<div key={i} className="panel__container__item" onClick={()=>gotoPage(item.cfiRange)}>
+					<div className="panel__container__item__color" style={{backgroundColor:item.color}}></div>
+					<div className="panel__container__item__name">{item.text}</div>
+					<div className="panel__container__item__delete" onClick={(e)=>{e.stopPropagation();removeAnnotation(i,item)}}>
 						<TrashIcon strokeWidth={2} width={24} height={24} stroke="currentColor"/>
 					</div>
 				</div>
@@ -164,9 +164,9 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	},[addAnnotationRef,addAnnotaion])
 
 	return (
-		<div className="bookmark-panel">
-			<div className="annotation-panel__title">Annotation</div>
-			<div className="annotation-panel__container">
+		<div className="panel">
+			<div className="panel__title">Annotation</div>
+			<div className="panel__container">
 				{ renderAnnotationItems() }
 			</div>
 		</div>
