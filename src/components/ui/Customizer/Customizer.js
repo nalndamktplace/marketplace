@@ -5,6 +5,7 @@ import { isUsable } from "../../../helpers/functions"
 import {ReactComponent as FontSizeIncreaseIcon } from "../../../assets/icons/fontsize-increase.svg"
 import {ReactComponent as FontSizeDecreaseIcon } from "../../../assets/icons/fontsize-decrease.svg"
 import GaTracker from "../../../trackers/ga-tracker"
+import { useEffect } from "react"
 
 const minFontSize = 50
 const maxFontSize = 200
@@ -20,9 +21,11 @@ const Customizer = ({rendition}) => {
 	}
 
 	const updateFontSize = (newFontSize) => {
-		GaTracker('event_customizer_fontsize_'+newFontSize)
+		const offset = 50 ;
+		const fontSize = newFontSize + offset ;
+		GaTracker('event_customizer_fontsize_'+fontSize)
 		if(!isUsable(rendition)) return
-		rendition.themes.fontSize(`${newFontSize}%`)
+		rendition.themes.fontSize(`${fontSize}%`)
 		setFontSize(newFontSize)
 		rerender()
 	}
@@ -36,7 +39,7 @@ const Customizer = ({rendition}) => {
 
 	const setFont = (fontFamily) => {
 		GaTracker('event_customizer_font_'+fontFamily)
-		rendition.themes.override("font-family", fontFamily)
+		rendition.themes.override("--font-family", fontFamily)
 		rerender()
 	}
 

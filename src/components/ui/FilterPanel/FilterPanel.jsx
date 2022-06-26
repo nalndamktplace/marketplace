@@ -1,7 +1,8 @@
 import Button from "../Buttons/Button"
 import Accordian from "../Accordian/Accordian"
+import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg" ;
 
-const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults }) => {
+const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFiltersPanelOpen }) => {
 
     const toggleFilter = (e, filterItem, item) => {
 		if(filterItem.type === "multiselect") {
@@ -88,8 +89,8 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults }) => 
     return ( 
         <div className="filter-panel">
             <div className="filter-panel__header">
-                <div className="typo__head--6 typo__color--n600">Filters</div>
-                <Button onClick={clearFilters}>clear</Button>
+                <div className="typo__head--6 typo__color--n600 filter-panel__header__title">Filters</div>
+                <Button className="filter-panel__header__close-btn" type="icon" onClick={()=>{setFiltersPanelOpen(false)}}><CloseIcon /></Button>
             </div>
             <div className="filter-panel__body">
                 {
@@ -103,7 +104,9 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults }) => 
                         }
                     })
                 }
-            
+            </div>
+            <div className="filter-panel__fab">
+                <Button type="primary" onClick={clearFilters}>CLEAR</Button>
             </div>
         </div> 
     )

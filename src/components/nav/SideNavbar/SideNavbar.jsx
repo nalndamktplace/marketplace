@@ -92,7 +92,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 	const renderNavItems = () => {
 		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet) && item.id === "NI4") return
+			if(!isUsable(WalletState.wallet.provider) && item.id === "NI4") return
 			domElements.push(
 				<div key={item.id} className="side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer" onClick={()=>menuItemClickHandler(item)}>
 					{isUsable(item.icon) && <item.icon/>}
@@ -127,7 +127,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
                     {SubMenuOpen && ActiveSubMenu && renderSubMenuItems(ActiveSubMenu)}
                 </div>
 				<div className="side-navbar__container__spacer"></div>
-                {!isUsable(WalletState.wallet) && (<Button type="primary" size="xl" onClick={()=>handleWalletConnect()}>Connect Wallet</Button>)}
+                {!isUsable(WalletState.wallet.provider) && (<Button type="primary" size="xl" onClick={()=>handleWalletConnect()}>Connect Wallet</Button>)}
                 <div className="side-navbar__container__socials">{renderSocialIcons()}</div>
             </div>
         </div>

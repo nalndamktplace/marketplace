@@ -1,0 +1,30 @@
+.range-slider {
+    --progress:0;
+    position: relative ;
+    width: 100% ;
+    height: 4px ;
+	background-color: $color-neutral-300 ;
+    cursor: pointer ;
+
+    &__input {
+        -webkit-appearance: none ;
+        appearance: none ;
+        position: absolute ;
+        top : 50% ;
+        left: 0 ;
+        width: 100% ;
+        height: 100% ;
+        background-color: transparent ;
+        transform: translateY(-50%);
+        cursor: pointer ;
+    }
+
+    &::before {
+        content: "" ;
+        position: absolute ;
+        left : 0 ;
+        width : calc(100% * var(--progress)) ;
+        height: 100% ;
+        background-color: $color-secondary;
+    }
+}
