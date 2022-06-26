@@ -1,4 +1,5 @@
 import axios from "axios"
+import jc from 'json-cycle'
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
@@ -39,11 +40,22 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 	const [SearchQuery, setSearchQuery] = useState('')
 	const [SearchResults, setSearchResults] = useState([])
+	const [Collections, setCollections] = useState([])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
+
+	useEffect(() => {
+		setCollections([])
+		axios({
+			url: BASE_URL+'/api/collections',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setCollections(res.data)
+		}).catch(err => {})
+	}, [])
 
 	useEffect(() => {
 		if(SearchQuery.length>3 && SearchQuery.length<16){
@@ -57,27 +69,21 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					setSearchResults(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
 	}, [dispatch, SearchQuery])
 
 	const handleWalletConnect = () => {
-		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet)){
+		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
 			return true
-		}
-		else if(!isUsable(WalletState.support) || WalletState.support === false){
-			window.open("https://metamask.io/download/", '_blank')
-			return false
 		}
 		else {
 			Wallet.connectWallet().then(res => {
-				dispatch(setWallet(res.selectedAddress))
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 				return true
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				return false
 			})
@@ -101,13 +107,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
 		},
-	]
-
-	const RIBBION_ITEMS = [
-		{ id : "RI1",search:"?collection=bestselling" , title : "Bestsellers"},
-		{ id : "RI2",search:"?collection=bestoffiction" , title : "Fiction"},
-		{ id : "RI3",search:"?collection=bestofnonfiction" , title : "Non-Fiction"},
-		{ id : "RI4",search:"?collection=newrelease" , title : "New Release"}
 	]
 
 	const toggleMenu = () => {
@@ -135,13 +134,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const handleWalletDisconnect = () => {
 		GaTracker('event_header_wallet_disconnect')
-		Wallet.disconnectWallet().then(res => {
-			window.localStorage.clear()
+		Wallet.disconnectWallet(WalletState.wallet.provider).then(res => {
 			dispatch(clearWallet())
 			navigate('/')
 			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
 		}).catch(err => {
-			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
 		})
 	}
@@ -149,7 +146,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const renderNavItems = () => {
 		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet) && item.id === "NI4") return
+			if(!isUsable(WalletState.wallet.provider) && item.id === "NI4") return
 			if(isUsable(item.subMenu)){
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
@@ -247,16 +244,17 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				</div>
 				<div className="header__content__navbar">
 					{renderNavItems()}
-					{!isUsable(WalletState.wallet) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
+					{!isUsable(WalletState.wallet.provider) && <Button type="primary" size="lg" onClick={handleWalletConnect}>CONNECT WALLET</Button>}
 				</div>
 				<div className={getSubMenuClasses()} onClick={()=>toggleMenu()}>
 					<div/><div/><div/>
 				</div>
 			</div>
-			{showRibbion && <div className="header__ribbion">
-				<div className="header__ribbion__item header__ribbion__item--label">Browse Categories</div>
-				{ RIBBION_ITEMS.map(item=><div key={item.id} onClick={()=>navigate({pathname:'/explore',search: item.search})} className="header__ribbion__item">{item.title}</div>)}
-			</div>}
+			{showRibbion && isFilled(Collections) && <div className="header__ribbion">
+				{/* <div className="header__ribbion__item header__ribbion__item--label">Browse Categories</div> */}
+				{ Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
+				</div>
+			}
 			<SideNavbar 
 				MenuOpen={MenuOpen} 
 				setMenuOpen={setMenuOpen}

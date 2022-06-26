@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
+import GaTracker from '../trackers/ga-tracker'
 import Contracts from '../connections/contracts'
 
 import { setSnackbar } from '../store/actions/snackbar'
@@ -22,7 +23,7 @@ import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
 import { GENRES } from '../config/genres'
 import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
-import GaTracker from '../trackers/ga-tracker'
+import { AGE_GROUPS } from '../config/ages'
 
 const PublishNftPage = props => {
 
@@ -34,7 +35,7 @@ const PublishNftPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], ageGroup: '', price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
 	const [formProgress, setFormProgress] = useState(0)
 
 	useEffect(() => { GaTracker('page_view_publish') }, [])
@@ -48,13 +49,13 @@ const PublishNftPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
+		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 		setLoading(false)
 	}, [WalletState])
 
 	useEffect(()=>{
 		let filled = Object.values(FormInput).filter(v => !(v===""||v?.length===0||v===null)).length - 1
-		setFormProgress(filled/12)
+		setFormProgress(filled/13)
 	},[FormInput])
 
 	async function listNFTForSale() {
@@ -75,13 +76,13 @@ const PublishNftPage = props => {
 		}).then(res => {
 			const bookUrl = res.data.book.url
 			const coverUrl = res.data.cover.url
-			const { name, author, cover, book, genres, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
+			const { name, author, cover, book, genres, ageGroup, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
 			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays())
 			let genreIDs = []
 			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
 			const languageId = LANGUAGES.indexOf(language).toString()
 			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
-				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs).then(tx => {
+				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
 					const bookAddress = tx.events[0].address
 					const status = tx.status
 					const txHash = tx.transactionHash
@@ -94,6 +95,7 @@ const PublishNftPage = props => {
 						formData.append("cover", coverUrl)
 						formData.append("book", bookUrl)
 						formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+						formData.append("ageGroup", ageGroup)
 						formData.append("price", price)
 						formData.append("pages", pages)
 						formData.append("publication", publication)
@@ -158,6 +160,7 @@ const PublishNftPage = props => {
 					<h3 className='typo__head typo__head--3 utils__margin__top--m utils__margin__bottom--s'>Meta Data</h3>
 					<InputField type="number" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
+					<InputField type="list" label="age group" listType={'single'} values={AGE_GROUPS} value={FormInput.ageGroup} onSave={value => setFormInput({ ...FormInput, ageGroup: value })} placeholder="e.g., Youth (15-24 years)" description="Select the most appropriate age group for the book."/>
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
 					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher"/>
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>

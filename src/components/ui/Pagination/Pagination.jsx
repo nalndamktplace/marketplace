@@ -18,11 +18,12 @@ const Pagination = ({max=10,current=3,onPageChange=()=>{}}) => {
     const prevPage = () => {onPageChange(Math.max(1,current-1))}
 
     return ( 
-        <div className="pagination">
-            <Button className="pagination__nav" onClick={prevPage}><ChevronLeftIcon/><span>Prev</span></Button>
-            {renderPageNumbers()}
-            <Button className="pagination__nav" onClick={nextPage}><span>Next</span><ChevronRightIcon/></Button>
-        </div> 
+		null
+        // <div className="pagination">
+        //     <Button className="pagination__nav" onClick={prevPage}><ChevronLeftIcon/><span>Prev</span></Button>
+        //     {renderPageNumbers()}
+        //     <Button className="pagination__nav" onClick={nextPage}><span>Next</span><ChevronRightIcon/></Button>
+        // </div> 
     )
 }
  

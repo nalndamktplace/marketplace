@@ -25,7 +25,7 @@ import GaTracker from '../trackers/ga-tracker'
 
 const ExplorePage = () => {
 
-	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
+	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
@@ -64,7 +64,7 @@ const ExplorePage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
+		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 		setLoading(false)
 	}, [WalletState])
 
@@ -80,7 +80,7 @@ const ExplorePage = () => {
 					case 'multiselect':
 						if(isFilled(filter.value)){
 							let tempNfts = []
-							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft.genres.indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
+							filter.value.forEach(filterValue => nfts.forEach(nft => { if(nft[filter.key].indexOf(filterValue)>-1 && tempNfts.filter(tempNft => tempNft["id"] === nft.id).length<1) tempNfts.push(nft) }) )
 							nfts = tempNfts
 						}
 						break
@@ -115,7 +115,7 @@ const ExplorePage = () => {
 	const buyHandler = nft => {
 		GaTracker('event_explore_purchase_book')
 		setLoading(true)
-		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString()).then(res => {
+		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
@@ -173,7 +173,7 @@ const ExplorePage = () => {
 					<div className="explore__data__books__wrapper" data-layout={layout}>
 						{isUsable(Nfts) && Nfts.length > 0
 							? 	renderNfts()
-							: 	<div className='explore__data__books__empty'>
+							: 	<div className='explore__data__books__wrapper__empty'>
 									<img src={BooksShelf} alt="books shelf" className="explore__data__books__image" />
 									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 								</div>
