@@ -107,7 +107,7 @@ const IndexPage = props => {
 						<div className="index__collection__books__item" key={book.id+'|'+collection.id} onClick={()=>openHandler(book)}>
 							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
 							<div className="index__collection__books__item__data">
-								<div className={getPriceTagClass(book)}>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{book.price}</>}</div>
+								<div className={getPriceTagClass(book)}>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' width={24} height={24}/>{book.price}</>}</div>
 								<p className='index__collection__books__item__data__name typo__head typo__head--4'>
 									{(book?.title||"").slice(0,40)}
 									{book?.title?.length > 40 && "..."}
