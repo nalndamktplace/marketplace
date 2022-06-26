@@ -9,8 +9,8 @@
 
 	&__bg{
 		position: absolute;
-		height: 100vh;
-		width: 100vw;
+		height: 100%;
+		width: 100%;
 		display: flex;
 		background: url('../../assets/images/background-publish.svg');
 
@@ -33,14 +33,14 @@
 	&__data{
 		min-height: calc(100vh - 12rem);
 		display: flex;
-		flex-direction: row;
 		align-items: flex-start;
 		justify-content: flex-start;
 		width: 100%;
 		padding-bottom: 4.8rem;
 
 		@include respond(tabLand){
-			display: block ;
+			flex-direction: column ;
+			align-items: center ;
 		}
 
 		& > .typo__head {
@@ -48,10 +48,11 @@
 		}
 
 		&__form{
-			flex: 1 0 ;
 			max-width: 80rem;
 			margin-right: 4rem ;
+			width: calc(50% - 4rem);
 
+			@include respond(tabLand) {width: 100%; margin-right: 0rem ;}
 			@include respond(phone){max-width: 100%; width: 100%;}
 
 			&__cta{
@@ -60,18 +61,27 @@
 		}
 
 		&__preview{
-			flex: 1 ;
-			right: 0 ;
+			position: fixed ;
+			right: 2rem ;
+			width: 50% ;
 			background-color: $color-white ;
 
 			&__container{
 				border: 0.2rem solid $color-neutral-200;
 				border-radius: 0.8rem;
-				margin: 2rem;
 				padding: 2rem;
 			}
 
-			@include respond(tabPort){margin-top: 4.8rem;}
+			@include respond(tabLand){
+				position: static ;
+				margin-top: 4.8rem;
+				width: 100% ;
+				max-width: 80rem;
+			}
+
+			@include respond(phone){
+				max-width: 100% ;
+			}
 
 			&>img{
 				height: calc(75vh - 28rem);
