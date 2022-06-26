@@ -55,6 +55,7 @@ const ReaderPage = () => {
 	const [tocPanel, setTocPanel] = useState(false);
 
 	const debouncedProgress = useDebounce(progress, 300)
+	const seeking = useRef(false);
 
 	const connectWallet = useCallback(
 		() => {
@@ -98,7 +99,7 @@ const ReaderPage = () => {
 		if(!isUsable(rendition)) return
 		const handleResize = () => {
 			GaTracker('event_reader_resize')
-			rendition.manager.resize(window.innerWidth-8*16,"100%")
+			rendition.manager.resize(window.innerWidth<600 ? window.innerWidth : window.innerWidth-128,"100%")
 		}
 		const handleFullscreen = () => {
 			if(isUsable(window.document.fullscreenElement)){
@@ -135,7 +136,13 @@ const ReaderPage = () => {
 		const book = Epub(bookURL,{openAs:"epub"})
 		book.ready.then(()=>{
 			document.querySelector("#book__reader").innerHTML = ""
-			const rendition = book.renderTo("book__reader", { width: window.innerWidth-8*16,height: "100%" })
+			const rendition = book.renderTo("book__reader", { 
+				width: window.innerWidth<600 ? window.innerWidth : window.innerWidth-128,
+				height: "100%" ,
+				manager: "continuous",
+				flow: "paginated",
+				snap : "true"
+			})
 			rendition.themes.registerThemes({
 				dark : {
 					body : {
@@ -212,10 +219,14 @@ const ReaderPage = () => {
 
 	useEffect(() => {
 		if(!isUsable(rendition)) return
-		rendition.display(rendition.book.locations.cfiFromLocation(debouncedProgress))
+		if(seeking.current==true){
+			rendition.display(rendition.book.locations.cfiFromLocation(debouncedProgress))
+			seeking.current=false
+		}	
 	}, [debouncedProgress, rendition])
 
 	const handlePageUpdate = (e) => {
+		seeking.current = true ;
 		setProgress(e.target.value)
 	}
 

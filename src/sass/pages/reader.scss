@@ -74,6 +74,10 @@
 			justify-content: center ;
 			width: 8rem ;
 
+			@include respond(phone) {
+				display: none ;
+			}
+
 			&__button {
 				width : 5rem ;
 				height: 5rem ;
