@@ -11,8 +11,8 @@ const minFontSize = 50
 const maxFontSize = 200
 const fontDeltaStep = 10
 
-const Customizer = ({rendition}) => {
-	const [fontSize, setFontSize] = useState(100)
+const Customizer = ({initialFontSize=100,rendition}) => {
+	const [fontSize, setFontSize] = useState(initialFontSize)
 
 	const rerender = () => {
 		let location = rendition.currentLocation()
