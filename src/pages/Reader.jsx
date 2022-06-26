@@ -28,6 +28,9 @@ import { ReactComponent as ListIcon } from "../assets/icons/list.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
+import { setWallet } from "../store/actions/wallet"
+import Wallet from "../connections/wallet"
+import axios from "axios"
 import TocPanel from "../components/ui/TocPanel/TocPanel"
 import RangeSlider from "../components/ui/RangeSlider/RangeSlider"
 import { setWallet } from "../store/actions/wallet"
@@ -52,6 +55,7 @@ const ReaderPage = () => {
 	const [pageBookmarked, setPageBookmarked] = useState(false)
 	const [totalLocations, setTotalLocations] = useState(0)
 	const [customizerPanel, setCustomizerPanel] = useState(false)
+	const [WalletAddress, setWalletAddress] = useState(null);
 	const [tocPanel, setTocPanel] = useState(false);
 	const [WalletAddress, setWalletAddress] = useState(null);
 	const [showUI, setShowUI] = useState(true);
@@ -76,6 +80,7 @@ const ReaderPage = () => {
 			}).finally(() => setLoading(false))
 		},[dispatch],
 	)
+
 
 	const saveLastReadPage = useCallback(
 		(cfi) => {
@@ -124,6 +129,14 @@ const ReaderPage = () => {
 		[]
 	)
 
+	useEffect(() => {
+		setLoading(true)
+		if(isUsable(WalletState))
+			setWalletAddress(WalletState)
+		else connectWallet()
+		setLoading(false)
+	}, [WalletState, connectWallet])
+
 	useEffect(() => { GaTracker('page_view_reader') }, [])
 
 	useEffect(()=>{
@@ -146,6 +159,17 @@ const ReaderPage = () => {
 	useEffect(()=>{
 		hideAllPanel()
 	},[showUI,hideAllPanel])
+
+   useEffect(() => {
+		if(!isUsable(Math.floor(progress*100/totalLocations)) || isNaN(Math.floor(progress*100/totalLocations))) setLoading(true)
+		else setLoading(false)
+	}, [progress, totalLocations])
+
+	const hideAllPanel = ({customizer=true,bookmark=true,annotation=true,toc=true}) => {
+		customizer && setCustomizerPanel(false)
+		annotation && setAnnotaionPanel(false)
+		toc && setTocPanel(false)
+	}
 
 	useEffect(()=>{
 		let bookURL = null
@@ -220,6 +244,77 @@ const ReaderPage = () => {
 		});
 	},[rendition,currentLocationCFI])
 
+    useEffect(() => {
+		let bookURL = null
+		const navParams = params.state
+		if(isUsable(navParams.preview) && navParams.preview === true){
+			bookURL = BASE_URL+'/files/'+navParams.book.preview
+			setBookMeta(navParams.book)
+			setPreview(true)
+		}
+		else{
+			bookURL = navParams.book.submarineURL
+			setBookMeta(navParams.book)
+			setPreview(false)
+		}
+		const book = Epub(bookURL,{openAs:"epub"})
+		book.ready.then(()=>{
+			document.querySelector("#book__reader").innerHTML = ""
+			const rendition = book.renderTo("book__reader", { 
+				width: window.innerWidth<600 ? window.innerWidth : window.innerWidth-128,
+				height: "100%" ,
+				manager: "continuous",
+				flow: "paginated",
+				snap : "true"
+			})
+			rendition.themes.registerThemes({
+				dark : {
+					body : {
+						"background-color" : "black",
+						"color" : "white",
+						"--font-family" : "inherit",
+						"--line-height" : "1.6"
+					},
+					p : {
+						"text-align": "justify" ,
+						"font-family" : "var(--font-family) !important",
+						"line-height" : "var(--line-height) !important"
+					}
+				},
+				light : {
+					body : {
+						"background-color" : "white",
+						"color" : "black",
+						"--font-family" : "inherit",
+						"--line-height" : "1.6"
+					},
+					p : {
+						"text-align": "justify" ,
+						"font-family" : "var(--font-family) !important",
+						"line-height" : "var(--line-height) !important"
+					}
+				}
+			})
+			rendition.themes.select("light")
+			rendition.display()
+			rendition.themes.fontSize("150%");
+			rendition.themes.font("Arial,sans-serif");
+			setRendition(rendition)
+		}).catch(err => {
+			dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
+		})
+	},[params, dispatch])
+
+	const saveLastReadPage = useCallback(
+		(cfi) => {
+			if(!isUsable(window.localStorage)) return
+			if(!isUsable(bookMeta)) return
+			const bookKey = `${bookMeta.id}:lastread`
+			localStorage.setItem(bookKey,cfi)
+		},
+		[bookMeta],
+	)
+
 	useEffect(()=>{
 		if(!isUsable(rendition)) return
 		if(!isUsable(bookMeta)) return
@@ -267,6 +362,7 @@ const ReaderPage = () => {
 			.then(()=>{
 				setTotalLocations(rendition.book.locations.total)
 				localStorage.setItem(bookKey, rendition.book.locations.save())
+			}).catch((err)=>{
 			})
 			.catch((err)=>{console.error(err)})
 		}
@@ -280,6 +376,12 @@ const ReaderPage = () => {
 		}	
 	}, [debouncedProgress, rendition, seeking])
 
+
+	const handlePageUpdate = (e) => {
+		seeking.current = true ;
+		setProgress(e.target.value)
+	}
+
 	// todo move loading to server
 	useEffect(() => {
 		if(!isUsable(window.localStorage)) return
@@ -291,6 +393,61 @@ const ReaderPage = () => {
 			rendition.display(lastPageCfi)
 		}
 	}, [bookMeta, rendition]) 
+	
+	function openFullscreen() {
+		var elem = document.documentElement
+		if (elem.requestFullscreen) {
+			elem.requestFullscreen()
+		} else if (elem.webkitRequestFullscreen) { /* Safari */
+			elem.webkitRequestFullscreen()
+		} else if (elem.msRequestFullscreen) { /* IE11 */
+			elem.msRequestFullscreen()
+		}
+	}
+
+	function closeFullscreen() {
+		if(!document.fullscreenElement) return
+		if (document.exitFullscreen) {
+			document.exitFullscreen()
+		} else if (document.webkitExitFullscreen) { /* Safari */
+			document.webkitExitFullscreen()
+		} else if (document.msExitFullscreen) { /* IE11 */
+			document.msExitFullscreen()
+		}
+	}
+
+	useEffect(()=>{
+		if(fullscreen===true) openFullscreen()
+		else closeFullscreen()
+	},[fullscreen])
+
+	const isCurrentPageBookmarked = useCallback(
+		() => {
+			if(!isUsable(rendition)) return
+			if(!isUsable(bookMeta)) return
+			const bookKey = `${bookMeta.id}:bookmarks`
+			let item = window.localStorage.getItem(bookKey) ;
+			if(!isFilled(item)) return false ;
+			let stored = JSON.parse(item) || {}
+			let epubcfi = new EpubCFI()
+			let current = rendition.currentLocation()
+			try{
+				if(epubcfi.compare(stored.cfi,current.start.cfi)===0) return true
+				if(epubcfi.compare(stored.cfi,current.end.cfi)===0) return true
+				if(epubcfi.compare(stored.cfi,current.start.cfi)===1 && epubcfi.compare(stored.cfi,current.end.cfi)===-1) return true
+				return false	 
+			} catch(err){
+				return false
+			}
+		},[bookMeta, rendition]
+	)
+
+	const updateBookmarkedStatus = useCallback(
+		() => {
+			const pageBookmarked = isCurrentPageBookmarked()
+			setPageBookmarked(pageBookmarked)
+		},[isCurrentPageBookmarked]
+	)
 
 
 
@@ -376,17 +533,17 @@ const ReaderPage = () => {
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
 			setLoading(true)
-			let newBookmark = {
+			let newBookmarks = {
 				cfi : rendition.currentLocation().start.cfi,
 				percent : rendition.currentLocation().start.percentage
 			};
+			console.log(newBookmarks)
 			axios({
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'POST',
 				data: {
 					bid: bookMeta.id,
 					uid: WalletAddress,
-					bookmarks: JSON.stringify(newBookmark),
 				}
 			}).then(res => {
 				if(res.status === 200) {
@@ -407,6 +564,7 @@ const ReaderPage = () => {
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
 			setLoading(true)
+			let newBookmarks = "" ;
 			axios({
 				url: BASE_URL+'/api/reader/bookmarks',
 				method: 'POST',

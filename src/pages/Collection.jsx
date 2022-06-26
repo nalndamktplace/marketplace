@@ -67,7 +67,7 @@ const CollectionPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
+		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 		setLoading(false)
 	}, [WalletState])
 
@@ -117,7 +117,7 @@ const CollectionPage = () => {
 
 	const buyHandler = nft => {
 		setLoading(true)
-		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString()).then(res => {
+		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
@@ -156,7 +156,7 @@ const CollectionPage = () => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="explore__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="explore__data__books__header">

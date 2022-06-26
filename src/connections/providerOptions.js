@@ -3,13 +3,13 @@ import { sequence } from "0xsequence"
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk"
 
 const providerOptions = {
-	// sequence: {
-	// 	package: sequence,
-	// 	options: {
-	// 		appName: "Nalnda",
-	// 		defaultNetwork: "mumbai",
-	// 	},
-	// },
+	sequence: {
+		package: sequence,
+		options: {
+			appName: "Nalnda",
+			defaultNetwork: "mumbai",
+		},
+	},
 	// walletconnect: {
 	//	 package: WalletConnectProvider,
 	//	 options: {

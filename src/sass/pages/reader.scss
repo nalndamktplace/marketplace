@@ -119,6 +119,10 @@
 				display: none ;
 			}
 
+			@include respond(phone) {
+				display: none ;
+			}
+
 			&__button {
 				width : 5rem ;
 				height: 5rem ;

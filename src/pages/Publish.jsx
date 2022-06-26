@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
+import GaTracker from '../trackers/ga-tracker'
 import Contracts from '../connections/contracts'
 
 import { setSnackbar } from '../store/actions/snackbar'
@@ -22,7 +23,6 @@ import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
 import { GENRES } from '../config/genres'
 import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
-import GaTracker from '../trackers/ga-tracker'
 import { AGE_GROUPS } from '../config/ages'
 
 const PublishNftPage = props => {
@@ -49,7 +49,7 @@ const PublishNftPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState.wallet)
+		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 		setLoading(false)
 	}, [WalletState])
 
@@ -82,7 +82,7 @@ const PublishNftPage = props => {
 			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
 			const languageId = LANGUAGES.indexOf(language).toString()
 			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
-				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs).then(tx => {
+				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
 					const bookAddress = tx.events[0].address
 					const status = tx.status
 					const txHash = tx.transactionHash
@@ -185,7 +185,7 @@ const PublishNftPage = props => {
 							<div className="publish__data__preview__book__data">
 								<div className="publish__data__preview__book__data__title  typo__head--4">{FormInput.name}</div>
 								<div className="publish__data__preview__book__data__author typo__head--6">{FormInput.author}</div>
-								{FormInput.price && <div className="publish__data__preview__book__data__price"><USDCIcon fill="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
+								{FormInput.price && <div className="publish__data__preview__book__data__price"><USDCIcon stroke="currentColor" width={24} height={24}/><span>{FormInput.price}</span></div>}
 								{FormInput.language && <div className="publish__data__preview__book__data__field">
 									<div className="publish__data__preview__book__data__field__label typo__head--6">Language</div>
 									<div className="publish__data__preview__book__data__field__value">{FormInput.language}</div>

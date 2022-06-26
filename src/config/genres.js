@@ -42,4 +42,5 @@ export const GENRES = [
 	"Humanities & Social Sciences",
 	"Parenting & Families",
 	"Science & Technology",
+	"Society & Culture"
 ]

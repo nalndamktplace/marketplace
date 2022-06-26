@@ -32,7 +32,7 @@ const AccountPage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-	const WalletState = useSelector(state => state.WalletState.wallet)
+	const WalletState = useSelector(state => state.WalletState)
 
 	const [Nfts, setNfts] = useState([])
 	const [AllNfts, setAllNfts] = useState([])
@@ -55,13 +55,12 @@ const AccountPage = props => {
 	const connectWallet = useCallback(
 		() => {
 			Wallet.connectWallet().then(res => {
-				dispatch(setWallet(res.selectedAddress))
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			}).finally(() => setLoading(false))
-		},[dispatch],
+		},[dispatch]
 	)
 
 	useEffect(() => {
@@ -118,8 +117,7 @@ const AccountPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState))
-			setWalletAddress(WalletState)
+		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 		else connectWallet()
 		setLoading(false)
 	}, [WalletState, connectWallet])
@@ -182,10 +180,8 @@ const AccountPage = props => {
 					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
 				}
 			}).catch(err => {
-				console.error(err)
 			})
 		} catch (err) {
-			console.error(err)
 		}
 		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
 	}
@@ -206,7 +202,7 @@ const AccountPage = props => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="account__data">
 				<div className="account__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="account__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="account__data__books__header">
