@@ -83,7 +83,7 @@ const PublishNftPage = props => {
 			const languageId = LANGUAGES.indexOf(language).toString()
 			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
 				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
-					const bookAddress = tx.events[0].address
+					const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
 					const status = tx.status
 					const txHash = tx.transactionHash
 					if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
@@ -100,13 +100,12 @@ const PublishNftPage = props => {
 						formData.append("pages", pages)
 						formData.append("publication", publication)
 						formData.append("attributes", JSON.stringify(attributes))
-						formData.append("synopsis", synopsis)
+						formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
 						formData.append("language", language)
 						formData.append("published", published)
 						formData.append("secondarySalesFrom", secondaryFrom)
 						formData.append("publisherAddress", WalletAddress)
 						formData.append("bookAddress", bookAddress)
-						formData.append("status", status)
 						formData.append("txHash", txHash)
 						axios({
 							url: BASE_URL+'/api/book/publish',
