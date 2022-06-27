@@ -470,13 +470,13 @@ const ReaderPage = () => {
 				<div className={pageBookmarked ? "reader__container__bookmark reader__container__bookmark--show" : "reader__container__bookmark"}></div>
 				<div className="reader__container__prev-btn">
 					<div className="reader__container__prev-btn__button" onClick={()=> rendition.prev()}>
-						<ChevronLeftIcon stroke="currentColor" />
+						<ChevronLeftIcon width={32} stroke="currentColor" />
 					</div>
 				</div>
 				<div id="book__reader" className="reader__container__book"></div>
 				<div className="reader__container__next-btn">
 					<div className="reader__container__next-btn__button" onClick={()=> rendition.next()}>
-						<ChevronRightIcon stroke="currentColor" />
+						<ChevronRightIcon width={32} stroke="currentColor" />
 					</div>
 				</div>
 				<div className={
@@ -498,7 +498,7 @@ const ReaderPage = () => {
 			<nav className={"reader__nav" + (showUI?" reader__nav--show":"")}>
 				<div className="reader__nav__value">
 					<div className="reader__nav__value__chapter-title typo__gray--n600">{chapterName}</div>
-					<div>{Math.floor(progress*100/totalLocations)}%</div>
+					<div>{Math.floor(debouncedProgress*100/totalLocations)||"0"}%</div>
 				</div>
 				<div className="reader__nav__progress">
 					<RangeSlider value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
