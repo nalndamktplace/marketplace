@@ -1,9 +1,6 @@
 const readerTheme = {
     dark : {
         body : {
-            "padding":"0 !important",
-            "padding-left":"0 !important",
-            "padding-right":"0 !important",
             "background-color" : "black",
             "color" : "white",
             "--font-family" : "inherit",
