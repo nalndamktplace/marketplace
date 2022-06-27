@@ -5,14 +5,16 @@ import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
 const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show', onRead=()=>{}}) => {
 
 	const renderCTA = () => {
-		switch (state) {
-			case 'show':
-				return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>{book.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></div>)
-			case 'owned':
-				return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center' onClick={()=>onRead()}>Read</div>)
-			default:
-				return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>{book.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></div>)
-		}
+		if(book.status === 1)
+			switch (state) {
+				case 'show':
+					return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>{book.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></div>)
+				case 'owned':
+					return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center' onClick={()=>onRead()}>Read</div>)
+				default:
+					return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>{book.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></div>)
+			}
+		else return (<div className='book-item__data__review typo__body typo__body--2 utils__d__flex utils__align__center'>Under Review</div>)
 	}
 
     return (
