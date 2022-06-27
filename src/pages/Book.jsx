@@ -706,7 +706,7 @@ const BookPage = props => {
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__color--n500 typo__head typo__head--5">{NFT.author}</h5>
-									{Owner||Published?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' strokeWidth={1}  width={24} height={24} fill='currentColor'/>{NFT.price}</>}</div>}
+									{Owner||Published?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={24} height={24}/>{NFT.price}</>}</div>}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
 											<Stars rating={Rating}/>
@@ -755,7 +755,7 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
-										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price}&nbsp;<USDCIcon width={24} height={24} fill='currentColor'/></div>
+										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'><USDCIcon width={24} height={24} stroke='currentColor'/>&nbsp;{NFT.price}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Publication date</div>
 										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
