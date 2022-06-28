@@ -148,6 +148,7 @@ const ReaderPage = () => {
 	},[showUI,hideAllPanel])
 
 	useEffect(()=>{
+		setLoading(true)
 		let bookURL = null
 		const navParams = params.state
 		if(isUsable(navParams.preview) && navParams.preview === true){
@@ -157,26 +158,33 @@ const ReaderPage = () => {
 			bookURL = navParams.book.submarineURL
 			setPreview(false)
 		}
-
-		const book = Epub(bookURL,{openAs:"epub"})
-		book.ready.then(()=>{
-			const elm = document.querySelector("#book__reader") ;
-			if(elm) elm.innerHTML = "";
-			const _rendition = book.renderTo("book__reader", {
-                width: "100%",
-                height: "100%",
-                manager: "continuous",
-                flow: "paginated",
-                snap: "true",
-				gap : 40
-            });
-			_rendition.themes.default(ReaderBaseTheme)
-			setRendition(_rendition)
-		}).catch(err => {
+		try {
+			const book = Epub(bookURL,{openAs:"epub"})
+			book.ready.then(()=>{
+				const elm = document.querySelector("#book__reader") ;
+				if(elm) elm.innerHTML = "";
+				const _rendition = book.renderTo("book__reader", {
+					width: "100%",
+					height: "100%",
+					manager: "continuous",
+					flow: "paginated",
+					snap: "true",
+					gap : 40
+				});
+				_rendition.themes.default(ReaderBaseTheme)
+				setRendition(_rendition)
+				setLoading(false)
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
+				setLoading(false)
+			})
+			setBookMeta(navParams.book)  
+		} catch(err) {
 			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
-		})
-		setBookMeta(navParams.book)  
+			setLoading(false)
+		}
 	},[params, dispatch])
 
 	useEffect(()=>{ 
@@ -435,7 +443,7 @@ const ReaderPage = () => {
 				<div className="reader__header__left">
 					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 					<div className="reader__header__left__timer">
-						<ReadTimer preview={Preview} bookMeta={bookMeta}/>
+						{rendition && <ReadTimer preview={Preview} bookMeta={bookMeta}/>}
 					</div>
 				</div>
 				<div className="reader__header__center">
