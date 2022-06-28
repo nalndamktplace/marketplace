@@ -57,7 +57,8 @@ export const EXPLORE_PAGE_FILTERS = [
 			{value: "Humanities & Social Sciences", label: "Humanities & Social Sciences"},
 			{value: "Parenting & Families", label: "Parenting & Families"},
 			{value: "Science & Technology", label: "Science & Technology"},
-			{value: "Society & Culture", label: "Society & Culture"}
+			{value: "Society & Culture", label: "Society & Culture"},
+			{value: "Psychological Thrillers", label: "Psychological Thrillers"}
         ],
     },
 	{
@@ -137,7 +138,8 @@ export const ACCOUNT_PAGE_FILTERS = [
 			{value: "Humanities & Social Sciences", label: "Humanities & Social Sciences"},
 			{value: "Parenting & Families", label: "Parenting & Families"},
 			{value: "Science & Technology", label: "Science & Technology"},
-			{value: "Society & Culture", label: "Society & Culture"}
+			{value: "Society & Culture", label: "Society & Culture"},
+			{value: "Psychological Thrillers", label: "Psychological Thrillers"}
         ],
     },
 	{

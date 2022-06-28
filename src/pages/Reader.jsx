@@ -71,7 +71,6 @@ const ReaderPage = () => {
 				dispatch(setWallet(res.selectedAddress))
 				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			}).finally(() => setLoading(false))
 		},[dispatch],
@@ -102,7 +101,6 @@ const ReaderPage = () => {
 				if(epubcfi.compare(stored.cfi,current.start.cfi)===1 && epubcfi.compare(stored.cfi,current.end.cfi)===-1) return true
 				return false	 
 			} catch(err){
-				console.error(err)
 				return false
 			}
 		},[bookMeta, rendition]
@@ -268,7 +266,7 @@ const ReaderPage = () => {
 				setTotalLocations(rendition.book.locations.total)
 				localStorage.setItem(bookKey, rendition.book.locations.save())
 			})
-			.catch((err)=>{console.error(err)})
+			.catch((err)=>{})
 		}
 	},[rendition,bookMeta])
 

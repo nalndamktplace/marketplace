@@ -78,6 +78,23 @@
             }
         }
 
+        &__rejected {
+            padding: 0.8rem 1.6rem ;
+            width: min-content ;
+            background-color: $color-red ;
+            color: #fff ;
+            display: flex ;
+            align-items: center ;
+            border-radius: 0.5rem ;
+            font-weight: 700 ;
+            font-size: 2rem ;
+			white-space: nowrap ;
+
+            > svg {
+                margin-right: 0.5rem ;
+            }
+        }
+
         &__author{
             text-transform: uppercase;
             // font-size: 1.75rem; 
