@@ -8,9 +8,8 @@ import { isUsable } from "../../../helpers/functions"
 import { setSnackbar } from "../../../store/actions/snackbar"
 import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 
-import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg"
-
 import { BASE_URL } from "../../../config/env"
+import Button from "../Buttons/Button"
 
 const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hideModal=()=>{}}) => {
 
@@ -73,16 +72,18 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 		if(!isUsable(bookMeta)) return ""
 		Annotations.forEach((item,i)=>{
 			domItems.push(
-				<div key={i} className="panel__container__item" onClick={()=>gotoPage(item.cfiRange)}>
-					<div className="panel__container__item__color" style={{backgroundColor:item.color}}></div>
-					<div className="panel__container__item__name">{item.text}</div>
-					<div className="panel__container__item__delete" onClick={(e)=>{e.stopPropagation();removeAnnotation(i,item)}}>
-						<TrashIcon strokeWidth={2} width={24} height={24} stroke="currentColor"/>
+				<div key={i} className="panel__annotation__item" onClick={()=>gotoPage(item.cfiRange)}>
+					<div className="panel__annotation__item__container">
+						<div className="panel__annotation__item__color" style={{backgroundColor:item.color}}></div>
+						<div className="panel__annotation__item__name">{item.text}</div>
 					</div>
+					<Button size="sm" type="icon" onClick={(e)=>{e.stopPropagation();removeAnnotation(i,item)}}>
+						remove
+					</Button>
 				</div>
 			)
 		})
-		if(domItems.length===0) domItems.push(<div key="empty" className="bookmark-panel__container__empty">No Items</div>)
+		if(domItems.length===0) domItems.push(<div key="empty" className="panel__empty">No Items</div>)
 		return domItems
 	}
 
@@ -92,7 +93,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 			if(!isUsable(rendition)) return
 			if(!isUsable(bookMeta)) return
 			setLoading(true)
-			let newAnnotations = Annotations.filter((item,i) => i != itemIndex )
+			let newAnnotations = Annotations.filter((item,i) => i !== itemIndex )
 			axios({
 				url: BASE_URL+'/api/reader/annotations',
 				method: 'POST',
@@ -163,14 +164,7 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 		addAnnotationRef.current = addAnnotaion
 	},[addAnnotationRef,addAnnotaion])
 
-	return (
-		<div className="panel">
-			<div className="panel__title">Annotation</div>
-			<div className="panel__container">
-				{ renderAnnotationItems() }
-			</div>
-		</div>
-	)
+	return <div className="panel panel__annotation"> {renderAnnotationItems()} </div> ;
 }
 
 export default AnnotationPanel
