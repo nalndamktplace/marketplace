@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react"
-
 import { isUsable } from "../../../helpers/functions"
-
-import {ReactComponent as FontSizeIncreaseIcon } from "../../../assets/icons/fontsize-increase.svg"
-import {ReactComponent as FontSizeDecreaseIcon } from "../../../assets/icons/fontsize-decrease.svg"
 import GaTracker from "../../../trackers/ga-tracker"
 import { ReaderDefault, ReaderPreferenceOptions} from "../../../config/readerTheme"
+import NumberInput from "../Input/NumberInput"
+import { useCallback } from "react"
 
 const Customizer = ({rendition}) => {
 	const [readerPreferences, setReaderPreferences] = useState({
@@ -14,15 +12,13 @@ const Customizer = ({rendition}) => {
 		theme : ReaderDefault.theme.id,
 	});
 
-	const rerender = () => {
+	const rerender = useCallback(() => {
 		try {
 			let location = rendition.currentLocation()
 			rendition.clear()
 			rendition.display(location.start.cfi)
-		} catch(err){
-			// console.error(err)
-		}
-	}
+		} catch(err){/*console.error(err)*/}
+	},[rendition]);
 
 	const savePreferences = (readerPreferences) => {
 		if(!window.localStorage) return;
@@ -44,7 +40,6 @@ const Customizer = ({rendition}) => {
 			fontFamily = ReaderDefault.fontFamily.id,
 			theme      = ReaderDefault.theme.id,
 		} = loadSavedPreferences();
-
 		setReaderPreferences({fontSize,lineHeight,fontFamily,theme})
 	},[])
 
@@ -59,22 +54,19 @@ const Customizer = ({rendition}) => {
 		rendition.themes.override("--line-height", readerPreferences.lineHeight)
 		rendition.themes.override("--background-color", selectedTheme.backgroundColor)
 		rendition.themes.override("--color", selectedTheme.color)
-		window.document.body.setAttribute("data-theme",selectedTheme.id)
+		window.document.body.setAttribute("data-theme",selectedTheme.bodyTheme)
 		rerender();
 		savePreferences(readerPreferences);
-	}, [readerPreferences,rendition])
+	}, [readerPreferences,rendition,rerender])
 
 	const updateFontSize = (fontSize) => {
 		GaTracker('event_customizer_fontsize_'+fontSize)
 		setReaderPreferences(rp => ({...rp,fontSize})) ;
 	};
 
-	const increaseFontSize = () => {
-		updateFontSize(Math.min(ReaderPreferenceOptions.fontSize.max,readerPreferences.fontSize+ReaderPreferenceOptions.fontSize.step))
-	}
-	
-	const decreaseFontSize = () => {
-		updateFontSize(Math.max(ReaderPreferenceOptions.fontSize.min,readerPreferences.fontSize-ReaderPreferenceOptions.fontSize.step))
+	const updateLineHeight = (lineHeight) => {
+		GaTracker('event_customizer_lineheight_'+lineHeight)
+		setReaderPreferences(rp => ({...rp,lineHeight})) ;
 	};
 
 	const setTheme = (theme="reader-theme-light") => {
@@ -88,27 +80,51 @@ const Customizer = ({rendition}) => {
 	}
 
 	return (
-		<div className="customizer">
-			<div className="customizer__fontsize">
-				<div className="customizer__fontsize__decrease-btn" onClick={decreaseFontSize}>
-					<FontSizeDecreaseIcon width={24} stroke="currentColor"/>
-				</div>
-				<div className="customizer__fontsize__value">{readerPreferences.fontSize - ReaderPreferenceOptions.fontSize.offset}%</div>
-				<div className="customizer__fontsize__increase-btn" onClick={increaseFontSize}>
-					<FontSizeIncreaseIcon width={24} stroke="currentColor"/>
+		<div className="panel panel__customizer">
+			<div className="panel__customizer__field">
+				<div className="panel__customizer__field__lable typo__head--6">Font Size</div>
+				<div className="panel__customizer__field__input">
+					<NumberInput 
+						value={readerPreferences.fontSize} 
+						setValue={updateFontSize} 
+						unit="%"
+						offset={ReaderPreferenceOptions.fontSize.offset}
+						min={ReaderPreferenceOptions.fontSize.min} 
+						max={ReaderPreferenceOptions.fontSize.max}
+						step={ReaderPreferenceOptions.fontSize.step}
+					/>
 				</div>
 			</div>
-			<div className="customizer__theme">
-				<div className="customizer__theme__chip customizer__theme__chip--light" onClick={()=>setTheme("reader-theme-light")}>Light</div>
-				<div className="customizer__theme__chip customizer__theme__chip--dark" onClick={()=>setTheme("reader-theme-dark")}>Dark</div>
+			<div className="panel__customizer__field">
+				<div className="panel__customizer__field__lable typo__head--6">Line Spacing</div>
+				<div className="panel__customizer__field__input">
+					<NumberInput 
+						value={readerPreferences.lineHeight} 
+						setValue={updateLineHeight} 
+						min={ReaderPreferenceOptions.lineHeight.min} 
+						max={ReaderPreferenceOptions.lineHeight.max}
+						step={ReaderPreferenceOptions.lineHeight.step}
+					/>
+				</div>
 			</div>
-			<div className="customizer__fontfamily">
-				{
-					ReaderPreferenceOptions.fontFamily.map(ff => (
-						<div key={ff.id} className={"customizer__fontfamily__font" + (readerPreferences.fontFamily === ff.id ? " customizer__fontfamily__font--selected" : "") } style={{fontFamily:ff.value}} onClick={()=>{setFont(ff.id)}}>{ff.name}</div>
-					))
-				}
-				
+			<div className="panel__customizer__field">
+				<div className="panel__customizer__field__lable typo__head--6">Themes</div>
+				<div className="panel__customizer__field__input panel__customizer__field__input--themes">
+					{ReaderPreferenceOptions.themes.map(theme => (
+						<div key={theme.id} className={"panel__customizer__field__input__chip" + (readerPreferences.theme === theme.id ? " panel__customizer__field__input__chip--selected" : "")} onClick={()=>setTheme(theme.id)} style={{color:theme.color,backgroundColor:theme.backgroundColor}}>Aa</div>
+					))}
+				</div>
+			</div>
+			<div className="panel__customizer__field">
+				<div className="panel__customizer__field__lable typo__head--6">Fonts</div>
+				<div className="panel__customizer__field__input panel__customizer__field__input--fonts">
+				{ReaderPreferenceOptions.fontFamily.map(ff => (
+					<div key={ff.id} className={"panel__customizer__field__input__font" + (readerPreferences.fontFamily === ff.id ? " panel__customizer__field__input__font--selected" : "") } style={{fontFamily:ff.value}} onClick={()=>{setFont(ff.id)}}>
+						<div className="panel__customizer__field__input__font__demo">Aa</div>
+						<div className="panel__customizer__field__input__font__name">{ff.name}</div>
+					</div>
+				))}
+				</div>
 			</div>
 		</div>
 	)

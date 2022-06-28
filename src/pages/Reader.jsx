@@ -138,7 +138,7 @@ const ReaderPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState)
+		if(isUsable(WalletState)) setWalletAddress(WalletState.address)
 		else connectWallet()
 		setLoading(false)
 	}, [WalletState, connectWallet])
@@ -227,14 +227,12 @@ const ReaderPage = () => {
 	useEffect(()=>{
 		if(!isUsable(rendition)) return
 		if(!isUsable(bookMeta)) return
-
 		const handleRelocated = (event)=>{
 			updateBookmarkedStatus()
 			setProgress(event.start.location)
 			saveLastReadPage(event.start.cfi)
 			setCurrentLocationCFI(event.start.cfi)
 		}
-
 		const handleClick = () => { setShowUI(s=>!s)}
 		const handleKeyUp = (e) => {
 			if ((e.key === "ArrowLeft") || (e.keyCode || e.which) === 37) {
@@ -244,7 +242,6 @@ const ReaderPage = () => {
 				rendition.next();
 			}
 		}
-
 		rendition.on("relocated",handleRelocated)
 		rendition.on("click",handleClick);
 		rendition.on("keyup", handleKeyUp);
@@ -257,7 +254,6 @@ const ReaderPage = () => {
 		}
 	},[rendition,bookMeta, updateBookmarkedStatus,saveLastReadPage,setCurrentLocationCFI])
 
-	// Generates Locations for book
 	useEffect(()=>{
 		if (!isUsable(rendition)) return
 		if (!isUsable(bookMeta)) return
@@ -284,7 +280,6 @@ const ReaderPage = () => {
 		}	
 	}, [debouncedProgress, rendition, seeking])
 
-	// todo move loading to server
 	useEffect(() => {
 		if(!isUsable(window.localStorage)) return
 		if(!isUsable(bookMeta)) return
@@ -294,9 +289,7 @@ const ReaderPage = () => {
 		if(isUsable(lastPageCfi)) {
 			rendition.display(lastPageCfi)
 		}
-	}, [bookMeta, rendition]) 
-
-
+	}, [bookMeta, rendition])
 
 	useEffect(()=>{
 		if(!isUsable(rendition)) return
@@ -321,12 +314,6 @@ const ReaderPage = () => {
 		}
 		rendition.on("markClicked",handleMarkClicked)
 		return ()=>{rendition.off("markClicked",handleMarkClicked)}
-	},[rendition,bookMeta])
-
-	useEffect(()=>{
-		if(!isUsable(rendition)) return
-		if(!isUsable(bookMeta)) return
-		updateAnnotation()
 	},[rendition,bookMeta])
 
 	const handlePageUpdate = (e) => {
@@ -354,24 +341,6 @@ const ReaderPage = () => {
 		if(!isUsable(bookMeta)) return
 		if(isUsable(addAnnotationRef.current) && typeof addAnnotationRef.current === "function")
 			addAnnotationRef.current({...annotationSelection,color})
-	}
-
-	const updateAnnotation = () => {
-		// if(!isUsable(rendition)) return ""
-		// if(!isUsable(bookMeta)) return ""
-		// const bookKey = `${bookMeta.id}:annotations`
-		// let stored = JSON.parse(window.localStorage.getItem(bookKey)) || []
-		// console.log(stored)
-		// stored.forEach((item)=>{
-		//	 rendition.annotations.add(
-		//		 "highlight",
-		//		 item.cfiRange,
-		//		 {},
-		//		 ()=>{},
-		//		 "",
-		//		 {"fill": item.color, "fill-opacity": "0.35", "mix-blend-mode": "multiply"}
-		//	 )
-		// })
 	}
 
 	const addBookMark = () => {
@@ -450,24 +419,11 @@ const ReaderPage = () => {
 					<div className="typo__body--2 typo__color--n700">{bookMeta.title||"Untitled"}</div>
 				</div> 
 				<div className="reader__header__right">
-					<Button className="reader__header__right__hide-on-mobile" type="icon" onClick={()=>setFullscreen(s=>!s)}>
-						{fullscreen?<MinimizeIcon/>:<MaximizeIcon/>}
-					</Button>
-					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s)}} >
-						<ListIcon/>
-					</Button>
-					<SidePanel show={tocPanel} position="right"><TocPanel onSelect={()=>{hideAllPanel({toc: false});setTocPanel(false)}} rendition={rendition}/></SidePanel>
-					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} >
-						<BlockquoteIcon/>
-					</Button>
-					<SidePanel show={annotaionPanel} position="right">
-						<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
-					</SidePanel>
+					<Button className="reader__header__right__hide-on-mobile" type="icon" onClick={()=>setFullscreen(s=>!s)}> {fullscreen?<MinimizeIcon/>:<MaximizeIcon/>} </Button>
+					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s)}} > <ListIcon/> </Button>
+					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} > <BlockquoteIcon/> </Button>
 					<Button type="icon" className={pageBookmarked?"reader__header__right__button--active":""} onClick={toggleBookMark} ><BookmarkIcon /></Button>
 					<Button type="icon" className={customizerPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s)}}><LetterCaseIcon /></Button>
-					<SidePanel show={customizerPanel} position="right">
-						<Customizer initialFontSize={100} rendition={rendition}/>
-					</SidePanel>
 				</div>
 			</div>
 			<div className="reader__container">
@@ -483,25 +439,24 @@ const ReaderPage = () => {
 						<ChevronRightIcon width={32} stroke="currentColor" />
 					</div>
 				</div>
-				<div className={
-					showContextMenu
-					? "reader__container__context-menu-container reader__container__context-menu-container--show"
-					: "reader__container__context-menu-container"
-				}>
-					<AnnotationContextMenu 
-						onColorSelect={(color)=>{
-							handleAnnotationColorSelect(color)
-							setShowContextMenu(false)
-						}} 
-						onClose={()=>{
-							setShowContextMenu(false)
-						}}
-					/>
-				</div>
+				{!Preview && (
+					<div className={ showContextMenu ? "reader__container__context-menu-container reader__container__context-menu-container--show" : "reader__container__context-menu-container"}>
+						<AnnotationContextMenu onColorSelect={(color)=>{handleAnnotationColorSelect(color); setShowContextMenu(false)}} onClose={()=>setShowContextMenu(false)}/>
+					</div>
+				)}
+				<SidePanel show={tocPanel} setShow={setTocPanel} position="right" title="Table of Content">
+					<TocPanel onSelect={()=>{hideAllPanel({toc: false});setTocPanel(false)}} rendition={rendition}/>
+				</SidePanel>
+				<SidePanel show={annotaionPanel} setShow={setAnnotaionPanel} position="right" title="Annotations">
+					<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
+				</SidePanel>
+				<SidePanel show={customizerPanel} setShow={setCustomizerPanel} position="right-bottom" title="Preferences">
+					<Customizer initialFontSize={100} rendition={rendition}/>
+				</SidePanel>
 			</div>
 			<nav className={"reader__nav" + (showUI?" reader__nav--show":"")}>
 				<div className="reader__nav__value">
-					<div className="reader__nav__value__chapter-title typo__gray--n600">{chapterName}</div>
+					<div className="reader__nav__value__chapter-title typo__gray--n600">{chapterName||bookMeta.title||""}</div>
 					<div>{Math.floor(debouncedProgress*100/totalLocations)||"0"}%</div>
 				</div>
 				<div className="reader__nav__progress">

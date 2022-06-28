@@ -2,13 +2,13 @@ export const ReaderPreferenceOptions = {
     fontSize   : { min : 100 , max : 250, step: 10, offset : 50},
     lineHeight : { min : 1  , max : 2  , step: .25},
     fontFamily : [
-        { id:"reader-font-family-arial"    , name: "Arial"          , value: "'Arial', sans-serif"       },
-        { id:"reader-font-family-times"    , name: "Times New Roman", value: "'Times New Roman', serif"  },
-        { id:"reader-font-family-trebuchet", name: "Trebuchet MS"   , value: "'Trebuchet MS', sans-serif"},
+        { id:"reader-font-family-arial"    , name: "Arial"    , value: "'Arial', sans-serif"       },
+        { id:"reader-font-family-times"    , name: "Times"    , value: "'Times New Roman', serif"  },
+        { id:"reader-font-family-trebuchet", name: "Trebuchet", value: "'Trebuchet MS', sans-serif"},
     ],
     themes : [
-        { id:"reader-theme-light", label : "light",  backgroundColor : "white", color : "black" },
-        { id:"reader-theme-dark" , label : "dark" ,  backgroundColor : "black", color : "white" },
+        { id:"reader-theme-light", name : "Light",  backgroundColor : "white", color : "black", bodyTheme : "light" },
+        { id:"reader-theme-dark" , name : "Dark" ,  backgroundColor : "black", color : "white", bodyTheme : "dark" },
     ],
 };
 
