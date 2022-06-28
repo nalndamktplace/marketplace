@@ -33,7 +33,7 @@ import RangeSlider from "../components/ui/RangeSlider/RangeSlider"
 import { setWallet } from "../store/actions/wallet"
 import Wallet from "../connections/wallet"
 import axios from "axios"
-import readerTheme from "../config/readerTheme"
+import { ReaderBaseTheme } from "../config/readerTheme"
 
 const ReaderPage = () => {
 
@@ -168,13 +168,9 @@ const ReaderPage = () => {
                 manager: "continuous",
                 flow: "paginated",
                 snap: "true",
+				gap : 40
             });
-			_rendition.display().then(()=>{
-				_rendition.themes.registerThemes(readerTheme)
-				_rendition.themes.select("light")
-				_rendition.themes.fontSize("170%")
-				_rendition.themes.override("--font-family", "Arial,sans-serif")
-			});
+			_rendition.themes.default(ReaderBaseTheme)
 			setRendition(_rendition)
 		}).catch(err => {
 			console.error({err})

@@ -96,6 +96,7 @@
 
 	&__fontfamily {
 		&__font {
+			position: relative ;
 			height: 6rem ;
 			display: flex ;
 			align-items: center ;
@@ -103,28 +104,22 @@
 			border-bottom: 1px solid $color-neutral-200 ;
 			cursor: pointer ;
 			color: $color-neutral-500 ;
+			font-size: 1.6rem ;
 
 			&:hover {
 				background-color: $color-neutral-200 ;
 				color: $color-neutral-900 ;
 			}
 
-			&--arial {
-				font-family: Arial, sans-serif ;
-			}
-
-			&--times {
-				font-family: 'Times New Roman', Times, serif ;
-			}
-
-			&--cursive {
-				font-family: "'Brush Script MT', cursive" ;
+			&--selected {
+				font-weight: 700 ;
+				color: $color-neutral-900 ;
 			}
 		}
 	}
 }
 
-[data-theme="dark"] .customizer {
+[data-theme="reader-theme-dark"] .customizer {
 	background-color: $color-neutral-900 ;
 
 	&__fontsize {
