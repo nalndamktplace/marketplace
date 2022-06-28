@@ -91,7 +91,7 @@
 		width: 100% ;
 		height: 100% ;
 		overflow: hidden ;
-		padding: 5rem 2rem ;
+		padding: 8rem ;
 
 		@include respond(tabPort) {
 			padding: 4rem 2rem ;
@@ -160,17 +160,17 @@
 
 		&__bookmark {
 			position: absolute ;
-			width: 6rem ;
-			height: 10rem ;
+			width: 3rem ;
+			height: 4rem ;
 			right: 4rem ;
-			top: 8rem ;
+			top: 0rem ;
 			background-color: $color-secondary ;
 			z-index: 99 ;
 			clip-path: polygon(
 				0% 0%,
 				100% 0%,
 				100% 100%,
-				50% 75%,
+				50% 60%,
 				0% 100%	
 			);
 			transform: translateY(calc(-100% - 8rem));
@@ -178,10 +178,6 @@
 
 			&--show {
 				transform: none ;
-			}
-
-			@include respond(tabPort) {
-				display: none ;
 			}
 		}
 
@@ -210,7 +206,7 @@
 		width: 100% ;
 		padding: 2rem 8rem ;
 		background-color: transparent ;
-		transform: translateY(2rem);
+		transform: translateY(4rem); 
 		transition: all 200ms ease-out;
 		z-index: 50 ;
 		--offset : 6rem ;
@@ -226,13 +222,14 @@
 
 			&__chapter-title {
 				white-space: nowrap ;
-				max-width: 32ch ;
 				overflow: hidden ;
 				text-overflow: ellipsis ;
+				margin-right: 4rem ;
 			}
 		}
 
 		&__progress {
+			width: 100% ;
 			transition: all 200ms ease-out;
 			transform: translateY(var(--offset));
 		}
