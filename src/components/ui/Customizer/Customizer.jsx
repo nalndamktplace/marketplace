@@ -24,9 +24,32 @@ const Customizer = ({rendition}) => {
 		}
 	}
 
+	const savePreferences = (readerPreferences) => {
+		if(!window.localStorage) return;
+		window.localStorage.setItem("READER_PREFERENCES",JSON.stringify(readerPreferences));
+	}
+
+	const loadSavedPreferences = () => {
+		if(!window.localStorage) return {} ;
+		try{
+			let savedItem = JSON.parse(window.localStorage.getItem("READER_PREFERENCES"));
+			return savedItem || {} ;
+		} catch(err) { return {} }
+	}
+
+	useEffect(()=>{
+		let {
+			fontSize   = ReaderDefault.fontSize ,
+			lineHeight = ReaderDefault.lineHeight ,
+			fontFamily = ReaderDefault.fontFamily.id,
+			theme      = ReaderDefault.theme.id,
+		} = loadSavedPreferences();
+
+		setReaderPreferences({fontSize,lineHeight,fontFamily,theme})
+	},[])
+
 	useEffect(() => {
 		if(!isUsable(rendition)) return ;
-		console.log(readerPreferences)
 		let selectedTheme = ReaderPreferenceOptions.themes.find(s=> s.id === readerPreferences.theme);
 		let selectedFontFamily = ReaderPreferenceOptions.fontFamily.find(s => s.id === readerPreferences.fontFamily);
 		if(!isUsable(selectedTheme)) selectedTheme = ReaderPreferenceOptions.themes[0] ;
@@ -38,6 +61,7 @@ const Customizer = ({rendition}) => {
 		rendition.themes.override("--color", selectedTheme.color)
 		window.document.body.setAttribute("data-theme",selectedTheme.id)
 		rerender();
+		savePreferences(readerPreferences);
 	}, [readerPreferences,rendition])
 
 	const updateFontSize = (fontSize) => {
