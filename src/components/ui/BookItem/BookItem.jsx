@@ -8,24 +8,24 @@ const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show'
 		if(book.status === 1)
 			switch (state) {
 				case 'show':
-					return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>{book.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></div>)
+					return (<div onClick={()=>onOpen()} className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'><USDCIcon width={20} height={20} stroke="currentColor"/>&nbsp;{book.price}</div>)
 				case 'owned':
-					return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center' onClick={()=>onRead()}>Read</div>)
+					return (<div onClick={()=>onRead()} className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>Approved</div>)
 				default:
-					return (<div className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'>{book.price}&nbsp;<USDCIcon width={20} height={20} fill="currentColor"/></div>)
+					return (<div onClick={()=>onOpen()} className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'><USDCIcon width={20} height={20} stroke="currentColor"/>&nbsp;{book.price}</div>)
 			}
+		else if(book.status === 2) return (<div className='book-item__data__rejected typo__body typo__body--2 utils__d__flex utils__align__center'>Rejected</div>)
 		else return (<div className='book-item__data__review typo__body typo__body--2 utils__d__flex utils__align__center'>Under Review</div>)
 	}
 
     return (
         <div className='book-item' data-layout={layout}>
-            <img className='book-item__cover' onClick={onOpen} src={book.cover} alt={book.name} />
+            <img className='book-item__cover' onClick={()=>onOpen()} src={book.cover} alt={book.name} />
             <div className="book-item__data">
                 {renderCTA()}
-                <div onClick={onOpen} className='book-item__data__price typo__body typo__body--2 utils__d__flex utils__align__center'><USDCIcon width={20} height={20} stroke="currentColor"/>&nbsp;{book.price}</div>
-                <div onClick={onOpen} className='book-item__data__name typo__body typo__body--2'>{book.title}</div>
-                <div onClick={onOpen} className='book-item__data__author typo__body typo__body--2'>{book.author}</div>
-                <div onClick={onOpen} className='book-item__data__synopsis typo__body typo__body--2 typo__color--n500'>{book.synopsis.split(" ").slice(0,40).join(" ")}...</div>
+                <div onClick={()=>onOpen()} className='book-item__data__name typo__body typo__body--2'>{book.title}</div>
+                <div onClick={()=>onOpen()} className='book-item__data__author typo__body typo__body--2'>{book.author}</div>
+                <div onClick={()=>onOpen()} className='book-item__data__synopsis typo__body typo__body--2 typo__color--n500'>{book.synopsis.split(" ").slice(0,40).join(" ")}...</div>
                 <Stars rating={book.rating}/>
             </div>
         </div>
