@@ -1,7 +1,7 @@
 const Button = ({children,className="",type="",size="md",icon="",disabled=false,onClick={}}) => {
     
     const getButtonClasses = () => {
-        const classList = ["button",className]
+        const classList = ["button typo__act",className]
         classList.push(`button--${type}`)
         classList.push(`button--${size}`)
         return classList.join(" ")

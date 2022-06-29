@@ -108,11 +108,11 @@ const IndexPage = props => {
 							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
 							<div className="index__collection__books__item__data">
 								<div className={getPriceTagClass(book)}>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' width={24} height={24}/>{book.price}</>}</div>
-								<p className='index__collection__books__item__data__name typo__head typo__head--4'>
+								<p className='index__collection__books__item__data__name typo__head typo__head--6'>
 									{(book?.title||"").slice(0,40)}
 									{book?.title?.length > 40 && "..."}
 								</p>
-								<p className='index__collection__books__item__data__author typo__body typo__body--2'>{book.author}</p>
+								<p className='index__collection__books__item__data__author typo__subtitle'>{book.author}</p>
 							</div>
 						</div>
 					)
@@ -127,7 +127,7 @@ const IndexPage = props => {
 				collectionsDOM.push(
 					<div className="index__collection" key={collection.id}>
 						<div className="index__collection__header">
-							<h4 className="typo__head typo__head--2 index__collection__header__title typo__transform--capital">
+							<h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">
 								{collection.name}
 							</h4>
 							{/* <Button>
@@ -180,7 +180,7 @@ const IndexPage = props => {
 						<div className="index__featured__container__row__item__container">
 							{renderCollection(collection)}
 						</div>
-						<div className="index__featured__container__row__item__title typo__head--4 typo__transform--capital">{collection.name}</div>
+						<div className="index__featured__container__row__item__title typo__head--5 typo__transform--capital">{collection.name}</div>
 					</div>
 				)
 			})
@@ -195,8 +195,8 @@ const IndexPage = props => {
 				</div>
 				<div className="index__content">
 					<div className="index__content__container">
-						<h1 className="typo__display typo__transform--capital typo__color--white typo__transform--capital">experience<br/> books beyond<br/> reading</h1>
-						<h3 className="typo__head typo__head--3 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
+						<h1 className="typo__head typo__head--2 typo__weight--heavy typo__color--white typo__transform--capital">experience<br/> books beyond<br/> reading</h1>
+						<h3 className="typo__head typo__head--4 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
 						<div className="index__content__container__row">
 							<Button size="xl" type="white" onClick={() => navigate('/explore')}>Explore</Button>
 							<Button size="xl" type="outline-white" onClick={() => navigate('/publish')}>Publish</Button>

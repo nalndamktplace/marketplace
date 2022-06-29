@@ -25,7 +25,7 @@ import GaTracker from '../trackers/ga-tracker'
 
 const ExplorePage = () => {
 
-	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
+	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
@@ -163,11 +163,11 @@ const ExplorePage = () => {
 					<div className="explore__data__books__header">
 						<div className='explore__data__books__header__filter'>
 							<Button type="icon" onClick={()=>setFiltersPanelOpen(s=>!s)}><FilterIcon fill={FiltersPanelOpen?"currentColor":"transparent"} /></Button>
-							<div className="typo__color--n500">Found <span className="typo__color--n700" style={{fontWeight:"500"}}>{Nfts.length}</span> results</div>
+							<div className="typo__body typo__color--n500">Found <span className="typo__color--n700" style={{fontWeight:"500"}}>{Nfts.length}</span> results</div>
 						</div>
 						<div className="explore__data__books__header__layout">
-							<Button className="account__data__books__header__layout__button" onClick={()=>setLayout("LIST")}><ListViewIcon/><span>List</span></Button>
-							<Button className="account__data__books__header__layout__button" onClick={()=>setLayout("GRID")}><GridViewIcon/><span>GRID</span></Button>
+							<Button className="account__data__books__header__layout__button typo__act" onClick={()=>setLayout("LIST")}><ListViewIcon/><span>List</span></Button>
+							<Button className="account__data__books__header__layout__button typo__act" onClick={()=>setLayout("GRID")}><GridViewIcon/><span>GRID</span></Button>
 						</div>
 					</div>
 					<div className="explore__data__books__wrapper" data-layout={layout}>

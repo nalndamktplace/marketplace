@@ -55,8 +55,8 @@ const InputField = props => {
 
 	return (
 		<div className='input__group'>
-			<div className='input__group__label'>{props.label}</div>
-			<div className='input__group__description'>{props.description}</div>
+			<div className='input__group__label typo__body typo__transform--capital'>{props.label}</div>
+			<div className='input__group__description typo__body typo__body--2'>{props.description}</div>
 			{renderInputField()}
 		</div>
 	)

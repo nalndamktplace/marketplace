@@ -140,19 +140,15 @@
 			
 		}
 
-		&:not(:last-of-type){margin-bottom: 2rem;}
+		&:not(:last-of-type){margin-bottom: 2.8rem;}
 	
 		&__label{
 			color: $color-neutral-700 ;
-			text-transform: capitalize;
-			font-size: 2rem ;
-			font-weight: 500 ;
 			line-height: 1.5 ;
 		}
 
 		&__description {
 			color: $color-neutral-500 ;
-			font-size: 1.5rem ;
 			margin-bottom: 1rem ;
 		}
 	}

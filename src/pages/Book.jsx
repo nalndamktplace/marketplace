@@ -549,7 +549,7 @@ const BookPage = props => {
 			tabsDOM.push(
 				<div onClick={()=>setActiveTab(tab.id)} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item utils__cursor--pointer"} key={tab.id}>
 					{isUsable(tab.icon) && tab.icon}
-					<h5 className="typo__head typo__head--5">{tab.label}</h5>
+					<h5 className="typo__head typo__head--6 typo__transform--capital">{tab.label}</h5>
 				</div>
 			)
 		})
@@ -559,7 +559,7 @@ const BookPage = props => {
 	const renderTabData = () => {
 		switch (ActiveTab) {
 			case 'TAB01':
-				return <p className="typo__body typo__body--2 typo__color--n600">{NFT.synopsis}</p>
+				return <p className="typo--break-spaces typo__body typo__body--2 typo__color--n600">{NFT.synopsis}</p>
 			case 'TAB02':
 				const renderReviews = reviews => {
 					let reviewsDOM = []
@@ -701,7 +701,7 @@ const BookPage = props => {
 			{isUsable(NFT)?
 				<>
 					<div className="book__data">
-						<div className="book__data__background"></div>
+						<div className="book__data__background"/>
 						<div className="book__data__container">
 							<div>
 								<div className='book__data__container__cover'>
@@ -709,13 +709,13 @@ const BookPage = props => {
 								</div>
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
-									<h5 className="typo__color--n500 typo__head typo__head--5">{NFT.author}</h5>
+									<h5 className="typo__color--n500 typo__head typo__head--6">{NFT.author}</h5>
 									{Owner||Published?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={24} height={24}/>{NFT.price}</>}</div>}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
 											<Stars rating={Rating}/>
 										</div>
-										<div className='book__data__container__meta__rating__count'>
+										<div className='book__data__container__meta__rating__count typo__body'>
 											{TotalReveiws} reviews
 										</div>
 									</div>
@@ -746,7 +746,7 @@ const BookPage = props => {
 										<div className="book__data__container__desc__summary__contract">
 											<div className='book__data__container__desc__summary__contract__data'>
 												<div className='book__data__container__desc__summary__contract__label typo__color--n700'>Contract Address</div>
-												<div className='book__data__container__desc__summary__contract__value typo__color--n700' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,4)}…{(NFT.book_address||"").slice((NFT.contract||"").length-4)}</div>
+												<div className='book__data__container__desc__summary__contract__value typo__color--n500' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,12)}…{(NFT.book_address||"").slice((NFT.contract||"").length-10)}</div>
 											</div>
 											<div className='book__data__container__desc__summary__contract__icon'>
 												<ExternalLinkIcon />

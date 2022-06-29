@@ -1,13 +1,4 @@
 export const EXPLORE_PAGE_FILTERS = [
-    {
-        name: "market",
-        label: "Market",
-        type: "tab",
-        values: [
-            {value:"new",label:"New Books"},
-            {value:"old",label:"Old Books"},
-        ],
-    },
     { name: "price", label:"Price", type: "range", min: 0, max: 1000, step: 10, unit:"USDC",default:1000 },
     {
         name: "genres",

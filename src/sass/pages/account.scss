@@ -1,5 +1,5 @@
 .account {
-	--header-height:8rem;
+	--header-height:12rem;
 	position: relative ;
 	overflow: hidden ;
 	padding: 0 ;
@@ -17,7 +17,7 @@
 			flex: 0 0 var(--size);
 			max-width: var(--size) ;
 			width: var(--size) ;
-			border-right: 2px solid $color-neutral-200 ;
+			border-right: 0.2rem solid $color-neutral-200 ;
 			height: 100% ;
 			overflow-y: auto ;
 			transition: margin 100ms ease-out ;
@@ -51,7 +51,7 @@
 				flex: 0 0 7rem ;
 				height: 7rem ;
 				padding: 0 1.5rem ;
-				border-bottom: 2px solid $color-neutral-200 ;
+				border-bottom: 0.2rem solid $color-neutral-200 ;
 
 				&__filter {
 					display: flex ;
@@ -79,8 +79,8 @@
 							padding: 0 1.75rem ;
 							height: 7rem ;
 							flex: 1 ;
-							border-top: 3px solid transparent ;
-							border-bottom: 3px solid transparent ;
+							border-top: 0.24rem solid transparent ;
+							border-bottom: 0.24rem solid transparent ;
 							cursor: pointer ;
 							color: $color-neutral-600 ;
 
@@ -91,7 +91,7 @@
 
 							&[data-state="true"]{
 								color: $color-primary ;
-								border-bottom: 3px solid $color-primary ;
+								border-bottom: 0.24rem solid $color-primary ;
 							}
 						}
 					}

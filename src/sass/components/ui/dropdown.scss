@@ -8,7 +8,7 @@
 		right: 0 ;
 		background-color: $color-white ;
 		padding: 1rem ;
-		border-radius: 4px ;
+		border-radius: 0.4rem ;
 		filter: drop-shadow( 0 0 1rem rgba($color-black,0.2));
 		transform: scale(0);
 		opacity: 0 ;
@@ -26,7 +26,7 @@
 
 		&__item {
 			padding: 2rem ;
-			border-radius: 4px ;
+			border-radius: 0.4rem ;
 			color: $color-neutral-500 ;
 
 			&:hover {
