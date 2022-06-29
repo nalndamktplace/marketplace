@@ -22,6 +22,7 @@ import { BASE_URL } from '../../../config/env'
 
 import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
+import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
 import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as FileTextIcon} from "../../../assets/icons/file-text.svg"
@@ -192,8 +193,9 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					<div onClick={() => {navigate('/book', {state: result}); setSearchQuery('')}} className="header__content__search__result" key={result.id}>
 						<img src={result.cover} alt={result.title+"'s Cover"} className="header__content__search__result__cover"/>
 						<div className="header__content__search__result__info">
-							<div className='header__content__search__result__info__name typo__head typo__head--6 typo__transform--capital'>{result.title}</div>
-							<div className='header__content__search__result__info__author typo__subtitle typo__transform--upper'>{result.author}</div>
+							<div className='header__content__search__result__info__name typo__head typo__subtitle typo__transform--capital'>{result.title}</div>
+							<div className='header__content__search__result__info__author typo__subtitle typo__subtitle--2 typo__transform--upper'>{result.author}</div>
+							<div className='index__collection__books__item__data__price typo__act typo__color--success'>{result.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{result.price}</>}</div>
 						</div>
 					</div>
 				)
