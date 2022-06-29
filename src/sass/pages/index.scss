@@ -60,13 +60,13 @@
 
 	&__collection{
 		width: 100%;
-		&:not(:last-child){margin-bottom: 6.4rem;}
+		&:not(:last-child){margin-bottom: 4.8rem;}
 
 		&__header {
 			display: flex ;
 			justify-content: space-between ;
 			align-items: center ;
-			margin-bottom: 4rem ;
+			margin-bottom: 2.4rem ;
 
 			&__button {
 				position: relative ;
@@ -113,7 +113,7 @@
 			
 
 			&__item{
-				--cover-size : 26rem ;
+				--cover-size : 20rem ;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
@@ -155,10 +155,8 @@
 					&>p{margin-bottom: 0;}
 
 					&__price {
-						padding: 0.8rem 1.6rem ;
+						padding: 0.2rem 0rem ;
 						width: min-content ;
-						background-color: hsl(160,80%,40%) ;
-						color: #fff ;
 						display: flex ;
 						align-items: center ;
 						border-radius: 0.8rem ;
@@ -168,7 +166,6 @@
 						}
  
 						&--free {
-							background-color: hsl(160,80%,40%) ;
 						}
 					}
 

@@ -95,24 +95,18 @@ const IndexPage = props => {
 		const renderNfts = (books,collection) => {
 			let booksDOM = []
 
-			const getPriceTagClass = (book) => {
-				let classes = ["index__collection__books__item__data__price typo-head--6"]
-				if(book.price === 0) classes.push("index__collection__books__item__data__price--free")
-				return classes.join(" ")
-			}
-
 			if(isFilled(books)){
 				books.forEach(book => {
 					booksDOM.push(
 						<div className="index__collection__books__item" key={book.id+'|'+collection.id} onClick={()=>openHandler(book)}>
 							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
 							<div className="index__collection__books__item__data">
-								<div className={getPriceTagClass(book)}>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' width={24} height={24}/>{book.price}</>}</div>
 								<p className='index__collection__books__item__data__name typo__head typo__head--6'>
 									{(book?.title||"").slice(0,40)}
 									{book?.title?.length > 40 && "..."}
 								</p>
 								<p className='index__collection__books__item__data__author typo__subtitle'>{book.author}</p>
+								<div className='index__collection__books__item__data__price typo__act typo__color--success'>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{book.price}</>}</div>
 							</div>
 						</div>
 					)
@@ -130,9 +124,6 @@ const IndexPage = props => {
 							<h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">
 								{collection.name}
 							</h4>
-							{/* <Button>
-								<span>View more</span> <ArrowRight width={24} height={24} />
-							</Button> */}
 						</div>
 						
 						<div className="index__collection__books">

@@ -698,12 +698,6 @@ const BookPage = props => {
 		else dispatch(setSnackbar({show: true, message: "Please login first", type: 3}))
 	}
 
-	const getPriceTagClass = (book) => {
-		let classes = ["book__data__container__meta__price typo-head--6"]
-		if(book.price === 0) classes.push("book__data__container__meta__price--free")
-		return classes.join(" ")
-	}
-
 	return (
 		<Page>
 			<div className="book__bg">
@@ -721,10 +715,10 @@ const BookPage = props => {
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__color--n500 typo__head typo__head--6">{NFT.author}</h5>
-									{Owner||Published?null:<div className={getPriceTagClass(NFT)}>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={24} height={24}/>{NFT.price}</>}</div>}
+									{Owner||Published?null:<div className='book__data__container__meta__price typo-head--6 typo__act typo__color--success'>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{NFT.price}</>}</div>}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
-											<Stars rating={Rating}/>
+											<Stars size={'small'} rating={Rating}/>
 										</div>
 										<div className='book__data__container__meta__rating__count typo__body'>
 											{TotalReveiws} reviews
@@ -760,7 +754,7 @@ const BookPage = props => {
 												<div className='book__data__container__desc__summary__contract__value typo__color--n500' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,12)}…{(NFT.book_address||"").slice((NFT.contract||"").length-10)}</div>
 											</div>
 											<div className='book__data__container__desc__summary__contract__icon'>
-												<ExternalLinkIcon />
+												<ExternalLinkIcon width={24} height={24}/>
 											</div>
 										</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
@@ -782,24 +776,24 @@ const BookPage = props => {
 								<div className="book__data__container__desc__right">
 									<div className="book__data__container__desc__interacts">
 										<div className="book__data__container__desc__interacts__item">
-											<LikeIcon width={32} height={32} className="book__data__container__desc__interacts__item__icon" stroke={Liked?"#ff5722":"currentColor"} fill={Liked?"#ff5722":"transparent"} onClick={ ()=>likeHandler() }/>
-											<div className='typo__head--6 typo__color--n500'>Likes</div>
-											<div className='typo__head--3 typo__color--n600'>{Likes||"0"}</div>
+											<div className='typo__subtitle typo__color--n500'>Likes</div>
+											<LikeIcon width={24} height={24} className="book__data__container__desc__interacts__item__icon" stroke={Liked?"#ff5722":"currentColor"} fill={Liked?"#ff5722":"transparent"} onClick={ ()=>likeHandler() }/>
+											<div className='typo__head--5 typo__color--n600'>{Likes||"0"}</div>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
-											<ReviewIcon width={32} height={32} stroke="currentColor"/>
-											<div className='typo__head--6 typo__color--n500'>Reviews</div>
-											<div className='typo__head--3 typo__color--n600'>{TotalReveiws||"0"}</div>
+											<div className='typo__subtitle typo__color--n500'>Reviews</div>
+											<ReviewIcon width={24} height={24} stroke="currentColor"/>
+											<div className='typo__head--5 typo__color--n600'>{TotalReveiws||"0"}</div>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
-											<PrintIcon width={32} height={32} stroke="currentColor"/>
-											<div className='typo__head--6 typo__color--n500'>Pages</div>
-											<div className='typo__head--3 typo__color--n600'>{NFT.print||"00"}</div>
+											<div className='typo__subtitle typo__color--n500'>Pages</div>
+											<PrintIcon width={24} height={24} stroke="currentColor"/>
+											<div className='typo__head--5 typo__color--n600'>{NFT.print||"00"}</div>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
-											<CartIcon width={32} height={32} stroke="currentColor"/>
-											<div className='typo__head--6 typo__color--n500'>Sold</div>
-											<div className='typo__head--3 typo__color--n600'>{NFT.copies||"00"}</div>
+											<div className='typo__subtitle typo__color--n500'>Sold</div>
+											<CartIcon width={24} height={24} stroke="currentColor"/>
+											<div className='typo__head--5 typo__color--n600'>{NFT.copies||"00"}</div>
 										</div>
 									</div>
 									<div className="book__data__container__desc__tabs">
