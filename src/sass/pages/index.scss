@@ -29,10 +29,27 @@
 		height: 120% ;
 		overflow: hidden;
 		background-color: $color-blue ;
-		background-image: url('../../assets/images/banner-top.svg') , url('../../assets/images/banner-bottom.svg');
-		background-size: 100% auto,100% auto;
-		background-position: top,bottom;
+		background-image: url('../../assets/images/banner-top.svg') ;
+		background-size: 100% auto;
+		background-position: top left;
 		background-repeat: no-repeat;
+
+		&::after {
+			content: "" ;
+			position: absolute ;
+			bottom : -4px ;
+			left: 0 ;
+			width : 100% ;
+			height: 100% ;
+			pointer-events: none ;
+			background-image: url('../../assets/images/banner-bottom.svg');
+			background-size: 100% auto;
+			background-position: bottom right;
+			background-repeat: no-repeat;
+	
+			@include respond(tabPort){ background-size: 120% auto;}	
+			@include respond(phone)  { background-size: 150% auto;}
+		}
 
 		@include respond(phone){ height: calc(100vh - 6.4rem); }
 	}
