@@ -117,7 +117,6 @@
 					object-fit: cover;
 					background-color: #fff ;
 					border-radius: 1rem ;
-					box-shadow: $shadow-md ;
 
 					&__img {
 						width: 100% ;
@@ -133,6 +132,8 @@
 						justify-content: center ;
 						flex-direction: column ;
 						background-color: $color-neutral-200;
+						border-radius: 1rem ;
+						box-shadow: inset $shadow-sm ;
 						color: $color-neutral-500;
 						&:hover {
 							color: $color-neutral-700;
@@ -205,6 +206,7 @@
 					&__value {
 						position: absolute ;
 						bottom: 100% ;
+						font-weight: 500 ;
 					}
 				}
 			}

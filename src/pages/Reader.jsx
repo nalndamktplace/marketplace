@@ -170,6 +170,7 @@ const ReaderPage = () => {
 					gap : 40
 				});
 				_rendition.themes.default(ReaderBaseTheme)
+				_rendition.display();
 				setRendition(_rendition)
 				setLoading(false)
 			}).catch(err => {

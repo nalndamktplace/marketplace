@@ -203,7 +203,7 @@ const PublishNftPage = props => {
 						</div>
 						<div className='publish__data__preview__progress  utils__margin__top--b'>
 							<div className='publish__data__preview__progress__container'>
-								<div className='publish__data__preview__progress__container__value'>{Math.round(formProgress*100)}%</div>
+								<div className='publish__data__preview__progress__container__value typo__color--n700'>{Math.round(formProgress*100)}%</div>
 								<ProgressBar progress={formProgress}/>
 							</div>
 							<Button type="primary" disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>

@@ -150,6 +150,7 @@
 				min-height: 50vh;
 				position: relative;
 				z-index: 0;
+				white-space: break-spaces ;
 
 				@include respond(tabPort) {
 					margin: 0 ;
@@ -179,7 +180,14 @@
 
 				&__right {
 					flex: 1 ;
-					padding:  0 4rem 4rem 0 ;
+
+					padding-right: 4rem ;
+
+					overflow: hidden ;
+
+					@include respond(tabPort) {
+						padding: 0 ;
+					}
 				}
 
 				&__interacts{
@@ -258,22 +266,33 @@
 					width: 100%;
 
 					&__container{
+						--marker-x : 0 ;
+						--marker-width : 0;
+						position: relative ;
 						display: flex;
 						flex-direction: row;
 						align-items: center;
 						justify-content: flex-start;
 						margin-bottom: 2.4rem;
 						border-bottom: 0.2rem solid $color-neutral-200 ;
+						overflow-x: auto ;
+
+						-ms-overflow-style: none; /* Internet Explorer 10+ */
+						scrollbar-width: none; /* Firefox */
+						overflow: -moz-scrollbars-none; /* Old Firefox */
+						
+						&::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
 
 						&__item{
 							display: flex ;
 							align-items: center ;
 							justify-content: center ;
-							padding: 1.2rem 1.6rem;
-							border-bottom: 0.2rem solid $color-white;
+							padding: 1.2rem 0;
 							transition: all 0.15s ease-in-out;
 							color: $color-neutral-500 ;
 							border-bottom: 0.4rem solid transparent ; 
+							width: 16rem ;
+							flex: 0 0 16rem ;
 
 							&>svg {
 								width : 3rem ;
@@ -292,10 +311,20 @@
 							}
 
 							@include respond(phone) {
-								flex: 1 ;
+								flex: 0 0 16rem ;
 								padding: 1.2rem 0rem ;
 							}
 
+							&::before {
+								content: '';
+								position: absolute ;
+								bottom: 0 ;
+								left : calc(var(--marker-x) * 1px) ;
+								width: 16rem ;
+								height: 4px ;
+								background-color: $color-primary ;
+								transition: all 0.1s ease-out;
+							}
 						}
 					}
 
@@ -441,6 +470,12 @@
 							&__item + &__item {
 								margin-top: 2rem ;
 							}
+						}
+
+						&__empty {
+							text-align: center ;
+							padding: 2rem ;
+							color: $color-neutral-500 ;
 						}
 					}
 				}

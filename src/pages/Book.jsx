@@ -2,7 +2,7 @@ import axios from 'axios'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import Page from '../components/hoc/Page/Page'
 
@@ -73,6 +73,8 @@ const BookPage = props => {
 	// live reader count
 	const [liveReaderCount, setLiveReaderCount] = useState(0)
 	const [avgReadTime, setAvgReadTime] = useState(0)
+	// tabs
+	const TabContainerRef = useRef();
 
 	useEffect(() => { GaTracker('page_view_book') }, [])
 
@@ -268,6 +270,13 @@ const BookPage = props => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
+
+	useEffect(()=>{
+		let activeTabElement = document.getElementById("BOOK_PAGE_" + ActiveTab);
+		if(!isUsable(activeTabElement)) return ;
+		if(!isUsable(TabContainerRef.current)) return;
+		TabContainerRef.current.style.setProperty("--marker-x",activeTabElement.offsetLeft);
+	},[ActiveTab])
 
 	const walletStatus = () => {
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
@@ -547,7 +556,7 @@ const BookPage = props => {
 		let tabsDOM = []
 		TABS.forEach(tab => {
 			tabsDOM.push(
-				<div onClick={()=>setActiveTab(tab.id)} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item utils__cursor--pointer"} key={tab.id}>
+				<div onClick={()=>setActiveTab(tab.id)} id={"BOOK_PAGE_"+tab.id} className={tab.id === ActiveTab?"book__data__container__desc__tabs__container__item book__data__container__desc__tabs__container__item--active":"book__data__container__desc__tabs__container__item utils__cursor--pointer"} key={tab.id}>
 					{isUsable(tab.icon) && tab.icon}
 					<h5 className="typo__head typo__head--6 typo__transform--capital">{tab.label}</h5>
 				</div>
@@ -586,6 +595,7 @@ const BookPage = props => {
 					:null}
 					<div className="book__data__container__desc__tabs__data__reviews">
 						{renderReviews(Reviews)}
+						{Reviews?.length === 0 ? <div className='book__data__container__desc__tabs__data__empty'>No Reviews</div> : ""}
 					</div>
 				</React.Fragment>
 			case 'TAB03':
@@ -620,6 +630,7 @@ const BookPage = props => {
 					:null}
 					<div className="book__data__container__desc__tabs__data__quotes">
 						{renderQuotes(Quotes)}
+						{Quotes?.length === 0 ? <div className='book__data__container__desc__tabs__data__empty'>No Quotes</div> : ""}
 					</div>
 				</React.Fragment>
 			default:
@@ -759,7 +770,7 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
-										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'><USDCIcon width={24} height={24} stroke='currentColor'/>&nbsp;{NFT.price}</div>
+										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'><USDCIcon width={18} height={18} stroke='currentColor'/>&nbsp;{NFT.price}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Publication date</div>
 										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
@@ -782,7 +793,7 @@ const BookPage = props => {
 										</div>
 										<div className="book__data__container__desc__interacts__item">
 											<PrintIcon width={32} height={32} stroke="currentColor"/>
-											<div className='typo__head--6 typo__color--n500'>Print Pages</div>
+											<div className='typo__head--6 typo__color--n500'>Pages</div>
 											<div className='typo__head--3 typo__color--n600'>{NFT.print||"00"}</div>
 										</div>
 										<div className="book__data__container__desc__interacts__item">
@@ -792,7 +803,7 @@ const BookPage = props => {
 										</div>
 									</div>
 									<div className="book__data__container__desc__tabs">
-										<div className="book__data__container__desc__tabs__container">
+										<div ref={TabContainerRef} className="book__data__container__desc__tabs__container">
 											{renderTabs()}
 										</div>
 										<div className="book__data__container__desc__tabs__data">
