@@ -12,7 +12,7 @@
 		height: 100%;
 		width: 100%;
 		display: flex;
-		background: url('../../assets/images/background-publish.svg');
+		// background: url('../../assets/images/background-publish.svg');
 
 		&>img{
 			flex: 1;
@@ -49,10 +49,15 @@
 
 		&__form{
 			max-width: 80rem;
-			margin-right: 4rem ;
-			width: calc(50% - 4rem);
+			margin-right: 8rem ;
+			width: calc(50% - 8rem);
 
-			@include respond(tabLand) {width: 100%; margin-right: 0rem ;}
+			@include respond(tabLand) {
+				width: 100%;
+				margin-right: 0rem;
+				margin-top: 0rem;
+				&>h3:first-child{margin-top: 0 !important;}
+			}
 			@include respond(phone){max-width: 100%; width: 100%;}
 
 			&__cta{
@@ -61,30 +66,30 @@
 		}
 
 		&__preview{
-			position: fixed ;
-			right: 2rem ;
-			width: 50% ;
-			height: calc(100% -  var(--header-height)) ;
-			display: flex ;
-			align-items: center ;
+			width: calc(50% - 8rem);
 			background-color: $color-white ;
 
+			@include respond(tabLand){
+				margin-top: 4.8rem;
+				width: 100%;
+			}
+
 			&__container{
-				width: 100% ;
-				box-shadow: $shadow-md ;
+				position: fixed;
+				border: 0.2rem solid $color-neutral-200;
 				border-radius: 0.8rem;
 				padding: 2rem;
-			}
+				margin-top: 4rem;
+				top: 50%;
+				width: calc(50% - 8rem);
+				transform: translate(0, calc(-50% + 4rem));
 
-			@include respond(tabLand){
-				position: static ;
-				margin-top: 4.8rem;
-				width: 100% ;
-				max-width: 80rem;
-			}
-
-			@include respond(phone){
-				max-width: 100% ;
+				@include respond(tabLand){
+					position: relative;
+					top: 0;
+					transform: none;
+					width: 100%;
+				}
 			}
 
 			&>img{
@@ -146,23 +151,16 @@
 					&__title  { color: $color-neutral-900; }
 					&__author { color: $color-neutral-600; margin-top: 0 ; }
 					&__price {
-						padding: 0.8rem 1.6rem ;
+						padding: 0.2rem 0 0;
 						width: min-content ;
-						background-color: hsl(160,80%,40%) ;
-						color: #fff ;
 						display: flex ;
 						align-items: center ;
-						border-radius: 0.5rem ;
-						font-weight: 700 ;
-						font-size: 2rem ;
- 
+						border-radius: 0.8rem ;
+
 						> svg {
 							margin-right: 0.5rem ;
 						}
- 
-						&--free {
-							background-color: hsl(160,80%,40%) ;
-						}
+
 					}
 					&__field {
 						color: $color-neutral-700 ;
@@ -201,7 +199,6 @@
 			&__progress {
 				display: flex ;
 				align-items: center ;
-				margin-top: 3rem ;
 				&__container {
 					flex: 1 ;
 					position: relative ;

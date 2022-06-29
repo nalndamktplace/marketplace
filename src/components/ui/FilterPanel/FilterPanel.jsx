@@ -42,7 +42,7 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFil
         let options = []
 		const currentValues = filters.filter(filter => filter['key'] === filterData.name)[0].value
         filterData.values.forEach(item => {
-            options.push(<div key={item.value} className="filter-panel__body__item">
+            options.push(<div key={item.value} className="filter-panel__body__item typo__body">
                 <label>
                     <input type="checkbox" onChange={(e)=>toggleFilter(e,filterData,item)} checked={currentValues.indexOf(item.value)>-1}/>
                     <span>{item.label}</span>
@@ -56,7 +56,7 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFil
         let options = []
 		const currentValue = filters.filter(filter => filter['key'] === filterData.name)[0].value
         filterData.values.forEach(item => {
-            options.push(<div key={item.value} className="filter-panel__body__item">
+            options.push(<div key={item.value} className="filter-panel__body__item typo__body">
                 <label>
                     <input type="radio" name={filterData.name} onChange={(e)=>toggleFilter(e,filterData,item)} checked={currentValue === item.value}/>
                     <span>{item.label}</span>
@@ -77,7 +77,7 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFil
 		const currentValue = filters.filter(filter => filter['key'] === filterData.name)[0].value
         return <div className="filter-panel__body__range">
             <div className="filter-panel__body__range__header">
-                <div className="filter-panel__body__range__label typo__head typo__head--6">{filterData.label}</div>
+                <div className="filter-panel__body__range__label typo__subtitle">{filterData.label}</div>
                 <div className="filter-panel__body__range__value">{currentValue} {filterData.unit}</div>
             </div>
             <div className="filter-panel__body__range__body">
@@ -89,7 +89,7 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFil
     return ( 
         <div className="filter-panel">
             <div className="filter-panel__header">
-                <div className="typo__head--6 typo__color--n600 filter-panel__header__title">Filters</div>
+                <div className="typo__head typo__head--6 typo__color--n600 filter-panel__header__title">Filters</div>
                 <Button className="filter-panel__header__close-btn" type="icon" onClick={()=>{setFiltersPanelOpen(false)}}><CloseIcon /></Button>
             </div>
             <div className="filter-panel__body">

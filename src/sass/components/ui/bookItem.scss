@@ -1,5 +1,5 @@
 .book-item {
-    --cover-size : 26rem ;
+    --cover-size : 20rem ;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -8,6 +8,12 @@
     cursor: pointer;
     position: relative ;
     width: var(--cover-size);
+
+	&[data-layout="GRID"]{
+		.book-item__data{
+			padding: 1rem 0;
+		}
+	}
 
     &[data-layout="LIST"] {
         flex-direction: row ;
@@ -28,7 +34,7 @@
     }
 
     &__cover{
-        border-radius: 0.5rem ;
+        border-radius: 0.8rem ;
         width  : calc(var(--cover-size));
         height : calc(var(--cover-size) * 1.6);
         object-fit: cover;
@@ -37,40 +43,31 @@
 
     &__data{
         width: 100% ;
-        padding: 1rem 0;
         margin-bottom: auto;
         &>p{margin-bottom: 0;}
 
         &__price {
-            padding: 0.8rem 1.6rem ;
+            padding: 0.4rem 0rem ;
             width: min-content ;
-            background-color: hsl(160,80%,40%) ;
             color: #fff ;
             display: flex ;
             align-items: center ;
-            border-radius: 0.5rem ;
-            font-weight: 700 ;
-            font-size: 2rem ;
+            border-radius: 0.8rem ;
 
             > svg {
                 margin-right: 0.5rem ;
             }
 
             &--free {
-                background-color: hsl(160,80%,40%) ;
             }
         }
 
         &__review {
-            padding: 0.8rem 1.6rem ;
+            padding: 0.4rem 0rem ;
             width: min-content ;
-            background-color: $color-blue ;
-            color: #fff ;
             display: flex ;
             align-items: center ;
-            border-radius: 0.5rem ;
-            font-weight: 700 ;
-            font-size: 2rem ;
+            border-radius: 0.8rem ;
 			white-space: nowrap ;
 
             > svg {
@@ -79,15 +76,11 @@
         }
 
         &__rejected {
-            padding: 0.8rem 1.6rem ;
+            padding: 0.4rem 0rem ;
             width: min-content ;
-            background-color: $color-red ;
-            color: #fff ;
             display: flex ;
             align-items: center ;
-            border-radius: 0.5rem ;
-            font-weight: 700 ;
-            font-size: 2rem ;
+            border-radius: 0.8rem ;
 			white-space: nowrap ;
 
             > svg {
@@ -96,21 +89,16 @@
         }
 
         &__author{
-            text-transform: uppercase;
-            // font-size: 1.75rem; 
-            // font-weight: 400;
-            color: $color-neutral-600
+            color: $color-neutral-400
         }
 
         &__name{ 
-            text-transform: capitalize; 
             word-break: break-word ;
             line-height: 1.25 ;
-            margin-top: 0.8rem ;
-            font-weight: 700 ;
         }
 
         &__synopsis{
+			margin-top: 0.4rem;
             display: none ;
         }
     }

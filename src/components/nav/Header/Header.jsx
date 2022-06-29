@@ -149,7 +149,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
 					subMenuitems.push(
-						<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__content__navbar__link__subitem typo__head--6'>
+						<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__content__navbar__link__subitem typo__act typo__transform--capital'>
 							{isUsable(navItem.icon) && <item.icon/>}
 							{navItem.id !== "NI4" && <span>{navItem.title}</span>}
 						</div>
@@ -158,7 +158,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				domElements.push(
 					<Dropdown 
 						key={item.id}
-						button={<div key={item.id} className="header__content__navbar__link" onClick={()=>menuItemClickHandler(item)}>
+						button={<div key={item.id} className="header__content__navbar__link typo__act typo__transform--capital" onClick={()=>menuItemClickHandler(item)}>
 							{isUsable(item.icon) && <item.icon/>}
 							{item.id !== "NI4" && <span>{item.title}</span>}
 						</div>}
@@ -167,7 +167,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				)
 			} else {
 				domElements.push(
-					<div key={item.id} className="header__content__navbar__link" onClick={()=>menuItemClickHandler(item)}>
+					<div key={item.id} className="header__content__navbar__link typo__act typo__transform--capital" onClick={()=>menuItemClickHandler(item)}>
 						{isUsable(item.icon) && <item.icon/>}
 						{item.id !== "NI4" && <span>{item.title}</span>}
 					</div>
@@ -192,8 +192,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 					<div onClick={() => {navigate('/book', {state: result}); setSearchQuery('')}} className="header__content__search__result" key={result.id}>
 						<img src={result.cover} alt={result.title+"'s Cover"} className="header__content__search__result__cover"/>
 						<div className="header__content__search__result__info">
-							<div className='header__content__search__result__info__author typo__body typo__body--2'>{result.author}</div>
-							<div className='header__content__search__result__info__name typo__body typo__body--2'>{result.title}</div>
+							<div className='header__content__search__result__info__name typo__head typo__head--6 typo__transform--capital'>{result.title}</div>
+							<div className='header__content__search__result__info__author typo__subtitle typo__transform--upper'>{result.author}</div>
 						</div>
 					</div>
 				)

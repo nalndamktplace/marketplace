@@ -76,7 +76,7 @@
 			justify-content: center;
 			transition: all 0.15s ease-out;
 			padding: 1rem 0;
-			border-radius: 4px ;
+			border-radius: 0.4rem ;
 			font-weight: 600 ;
 			color: $color-neutral-500 ;
 
@@ -121,7 +121,7 @@
 			
 			&__item{
 				padding: 1rem ;
-				border-radius: 8px ;
+				border-radius: 0.8rem ;
 
 				&:not(:last-child){ margin-bottom: 0.8rem; }
 				&:hover { background-color: $color-neutral-200 ; }

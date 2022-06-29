@@ -33,11 +33,11 @@ main{ min-height: 100vh; }
 textarea, input[type="text"]{
 	transition: box-shadow 0.1s ease-in-out;
 	border: none ;
-	box-shadow: 0 0 0 2px $color-neutral-200 ; 
+	box-shadow: 0 0 0 0.2rem $color-neutral-200 ; 
 
 	&:focus {
 		outline: none !important;
-		box-shadow: 0 0 0 2px $color-primary;
+		box-shadow: 0 0 0 0.2rem $color-primary;
 	}
 
 	&::placeholder {

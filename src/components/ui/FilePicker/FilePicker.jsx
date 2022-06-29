@@ -31,7 +31,7 @@ const FilePicker = (props) => {
 				onChange={handleFileChange}
 				ref={fileInputRef}
 			/>
-			<div className="file-input__file-name">{file ? file : props.placeholder || "Upload File"}</div>
+			<div className="file-input__file-name typo__color--n400">{file ? file : props.placeholder || "Upload File"}</div>
 		</div>
 	)
 }

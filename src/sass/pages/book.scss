@@ -116,7 +116,6 @@
 
 					&__count {
 						color: $color-neutral-500 ;
-						font-weight: 500 ;
 						margin-left: 2rem ;
 					}
 				}
@@ -128,9 +127,7 @@
 					color: #fff ;
 					display: flex ;
 					align-items: center ;
-					border-radius: 0.5rem ;
-					font-weight: 700 ;
-					font-size: 2rem ;
+					border-radius: 0.8rem ;
 					margin-top: 1rem ;
 
 					> svg {
@@ -183,6 +180,7 @@
 
 				&__right {
 					flex: 1 ;
+
 					padding-right: 4rem ;
 
 					overflow: hidden ;
@@ -223,7 +221,6 @@
 						max-width: 48rem ;
 
 						&__label {
-							font-weight: 500 ;
 						}
 
 						&__data {
@@ -240,10 +237,8 @@
 					}
 
 					&__head {
-						text-transform: capitalize ;
 						margin: 0 ;
 						margin-top: 2rem ;
-						font-weight: 500 ;
 					}
 
 					&__data {
@@ -255,10 +250,11 @@
 						position: relative ;
 						margin-left: -0.75rem ;
 						flex-wrap: wrap ;
+
 						&__item {
 							padding: 0.75rem 1.5rem ;
 							background-color: $color-neutral-200 ;
-							color: $color-neutral-700 ;
+							color: $color-neutral-500 ;
 							margin: 0.5rem ;
 							border-radius: 500px ;
 						}
@@ -278,7 +274,7 @@
 						align-items: center;
 						justify-content: flex-start;
 						margin-bottom: 2.4rem;
-						border-bottom: 2px solid $color-neutral-200 ;
+						border-bottom: 0.2rem solid $color-neutral-200 ;
 						overflow-x: auto ;
 
 						-ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -294,7 +290,7 @@
 							padding: 1.2rem 0;
 							transition: all 0.15s ease-in-out;
 							color: $color-neutral-500 ;
-							border-bottom: 4px solid transparent ; 
+							border-bottom: 0.4rem solid transparent ; 
 							width: 16rem ;
 							flex: 0 0 16rem ;
 
@@ -306,13 +302,11 @@
 							}
 
 							&>h5{
-								text-transform: capitalize !important;
-								font-weight: 600;
 								color: currentColor ;
 							}
 							
 							&--active{
-								// border-bottom: 4px solid $color-primary; 
+								border-bottom: 0.4rem solid $color-primary; 
 								color: $color-primary ;
 							}
 
@@ -336,7 +330,7 @@
 
 					&__data{
 						&__action{
-							border: 2px solid $color-neutral-200;
+							border: 0.2rem solid $color-neutral-200;
 							width: 100% ;
 							padding: 1rem ;
 							border-radius: 1rem ;

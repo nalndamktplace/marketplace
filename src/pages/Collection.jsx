@@ -24,7 +24,7 @@ import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 
 const CollectionPage = () => {
 
-	const DEFAULT_FILTERS = [{key: 'market', value: 'new', type: 'tab'}, {key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
+	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}]
 
 	const params = useLocation()
 	const navigate = useNavigate()

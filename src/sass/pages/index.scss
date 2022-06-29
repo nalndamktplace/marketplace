@@ -1,5 +1,5 @@
 .index{
-	--header-height : 14rem ;
+	--header-height : 12rem ;
 	margin-top: var(--header-height) ;
 	
 	&__hero{
@@ -60,9 +60,7 @@
 
 	&__collection{
 		width: 100%;
-		padding: 8rem 0 4rem 0;
-
-		// &:not(:last-child){margin-bottom: 8rem;}
+		&:not(:last-child){margin-bottom: 6.4rem;}
 
 		&__header {
 			display: flex ;
@@ -78,10 +76,9 @@
 				align-items: center ;
 				justify-content: center ;
 				color: $color-neutral-500;
-				border-radius: 4px ;
+				border-radius: 0.4rem ;
 				white-space: nowrap ;
 				cursor: pointer ;
-				font-weight: 500 ;
 		
 				&>svg {
 					width: 75% ;
@@ -129,7 +126,7 @@
 				&:not(:last-child){ margin-right: 4rem; }
 
 				&__cover{
-					border-radius: 0.5rem ;
+					border-radius: 0.8rem ;
 					width  : calc(var(--cover-size));
 					height : calc(var(--cover-size) * 1.6);
 					object-fit: cover;
@@ -164,9 +161,7 @@
 						color: #fff ;
 						display: flex ;
 						align-items: center ;
-						border-radius: 0.5rem ;
-						font-weight: 700 ;
-						font-size: 2rem ;
+						border-radius: 0.8rem ;
  
 						> svg {
 							margin-right: 0.5rem ;
@@ -179,8 +174,6 @@
 
 					&__author{
 						text-transform: uppercase;
-						font-size: 1.75rem; 
-						font-weight: 400;
 						color: $color-neutral-400
 					}
 
@@ -189,7 +182,6 @@
 						word-break: break-word ;
 						line-height: 1.25 ;
 						margin-top: 0.8rem ;
-						font-weight: 700 ;
 					}
 				}
 
@@ -218,7 +210,7 @@
 		@include respond(phone){ margin-bottom: 0rem; }
 
 		&__container{
-			text-shadow: 0 0 4px rgba($color-black,0.3), 0 0 16px rgba($color-black,0.2);
+			text-shadow: 0 0 0.4rem rgba($color-black,0.3), 0 0 10.64rem rgba($color-black,0.2);
 			&__row{
 				display: flex;
 				flex-direction: row;
@@ -328,8 +320,6 @@
 	
 					&__author{
 						text-transform: uppercase;
-						font-size: 1.2rem;
-						font-weight: 600;
 						color: rgba($color-black, 0.64)
 					}
 
@@ -417,10 +407,6 @@
 					&__title {
 						color: $color-neutral-700;
 					}
-				}
-
-				&> * + * {
-					margin-left: 2rem ;
 				}
 
 				@include respond(tabPort){
