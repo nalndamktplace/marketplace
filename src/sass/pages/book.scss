@@ -121,10 +121,8 @@
 				}
 
 				&__price {
-					padding: 0.8rem 1.6rem ;
+					padding: 0.2rem 0rem ;
 					width: min-content ;
-					background-color: hsl(160,80%,40%) ;
-					color: #fff ;
 					display: flex ;
 					align-items: center ;
 					border-radius: 0.8rem ;
@@ -135,7 +133,6 @@
 					}
 
 					&--free {
-						background-color: hsl(160,80%,40%) ;
 					}
 				}
 
@@ -214,7 +211,7 @@
 					&__contract {
 						display: flex ;
 						align-items: center ;
-						padding: 2rem ;
+						padding: 1.2rem ;
 						background-color: $color-neutral-200 ;
 						border-radius: 1rem ;
 						cursor: pointer ;
