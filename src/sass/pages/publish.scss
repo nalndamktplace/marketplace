@@ -64,10 +64,14 @@
 			position: fixed ;
 			right: 2rem ;
 			width: 50% ;
+			height: calc(100% -  var(--header-height)) ;
+			display: flex ;
+			align-items: center ;
 			background-color: $color-white ;
 
 			&__container{
-				border: 0.2rem solid $color-neutral-200;
+				width: 100% ;
+				box-shadow: $shadow-md ;
 				border-radius: 0.8rem;
 				padding: 2rem;
 			}
@@ -108,7 +112,6 @@
 					object-fit: cover;
 					background-color: #fff ;
 					border-radius: 1rem ;
-					box-shadow: $shadow-md ;
 
 					&__img {
 						width: 100% ;
@@ -124,6 +127,8 @@
 						justify-content: center ;
 						flex-direction: column ;
 						background-color: $color-neutral-200;
+						border-radius: 1rem ;
+						box-shadow: inset $shadow-sm ;
 						color: $color-neutral-500;
 						&:hover {
 							color: $color-neutral-700;
@@ -204,6 +209,7 @@
 					&__value {
 						position: absolute ;
 						bottom: 100% ;
+						font-weight: 500 ;
 					}
 				}
 			}
