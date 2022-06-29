@@ -37,7 +37,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
 	const [SubMenuOpen, setSubMenuOpen] = useState(false)
-	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 	const [SearchQuery, setSearchQuery] = useState('')
 	const [SearchResults, setSearchResults] = useState([])
 	const [Collections, setCollections] = useState([])
@@ -127,7 +126,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			setMenuOpen(false)
 			GaTracker('external_link_header_'+navItem.title)
 		} else if(isUsable(navItem.subMenu)){
-			setActiveSubMenu(navItem)
 			setSubMenuOpen(true)
 		}
 	}

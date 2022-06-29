@@ -73,7 +73,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		}
 		let itemsDOM = []
 		item.subMenu.forEach(navItem => {
-			itemsDOM.push(<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+			itemsDOM.push(<div onClick={()=>{menuItemClickHandler(navItem);setSubMenuOpen(false)}} key={navItem.id} className='side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 		})
 		return itemsDOM
 	}
