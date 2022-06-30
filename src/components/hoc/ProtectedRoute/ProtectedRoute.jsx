@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -9,11 +10,14 @@ import { setWallet } from "../../../store/actions/wallet"
 import { setSnackbar } from "../../../store/actions/snackbar"
 import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
 
+import { BASE_URL } from '../../../config/env'
+import { setUser } from '../../../store/actions/user'
+
 const ProtectedRoute = ({element}) => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const WalletState = useSelector(state=>state.WalletState)
+	const WalletState = useSelector(state => state.WalletState)
 
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
 
@@ -25,8 +29,19 @@ const ProtectedRoute = ({element}) => {
 			dispatch(showSpinner())
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-				setIsAuthenticated(true)
+				axios({
+					url: BASE_URL+'/api/user/login',
+					method: 'POST',
+					headers: {
+						'address': res.address 
+					}
+				}).then(res => {
+					if(res.status === 200) dispatch(setUser(res.data))
+				}).catch(err => {
+				}).finally( () => {
+					dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+					setIsAuthenticated(true)
+				})
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				navigate('/')

@@ -26,6 +26,7 @@ import {ReactComponent as GridIcon} from "../../../assets/icons/layout-grid.svg"
 import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
+import { setUser } from "../../../store/actions/user"
 
 const Header = ({showRibbion=true,noPadding=false}) => {
 
@@ -80,8 +81,19 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		else {
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-				return true
+				axios({
+					url: BASE_URL+'/api/user/login',
+					method: 'POST',
+					headers: {
+						'address': res.address 
+					}
+				}).then(res => {
+					if(res.status === 200) dispatch(setUser(res.data))
+				}).catch(err => {
+				}).finally( () => {
+					dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+					return true
+				})
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				return false

@@ -38,6 +38,7 @@ import { BASE_URL } from '../config/env'
 import { AGE_GROUPS } from '../config/ages'
 
 import GaTracker from '../trackers/ga-tracker'
+import { setUser } from '../store/actions/user'
 
 const BookPage = props => {
 
@@ -486,8 +487,19 @@ const BookPage = props => {
 			Wallet.connectWallet().then(res => {
 				setLoading(false)
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				setWalletAddress(res.address)
-				purchase()
+				axios({
+					url: BASE_URL+'/api/user/login',
+					method: 'POST',
+					headers: {
+						'address': res.address 
+					}
+				}).then(res => {
+					if(res.status === 200) dispatch(setUser(res.data))
+				}).catch(err => {
+				}).finally( () => {
+					setWalletAddress(res.address)
+					purchase()
+				})
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
 				setLoading(false)
