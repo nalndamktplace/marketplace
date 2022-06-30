@@ -17,7 +17,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import Button from '../components/ui/Buttons/Button'
 import ProgressBar from '../components/ui/ProgressBar/ProgressBar'
 
-import { ReactComponent as USDCIcon } from "../assets/icons/usdc-icon.svg"
+import { ReactComponent as USDCIcon } from "../assets/icons/usdc.svg"
 import { ReactComponent as ImagePlaceholder } from "../assets/icons/image.svg"
 
 import { GENRES } from '../config/genres'

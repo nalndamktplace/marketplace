@@ -21,7 +21,7 @@ import { ReactComponent as ChevronLeftIcon } from "../assets/icons/chevron-left.
 import { ReactComponent as ChevronRightIcon } from "../assets/icons/chevron-right.svg"
 import { ReactComponent as BookmarkIcon } from "../assets/icons/bookmark.svg"
 import { ReactComponent as LetterCaseIcon } from "../assets/icons/letter-case.svg"
-import { ReactComponent as BlockquoteIcon } from "../assets/icons/blockquote.svg"
+import { ReactComponent as BlockquoteIcon } from "../assets/icons/block-quote.svg"
 import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg"
 import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
 import { ReactComponent as ListIcon } from "../assets/icons/list.svg"

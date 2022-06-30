@@ -6,12 +6,12 @@ import Button from "../../ui/Buttons/Button"
 import { isUsable } from "../../../helpers/functions"
 import GaTracker from "../../../trackers/ga-tracker"
 
+import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg"
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg"
 import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
 import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
-import {ReactComponent as BackIcon} from "../../../assets/icons/back-arrow.svg"
-import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg"
 import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
+import {ReactComponent as ArrowLeftIcon} from "../../../assets/icons/arrow-left.svg"
 
 const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
 
@@ -118,7 +118,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
                 <div className={getSubMenuClasses()}>
                     <div className="side-navbar__container__submenu__header">
                         <div className="side-navbar__container__submenu__header__backbtn" onClick={toggleSubMenu}>
-                            <BackIcon />
+                            <ArrowLeftIcon />
                         </div>
                         <div className="side-navbar__container__submenu__header__title typo__head--5">
                             {ActiveSubMenu && ActiveSubMenu.title}

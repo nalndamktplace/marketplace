@@ -15,7 +15,7 @@ import { hideModal, SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { BASE_URL } from '../../../config/env'
 
-import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
+import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
 
 const PurchaseModal = props => {
 

@@ -1,6 +1,6 @@
 import Stars from "../Stars/Stars"
 
-import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc-icon.svg"
+import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
 
 const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show', onRead=()=>{}}) => {
 

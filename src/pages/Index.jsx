@@ -10,7 +10,7 @@ import { isFilled, isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-import {ReactComponent as USDCIcon} from "../assets/icons/usdc-icon.svg"
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from '../trackers/ga-tracker'
