@@ -17,7 +17,7 @@ const Customizer = ({rendition}) => {
 			let location = rendition.currentLocation()
 			rendition.clear()
 			rendition.display(location.start.cfi)
-		} catch(err){/*console.error(err)*/}
+		} catch(err){}
 	},[rendition]);
 
 	const savePreferences = (readerPreferences) => {

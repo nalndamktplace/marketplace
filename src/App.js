@@ -8,6 +8,7 @@ import './main.scss'
 import Spinner from './components/ui/Spinner/Spinner'
 import Snackbar from './components/ui/Snackbar/Snackbar'
 
+import UserReducer from './store/reducers/user'
 import ModalReducer from './store/reducers/modal'
 import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
@@ -32,6 +33,7 @@ import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 
 const rootReducer = combineReducers({
+	UserState: UserReducer,
 	ModalState: ModalReducer,
 	WalletState: WalletReducer,
 	SpinnerState: SpinnerReducer,

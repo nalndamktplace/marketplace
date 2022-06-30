@@ -23,6 +23,7 @@ import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import GaTracker from '../trackers/ga-tracker'
+import { setUser } from '../store/actions/user'
 
 const AccountPage = props => {
 
@@ -56,7 +57,18 @@ const AccountPage = props => {
 		() => {
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+				axios({
+					url: BASE_URL+'/api/user/login',
+					method: 'POST',
+					headers: {
+						'address': res.address 
+					}
+				}).then(res => {
+					dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+					if(res.status === 200) dispatch(setUser(res.data))
+				}).catch(err => {
+				}).finally( () => {
+				})
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			}).finally(() => setLoading(false))
