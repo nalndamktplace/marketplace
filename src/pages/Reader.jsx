@@ -413,7 +413,7 @@ const ReaderPage = () => {
 					</div>
 				</div>
 				<div className="reader__header__center">
-					<div className="typo__body--2 typo__color--n700">{bookMeta.title||"Untitled"}</div>
+					<div className="typo__body--2 typo__color--n700 typo__transform--capital">{bookMeta.title||"Untitled"}</div>
 				</div> 
 				<div className="reader__header__right">
 					<Button className="reader__header__right__hide-on-mobile" type="icon" onClick={()=>setFullscreen(s=>!s)}> {fullscreen?<MinimizeIcon/>:<MaximizeIcon/>} </Button>
@@ -453,7 +453,7 @@ const ReaderPage = () => {
 			</div>
 			<nav className={"reader__nav" + (showUI?" reader__nav--show":"")}>
 				<div className="reader__nav__value">
-					<div className="reader__nav__value__chapter-title typo__gray--n600">{chapterName||bookMeta.title||""}</div>
+					<div className="reader__nav__value__chapter-title typo__gray--n600 typo__transform--capital">{chapterName||bookMeta.title||""}</div>
 					<div>{Math.floor(debouncedProgress*100/totalLocations)||"0"}%</div>
 				</div>
 				<div className="reader__nav__progress">
