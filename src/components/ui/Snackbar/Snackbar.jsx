@@ -3,10 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { unsetSnackbar } from '../../../store/actions/snackbar'
 
-import CloseIconInfo from '../../../assets/icons/close-blue.svg'
-import CloseIconDanger from '../../../assets/icons/close-red.svg'
-import CloseIconWarn from '../../../assets/icons/close-yellow.svg'
-import CloseIconSuccess from '../../../assets/icons/close-green.svg'
+import {ReactComponent as CloseIcon} from '../../../assets/icons/close-icon.svg'
 
 const Snackbar = props => {
 
@@ -53,20 +50,22 @@ const Snackbar = props => {
 		return classes.join(" ")
 	}
 
-	const getSnackbarIcon = () => {
+	const getCloseIconClasses = () => {
+		let classes = ['snackbar__icon']
 		switch (SnackbarState.type) {
-			case 1: return CloseIconSuccess
-			case 2:	return CloseIconInfo
-			case 3: return CloseIconWarn
-			case 4: return CloseIconDanger
-			default: return CloseIconSuccess
+			case 1: classes.push('typo__color--success'); break
+			case 2:	classes.push('typo__color--info'); break
+			case 3: classes.push('typo__color--warning'); break
+			case 4: classes.push('typo__color--danger'); break
+			default: classes.push('typo__color--info'); break
 		}
+		return classes.join(' ')
 	}
 
 	return (
 		<div className={getSnackbarClasses()}>
 			<p className={getSnackbarMessageClasses()}>{SnackbarState.message}</p>
-			<img onClick={closeSnackbar} className='snackbar__icon' src={getSnackbarIcon()} alt={"Close"}/>
+			<CloseIcon onClick={closeSnackbar} className={getCloseIconClasses()}/>
 		</div>
 	)
 }
