@@ -23,7 +23,7 @@
 <circle cx="181.6" cy="207.975" r="3.44985" transform="rotate(90 181.6 207.975)" fill="white"/>
 <circle cx="158.701" cy="207.975" r="3.44985" transform="rotate(90 158.701 207.975)" fill="white"/>
 <circle cx="135.801" cy="207.975" r="3.44985" transform="rotate(90 135.801 207.975)" fill="white"/>
-<path d="M132.351 247.051L140.978 238.425L149.605 247.051L158.231 238.425L166.858 247.051L175.485 238.425L184.112 247.051L192.739 238.425L201.366 247.051L209.992 238.425L218.619 247.051L227.246 238.425L235.873 247.051" stroke="white" stroke-width="2"/>
+<path d="M132.351 247.051L140.978 238.425L149.605 247.051L158.231 238.425L166.858 247.051L175.485 238.425L184.112 247.051L192.739 238.425L201.366 247.051L209.992 238.425L218.619 247.051L227.246 238.425L235.873 247.051" stroke="white" stroke-width="3.6"/>
 <defs>
 <filter id="filter0_d_179_2641" x="998.109" y="0" width="957.325" height="370.751" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>

@@ -1,16 +1,1 @@
-<svg
-	xmlns="http://www.w3.org/2000/svg"
-	class="icon icon-tabler icon-tabler-brand-safari"
-	width="44"
-	height="44"
-	viewBox="0 0 24 24"
-	stroke-width="2"
-	stroke="currentColor"
-	fill="none"
-	stroke-linecap="round"
-	stroke-linejoin="round"
->
-	<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-	<polyline points="8 16 10 10 16 8 14 14 8 16" />
-	<circle cx="12" cy="12" r="9" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M8,24l4-12L24,8,20,20,8,24" transform="translate(8 8)" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.6"/><circle cx="18" cy="18" r="18" transform="translate(6 6)" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.6"/></svg>
