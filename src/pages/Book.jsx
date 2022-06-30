@@ -441,6 +441,21 @@ const BookPage = props => {
 
 	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
 
+	const loginUser = (walletAddress) => {
+		axios({
+			url: BASE_URL+'/api/user/login',
+			method: 'POST',
+			headers: {
+				'address': walletAddress
+			}
+		}).then(res => {
+			if(res.status === 200) dispatch(setUser(res.data))
+		}).catch(err => {
+		}).finally( () => {
+			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+		})
+	}
+
 	const purchaseNewCopyHandler = () => {
 
 		const purchase = () => {
@@ -481,25 +496,18 @@ const BookPage = props => {
 
 		GaTracker('event_book_purchase_new')
 		setLoading(true)
-		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)) purchase()
+		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)){
+			loginUser(WalletAddress)
+			purchase()
+		}
 		else{
 			setLoading(true)
 			Wallet.connectWallet().then(res => {
 				setLoading(false)
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				axios({
-					url: BASE_URL+'/api/user/login',
-					method: 'POST',
-					headers: {
-						'address': res.address 
-					}
-				}).then(res => {
-					if(res.status === 200) dispatch(setUser(res.data))
-				}).catch(err => {
-				}).finally( () => {
-					setWalletAddress(res.address)
-					purchase()
-				})
+				setWalletAddress(res.address)
+				loginUser(res.address)
+				purchase()
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
 				setLoading(false)

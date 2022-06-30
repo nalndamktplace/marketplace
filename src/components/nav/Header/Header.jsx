@@ -74,26 +74,31 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
+	const loginUser = (walletAddress) => {
+		axios({
+			url: BASE_URL+'/api/user/login',
+			method: 'POST',
+			headers: {
+				'address': walletAddress
+			}
+		}).then(res => {
+			if(res.status === 200) dispatch(setUser(res.data))
+		}).catch(err => {
+		}).finally( () => {
+			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
+		})
+	}
+
 	const handleWalletConnect = () => {
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
+			loginUser(WalletState.wallet.address)
 			return true
 		}
 		else {
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				axios({
-					url: BASE_URL+'/api/user/login',
-					method: 'POST',
-					headers: {
-						'address': res.address 
-					}
-				}).then(res => {
-					if(res.status === 200) dispatch(setUser(res.data))
-				}).catch(err => {
-				}).finally( () => {
-					dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-					return true
-				})
+				loginUser(res.address)
+				return true
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 				return false
@@ -113,7 +118,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
-				// {id: "NI4SMI2",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet)?WalletState.wallet.sequence.openWallet():null,},
+				{id: "NI4SMI2",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
 				{id: "NI4SMI3",title: "Library",url: "/account",uri: null,icon: null,action: null},
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],

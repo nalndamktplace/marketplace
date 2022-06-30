@@ -37,7 +37,7 @@ const ProfilePage = () => {
 				url: BASE_URL+'/api/user/profile',
 				method: 'PUT',
 				headers: {
-					'address': UserState.user.wallet,
+					'address': WalletState.wallet.address,
 					'user-id': UserState.user.uid
 				},
 				data: {
@@ -72,7 +72,7 @@ const ProfilePage = () => {
 				url: BASE_URL+'/api/user/profile/pic',
 				method: 'PUT',
 				headers: {
-					'address': UserState.user.wallet,
+					'address': WalletState.wallet.address,
 					'user-id': UserState.user.uid
 				},
 				data: formData
@@ -95,18 +95,18 @@ const ProfilePage = () => {
 	useEffect(() => { if(isUsable(FormInput.displayPic)) setDisplayPicUrl(URL.createObjectURL(FormInput.displayPic)) }, [FormInput.displayPic])
 
 	useEffect(() => {
-		if(isFilled(UserState.user.uid) && isFilled(UserState.user.wallet)){
+		if(isFilled(UserState.user.uid) && isFilled(WalletState.wallet.address)){
 			setLoading(true)
 			axios({
 				url: BASE_URL+'/api/user/profile',
 				method: 'GET',
 				headers: {
-					'address': UserState.user.wallet,
+					'address': WalletState.wallet.address,
 					'user-id': UserState.user.uid
 				}
 			}).then(res => {
 				if(res.status === 200){
-					setFormInput(old => {return {...old, fullName: `${res.data.first_name} ${res.data.last_name}`, bio: res.data.bio}})
+					setFormInput(old => {return {...old, fullName: isFilled(res.data.first_name)?`${res.data.first_name} ${res.data.last_name}`:'', bio: res.data.bio}})
 					setDisplayPicUrl(`${BASE_URL}/files/${res.data.display_pic}`)
 				}
 				else dispatch(setSnackbar('NOT200'))
@@ -114,8 +114,7 @@ const ProfilePage = () => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-		else dispatch(setSnackbar({show: true, message: "Please login first.", type: 2}))
-	}, [UserState, dispatch])
+	}, [UserState, dispatch, WalletState])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -135,8 +134,8 @@ const ProfilePage = () => {
                         <div className="typo__head--3">Personal Details</div>
                         <Button onClick={()=>saveHandler()}><SaveIcon/>Save</Button>
                     </div>
-					<InputField type="string" label="fullname" value={FormInput.fullName} onChange={e => setFormInput({ ...FormInput, fullName: e.target.value })} description="Enter your full name"/>
-					<InputField type="text" label="bio" value={FormInput.bio} onChange={e => {e.target.value.length<141?setFormInput({ ...FormInput, bio: e.target.value }):dispatch(setSnackbar({show: true, message: "Bio cannot be longer than 140 characters.", type: 3}))}} description={`Enter your bio (${FormInput.bio.length}/140)`}/>
+					<InputField type="string" label="fullname" value={isUsable(FormInput.fullName)?FormInput.fullName:''} onChange={e => setFormInput({ ...FormInput, fullName: e.target.value })} description="Enter your full name"/>
+					<InputField type="text" label="bio" value={FormInput.bio} onChange={e => {e.target.value.length<1001?setFormInput({ ...FormInput, bio: e.target.value }):dispatch(setSnackbar({show: true, message: "Bio cannot be longer than 1,000 characters.", type: 3}))}} description={`Enter your bio (${isUsable(FormInput.bio)?FormInput.bio.length:0}/1000)`}/>
                     <div className="profile__details__header">
                         <div className="typo__head--3">Connections</div>
                     </div>
@@ -144,7 +143,7 @@ const ProfilePage = () => {
                         <div className="profile__details__connect__icon">
                             <WalletIcon width={32} height={32} stroke="currentColor"/>
                         </div>
-                        <div className="profile__details__connect__label typo__head--6">Wallet: {UserState.user.wallet}</div>
+                        <div className="profile__details__connect__label typo__head--6">Wallet: {WalletState.wallet.address}</div>
                         <Button type="primary">open</Button>
                     </div>
                     <div className="profile__details__connect">
