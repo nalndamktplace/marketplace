@@ -131,13 +131,13 @@ const ProfilePage = () => {
                 </div>
                 <div className="profile__details">
                     <div className="profile__details__header">
-                        <div className="typo__head--3">Personal Details</div>
+                        <div className="typo__head--4">Personal Details</div>
                         <Button onClick={()=>saveHandler()}><SaveIcon/>Save</Button>
                     </div>
 					<InputField type="string" label="fullname" value={isUsable(FormInput.fullName)?FormInput.fullName:''} onChange={e => setFormInput({ ...FormInput, fullName: e.target.value })} description="Enter your full name"/>
 					<InputField type="text" label="bio" value={FormInput.bio} onChange={e => {e.target.value.length<1001?setFormInput({ ...FormInput, bio: e.target.value }):dispatch(setSnackbar({show: true, message: "Bio cannot be longer than 1,000 characters.", type: 3}))}} description={`Enter your bio (${isUsable(FormInput.bio)?FormInput.bio.length:0}/1000)`}/>
                     <div className="profile__details__header">
-                        <div className="typo__head--3">Connections</div>
+                        <div className="typo__head--4">Connections</div>
                     </div>
                     <div className="profile__details__connect" onClick={()=>walletHandler()}>
                         <div className="profile__details__connect__icon">
