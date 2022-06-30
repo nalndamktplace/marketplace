@@ -94,7 +94,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		NAV_ITEMS.forEach(item => {
 			if(!isUsable(WalletState.wallet.provider) && item.id === "NI4") return
 			domElements.push(
-				<div key={item.id} className="side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer" onClick={()=>menuItemClickHandler(item)}>
+				<div key={item.id} className="side-navbar__container__item typo__act utils__cursor--pointer" onClick={()=>menuItemClickHandler(item)}>
 					{isUsable(item.icon) && <item.icon/>}
 					<span>{item.title}</span>
 				</div>
