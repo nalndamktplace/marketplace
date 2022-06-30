@@ -170,7 +170,7 @@ const PublishNftPage = props => {
 				</div>
 				<div className="publish__data__preview">
 					<div className="publish__data__preview__container">
-						<h3 className='typo__head typo__head--5 utils__margin__top--n utils__margin__bottom--b'>Preview</h3>
+						<h3 className='typo__head typo__head--5 utils__margin__top--n'>Preview</h3>
 						<div className='publish__data__preview__book' onClick={()=>{}}>
 							<div className="publish__data__preview__book__cover">
 								{	isUsable(CoverUrl)
@@ -201,7 +201,7 @@ const PublishNftPage = props => {
 								</div>}
 							</div>
 						</div>
-						<div className='publish__data__preview__progress  utils__margin__top--b'>
+						<div className='publish__data__preview__progress'>
 							<div className='publish__data__preview__progress__container'>
 								<div className='publish__data__preview__progress__container__value typo__color--n700'>{Math.round(formProgress*100)}%</div>
 								<ProgressBar progress={formProgress}/>
