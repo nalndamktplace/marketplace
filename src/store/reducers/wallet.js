@@ -1,5 +1,4 @@
 import { CLEAR_WALLET, SET_WALLET, WEB3_IS_NOT_SUPPORTED, WEB3_IS_SUPPORTED } from "../actions/wallet"
-// import jc from 'json-cycle'
 
 const initState = {
 	wallet: {
