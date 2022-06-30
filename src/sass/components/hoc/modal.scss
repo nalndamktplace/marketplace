@@ -2,8 +2,12 @@
 	background-color: $color-white;
 	border-radius: 2rem;
 	box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
-	z-index: 100;
+	z-index: 800;
 	padding: 2.4rem;
+
+	@include respond(phone){
+		overflow-y: scroll;
+	}
 }
 
 /* this is different modal (css for components/hoc/Modal.jsx) */
@@ -15,6 +19,7 @@
 	min-width: 40vw ;
 	max-width: 48rem ;
 	min-height: max-content ;
+	max-height: 100%;
 	transform: translate(-50%,-50%);
 	background-color: $color-white ;
 	box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
