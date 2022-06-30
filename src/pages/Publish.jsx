@@ -114,7 +114,7 @@ const PublishNftPage = props => {
 						}).then(res4 => {
 							if(res4.status === 200){
 								setLoading(false)
-								navigate('/account', {state: {tab: 'published'}})
+								navigate('/library', {state: {tab: 'published'}})
 							}
 							else {
 								dispatch(setSnackbar('ERROR'))

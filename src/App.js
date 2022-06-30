@@ -18,7 +18,7 @@ import DarkModeReducer from './store/reducers/darkmode'
 import BookPage from './pages/Book'
 import IndexPage from './pages/Index'
 import ReaderPage from './pages/Reader'
-import AccountPage from './pages/Account'
+import LibraryPage from './pages/Library'
 import ExplorePage from './pages/Explore'
 import ProfilePage from './pages/Profile'
 import PublishNftPage from './pages/Publish'
@@ -57,9 +57,9 @@ function App() {
 							<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
 							<Route path='/explore' element={<ExplorePage/>}/>
 							<Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />}/>
-							<Route path='/account' element={<ProtectedRoute element={<AccountPage />} />}/>
+							<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
 							<Route path='/collection' element={<CollectionPage/>}/>
-							<Route path='/account/reader' element={<ReaderPage/>}/>
+							<Route path='/library/reader' element={<ReaderPage/>}/>
 							{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
 							{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
 						</Routes>

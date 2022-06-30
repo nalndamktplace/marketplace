@@ -119,7 +119,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
 				{id: "NI4SMI2",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
-				{id: "NI4SMI3",title: "Library",url: "/account",uri: null,icon: null,action: null},
+				{id: "NI4SMI3",title: "Library",url: "/library",uri: null,icon: null,action: null},
 				{id: "NI4SMI4",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {handleWalletDisconnect()}},
 			],
 		},

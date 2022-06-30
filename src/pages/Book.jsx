@@ -413,7 +413,7 @@ const BookPage = props => {
 							}).then(res=>{
 								if(res.status === 200) {
 									GaTracker('navigate_book_reader')
-									navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
+									navigate('/library/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
 								} else {
 									dispatch(setSnackbar({show:true,message : "Error", type : 4}))
 								}

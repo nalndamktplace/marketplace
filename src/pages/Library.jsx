@@ -25,7 +25,7 @@ import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import GaTracker from '../trackers/ga-tracker'
 import { setUser } from '../store/actions/user'
 
-const AccountPage = props => {
+const LibraryPage = props => {
 
 	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}, {key: 'decayscore', value: null, type: 'range'}]
 
@@ -187,7 +187,7 @@ const AccountPage = props => {
 			}).then(res=>{
 				if(res.status === 200) {
 					GaTracker('navigate_account_reader')
-					navigate('/account/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
+					navigate('/library/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
 				} else {
 					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
 				}
@@ -195,7 +195,7 @@ const AccountPage = props => {
 			})
 		} catch (err) {
 		}
-		navigate('/account/reader', {state: {book: NFT, preview: false}}) 
+		navigate('/library/reader', {state: {book: NFT, preview: false}}) 
 	}
 
 	const openHandler = nft => {
@@ -249,4 +249,4 @@ const AccountPage = props => {
 	)
 }
 
-export default AccountPage
+export default LibraryPage
