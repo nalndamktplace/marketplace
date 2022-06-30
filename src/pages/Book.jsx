@@ -785,12 +785,12 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
 										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'><USDCIcon width={18} height={18} stroke='currentColor'/>&nbsp;{NFT.price}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Publication date</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Published On</div>
 										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
 										<div className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Average Read Time</div>
-										<div className='book__data__container__desc__summary__data'>{moment.utc(avgReadTime*1000).format('HH:mm:ss')}</div>
+										<div className='book__data__container__desc__summary__data'>{moment.utc(avgReadTime*1000).format('m')} minutes</div>
 									</div>
 								</div>
 								<div className="book__data__container__desc__right">
