@@ -174,13 +174,11 @@ const ReaderPage = () => {
 				setRendition(_rendition)
 				setLoading(false)
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
 				setLoading(false)
 			})
 			setBookMeta(navParams.book)  
 		} catch(err) {
-			console.error({err})
 			dispatch(setSnackbar({show: true, message: "Error while loading book.", type: 4}))
 			setLoading(false)
 		}
