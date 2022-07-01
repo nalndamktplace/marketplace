@@ -14,6 +14,7 @@ import {ReactComponent as USDCIcon} from "../assets/icons/usdc.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from '../trackers/ga-tracker'
+import moment from 'moment'
 
 const IndexPage = props => {
 
@@ -25,8 +26,18 @@ const IndexPage = props => {
 	const [Collections, setCollections] = useState([])
 	const [CollectionBooks, setCollectionBooks] = useState([])
 	const [Genres, setGenres] = useState([])
+	const [MediumData, setMediumData] = useState([])
 
 	useEffect(() => { GaTracker('page_view_index') }, [])
+
+	useEffect(() => {
+		axios({
+			url: "https://api.rss2json.com/v1/api.json\?rss_url\=https://medium.com/feed/@nalndamktplace",
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setMediumData(res.data)
+		}).catch(err => {})
+	}, [])
 
 	useEffect(() => {
 		if(IsLoading) dispatch(showSpinner())
@@ -179,6 +190,39 @@ const IndexPage = props => {
 		return collectionsDOM
 	}
 
+	const renderMediumArticles = () => {
+
+		const renderCategories = categories => {
+			let categoriesDOM = []
+			categories.forEach(category => {
+				categoriesDOM.push(
+					<div className='index__medium__article__data__categories__item typo__body typo__body--2 typo__transform--capital'>
+						{category}
+					</div>
+				)
+			})
+			return categoriesDOM
+		}
+
+		let mediumArticlesDOM = []
+		if(isFilled(MediumData.items))
+			MediumData.items.forEach((item, index) => {
+				mediumArticlesDOM.push(
+					<div className='index__medium__article' onClick={()=>window.open(item.link, "_blank")}>
+						<img src={item.thumbnail} alt={item.title} className='index__medium__article__banner'/>
+						<div className='index__medium__article__data'>
+							<h5 className='typo__head typo__head--6'>{item.title}</h5>
+							<p className='typo__cap'>{moment(item.pubDate).format("DD MMM, YYYY")}</p>
+							<div className='index__medium__article__data__categories'>
+								{renderCategories(item.categories)}
+							</div>
+						</div>
+					</div>
+				)
+			})
+		return mediumArticlesDOM
+	}
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
@@ -209,6 +253,12 @@ const IndexPage = props => {
 			</div>
 			<div className="index__section">
 				{renderGenres()}
+			</div>
+			<div className="index__section">
+				<h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">{isUsable(MediumData.feed)?MediumData.feed.title:'Loading...'}</h4>
+				<div className="index__medium">
+					{renderMediumArticles()}
+				</div>
 			</div>
 		</Page>
 	)
