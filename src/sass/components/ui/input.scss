@@ -145,6 +145,11 @@
 		&__label{
 			color: $color-neutral-700 ;
 			line-height: 1.5 ;
+
+			&--required::after {
+				content: "*";
+				color: hsl(350, 90%, 50%) ;
+			}
 		}
 
 		&__description {
