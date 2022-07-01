@@ -160,11 +160,11 @@
 						display: flex ;
 						align-items: center ;
 						border-radius: 0.8rem ;
- 
+
 						> svg {
 							margin-right: 0.5rem ;
 						}
- 
+
 						&--free {
 						}
 					}
@@ -417,6 +417,60 @@
 
 			&> * + * {
 				margin-top: 2rem ;
+			}
+		}
+	}
+
+	&__medium{
+		display: grid;
+		column-gap: 4rem;
+		row-gap: 4rem;
+		grid-template-columns: repeat(4, 1fr);
+		margin-top: 4rem;
+
+		@include respond(desBig){ grid-template-columns: repeat(4, 1fr); }
+		@include respond(retinaBig){ grid-template-columns: repeat(4, 1fr); }
+		@include respond(desk){ grid-template-columns: repeat(3, 1fr); }
+		@include respond(tabLand){ grid-template-columns: repeat(3, 1fr); }
+		@include respond(tabPort){ grid-template-columns: repeat(2, 1fr); }
+		@include respond(phone){ grid-template-columns: repeat(1, 1fr); }
+
+		&__article{
+			border: 0.1rem solid rgba($color-black, 0.2);
+			border-radius: 1.2rem;
+			overflow: hidden;
+			transition: all 0.4s ease-in-out;
+			cursor: pointer;
+
+			&:hover{ box-shadow: 0 0.3rem 2.4rem rgba($color-black, 0.2); }
+
+			&__banner{
+				width: 100%;
+				height: 20rem;
+				object-fit: cover;
+			}
+
+			&__data{
+				padding: 1.6rem 2rem;
+
+				&__categories{
+					display: flex;
+					flex-direction: row;
+					align-items: flex-start;
+					justify-content: flex-start;
+					flex-wrap: wrap;
+
+					&__item{
+						padding: 0.48rem 0.8rem;
+						background-color: $color-neutral-200;
+						color: $color-neutral-500;
+						border-radius: 100rem;
+						white-space: nowrap;
+						margin-bottom: 0.8rem;
+
+						&:not(:last-child){margin-right: 0.8rem;}
+					}
+				}
 			}
 		}
 	}
