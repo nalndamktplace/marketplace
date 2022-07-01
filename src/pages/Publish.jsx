@@ -54,8 +54,14 @@ const PublishNftPage = props => {
 	}, [WalletState])
 
 	useEffect(()=>{
-		let filled = Object.values(FormInput).filter(v => !(v===""||v?.length===0||v===null)).length - 1
-		setFormProgress(filled/13)
+		const ignoreFields = ["publication","attributes","isbn","primarySales","secondarySalesDate"] ;
+		let filled = 0;
+		let total = Object.keys(FormInput).length ;
+		Object.keys(FormInput).forEach(key => {
+			if(ignoreFields.includes(key)) return total-- ;
+			if(!(FormInput[key]===""||FormInput[key]?.length===0||FormInput[key]===null)) filled++ ;
+		})
+		setFormProgress(filled/total)
 	},[FormInput])
 
 	async function listNFTForSale() {
@@ -161,7 +167,7 @@ const PublishNftPage = props => {
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
 					<InputField type="list" label="age group" listType={'multiple'} minLimit={1} maxLimit={AGE_GROUPS.length} values={AGE_GROUPS} value={FormInput.ageGroup} onSave={values => setFormInput({ ...FormInput, ageGroup: values })} placeholder="e.g., Youth (15-24 years)" description="Select the most appropriate age group for the book."/>
 					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
-					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher"/>
+					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher" required={false}/>
 					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
