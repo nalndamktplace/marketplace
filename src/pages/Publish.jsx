@@ -87,7 +87,7 @@ const PublishNftPage = props => {
 			let genreIDs = []
 			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
 			const languageId = LANGUAGES.indexOf(language).toString()
-			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
+			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
 				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
 					const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
 					const status = tx.status
