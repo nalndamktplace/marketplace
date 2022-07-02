@@ -42,7 +42,7 @@ const LibraryPage = props => {
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
-	const [layout, setLayout] = useState("GRID")
+	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
 	const [currentPage, setCurrentPage] = useState(1)
 	const [maxPage, setMaxPage] = useState(10)
 

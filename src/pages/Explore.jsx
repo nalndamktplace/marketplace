@@ -37,7 +37,7 @@ const ExplorePage = () => {
 	const [Filters, setFilters] = useState(DEFAULT_FILTERS)
 	const [Loading, setLoading] = useState(false)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
-	const [layout, setLayout] = useState("GRID")
+	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
 	const [currentPage, setCurrentPage] = useState(1)
 	const [maxPage, setMaxPage] = useState(10)
 	const [AllNfts, setAllNfts] = useState([])
