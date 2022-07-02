@@ -87,7 +87,7 @@ const PublishNftPage = props => {
 			let genreIDs = []
 			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
 			const languageId = LANGUAGES.indexOf(language).toString()
-			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages) && isFilled(publication)){
+			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
 				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
 					const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
 					const status = tx.status
@@ -190,7 +190,7 @@ const PublishNftPage = props => {
 							<div className="publish__data__preview__book__data">
 								<div className="publish__data__preview__book__data__title  typo__head--5">{FormInput.name}</div>
 								<div className="publish__data__preview__book__data__author typo__subtitle typo__color--n500">{FormInput.author}</div>
-								{FormInput.price && <div className="publish__data__preview__book__data__price typo__color--success"><USDCIcon stroke="currentColor" width={20} height={20}/><span>{FormInput.price}</span></div>}
+								{FormInput.price && <div className="publish__data__preview__book__data__price typo__color--success">{parseFloat(FormInput.price)===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{FormInput.price}</>}</div>}
 								{FormInput.language && <div className="publish__data__preview__book__data__field">
 									<div className="publish__data__preview__book__data__field__label typo__body typo__color--n700">Language</div>
 									<div className="publish__data__preview__book__data__field__value typo__body typo__color--n500">{FormInput.language}</div>
