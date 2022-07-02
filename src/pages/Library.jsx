@@ -166,36 +166,47 @@ const LibraryPage = props => {
 	}, [ActiveTab, WalletAddress, dispatch])
 
 	const readHandler = async (NFT) => {
+		setLoading(true)
 		try {
-			let messageToSign = await axios.get(BASE_URL + '/api/verify?bid='+NFT.book_address)
-
-			const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
-			const account = accounts[0]
-			const signedData = await window.ethereum.request({
-				method: "personal_sign",
-				params: [JSON.stringify(messageToSign.data), account, messageToSign.data.id],
-			})
 			axios({
-				url : BASE_URL + '/api/verify',
-				method : "POST",
-				data : {
-					accountAddress:account,
-					bookAddress: NFT.book_address,
-					signedData,
-					cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1)
+				url: BASE_URL+'/api/verify',
+				method: 'GET',
+				params: {
+					bid: NFT.book_address,
+					uid: WalletAddress
 				}
-			}).then(res=>{
-				if(res.status === 200) {
-					GaTracker('navigate_account_reader')
-					navigate('/library/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
-				} else {
-					dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+			}).then(res => {
+				if(res.status === 200){
+					const messageToSign = res.data
+					Wallet.signMessage(WalletState.wallet.provider, JSON.stringify(messageToSign)).then(res => {
+						if(res.isValid === true){
+							axios({
+								url : BASE_URL + '/api/verify',
+								method : "POST",
+								data : {
+									accountAddress: WalletAddress,
+									bookAddress: NFT.book_address,
+									signedData: res.signedData,
+									cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1),
+								}
+							}).then(res=>{
+								if(res.status === 200) {
+									GaTracker('navigate_book_reader')
+									navigate('/library/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
+								} else {
+									dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+								}
+							}).catch(err => {
+							}).finally( () => setLoading(false))
+						}
+						else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
+					})
 				}
-			}).catch(err => {
+				else dispatch(setSnackbar('NOT200'))
 			})
 		} catch (err) {
+			setLoading(false)
 		}
-		navigate('/library/reader', {state: {book: NFT, preview: false}}) 
 	}
 
 	const openHandler = nft => {
