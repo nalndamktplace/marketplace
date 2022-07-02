@@ -9,8 +9,10 @@ const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show'
 			switch (state) {
 				case 'show':
 					return (<div onClick={()=>onOpen()} className='book-item__data__price typo__color--success typo__act utils__d__flex utils__align__center'><USDCIcon width={20} height={20} stroke="currentColor"/>&nbsp;{book.price}</div>)
-				case 'owned':
+				case 'publisher':
 					return (<div onClick={()=>onRead()} className='book-item__data__price typo__color--success typo__act utils__d__flex utils__align__center'>Approved</div>)
+				case 'owned':
+					return (<div onClick={()=>onRead()} className='book-item__data__price typo__color--success typo__act utils__d__flex utils__align__center'>Read</div>)
 				default:
 					return (<div onClick={()=>onOpen()} className='book-item__data__price typo__color--success typo__act utils__d__flex utils__align__center'><USDCIcon width={20} height={20} stroke="currentColor"/>&nbsp;{book.price}</div>)
 			}
