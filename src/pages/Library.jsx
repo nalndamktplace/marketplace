@@ -206,7 +206,7 @@ const LibraryPage = props => {
 	const renderNfts = () => {
 		let nftDOM = []
 		let nfts = Nfts
-		nfts.forEach(nft => { nftDOM.push(<BookItem state='owned' layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>) })
+		nfts.forEach(nft => { nftDOM.push(<BookItem state={nft.publisher_address===WalletAddress?'publisher':'owned'} layout={layout} key={nft.id} book={nft} onRead={()=>readHandler(nft)} onOpen={()=>openHandler(nft)}/>) })
 		return nftDOM
 	}
 
