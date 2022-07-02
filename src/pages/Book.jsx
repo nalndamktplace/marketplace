@@ -484,6 +484,7 @@ const BookPage = props => {
 				})
 			}).catch(err => {
 				setLoading(false)
+				console.error(err); // todo remove it after testing
 				if(err?.message?.indexOf("execution reverted: ERC20: transfer amount exceeds balance")>-1)
 					dispatch(setSnackbar({show: true, message: "You do not have enough NALNDA to purchase this book. Please try again later.", type: 3}))
 				if(err?.message?.indexOf("execution reverted: NalndaBook: Book unapproved from marketplace!")>-1)
