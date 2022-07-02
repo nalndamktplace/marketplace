@@ -589,7 +589,7 @@ const BookPage = props => {
 	const renderTabData = () => {
 		switch (ActiveTab) {
 			case 'TAB01':
-				return <p className="typo--break-spaces typo__body typo__body--2 typo__color--n600">{NFT.synopsis}</p>
+				return <p className="typo--break-spaces typo__body typo__color--n600">{NFT.synopsis}</p>
 			case 'TAB02':
 				const renderReviews = reviews => {
 					let reviewsDOM = []
