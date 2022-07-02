@@ -33,7 +33,6 @@ export const GENRES = [
     "Memoir",
     "Music",
     "Mystery",
-    "Mystery",
     "New Adult",
     "Parenting & Families",
     "Personal Development",
