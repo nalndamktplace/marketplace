@@ -1,7 +1,7 @@
 export const FEEDBACK_CATEGORIES = [
     {id:"BUG",value:"Bug Report",},
-    {id:"SUG",value:"Suggestion",},
-    {id:"FET",value:"Feature Request",},
-    {id:"GFB",value:"General Feedback",},
-    {id:"OTH",value:"Other"},
+    {id:"SUGGESTION",value:"Suggestion",},
+    {id:"FEATURE",value:"Feature Request",},
+    {id:"GENERAL",value:"General Feedback",},
+    {id:"OTHER",value:"Other"},
 ]
