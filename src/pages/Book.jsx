@@ -73,7 +73,7 @@ const BookPage = props => {
 	const [QuotesForm, setQuotesForm] = useState({quote: ''})
 	// live reader count
 	const [liveReaderCount, setLiveReaderCount] = useState(0)
-	const [avgReadTime, setAvgReadTime] = useState(0)
+	const [totalReadTime, setTotalReadTime] = useState(0)
 	// tabs
 	const TabContainerRef = useRef();
 
@@ -224,10 +224,10 @@ const BookPage = props => {
 		if(isUsable(NFT)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/reader/avg-read-time?bid='+NFT.id,
+				url: BASE_URL+'/api/reader/total-read-time?bid='+NFT.id,
 				method: 'GET'
 			}).then(res => {
-				if(res.status === 200) setAvgReadTime(res.data.avg_read_time)
+				if(res.status === 200) setTotalReadTime(res.data.total_read_time)
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
@@ -484,13 +484,14 @@ const BookPage = props => {
 				})
 			}).catch(err => {
 				setLoading(false)
-				if(err.message.indexOf("execution reverted: ERC20: transfer amount exceeds balance")>-1)
-					dispatch(setSnackbar({show: true, message: "You do not have enough NALNDA to purchase this book. Please try again later.", type: 3}))
-				if(err.message.indexOf("execution reverted: NalndaBook: Book unapproved from marketplace!")>-1)
-					dispatch(setSnackbar({show: true, message: "The book has not been approved for sales yet. Please try again later.", type: 3}))
-				else if(err.code === 4001)
-					dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
-				else dispatch(setSnackbar('ERROR'))
+				if(err.message){
+					if(err?.message?.indexOf("execution reverted: ERC20: transfer amount exceeds balance")>-1)
+						dispatch(setSnackbar({show: true, message: "You do not have enough NALNDA to purchase this book. Please try again later.", type: 3}))
+					else if(err?.message?.indexOf("execution reverted: NalndaBook: Book unapproved from marketplace!")>-1)
+						dispatch(setSnackbar({show: true, message: "The book has not been approved for sales yet. Please try again later.", type: 3}))
+					else if(err.code === 4001)
+						dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
+				} else dispatch(setSnackbar('ERROR'))
 			})
 		}
 
@@ -588,7 +589,7 @@ const BookPage = props => {
 	const renderTabData = () => {
 		switch (ActiveTab) {
 			case 'TAB01':
-				return <p className="typo--break-spaces typo__body typo__body--2 typo__color--n600">{NFT.synopsis}</p>
+				return <p className="typo--break-spaces typo__body typo__color--n600">{NFT.synopsis}</p>
 			case 'TAB02':
 				const renderReviews = reviews => {
 					let reviewsDOM = []
@@ -784,13 +785,13 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
-										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'><USDCIcon width={18} height={18} stroke='currentColor'/>&nbsp;{NFT.price}</div>
+										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{NFT.price}</>}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Published On</div>
 										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
 										<div className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Average Read Time</div>
-										<div className='book__data__container__desc__summary__data'>{moment.utc(avgReadTime*1000).format('m')} minutes</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Read Time</div>
+										<div className='book__data__container__desc__summary__data'>{moment.utc(totalReadTime*1000).format('m')} minutes</div>
 									</div>
 								</div>
 								<div className="book__data__container__desc__right">
