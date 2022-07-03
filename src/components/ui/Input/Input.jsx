@@ -48,6 +48,10 @@ const InputField = ({required=true,...props}) => {
 							</Backdrop>
 						</React.Fragment>}
 				</React.Fragment>
+			case 'select' :
+				return <select className='input__group__field typo__body' value={props.value} onChange={props.onChange} required={required}>
+					{props.options.map(opt => <option key={opt.id} className="typo__color--n700" value={opt.id}>{opt.value}</option>)}
+				</select>
 			default:
 				return <input className='input__group__field typo__body' type={'text'} required={required} value={props.value} onChange={props.onChange}/>
 		}
