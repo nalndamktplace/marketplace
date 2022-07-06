@@ -29,7 +29,7 @@ const ListModal = props => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='List eBook' open={Show} toggleModal={modalCloseHandler}>
+			<Modal title='List eBook' open={Show} toggleModal={modalCloseHandler} cancellable>
 				<p className='utils__margin__bottom--n typo__transform--capital'>Book: {props.data.title}</p>
 				<p className='utils__margin__bottom--n typo__transform--capital'>Author: {props.data.author}</p>
 				<p className='typo__transform--capital'>DA Score: {props.data.da_score}</p>

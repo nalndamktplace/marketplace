@@ -57,7 +57,7 @@ const ReviewModal = ({ReviewForm,setReviewForm,reviewHandler}) => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='Review' open={Show} toggleModal={modalCloseHandler}>
+			<Modal title='Review' open={Show} toggleModal={modalCloseHandler} cancellable>
                 <div className="book__data__container__desc__tabs__data__review__rating">{renderStarsInput()}</div>
                 <InputField type="string" label="title" value={ReviewForm.title} onChange={e => setReviewForm({ ...ReviewForm, title: e.target.value })} />
                 <InputField type="text" label="body" value={ReviewForm.body} onChange={e => setReviewForm({ ...ReviewForm, body: e.target.value })} />

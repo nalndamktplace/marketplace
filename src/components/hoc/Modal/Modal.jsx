@@ -5,7 +5,7 @@ import Backdrop from "../Backdrop/Backdrop"
 
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
 
-const Modal = ({ title = "", open = false, toggleModal, children }) => {
+const Modal = ({ title = "", open = false, toggleModal, children, cancellable }) => {
 
 	useEffect(() => {
 		window.document.documentElement.style.overflowY = open ? "hidden" : "auto"
@@ -24,7 +24,7 @@ const Modal = ({ title = "", open = false, toggleModal, children }) => {
 				<div className="modal__wrapper__header">
 					<div className="modal__wrapper__header__title typo__head--6">{title}</div>
 					<div className="modal__wrapper__header__close-button">
-						<Button type="icon" onClick={()=>toggleModal(false)}><CloseIcon/></Button>
+						{cancellable?<Button type="icon" onClick={()=>toggleModal(false)}><CloseIcon/></Button>:null}
 					</div>
 				</div>
 				<div className="modal__wrapper__content">{children}</div>

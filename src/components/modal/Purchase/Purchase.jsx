@@ -129,7 +129,7 @@ const PurchaseModal = props => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='Purchase eBook' open={Show} toggleModal={modalCloseHandler}>
+			<Modal title='Purchase eBook' open={Show} toggleModal={modalCloseHandler} cancellable>
 				<div className="modal__purchase">
 					<div className="modal__purchase__tabs">
 						<div onClick={()=>switchTab(0)} className={getTabsClasses(0)}>

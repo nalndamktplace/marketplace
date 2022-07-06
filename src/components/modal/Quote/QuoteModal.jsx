@@ -27,7 +27,7 @@ const QuoteModal = ({QuotesForm,setQuotesForm,quoteHandler}) => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='Write Quote' open={Show} toggleModal={modalCloseHandler}>
+			<Modal title='Write Quote' open={Show} toggleModal={modalCloseHandler} cancellable>
                 <InputField type="string" label="quote" value={QuotesForm.quote} onChange={e => setQuotesForm({ ...QuotesForm, quote: e.target.value })} />
 				<Button className='utils__margin__top--m utils__margin__left--auto' type="primary" onClick={()=>quoteHandler()} >submit</Button>
 			</Modal>

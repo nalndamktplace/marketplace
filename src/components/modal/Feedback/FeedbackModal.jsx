@@ -80,7 +80,7 @@ const FeedbackModal = () => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='Feedback' open={Show} toggleModal={modalCloseHandler}>
+			<Modal title='Feedback' open={Show} toggleModal={modalCloseHandler} cancellable>
                 <InputField type="select"  label="Category" options={FEEDBACK_CATEGORIES} value={FeedbackForm.category} onChange={e => setFeedbackForm({ ...FeedbackForm, category: e.target.value })} />
                 <InputField type="text" label={`Feedback (${FeedbackForm.feedback.length}/1000)`} value={FeedbackForm.feedback} onChange={e => {e.target.value.length<1001?setFeedbackForm({ ...FeedbackForm, feedback: e.target.value }):dispatch(setSnackbar({show: true, message: "Feedback cannot be longer than 1,000 characters.", type: 3}))}} />
                 <Button className='utils__margin__top--m' type="primary" onClick={()=>feedbackHandler()} >SUBMIT</Button>
