@@ -34,13 +34,18 @@
 	// &--lg { font-size: 2.00rem ; font-weight: 700 ; padding: 1.50rem 2.00rem ; border-radius: 0.8rem ;}
 	// &--xl { font-size: 2.25rem ; font-weight: 700 ; padding: 1.75rem 2.50rem ; border-radius: 0.8rem ;}
 
-	&--icon {
-		padding: 1.00rem ;
+	&__icon {
+		margin-right: 1.00rem ;
+		width: 2.4rem;
+		height: 2.4rem;
+		object-fit: contain;
+
 		&>svg {margin: 0 ;}
-		&--sm { padding: 0.75rem ;}
-		&--md { padding: 1.00rem ;}
-		&--lg { padding: 1.50rem ;}
-		&--xl { padding: 1.75rem ;}
+
+		&--sm { margin: 0.75rem ;}
+		&--md { margin: 1.00rem ;}
+		&--lg { margin: 1.50rem ;}
+		&--xl { margin: 1.75rem ;}
 	}
 
 	&--primary { 
@@ -70,7 +75,7 @@
 		mix-blend-mode: screen;
 		background-color: transparent ; 
 		color: $color-black ;
-		&:hover {background-color: transparent ; color: $color-black ;box-shadow: inset 0 0 0 0.24rem #0004;}
+		&:hover {background-color: transparent ; color: $color-black ;box-shadow: inset 0 0 0 0.3rem #0004;}
 		&::before {
 			content: '';
 			position: absolute;
@@ -85,7 +90,7 @@
 	}
 	
 	&--outline-primary { 
-		box-shadow: inset 0 0 0 0.24rem $color-primary; 
+		box-shadow: inset 0 0 0 0.3rem $color-primary; 
 		background-color: transparent ;
 		color: $color-primary ;
 
@@ -96,7 +101,7 @@
 	}
 
 	&--outline-secondary { 
-		box-shadow: inset 0 0 0 0.24rem $color-secondary; 
+		box-shadow: inset 0 0 0 0.3rem $color-secondary; 
 		background-color: transparent ;
 		color: $color-secondary ;
 		&:hover {
@@ -106,10 +111,8 @@
 	}
 
 	&--outline-white { 
-		box-shadow: inset 0 0 0 0.24rem $color-white; 
-		background-color: transparent ;
-		color: $color-white ;
-		mix-blend-mode: screen;
+		border: 0.16rem solid $color-neutral-400;
+
 		&:hover {
 			background-color: $color-white ;
 			color: $color-black ;
