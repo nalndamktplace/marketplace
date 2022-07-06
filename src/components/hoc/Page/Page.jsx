@@ -6,14 +6,14 @@ import FeedbackModal from '../../modal/Feedback/FeedbackModal'
 import Footer from '../../nav/Footer/Footer'
 import Header from '../../nav/Header/Header'
 
-const Page = props => {
+const Page = ({fluid, containerClass, noPadding, showRibbion, noFooter, children}) => {
 
 	const dispatch = useDispatch();
 
 	const getClasses = () => {
 		let classes = ["page__wrapper"]
-		if(props.fluid) classes.push("page__wrapper--fluid")
-		if(props.containerClass) classes.push(props.containerClass)
+		if(fluid) classes.push("page__wrapper--fluid")
+		if(containerClass) classes.push(containerClass)
 		return classes.join(" ")
 	}
 
@@ -23,14 +23,14 @@ const Page = props => {
 
 	return (
 		<div className='page'>
-			<Header showRibbion={props.showRibbion} noPadding={props.noPadding}/>
+			<Header showRibbion={showRibbion} noPadding={noPadding}/>
 			<div className={getClasses()}>
-				{props.children}
+				{children}
 			</div>
 			<div className="page__feedback" onClick={onFeedback}>
 				<div className="page__feedback__label">FEEDBACK</div>
 			</div>
-			{props.noFooter?null:<Footer/>}
+			{noFooter?null:<Footer/>}
 			<FeedbackModal/>
 		</div>
 	)
