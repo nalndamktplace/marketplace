@@ -18,12 +18,12 @@ import SnackbarReducer from './store/reducers/snackbar'
 import DarkModeReducer from './store/reducers/darkmode'
 
 import IndexPage from './pages/Index'
-// import BookPage from './pages/Book'
-// import ReaderPage from './pages/Reader'
-// import LibraryPage from './pages/Library'
-// import ExplorePage from './pages/Explore'
-// import ProfilePage from './pages/Profile'
-// import PublishNftPage from './pages/Publish'
+import BookPage from './pages/Book'
+import ReaderPage from './pages/Reader'
+import LibraryPage from './pages/Library'
+import ExplorePage from './pages/Explore'
+import ProfilePage from './pages/Profile'
+import PublishNftPage from './pages/Publish'
 import CollectionPage from './pages/Collection'
 //	/*	Page to debug App
 //		Uncomment the lines below to activate page	*/
@@ -32,7 +32,7 @@ import CollectionPage from './pages/Collection'
 
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
-// import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
+import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 import LoginModal from './components/modal/Login/Login'
 
 const rootReducer = combineReducers({
@@ -52,26 +52,26 @@ function App() {
 			<Provider store={store}>
 				<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
 					<Router>
-						{/* <ScrollToTop> */}
+						<ScrollToTop>
 							<Routes>
 								<Route path='/*' element={<IndexPage/>}/>
 								<Route path='/' element={<IndexPage/>}/>
-								{/* <Route path='/book' element={<BookPage/>}/>
+								<Route path='/book' element={<BookPage/>}/>
 								<Route path='/book/preview' element={<ReaderPage/>}/>
 								<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
 								<Route path='/explore' element={<ExplorePage/>}/>
 								<Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />}/>
-								<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/> */}
+								<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
 								<Route path='/collection' element={<CollectionPage/>}/>
-								{/* <Route path='/library/reader' element={<ReaderPage/>}/> */}
+								<Route path='/library/reader' element={<ReaderPage/>}/>
 								{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
 								{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
 							</Routes>
-						{/* </ScrollToTop> */}
+						</ScrollToTop>
 					</Router>
-					{/* <Snackbar/>
-					<Spinner/> */}
-					{/* <WalletHOC/> */}
+					<Snackbar/>
+					<Spinner/>
+					<WalletHOC/>
 					<LoginModal/>
 				</GoogleOAuthProvider>
 			</Provider>
