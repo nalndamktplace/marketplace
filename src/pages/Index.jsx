@@ -1,4 +1,5 @@
 import axios from 'axios'
+import moment from 'moment'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
@@ -6,20 +7,22 @@ import React, { useEffect, useState } from 'react'
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
 
-import { isFilled, isUsable } from '../helpers/functions'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-import {ReactComponent as USDCIcon} from "../assets/icons/usdc.svg"
+import useIsLoggedIn from '../hook/useIsLoggedIn'
 
-import { BASE_URL } from '../config/env'
 import GaTracker from '../trackers/ga-tracker'
-import moment from 'moment'
+import { BASE_URL } from '../config/env'
+import { isFilled, isUsable } from '../helpers/functions'
+
+import {ReactComponent as USDCIcon} from "../assets/icons/usdc.svg"
 
 const IndexPage = props => {
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
+	const IsLoggedIn = useIsLoggedIn()
 
 	const [IsLoading, setIsLoading] = useState(false)
 	const [Highlights, setHighlights] = useState([])
@@ -27,6 +30,14 @@ const IndexPage = props => {
 	const [CollectionBooks, setCollectionBooks] = useState([])
 	const [Genres, setGenres] = useState([])
 	const [MediumData, setMediumData] = useState([])
+
+	const publishHandler = () => {
+		console.log({IsLoggedIn})
+		if(isUsable(IsLoggedIn)){
+			if(IsLoggedIn) navigate('/publish')
+			else dispatch(setSnackbar('NOT_LOGGED_IN'))
+		}
+	}
 
 	useEffect(() => { GaTracker('page_view_index') }, [])
 
@@ -234,7 +245,7 @@ const IndexPage = props => {
 						<h3 className="typo__head typo__head--4 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
 						<div className="index__content__container__row">
 							<Button size="xl" type="white" onClick={() => navigate('/explore')}>Explore</Button>
-							<Button size="xl" type="outline-white" onClick={() => navigate('/publish')}>Publish</Button>
+							<Button size="xl" type="outline-white" onClick={() => publishHandler()}>Publish</Button>
 						</div>
 					</div>
 				</div>

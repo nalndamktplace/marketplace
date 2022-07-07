@@ -17,11 +17,17 @@ import PurchaseModal from '../components/modal/Purchase/Purchase'
 
 import Wallet from '../connections/wallet'
 
+import GaTracker from '../trackers/ga-tracker'
+import { BASE_URL } from '../config/env'
+import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
+
+import { setUser } from '../store/actions/user'
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
-import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from '../store/actions/modal'
+
+import useIsLoggedIn from '../hook/useIsLoggedIn'
 
 import BackgroundBook from '../assets/images/background-book.svg'
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
@@ -34,11 +40,6 @@ import {ReactComponent as ReviewIcon} from "../assets/icons/message.svg"
 import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
 
-import { BASE_URL } from '../config/env'
-import { AGE_GROUPS } from '../config/ages'
-
-import GaTracker from '../trackers/ga-tracker'
-import { setUser } from '../store/actions/user'
 
 const BookPage = props => {
 
@@ -47,6 +48,7 @@ const BookPage = props => {
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
+	const isLoggedIn = useIsLoggedIn()
 
 	const WalletState = useSelector(state => state.WalletState)
 
@@ -435,11 +437,11 @@ const BookPage = props => {
 		navigate('/book/preview', {state: {book: NFT, preview: true}})
 	}
 
-	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
+	const purchaseHandler = () => isLoggedIn?dispatch(showModal(SHOW_PURCHASE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
-	const reviewModalHandler = () => { dispatch(showModal(SHOW_REVIEW_MODAL)) }
+	const reviewModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_REVIEW_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
-	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
+	const quoteModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_QUOTE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
 	const loginUser = (walletAddress) => {
 		axios({
