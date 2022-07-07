@@ -1,4 +1,4 @@
-import { ERR_GENERIC_SNACKBAR, ERR_NOT200_SNACKBAR, SET_SNACKBAR, UNSET_SNACKBAR } from "../actions/snackbar"
+import { ERR_GENERIC_SNACKBAR, ERR_NOT200_SNACKBAR, SET_SNACKBAR, STT_NOT_LOGGED_IN, UNSET_SNACKBAR } from "../actions/snackbar"
 
 const initState = {
 	show: false,
@@ -36,6 +36,13 @@ const handleData = (state = initState, action) => {
 				show: true,
 				message: "Something went wrong.",
 				type: 4
+			}
+		case STT_NOT_LOGGED_IN:
+			return {
+				...state,
+				show: true,
+				message: "Please login first.",
+				type: 3
 			}
 		default:
 			return state
