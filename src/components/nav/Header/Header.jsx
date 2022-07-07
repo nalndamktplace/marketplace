@@ -11,13 +11,17 @@ import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 
 import Button from "../../ui/Buttons/Button"
 import Dropdown from "../../ui/Dropdown/Dropdown"
-// import SideNavbar from "../SideNavbar/SideNavbar"
+import SideNavbar from "../SideNavbar/SideNavbar"
 
 import Constants from '../../../config/constants'
 import GaTracker from "../../../trackers/ga-tracker"
-import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/functions"
-import { isFilled } from "../../../helpers/functions"
+import { getData } from "../../../helpers/storage"
 import { BASE_URL } from '../../../config/env'
+import { isFilled } from "../../../helpers/functions"
+import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/functions"
+
+import { foundUser, unsetUser } from "../../../store/actions/user"
+import { showModal, SHOW_LOGIN_MODAL } from "../../../store/actions/modal"
 
 import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
@@ -26,10 +30,6 @@ import {ReactComponent as GridIcon} from "../../../assets/icons/layout-grid.svg"
 import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
-import { foundUser, setUser, unsetUser } from "../../../store/actions/user"
-import { showModal, SHOW_LOGIN_MODAL } from "../../../store/actions/modal"
-import { getData } from "../../../helpers/storage"
-import moment from "moment"
 
 const Header = ({showRibbion=true,noPadding=false}) => {
 
@@ -305,20 +305,10 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				</div>
 			</div>
 			{showRibbion && isFilled(Collections) && <div className="header__ribbion">
-				{/* <div className="header__ribbion__item header__ribbion__item--label">Browse Categories</div> */}
-				{ Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
+				{Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
 				</div>
 			}
-			{/* <SideNavbar 
-				MenuOpen={MenuOpen} 
-				setMenuOpen={setMenuOpen}
-				WalletState={WalletState}
-				loginHandler={loginHandler}
-				handleWalletConnect={handleWalletConnect}
-				handleWalletDisconnect={handleWalletDisconnect}
-				toggleMenu={toggleMenu}
-				NAV_ITEMS={NAV_ITEMS}
-			/> */}
+			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletConnect={handleWalletConnect} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />
 		</header>
 	)
 }
