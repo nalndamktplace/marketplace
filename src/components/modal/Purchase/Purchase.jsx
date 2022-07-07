@@ -28,8 +28,6 @@ const PurchaseModal = props => {
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
 
-	const modalCloseHandler = state => { if(state === false) dispatch(hideModal()) }
-
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
@@ -129,7 +127,7 @@ const PurchaseModal = props => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='Purchase eBook' open={Show} toggleModal={modalCloseHandler} cancellable>
+			<Modal title='Purchase eBook' open={Show} cancellable>
 				<div className="modal__purchase">
 					<div className="modal__purchase__tabs">
 						<div onClick={()=>switchTab(0)} className={getTabsClasses(0)}>
