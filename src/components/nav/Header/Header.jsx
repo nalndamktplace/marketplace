@@ -79,7 +79,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const connectWallet = (walletAddress) => {
-		console.log("linking wallet to account")
 		setLoading(true)
 		axios({
 			url: BASE_URL+'/api/user/wallet',
@@ -89,16 +88,12 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				'user-id': UserState.user.uid
 			}
 		}).then(res => {
-			console.log("wallet linked to account")
 			if(res.status === 200) dispatch(setSnackbar({show: true, message: "Wallet Connected!", type: 1}))
 			else dispatch(setSnackbar('ERROR'))
 		}).catch(err => {
-			console.log("unable to link wallet")
-			console.error({err})
 			dispatch(setSnackbar('ERROR'))
 		}).finally(() => {
 			setLoading(false)
-			console.log("wallet linking done")
 		})
 	}
 
@@ -114,19 +109,14 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}
 
 	const handleWalletConnect = () => {
-		console.log("connecting wallet")
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
-			console.log("using prev connection")
 			connectWallet(WalletState.wallet.address)
 		}
 		else {
-			console.log("creating new connection")
 			Wallet.connectWallet().then(res => {
-				console.log("new connection successful")
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				connectWallet(res.address)
 			}).catch(err => {
-				console.log("new connection failed")
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			})
 		}
@@ -275,10 +265,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		if(isFilled(SearchQuery) && SearchQuery.length>3) classes.push("dropdown__options--open")
 		return classes.join(' ')
 	}
-
-	useEffect(() => {
-		console.log({WalletState})
-	}, [WalletState])
 
 	return (
 		<header className="header" data-nopadding={noPadding}>
