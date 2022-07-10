@@ -49,7 +49,8 @@ export const EXPLORE_PAGE_FILTERS = [
 			{value: "Parenting & Families", label: "Parenting & Families"},
 			{value: "Science & Technology", label: "Science & Technology"},
 			{value: "Society & Culture", label: "Society & Culture"},
-			{value: "Psychological Thrillers", label: "Psychological Thrillers"}
+			{value: "Psychological Thrillers", label: "Psychological Thrillers"},
+			{value: "Politics", label: "Politics"}
         ],
     },
 	{
@@ -130,7 +131,8 @@ export const ACCOUNT_PAGE_FILTERS = [
 			{value: "Parenting & Families", label: "Parenting & Families"},
 			{value: "Science & Technology", label: "Science & Technology"},
 			{value: "Society & Culture", label: "Society & Culture"},
-			{value: "Psychological Thrillers", label: "Psychological Thrillers"}
+			{value: "Psychological Thrillers", label: "Psychological Thrillers"},
+			{value: "Politics", label: "Politics"}
         ],
     },
 	{
