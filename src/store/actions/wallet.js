@@ -4,7 +4,6 @@ export const WEB3_IS_SUPPORTED = "WEB3_IS_SUPPORTED"
 export const WEB3_IS_NOT_SUPPORTED = "WEB3_IS_NOT_SUPPORTED"
 
 export const setWallet = data => {
-	console.log("setting wallet", {data: data, type: SET_WALLET})
 	return {data: data, type: SET_WALLET}
 }
 export const clearWallet = () => {return {type: CLEAR_WALLET}}
