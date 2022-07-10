@@ -40,7 +40,8 @@ const ProfilePage = () => {
 				method: 'PUT',
 				headers: {
 					'address': WalletState.wallet.address,
-					'user-id': UserState.user.uid
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
 				data: {
 					firstName: FormInput.fullName.split(' ')[0],
@@ -49,11 +50,13 @@ const ProfilePage = () => {
 				}
 			}).then(res => {
 				if(res.status === 200){
-					dispatch(setUser(res.data))
+					const user = {...res.data, tokens: {acsTkn: UserState.tokens.acsTkn.tkn, rfsTkn: UserState.tokens.rfsTkn.tkn}}
+					dispatch(setUser(user))
 					dispatch(setSnackbar({show: true, message: "Profile Updated.", type: 1}))
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
+				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally( () => setLoading(false))
 		}
@@ -75,7 +78,8 @@ const ProfilePage = () => {
 				method: 'PUT',
 				headers: {
 					'address': WalletState.wallet.address,
-					'user-id': UserState.user.uid
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
 				data: formData
 			}).then(res => {
@@ -113,7 +117,8 @@ const ProfilePage = () => {
 				method: 'GET',
 				headers: {
 					// 'address': WalletState.wallet.address,
-					'user-id': UserState.user.uid
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				}
 			}).then(res => {
 				if(res.status === 200){

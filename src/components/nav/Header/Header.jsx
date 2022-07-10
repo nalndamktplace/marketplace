@@ -85,7 +85,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			method: 'POST',
 			headers: {
 				'address': walletAddress,
-				'user-id': UserState.user.uid
+				'user-id': UserState.user.uid,
+				'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 			}
 		}).then(res => {
 			if(res.status === 200) dispatch(setSnackbar({show: true, message: "Wallet Connected!", type: 1}))

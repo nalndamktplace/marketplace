@@ -21,6 +21,7 @@ const PurchaseModal = props => {
 
 	const dispatch = useDispatch()
 
+	const UserState = useSelector(state => state.UserState)
 	const ModalState = useSelector(state => state.ModalState)
 
 	const [Show, setShow] = useState(false)
@@ -46,6 +47,10 @@ const PurchaseModal = props => {
 			axios({
 				url: BASE_URL+'/api/book/list',
 				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				params: {
 					bookAddress: props.data.book_address
 				}

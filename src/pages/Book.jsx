@@ -50,6 +50,7 @@ const BookPage = props => {
 	const navigate = useNavigate()
 	const isLoggedIn = useIsLoggedIn()
 
+	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
 
 	const [WalletAddress, setWalletAddress] = useState(null)
@@ -307,6 +308,10 @@ const BookPage = props => {
 			axios({
 				url: BASE_URL + '/api/user/book/listed',
 				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				params: {
 					ownerAddress: WalletAddress,
 					tokenId: NFT.tokenId,
@@ -443,21 +448,6 @@ const BookPage = props => {
 
 	const quoteModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_QUOTE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
-	const loginUser = (walletAddress) => {
-		axios({
-			url: BASE_URL+'/api/user/login',
-			method: 'POST',
-			headers: {
-				'address': walletAddress
-			}
-		}).then(res => {
-			if(res.status === 200) dispatch(setUser(res.data))
-		}).catch(err => {
-		}).finally( () => {
-			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-		})
-	}
-
 	const purchaseNewCopyHandler = () => {
 
 		const purchase = () => {
@@ -500,7 +490,6 @@ const BookPage = props => {
 		GaTracker('event_book_purchase_new')
 		setLoading(true)
 		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)){
-			loginUser(WalletAddress)
 			purchase()
 		}
 		else{
@@ -509,7 +498,6 @@ const BookPage = props => {
 				setLoading(false)
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				setWalletAddress(res.address)
-				loginUser(res.address)
 				purchase()
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
