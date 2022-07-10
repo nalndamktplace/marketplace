@@ -11,11 +11,13 @@ import {ReactComponent as CameraIcon} from "../assets/icons/camera.svg"
 import {ReactComponent as WalletIcon} from "../assets/icons/wallet.svg"
 import {ReactComponent as TwitterIcon} from "../assets/icons/twitter.svg"
 import GaTracker from "../trackers/ga-tracker"
-import { isFilled, isUsable } from "../helpers/functions"
+import { isFilled, isUsable, isUserLoggedIn, isWalletConnected } from "../helpers/functions"
 import { BASE_URL } from '../config/env'
 import { setUser } from '../store/actions/user'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+import { setWallet } from '../store/actions/wallet'
+import Wallet from '../connections/wallet'
 
 const ProfilePage = () => {
 
@@ -90,24 +92,34 @@ const ProfilePage = () => {
 		}
 	}
 
+	const walletOnClickHandler = () => {
+		if(isWalletConnected(WalletState)){}
+		else{
+			Wallet.connectWallet().then(res => {
+				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+			}).catch(err => { })
+		}
+	}
+
 	useEffect(() => { GaTracker('page_view_profile') }, [])
 
 	useEffect(() => { if(isUsable(FormInput.displayPic)) setDisplayPicUrl(URL.createObjectURL(FormInput.displayPic)) }, [FormInput.displayPic])
 
 	useEffect(() => {
-		if(isFilled(UserState.user.uid) && isFilled(WalletState.wallet.address)){
+		if(isUserLoggedIn(UserState)){
 			setLoading(true)
 			axios({
 				url: BASE_URL+'/api/user/profile',
 				method: 'GET',
 				headers: {
-					'address': WalletState.wallet.address,
+					// 'address': WalletState.wallet.address,
 					'user-id': UserState.user.uid
 				}
 			}).then(res => {
 				if(res.status === 200){
 					setFormInput(old => {return {...old, fullName: isFilled(res.data.first_name)?`${res.data.first_name} ${res.data.last_name}`:'', bio: res.data.bio}})
-					setDisplayPicUrl(`${BASE_URL}/files/${res.data.display_pic}`)
+					if(isFilled(res.data.display_pic)) setDisplayPicUrl(`${BASE_URL}/files/${res.data.display_pic}`)
+					else setDisplayPicUrl(res.data.google_pic)
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
@@ -144,7 +156,7 @@ const ProfilePage = () => {
                             <WalletIcon width={32} height={32} stroke="currentColor"/>
                         </div>
                         <div className="profile__details__connect__label typo__head--6">Wallet: {WalletState.wallet.address}</div>
-                        <Button type="primary">open</Button>
+                        <Button type="primary" onClick={()=>walletOnClickHandler()}>{isWalletConnected(WalletState)?"open":"Connect"}</Button>
                     </div>
                     <div className="profile__details__connect">
                         <div className="profile__details__connect__icon">
