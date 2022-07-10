@@ -32,7 +32,6 @@ const IndexPage = props => {
 	const [MediumData, setMediumData] = useState([])
 
 	const publishHandler = () => {
-		console.log({IsLoggedIn})
 		if(isUsable(IsLoggedIn)){
 			if(IsLoggedIn) navigate('/publish')
 			else dispatch(setSnackbar('NOT_LOGGED_IN'))
