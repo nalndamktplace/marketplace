@@ -178,7 +178,7 @@ const LibraryPage = props => {
 			}).then(res => {
 				if(res.status === 200){
 					const messageToSign = res.data
-					Wallet.signMessage(WalletState.wallet.provider, JSON.stringify(messageToSign)).then(res => {
+					Wallet.signMessage(WalletState.wallet.signer, JSON.stringify(messageToSign)).then(res => {
 						if(res.isValid === true){
 							axios({
 								url : BASE_URL + '/api/verify',
