@@ -11,7 +11,6 @@ const useIsLoggedIn = () => {
 	const [IsLoggedIn, setIsLoggedIn] = useState(null)
 
 	useEffect(() => {
-		console.log({UserState})
 		if(isUsable(UserState.tokens.acsTkn)){
 			if(moment().isBefore(UserState.tokens.acsTkn.exp) && isUsable(UserState.user.uid)) setIsLoggedIn(true)
 			else setIsLoggedIn(false)
