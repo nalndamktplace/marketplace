@@ -21,14 +21,13 @@ const PurchaseModal = props => {
 
 	const dispatch = useDispatch()
 
+	const UserState = useSelector(state => state.UserState)
 	const ModalState = useSelector(state => state.ModalState)
 
 	const [Show, setShow] = useState(false)
 	const [Offers, setOffers] = useState([])
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState(0)
-
-	const modalCloseHandler = state => { if(state === false) dispatch(hideModal()) }
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -48,6 +47,10 @@ const PurchaseModal = props => {
 			axios({
 				url: BASE_URL+'/api/book/list',
 				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				params: {
 					bookAddress: props.data.book_address
 				}
@@ -129,7 +132,7 @@ const PurchaseModal = props => {
 
 	return (
 		<Backdrop show={Show}>
-			<Modal title='Purchase eBook' open={Show} toggleModal={modalCloseHandler}>
+			<Modal title='Purchase eBook' open={Show} cancellable>
 				<div className="modal__purchase">
 					<div className="modal__purchase__tabs">
 						<div onClick={()=>switchTab(0)} className={getTabsClasses(0)}>

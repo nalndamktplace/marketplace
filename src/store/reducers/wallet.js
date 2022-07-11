@@ -13,10 +13,6 @@ const initState = {
 const handleData = (state = initState, action) => {
 	switch (action.type) {
 		case SET_WALLET:
-			// localStorage.setItem("wallet", JSON.stringify(jc.decycle(action.data.wallet)))
-			// localStorage.setItem("provider", JSON.stringify(jc.decycle(action.data.provider)))
-			// localStorage.setItem("signer", JSON.stringify(jc.decycle(action.data.signer)))
-			// localStorage.setItem("address", JSON.stringify(action.data.address))
 			return {
 				...state,
 				wallet: {

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useLocation, useNavigate, useParams } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -14,7 +14,7 @@ import Page from '../components/hoc/Page/Page'
 import Contracts from '../connections/contracts'
 import Button from '../components/ui/Buttons/Button'
 import BookItem from '../components/ui/BookItem/BookItem'
-import Pagination from '../components/ui/Pagination/Pagination'
+// import Pagination from '../components/ui/Pagination/Pagination'
 import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
 
 import BooksShelf from '../assets/images/books-shelf.webp'
@@ -38,10 +38,11 @@ const CollectionPage = () => {
 	const [Filters, setFilters] = useState(DEFAULT_FILTERS)
 	const [Loading, setLoading] = useState(false)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
-	const [layout, setLayout] = useState("GRID")
-	const [currentPage, setCurrentPage] = useState(1)
-	const [maxPage, setMaxPage] = useState(10)
+	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
+	// const [currentPage, setCurrentPage] = useState(1)
+	// const [maxPage, setMaxPage] = useState(10)
 	const [AllNfts, setAllNfts] = useState([])
+	const [maxPrice, setMaxPrice] = useState(100);
 
 	useEffect(() => { setCollection(params.state) }, [params])
 
@@ -115,6 +116,14 @@ const CollectionPage = () => {
 		}
 	}, [Filters, AllNfts])
 
+	useEffect(()=>{
+		if(!isFilled(AllNfts)) return ;
+		let maxNftPrice = Math.max(...AllNfts.map(nft => nft.price));
+		maxNftPrice = Math.ceil(maxNftPrice / 10) * 10 ; 
+		console.log(maxNftPrice)
+		setMaxPrice(maxNftPrice||100)
+	},[AllNfts])
+
 	const buyHandler = nft => {
 		setLoading(true)
 		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
@@ -156,7 +165,7 @@ const CollectionPage = () => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel maxPrice={maxPrice} setFiltersPanelOpen={setFiltersPanelOpen} config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="explore__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="explore__data__books__header">
@@ -178,7 +187,7 @@ const CollectionPage = () => {
 								</div>
 						}
 						<div className="explore__data__books__wrapper__pagination">
-							<Pagination max={maxPage} current={currentPage} onPageChange={(p)=>setCurrentPage(p)} />
+							{/* <Pagination max={maxPage} current={currentPage} onPageChange={(p)=>setCurrentPage(p)} /> */}
 						</div>
 					</div>
 					

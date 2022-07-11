@@ -39,6 +39,7 @@ export const GENRES = [
     "Philosophy",
     "Photography",
     "Poetry",
+    "Politics",
     "Psychological Thrillers",
     "Psychology",
     "Relationships",

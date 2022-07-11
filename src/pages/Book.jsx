@@ -17,11 +17,16 @@ import PurchaseModal from '../components/modal/Purchase/Purchase'
 
 import Wallet from '../connections/wallet'
 
+import GaTracker from '../trackers/ga-tracker'
+import { BASE_URL } from '../config/env'
+import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
+
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
-import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 import { hideModal, showModal, SHOW_LIST_MODAL, SHOW_PURCHASE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from '../store/actions/modal'
+
+import useIsLoggedIn from '../hook/useIsLoggedIn'
 
 import BackgroundBook from '../assets/images/background-book.svg'
 import {ReactComponent as LikeIcon} from '../assets/icons/like.svg'
@@ -34,11 +39,6 @@ import {ReactComponent as ReviewIcon} from "../assets/icons/message.svg"
 import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
 
-import { BASE_URL } from '../config/env'
-import { AGE_GROUPS } from '../config/ages'
-
-import GaTracker from '../trackers/ga-tracker'
-import { setUser } from '../store/actions/user'
 
 const BookPage = props => {
 
@@ -47,7 +47,9 @@ const BookPage = props => {
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
+	const isLoggedIn = useIsLoggedIn()
 
+	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
 
 	const [WalletAddress, setWalletAddress] = useState(null)
@@ -305,6 +307,10 @@ const BookPage = props => {
 			axios({
 				url: BASE_URL + '/api/user/book/listed',
 				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				params: {
 					ownerAddress: WalletAddress,
 					tokenId: NFT.tokenId,
@@ -399,7 +405,7 @@ const BookPage = props => {
 			}).then(res => {
 				if(res.status === 200){
 					const messageToSign = res.data
-					Wallet.signMessage(WalletState.wallet.provider, JSON.stringify(messageToSign)).then(res => {
+					Wallet.signMessage(WalletState.wallet.signer, JSON.stringify(messageToSign)).then(res => {
 						if(res.isValid === true){
 							axios({
 								url : BASE_URL + '/api/verify',
@@ -435,26 +441,11 @@ const BookPage = props => {
 		navigate('/book/preview', {state: {book: NFT, preview: true}})
 	}
 
-	const purchaseHandler = () => { dispatch(showModal(SHOW_PURCHASE_MODAL)) }
+	const purchaseHandler = () => isLoggedIn?dispatch(showModal(SHOW_PURCHASE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
-	const reviewModalHandler = () => { dispatch(showModal(SHOW_REVIEW_MODAL)) }
+	const reviewModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_REVIEW_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
-	const quoteModalHandler = () => { dispatch(showModal(SHOW_QUOTE_MODAL)) }
-
-	const loginUser = (walletAddress) => {
-		axios({
-			url: BASE_URL+'/api/user/login',
-			method: 'POST',
-			headers: {
-				'address': walletAddress
-			}
-		}).then(res => {
-			if(res.status === 200) dispatch(setUser(res.data))
-		}).catch(err => {
-		}).finally( () => {
-			dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-		})
-	}
+	const quoteModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_QUOTE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
 	const purchaseNewCopyHandler = () => {
 
@@ -498,7 +489,6 @@ const BookPage = props => {
 		GaTracker('event_book_purchase_new')
 		setLoading(true)
 		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)){
-			loginUser(WalletAddress)
 			purchase()
 		}
 		else{
@@ -507,7 +497,6 @@ const BookPage = props => {
 				setLoading(false)
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 				setWalletAddress(res.address)
-				loginUser(res.address)
 				purchase()
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
