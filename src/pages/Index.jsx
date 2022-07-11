@@ -42,7 +42,7 @@ const IndexPage = props => {
 
 	useEffect(() => {
 		axios({
-			url: "https://api.rss2json.com/v1/api.json\?rss_url\=https://medium.com/feed/@nalndamktplace",
+			url: "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@nalndamktplace",
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setMediumData(res.data)
