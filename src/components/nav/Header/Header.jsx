@@ -78,26 +78,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
-	const connectWallet = (walletAddress) => {
-		setLoading(true)
-		axios({
-			url: BASE_URL+'/api/user/wallet',
-			method: 'POST',
-			headers: {
-				'address': walletAddress,
-				'user-id': UserState.user.uid,
-				'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
-			}
-		}).then(res => {
-			if(res.status === 200) dispatch(setSnackbar({show: true, message: "Wallet Connected!", type: 1}))
-			else dispatch(setSnackbar('ERROR'))
-		}).catch(err => {
-			dispatch(setSnackbar('ERROR'))
-		}).finally(() => {
-			setLoading(false)
-		})
-	}
-
 	const loginHandler = () => {
 		dispatch(showSpinner())
 		const localData = getData(Constants.USER_STATE)
@@ -110,13 +90,9 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}
 
 	const handleWalletConnect = () => {
-		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
-			connectWallet(WalletState.wallet.address)
-		}
-		else {
+		if(!isWalletConnected(WalletState)){
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				connectWallet(res.address)
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			})
