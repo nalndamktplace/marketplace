@@ -21,7 +21,6 @@ import GaTracker from '../trackers/ga-tracker'
 import { BASE_URL } from '../config/env'
 import { isFilled, isNotEmpty, isUsable } from '../helpers/functions'
 
-import { setUser } from '../store/actions/user'
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
