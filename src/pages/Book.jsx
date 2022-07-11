@@ -584,11 +584,11 @@ const BookPage = props => {
 					let reviewsDOM = []
 					if(isFilled(reviews)) reviews.forEach(review => reviewsDOM.push(
 						<div className="book__data__container__desc__tabs__data__reviews__item">
+							<div className="book__data__container__desc__tabs__data__reviews__item__header__head typo__head typo__head--6">{review.title}</div>
 							<div className="book__data__container__desc__tabs__data__reviews__item__header">
-								<div className="book__data__container__desc__tabs__data__reviews__item__header__head typo__head--4 typo__transform--upper">{review.title}</div>
+								<Stars rating={review.rating} size={'small'}/>
 								<div className="book__data__container__desc__tabs__data__reviews__item__header__time typo__color--n500">{moment(review.reviewed_at).format("D MMM, YYYY")}</div>
 							</div>
-							<Stars rating={review.rating} size={'small'}/>
 							<div className="book__data__container__desc__tabs__data__reviews__item__body typo__body typo__body--2">{review.body}</div>
 						</div>))
 					return reviewsDOM
@@ -617,7 +617,7 @@ const BookPage = props => {
 								<div className="book__data__container__desc__tabs__data__quotes__item__icon">
 									<QuoteIcon width={32} height={32} fill="currentColor"/>
 								</div>
-								<div className="book__data__container__desc__tabs__data__quotes__item__body">
+								<div className="book__data__container__desc__tabs__data__quotes__item__body typo__body">
 									{quote.body}
 								</div>
 								<div className="book__data__container__desc__tabs__data__quotes__item__time typo__cap typo__cap--2">
