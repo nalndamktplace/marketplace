@@ -33,6 +33,7 @@ const LibraryPage = props => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
+	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
 
 	const [Nfts, setNfts] = useState([])
@@ -58,18 +59,6 @@ const LibraryPage = props => {
 		() => {
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				axios({
-					url: BASE_URL+'/api/user/login',
-					method: 'POST',
-					headers: {
-						'address': res.address 
-					}
-				}).then(res => {
-					dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-					if(res.status === 200) dispatch(setUser(res.data))
-				}).catch(err => {
-				}).finally( () => {
-				})
 			}).catch(err => {
 				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
 			}).finally(() => setLoading(false))
@@ -146,6 +135,10 @@ const LibraryPage = props => {
 			axios({
 				url: BASE_URL+'/api/user/books/owned',
 				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				params: {userAddress: WalletAddress}
 			}).then(res => {
 				if(res.status === 200) setAllNfts(res.data)
@@ -157,6 +150,10 @@ const LibraryPage = props => {
 			axios({
 				url: BASE_URL+'/api/user/books/published',
 				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				params: {userAddress: WalletAddress}
 			}).then(res => {
 				if(res.status === 200) setAllNfts(res.data)
@@ -164,7 +161,7 @@ const LibraryPage = props => {
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
-	}, [ActiveTab, WalletAddress, dispatch])
+	}, [ActiveTab, WalletAddress, dispatch, UserState])
 
 	useEffect(()=>{
 		if(!isFilled(AllNfts)) return ;
@@ -186,7 +183,7 @@ const LibraryPage = props => {
 			}).then(res => {
 				if(res.status === 200){
 					const messageToSign = res.data
-					Wallet.signMessage(WalletState.wallet.provider, JSON.stringify(messageToSign)).then(res => {
+					Wallet.signMessage(WalletState.wallet.signer, JSON.stringify(messageToSign)).then(res => {
 						if(res.isValid === true){
 							axios({
 								url : BASE_URL + '/api/verify',
