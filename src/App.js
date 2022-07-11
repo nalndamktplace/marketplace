@@ -30,10 +30,11 @@ import CollectionPage from './pages/Collection'
 // import InterfaceDebugPage from './Debug/Interface'
 // import WalletDebugPage from './Debug/Wallet'
 
+import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
+import LoginModal from './components/modal/Login/Login'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
-import LoginModal from './components/modal/Login/Login'
 
 const rootReducer = combineReducers({
 	UserState: UserReducer,
@@ -60,7 +61,7 @@ function App() {
 								<Route path='/book/preview' element={<ReaderPage/>}/>
 								<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
 								<Route path='/explore' element={<ExplorePage/>}/>
-								<Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />}/>
+								<Route path='/profile' element={<ProfilePage />}/>
 								<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
 								<Route path='/collection' element={<CollectionPage/>}/>
 								<Route path='/library/reader' element={<ReaderPage/>}/>
@@ -72,6 +73,7 @@ function App() {
 					<Snackbar/>
 					<Spinner/>
 					<WalletHOC/>
+					<UserHOC/>
 					<LoginModal/>
 				</GoogleOAuthProvider>
 			</Provider>

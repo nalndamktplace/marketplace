@@ -11,7 +11,9 @@ export const isUserLoggedIn = data => {
 		const user = data.user
 		const tokens = data.tokens
 		if(isUsable(tokens.acsTkn)){
-			if(moment().isBefore(tokens.acsTkn.exp) && isUsable(user.uid)) return true
+			if(moment().isBefore(tokens.acsTkn.exp) && isFilled(user.uid)){
+				return true
+			}
 		}
 	}
 	return false
@@ -25,4 +27,16 @@ export const isWalletConnected = data => {
 		}
 	}
 	return false
+}
+
+export const isSameWallet = (walletAddress, userState) => {
+	if(isUsable(walletAddress) && isUsable(userState)){
+		if(isUserLoggedIn(userState)){
+			if(isFilled(userState.user.wallet)){
+				if(userState.wallet === walletAddress) return true
+				else return false
+			}
+			else return null
+		}
+	}
 }

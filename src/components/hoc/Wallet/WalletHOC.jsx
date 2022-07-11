@@ -1,38 +1,68 @@
 import axios from 'axios'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import Wallet from '../../../connections/wallet'
 
-import { setUser } from '../../../store/actions/user'
-import { setWallet } from '../../../store/actions/wallet'
-
 import { BASE_URL } from '../../../config/env'
+
+import { setWallet } from '../../../store/actions/wallet'
+import { setSnackbar } from '../../../store/actions/snackbar'
+import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
+
+import { isUserLoggedIn, isWalletConnected } from '../../../helpers/functions'
 
 const WalletHOC = props => {
 
 	const dispatch = useDispatch()
 
+	const UserState = useSelector(state => state.UserState)
+	const WalletState = useSelector(state => state.WalletState)
+
 	useEffect(() => {
-		if(Wallet.web3Modal.cachedProvider){
+		if(isUserLoggedIn(UserState) && Wallet.web3Modal.cachedProvider){
 			Wallet.connectWallet().then(res => {
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				axios({
-					url: BASE_URL+'/api/user/login',
-					method: 'POST',
-					headers: {
-						'address': res.address 
-					}
-				}).then(res => {
-					if(res.status === 200) dispatch(setUser(res.data))
-				}).catch(err => {
-				}).finally( () => {
-				})
+			}).catch(err => { })
+		}
+	}, [dispatch, UserState])
+
+	useEffect(() => {
+		if(isWalletConnected(WalletState)){
+			WalletState.wallet.wallet.on("accountsChanged", accounts => console.log({accounts}))
+			WalletState.wallet.wallet.on("chainChanged", chainId => console.log({chainId}))
+			WalletState.wallet.wallet.on("disconnect", () => console.log("Wallet Disconnected"))
+		}
+		return () => {
+			if(isWalletConnected(WalletState)){
+				WalletState.wallet.wallet.on("accountsChanged", accounts => console.log({accounts}))
+				WalletState.wallet.wallet.on("chainChanged", chainId => console.log({chainId}))
+				WalletState.wallet.wallet.on("disconnect", () => console.log("Wallet Disconnected"))
+			}
+		}
+	}, [WalletState])
+
+	useEffect(() => {
+		if(isUserLoggedIn(UserState) && isWalletConnected(WalletState)){
+			dispatch(showSpinner())
+			axios({
+				url: BASE_URL+'/api/user/wallet',
+				method: 'POST',
+				headers: {
+					'address': WalletState.wallet.address,
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				}
+			}).then(res => {
+				if(res.status === 200) dispatch(setSnackbar({show: true, message: "Wallet Connected!", type: 1}))
+				else dispatch(setSnackbar('ERROR'))
 			}).catch(err => {
-				// navigate('/')
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => {
+				dispatch(hideSpinner())
 			})
 		}
-	}, [dispatch])
+	}, [WalletState, dispatch, UserState])
 
 	return null
 }

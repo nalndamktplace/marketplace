@@ -60,7 +60,8 @@ const FeedbackModal = () => {
 			method: 'POST',
 			headers: {
 				'address': WalletAddress,
-				'user-id': UserState.user.uid
+				'user-id': UserState.user.uid,
+				'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 			},
 			data : {
 				userAddress : WalletAddress,

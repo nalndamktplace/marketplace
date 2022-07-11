@@ -19,7 +19,6 @@ const LoginModal = () => {
 
 	const dispatch = useDispatch()
 
-	const UserState = useSelector(state => state.UserState)
 	const ModalState = useSelector(state => state.ModalState)
 
 	const [Show, setShow] = useState(false)
@@ -29,7 +28,7 @@ const LoginModal = () => {
 		onSuccess: tokenRes => {
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/user/oauth/google/verify',
+				url: BASE_URL+'/api/user/oauth/google/login',
 				method: 'POST',
 				data: tokenRes
 			}).then(res => {
@@ -45,7 +44,10 @@ const LoginModal = () => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		},
-		onError: tokenErr => console.error({tokenErr}),
+		onError: tokenErr => {
+			console.error({tokenErr})
+			dispatch(setSnackbar('ERROR'))
+		},
 		flow: 'auth-flow',
 		ux_mode: 'popup'
 	})
