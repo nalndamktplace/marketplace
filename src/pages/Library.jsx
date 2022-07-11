@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Wallet from '../connections/wallet'
 import { setWallet } from '../store/actions/wallet'
 import { setSnackbar } from '../store/actions/snackbar'
-import { isFilled, isUsable } from '../helpers/functions'
+import { isFilled, isUsable, isUserLoggedIn } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import Page from '../components/hoc/Page/Page'
@@ -130,37 +130,39 @@ const LibraryPage = props => {
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		setLoading(true)
-		if(ActiveTab === 0)
-			axios({
-				url: BASE_URL+'/api/user/books/owned',
-				method: 'GET',
-				headers: {
-					'user-id': UserState.user.uid,
-					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
-				},
-				params: {userAddress: WalletAddress}
-			}).then(res => {
-				if(res.status === 200) setAllNfts(res.data)
-				else dispatch(setSnackbar('NOT200'))
-			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
-			}).finally(() => setLoading(false))
-		else if(ActiveTab === 1)
-			axios({
-				url: BASE_URL+'/api/user/books/published',
-				method: 'GET',
-				headers: {
-					'user-id': UserState.user.uid,
-					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
-				},
-				params: {userAddress: WalletAddress}
-			}).then(res => {
-				if(res.status === 200) setAllNfts(res.data)
-				else dispatch(setSnackbar('NOT200'))
-			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
-			}).finally(() => setLoading(false))
+		if(isUserLoggedIn(UserState)){
+			setLoading(true)
+			if(ActiveTab === 0)
+				axios({
+					url: BASE_URL+'/api/user/books/owned',
+					method: 'GET',
+					headers: {
+						'user-id': UserState.user.uid,
+						'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+					},
+					params: {userAddress: WalletAddress}
+				}).then(res => {
+					if(res.status === 200) setAllNfts(res.data)
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					dispatch(setSnackbar('ERROR'))
+				}).finally(() => setLoading(false))
+			else if(ActiveTab === 1)
+				axios({
+					url: BASE_URL+'/api/user/books/published',
+					method: 'GET',
+					headers: {
+						'user-id': UserState.user.uid,
+						'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+					},
+					params: {userAddress: WalletAddress}
+				}).then(res => {
+					if(res.status === 200) setAllNfts(res.data)
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					dispatch(setSnackbar('ERROR'))
+				}).finally(() => setLoading(false))
+		}
 	}, [ActiveTab, WalletAddress, dispatch, UserState])
 
 	useEffect(()=>{
