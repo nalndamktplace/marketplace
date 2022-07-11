@@ -477,7 +477,7 @@ const BookPage = props => {
 				setLoading(false)
 				if(err.message){
 					if(err?.message?.indexOf("execution reverted: ERC20: transfer amount exceeds balance")>-1)
-						dispatch(setSnackbar({show: true, message: "You do not have enough NALNDA to purchase this book. Please try again later.", type: 3}))
+						dispatch(setSnackbar({show: true, message: "You do not have enough USDC to purchase this book. Please visit the faucet to get some.", type: 3}))
 					else if(err?.message?.indexOf("execution reverted: NalndaBook: Book unapproved from marketplace!")>-1)
 						dispatch(setSnackbar({show: true, message: "The book has not been approved for sales yet. Please try again later.", type: 3}))
 					else if(err.code === 4001)

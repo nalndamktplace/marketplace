@@ -24,6 +24,7 @@ import { GENRES } from '../config/genres'
 import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
 import { AGE_GROUPS } from '../config/ages'
+import { deleteData } from '../helpers/storage'
 
 const PublishNftPage = props => {
 
@@ -152,6 +153,7 @@ const PublishNftPage = props => {
 							data: formData
 						}).then(res4 => {
 							if(res4.status === 200){
+								deleteData('publish-book-form-data')
 								setLoading(false)
 								navigate('/library', {state: {tab: 'published'}})
 							}
