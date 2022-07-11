@@ -43,9 +43,10 @@ const LibraryPage = props => {
 	const [ActiveTab, setActiveTab] = useState(0)
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
-	const [layout, setLayout] = useState("GRID")
+	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
 	const [currentPage, setCurrentPage] = useState(1)
 	const [maxPage, setMaxPage] = useState(10)
+	const [maxPrice, setMaxPrice] = useState(100);
 
 	useEffect(() => { GaTracker('page_view_account') }, [])
 
@@ -162,6 +163,13 @@ const LibraryPage = props => {
 			}).finally(() => setLoading(false))
 	}, [ActiveTab, WalletAddress, dispatch, UserState])
 
+	useEffect(()=>{
+		if(!isFilled(AllNfts)) return ;
+		let maxNftPrice = Math.max(...AllNfts.map(nft => nft.price));
+		maxNftPrice = Math.ceil(maxNftPrice / 10) * 10 ; 
+		setMaxPrice(maxNftPrice||100)
+	},[AllNfts])
+
 	const readHandler = async (NFT) => {
 		setLoading(true)
 		try {
@@ -222,7 +230,7 @@ const LibraryPage = props => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="account__data">
 				<div className="account__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel maxPrice={maxPrice} setFiltersPanelOpen={setFiltersPanelOpen} config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="account__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="account__data__books__header">

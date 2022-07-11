@@ -37,6 +37,7 @@ const PublishNftPage = props => {
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], ageGroup: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
 	const [formProgress, setFormProgress] = useState(0)
+	const [loadingFromStorage, setLoadingFromStorage] = useState(true);
 
 	useEffect(() => { GaTracker('page_view_publish') }, [])
 
@@ -63,6 +64,38 @@ const PublishNftPage = props => {
 		})
 		setFormProgress(filled/total)
 	},[FormInput])
+
+	useEffect(()=>{
+		if(!window.localStorage) return ;
+		try{
+			let FormInputValues = JSON.parse(window.localStorage.getItem("publish-book-form-data"));
+			if(!isUsable(FormInputValues)) {
+				setLoadingFromStorage(false);
+				return ;
+			}
+			setFormInput({
+				...FormInput,
+				name: FormInputValues.name,
+				author: FormInputValues.author,
+				genres: FormInputValues.genres,
+				ageGroup: FormInputValues.ageGroup,
+				price: FormInputValues.price,
+				pages: FormInputValues.pages,
+				publication: FormInputValues.publication,
+				synopsis: FormInputValues.synopsis,
+				language: FormInputValues.language,
+			});
+			setLoadingFromStorage(false);
+		} catch(err){
+			setLoadingFromStorage(false);
+		}
+	},[])
+
+	useEffect(()=>{
+		if(loadingFromStorage) return ;
+		if(!window.localStorage) return ;
+		window.localStorage.setItem("publish-book-form-data",JSON.stringify(FormInput));
+	},[FormInput,loadingFromStorage])
 
 	async function listNFTForSale() {
 		GaTracker('event_publish_list')
@@ -156,19 +189,19 @@ const PublishNftPage = props => {
 			<div className="publish__data">
 				<div className="publish__data__form utils__padding__bottom--s">
 					<h3 className='typo__head typo__head--5 utils__margin__top--b utils__margin__bottom--m'>Publish eBook</h3>
-					<InputField type="string" label="book name" onChange={e => setFormInput({ ...FormInput, name: e.target.value })} description="Enter name of the book"/>
-					<InputField type="string" label="book author" onChange={e => setFormInput({ ...FormInput, author: e.target.value })} description="Enter name of the author"/>
+					<InputField type="string" label="book name" value={FormInput.name} onChange={e => setFormInput({ ...FormInput, name: e.target.value })} description="Enter name of the book"/>
+					<InputField type="string" label="book author" value={FormInput.author} onChange={e => setFormInput({ ...FormInput, author: e.target.value })} description="Enter name of the author"/>
 					<h3 className='typo__head typo__head--5 utils__margin__top--b utils__margin__bottom--m'>Upload Files</h3>
 					<InputField type="file" label="cover" accept='image/*' onChange={e => setFormInput({ ...FormInput, cover: e.target.files[0] })} description="Upload a picture of book cover. File types supported: JPG, PNG, GIF, SVG, WEBP"/>
 					<InputField type="file" label="preview" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, preview: e.target.files[0] })} description="Upload a sample of book for preview. File types supported: EPUB"/>
 					<InputField type="file" label="book" accept='application/epub+zip' onChange={e => setFormInput({ ...FormInput, book: e.target.files[0] })} description="Upload a book. File types supported: EPUB"/>
 					<h3 className='typo__head typo__head--5 utils__margin__top--b utils__margin__bottom--m'>Meta Data</h3>
-					<InputField type="number" label="price in USDC" onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
+					<InputField type="number" label="price in USDC" value={FormInput.price} onChange={e => setFormInput({ ...FormInput, price: e.target.value })} description="Price of book in USDC"/>
 					<InputField type="list" label="genres" listType={'multiple'} minLimit={1} maxLimit={5} values={GENRES} value={FormInput.genres} onSave={values => setFormInput({ ...FormInput, genres: values })} placeholder="e.g., Action, Adventure" description="Select genres for the book. Max 5 genres can be selected"/>
 					<InputField type="list" label="age group" listType={'multiple'} minLimit={1} maxLimit={AGE_GROUPS.length} values={AGE_GROUPS} value={FormInput.ageGroup} onSave={values => setFormInput({ ...FormInput, ageGroup: values })} placeholder="e.g., Youth (15-24 years)" description="Select the most appropriate age group for the book."/>
-					<InputField type="number" label="number of print pages" onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
-					<InputField type="string" label="publication" onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher" required={false}/>
-					<InputField type="text" label="synopsis" lines={8} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
+					<InputField type="number" label="number of print pages" value={FormInput.pages} onChange={e => setFormInput({ ...FormInput, pages: e.target.value })} description="Enter number of pages in the book"/>
+					<InputField type="string" label="publication" value={FormInput.publication} onChange={e => setFormInput({ ...FormInput, publication: e.target.value })} description="Enter name of the publisher" required={false}/>
+					<InputField type="text" label="synopsis" lines={8} value={FormInput.synopsis} onChange={e => setFormInput({ ...FormInput, synopsis: e.target.value })} description="Write a brief description about the book"/>
 					<InputField type="list" label="language" listType={'single'} values={LANGUAGES} value={FormInput.language} onSave={value => setFormInput({ ...FormInput, language: value })} description="Select the language of the book"/>
 					<InputField type="date" label="published" onChange={e => setFormInput({ ...FormInput, published: e.target.value })} description="Enter when book was published"/>
 					<h3 className='typo__head typo__head--5 utils__margin__top--b utils__margin__bottom--m'>Secondary Sales Conditions</h3>

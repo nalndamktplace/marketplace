@@ -2,7 +2,7 @@ import Button from "../Buttons/Button"
 import Accordian from "../Accordian/Accordian"
 import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg" ;
 
-const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFiltersPanelOpen }) => {
+const FilterPanel = ({ config={}, maxPrice=100,filters=[], setFilters=()=>{}, defaults,setFiltersPanelOpen }) => {
 
     const toggleFilter = (e, filterItem, item) => {
 		if(filterItem.type === "multiselect") {
@@ -68,20 +68,23 @@ const FilterPanel = ({ config={}, filters=[], setFilters=()=>{}, defaults,setFil
 
     const renderTab = (filterData) => {
 		const currentValue = filters.filter(filter => filter['key'] === filterData.name)[0].value
-        return <div className="filter-panel__body__tabs">
+        return <div className="filter-panel__body__tabs" key={filterData.name}>
             {filterData.values.map(item => (<Button key={item.name} onClick={(e)=>toggleFilter(e,filterData,item)} className={"filter-panel__body__tabs__item " + (currentValue === item.value?"filter-panel__body__tabs__item--active":"") }>{item.label}</Button>))}
         </div>
     }
 
     const renderRange = (filterData) => {
 		const currentValue = filters.filter(filter => filter['key'] === filterData.name)[0].value
-        return <div className="filter-panel__body__range">
+        const maxValue = (filterData.name==="price"?maxPrice:filterData.max)||100 ;
+        const minValue = filterData.min||0 ;
+        const steps =(Math.round((maxValue - minValue)/50)*5) || 1;
+        return <div className="filter-panel__body__range" key={filterData.name}>
             <div className="filter-panel__body__range__header">
                 <div className="filter-panel__body__range__label typo__subtitle">{filterData.label}</div>
                 <div className="filter-panel__body__range__value">{currentValue} {filterData.unit}</div>
             </div>
             <div className="filter-panel__body__range__body">
-                <input defaultValue={filterData.default} onChange={(e)=>setFilterValue(filterData,e.target.value)} type="range" min={filterData.min||0} max={filterData.max||100} step={filterData.step||1} />
+                <input defaultValue={filterData.default} onChange={(e)=>setFilterValue(filterData,e.target.value)} type="range" min={minValue} max={maxValue} step={steps} />
             </div>
         </div>
     }
