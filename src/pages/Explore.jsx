@@ -41,6 +41,7 @@ const ExplorePage = () => {
 	const [currentPage, setCurrentPage] = useState(1)
 	const [maxPage, setMaxPage] = useState(10)
 	const [AllNfts, setAllNfts] = useState([])
+	const [maxPrice, setMaxPrice] = useState(100);
 
 	useEffect(() => { GaTracker('page_view_explore') }, [])
 
@@ -112,6 +113,13 @@ const ExplorePage = () => {
 		}
 	}, [Filters, AllNfts])
 
+	useEffect(()=>{
+		if(!isFilled(AllNfts)) return ;
+		let maxNftPrice = Math.max(...AllNfts.map(nft => nft.price));
+		maxNftPrice = Math.ceil(maxNftPrice / 10) * 10 ; 
+		setMaxPrice(maxNftPrice||100)
+	},[AllNfts])
+
 	const buyHandler = nft => {
 		GaTracker('event_explore_purchase_book')
 		setLoading(true)
@@ -157,7 +165,7 @@ const ExplorePage = () => {
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
-					<FilterPanel setFiltersPanelOpen={setFiltersPanelOpen} config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
+					<FilterPanel maxPrice={maxPrice} setFiltersPanelOpen={setFiltersPanelOpen} config={EXPLORE_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
 				</div>
 				<div className="explore__data__books" data-filter-open={FiltersPanelOpen}> 
 					<div className="explore__data__books__header">
