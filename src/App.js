@@ -33,7 +33,6 @@ import CollectionPage from './pages/Collection'
 
 import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
-import LoginModal from './components/modal/Login/Login'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 import PrivacyPolicyPage from './pages/Policies/Privacy'
@@ -80,7 +79,6 @@ function App() {
 						<Spinner/>
 						<WalletHOC/>
 						<UserHOC/>
-						<LoginModal/>
 					</GoogleOAuthProvider>
 				</Provider>
 			</div>
