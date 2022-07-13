@@ -120,7 +120,6 @@ const CollectionPage = () => {
 		if(!isFilled(AllNfts)) return ;
 		let maxNftPrice = Math.max(...AllNfts.map(nft => nft.price));
 		maxNftPrice = Math.ceil(maxNftPrice / 10) * 10 ; 
-		console.log(maxNftPrice)
 		setMaxPrice(maxNftPrice||100)
 	},[AllNfts])
 

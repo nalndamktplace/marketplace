@@ -56,7 +56,6 @@ const ProfilePage = () => {
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			}).finally( () => setLoading(false))
 		}
@@ -124,7 +123,7 @@ const ProfilePage = () => {
 				if(res.status === 200){
 					setFormInput(old => {return {...old, fullName: isFilled(res.data.first_name)?`${res.data.first_name} ${res.data.last_name}`:'', bio: res.data.bio}})
 					if(isFilled(res.data.display_pic)) setDisplayPicUrl(`${BASE_URL}/files/${res.data.display_pic}`)
-					else setDisplayPicUrl(res.data.google_pic)
+					else setDisplayPicUrl(res.data.social_pic)
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {

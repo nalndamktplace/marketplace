@@ -28,7 +28,7 @@ const LoginModal = () => {
 		onSuccess: tokenRes => {
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/user/oauth/google/login',
+				url: BASE_URL+'/api/user/oauth/login',
 				method: 'POST',
 				data: tokenRes
 			}).then(res => {
@@ -45,7 +45,6 @@ const LoginModal = () => {
 			}).finally(() => setLoading(false))
 		},
 		onError: tokenErr => {
-			console.error({tokenErr})
 			dispatch(setSnackbar('ERROR'))
 		},
 		flow: 'auth-flow',

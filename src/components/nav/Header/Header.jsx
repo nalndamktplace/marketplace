@@ -3,6 +3,8 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 
+import { useAuth0 } from "@auth0/auth0-react"
+
 import Wallet from "../../../connections/wallet"
 
 import { setSnackbar } from "../../../store/actions/snackbar"
@@ -13,15 +15,14 @@ import Button from "../../ui/Buttons/Button"
 import Dropdown from "../../ui/Dropdown/Dropdown"
 import SideNavbar from "../SideNavbar/SideNavbar"
 
-import Constants from '../../../config/constants'
 import GaTracker from "../../../trackers/ga-tracker"
-import { getData } from "../../../helpers/storage"
-import { BASE_URL } from '../../../config/env'
+import { logout } from "../../../helpers/storage"
 import { isFilled } from "../../../helpers/functions"
+import { BASE_URL } from '../../../config/env'
 import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/functions"
 
-import { foundUser, unsetUser } from "../../../store/actions/user"
-import { showModal, SHOW_LOGIN_MODAL } from "../../../store/actions/modal"
+import { unsetUser } from "../../../store/actions/user"
+
 
 import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
@@ -32,6 +33,8 @@ import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
 const Header = ({showRibbion=true,noPadding=false}) => {
+
+	const Auth0 = useAuth0()
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -45,6 +48,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [SearchQuery, setSearchQuery] = useState('')
 	const [SearchResults, setSearchResults] = useState([])
 	const [Collections, setCollections] = useState([])
+
+	useEffect(() => {
+		if(Auth0.isLoading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [Auth0.isLoading, dispatch])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -79,14 +87,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const loginHandler = () => {
-		dispatch(showSpinner())
-		const localData = getData(Constants.USER_STATE)
-		if(isUserLoggedIn(localData)) {
-			dispatch(foundUser(localData))
-			dispatch(setSnackbar({show: true, message: "Welcome Back.", type: 1}))
-		}
-		else dispatch(showModal(SHOW_LOGIN_MODAL))
-		dispatch(hideSpinner())
+		// loginWithPopup()
+		Auth0.loginWithRedirect()
 	}
 
 	const handleWalletConnect = () => {
@@ -153,8 +155,10 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}
 
 	const logOutHandler = () => {
+		Auth0.logout()
 		handleWalletDisconnect()
 		dispatch(unsetUser())
+		logout()
 	}
 
 	const renderNavItems = () => {
