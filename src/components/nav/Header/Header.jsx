@@ -3,6 +3,8 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 
+import { useAuth0 } from "@auth0/auth0-react"
+
 import Wallet from "../../../connections/wallet"
 
 import { setSnackbar } from "../../../store/actions/snackbar"
@@ -32,6 +34,8 @@ import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
 const Header = ({showRibbion=true,noPadding=false}) => {
+
+	const { loginWithRedirect } = useAuth0();
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -79,14 +83,15 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const loginHandler = () => {
-		dispatch(showSpinner())
-		const localData = getData(Constants.USER_STATE)
-		if(isUserLoggedIn(localData)) {
-			dispatch(foundUser(localData))
-			dispatch(setSnackbar({show: true, message: "Welcome Back.", type: 1}))
-		}
-		else dispatch(showModal(SHOW_LOGIN_MODAL))
-		dispatch(hideSpinner())
+		loginWithRedirect()
+		// dispatch(showSpinner())
+		// const localData = getData(Constants.USER_STATE)
+		// if(isUserLoggedIn(localData)) {
+		// 	dispatch(foundUser(localData))
+		// 	dispatch(setSnackbar({show: true, message: "Welcome Back.", type: 1}))
+		// }
+		// else dispatch(showModal(SHOW_LOGIN_MODAL))
+		// dispatch(hideSpinner())
 	}
 
 	const handleWalletConnect = () => {
