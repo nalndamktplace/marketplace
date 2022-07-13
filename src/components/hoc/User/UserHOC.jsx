@@ -11,12 +11,19 @@ import moment from 'moment'
 import { useNavigate } from 'react-router'
 import { clearWallet } from '../../../store/actions/wallet'
 import { setSnackbar } from '../../../store/actions/snackbar'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const UserHOC = props => {
+
+	const { user, isAuthenticated, isLoading } = useAuth0();
 
 	const dispatch = useDispatch()
 
 	const UserState = useSelector(state => state.UserState)
+
+	useEffect(() => {
+		console.log({user})
+	}, [user])
 
 	useEffect(() => {
 		if(!isUserLoggedIn(UserState)){
