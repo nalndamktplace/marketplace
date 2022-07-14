@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode'
 import { BASE_URL } from "../../config/env";
 import { isFilled } from "../../helpers/functions";
 import { logout, postData } from "../../helpers/storage";
-import { FOUND_USER, SET_USER, UNSET_USER } from "../actions/user";
+import { FOUND_USER, SET_USER, SET_USER_ONLY, UNSET_USER } from "../actions/user";
 import moment from "moment";
 
 const initState = {
@@ -57,6 +57,30 @@ const handleData = (state = initState, action) => {
 						exp: moment(jwt_decode(action.data.tokens.rfsTkn).exp*1000),
 						tkn: action.data.tokens.rfsTkn
 					}
+				}
+			}
+			postData(Constants.USER_STATE, userState)
+			return {
+				...state,
+				...userState
+			}
+		case SET_USER_ONLY:
+			userState = {
+				...state,
+				user: {
+					bio: action.data.bio,
+					displayPic: isFilled(action.data.display_pic)?BASE_URL+'/files/'+action.data.display_pic:null,
+					email: action.data.email,
+					name: [action.data.first_name, action.data.last_name],
+					socialId: action.data.social_id,
+					socialPic: action.data.social_pic,
+					socialSub: action.data.social_sub,
+					joinedAt: action.data.joined_at,
+					lastUpdate: action.data.last_update,
+					locale: action.data.locale,
+					type: action.data.type,
+					uid: action.data.uid,
+					wallet: action.data.wallet_address,
 				}
 			}
 			postData(Constants.USER_STATE, userState)

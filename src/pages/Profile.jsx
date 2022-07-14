@@ -13,7 +13,7 @@ import {ReactComponent as TwitterIcon} from "../assets/icons/twitter.svg"
 import GaTracker from "../trackers/ga-tracker"
 import { isFilled, isUsable, isUserLoggedIn, isWalletConnected } from "../helpers/functions"
 import { BASE_URL } from '../config/env'
-import { setUser } from '../store/actions/user'
+import { setUser, setUserOnly } from '../store/actions/user'
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { setWallet } from '../store/actions/wallet'
@@ -83,12 +83,16 @@ const ProfilePage = () => {
 				data: formData
 			}).then(res => {
 				if(res.status === 200){
-					dispatch(setUser(res.data))
+					dispatch(setUserOnly(res.data))
 					dispatch(setSnackbar({show: true, message: "Profile Pic Updated.", type: 1}))
 				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
+				if(isUsable(err.response)){
+					if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+					else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+				}
+				else dispatch(setSnackbar('ERROR'))
 			}).finally( () => setLoading(false))
 		} else {
 			setFormInput(old => {return {...old, displayPic: null}})
