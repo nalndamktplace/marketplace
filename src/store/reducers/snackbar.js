@@ -1,4 +1,4 @@
-import { ERR_GENERIC_SNACKBAR, ERR_NOT200_SNACKBAR, SET_SNACKBAR, STT_NOT_LOGGED_IN, UNSET_SNACKBAR } from "../actions/snackbar"
+import { ERR_GENERIC_SNACKBAR, ERR_NOT200_SNACKBAR, INVALID_FILE_TYPE, LIMIT_FILE_SIZE, SET_SNACKBAR, STT_NOT_LOGGED_IN, UNSET_SNACKBAR } from "../actions/snackbar"
 
 const initState = {
 	show: false,
@@ -42,6 +42,20 @@ const handleData = (state = initState, action) => {
 				...state,
 				show: true,
 				message: "Please login first.",
+				type: 3
+			}
+		case LIMIT_FILE_SIZE:
+			return {
+				...state,
+				show: true,
+				message: "Please try uploading a smaller file.",
+				type: 3
+			}
+		case INVALID_FILE_TYPE:
+			return {
+				...state,
+				show: true,
+				message: "Invalid file type recieved.",
 				type: 3
 			}
 		default:
