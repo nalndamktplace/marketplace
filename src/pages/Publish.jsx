@@ -162,7 +162,11 @@ const PublishNftPage = props => {
 							}
 						})
 						.catch(err => {
-							dispatch(setSnackbar('NOT200'))
+							if(isUsable(err.response)){
+								if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+								else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+							}
+							else dispatch(setSnackbar('NOT200'))
 							setLoading(false)
 						})
 					}
@@ -181,7 +185,11 @@ const PublishNftPage = props => {
 				setLoading(false)
 			}
 		}).catch(err => {
-			dispatch(setSnackbar('NOT200'))
+			if(isUsable(err.response)){
+				if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+				else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+			}
+			else dispatch(setSnackbar('NOT200'))
 			setLoading(false)
 		})
 	}
