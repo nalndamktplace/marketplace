@@ -129,7 +129,6 @@ const PublishNftPage = props => {
 					if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
 						let formData = new FormData()
 						formData.append("epub", FormInput.preview)
-						formData.append("ipfsPath", name)
 						formData.append("name", name)
 						formData.append("author", author)
 						formData.append("cover", coverUrl)
