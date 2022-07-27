@@ -8,8 +8,9 @@ import InputField from '../../ui/Input/Input'
 
 import { hideModal, SHOW_LIST_MODAL } from '../../../store/actions/modal'
 import GaTracker from '../../../trackers/ga-tracker'
+import { isUsable } from '../../../helpers/functions'
 
-const ListModal = props => {
+const ListModal = ({book, userCopy, onListHandler}) => {
 	const dispatch = useDispatch()
 
 	const ModalState = useSelector(state => state.ModalState)
@@ -28,16 +29,19 @@ const ListModal = props => {
 	const modalCloseHandler = state => { if(state === false) dispatch(hideModal()) }
 
 	return (
-		<Backdrop show={Show}>
-			<Modal title='List eBook' open={Show} toggleModal={modalCloseHandler} cancellable>
-				<p className='utils__margin__bottom--n typo__transform--capital'>Book: {props.data.title}</p>
-				<p className='utils__margin__bottom--n typo__transform--capital'>Author: {props.data.author}</p>
-				<p className='typo__transform--capital'>DA Score: {props.data.da_score}</p>
-				<InputField type="string" label="listing price in USDC" onChange={e => setListPrice(e.target.value)} />
-				<div style={{flex: 1}}/>
-				<Button type="primary" onClick={()=>props.onListHandler(ListPrice)}>List eBook</Button>
-			</Modal>
-		</Backdrop>
+		isUsable(userCopy) && isUsable(book)?
+			<Backdrop show={Show}>
+				<Modal title='List eBook' open={Show} toggleModal={modalCloseHandler} cancellable>
+					<p className='utils__margin__bottom--n typo__transform--capital'>Book: {book.title}</p>
+					<p className='utils__margin__bottom--n typo__transform--capital'>Author: {book.author}</p>
+					<p className='typo__transform--capital'>purchased at: {userCopy.purchase_price}</p>
+					<p className='typo__transform--capital'>DA Score: {userCopy.da_score}</p>
+					<InputField type="string" label="listing price in USDC" onChange={e => setListPrice(e.target.value)} />
+					<div style={{flex: 1}}/>
+					<Button type="primary" onClick={()=>onListHandler(ListPrice)}>List eBook</Button>
+				</Modal>
+			</Backdrop>:
+		null
 	)
 }
 
