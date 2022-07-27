@@ -59,6 +59,7 @@ const BookPage = props => {
 	const [NFT, setNFT] = useState(null)
 	const [Owner, setOwner] = useState(null)
 	const [Listed, setListed] = useState(null)
+	const [UserCopy, setUserCopy] = useState(null)
 	const [Published, setPublished] = useState(null)
 	// Likes
 	const [Likes, setLikes] = useState(0)
@@ -212,8 +213,9 @@ const BookPage = props => {
 		if(isUsable(NFT)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/reader/count?bid='+NFT.id,
-				method: 'GET'
+				url: `${BASE_URL}/api/reader/count`,
+				method: 'GET',
+				params: { bookAddress: NFT.book_address }
 			}).then(res => {
 				if(res.status === 200) setLiveReaderCount(res.data.reader_count)
 			}).catch(err => {
@@ -226,8 +228,9 @@ const BookPage = props => {
 		if(isUsable(NFT)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/reader/total-read-time?bid='+NFT.id,
-				method: 'GET'
+				url: `${BASE_URL}/api/reader/total-read-time`,
+				method: 'GET',
+				params: { bookAddress: NFT.book_address }
 			}).then(res => {
 				if(res.status === 200) setTotalReadTime(res.data.total_read_time)
 			}).catch(err => {
@@ -281,6 +284,27 @@ const BookPage = props => {
 		TabContainerRef.current.style.setProperty("--marker-x",activeTabElement.offsetLeft);
 	},[ActiveTab])
 
+	useEffect(() => {
+		if(Owner){
+			axios({
+				url: `${BASE_URL}/api/user/book`,
+				method: 'GET',
+				headers: {
+					'user-id': UserState.user.uid,
+					'address': WalletState.wallet.address,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
+				params: {walletAddress: WalletState.wallet.address, bookAddress: NFT.book_address}
+			}).then(res => {
+				if(res.status === 200) setUserCopy(res.data)
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				console.error({err})
+				dispatch(setSnackbar('ERROR'))
+			})
+		}
+	}, [Owner, UserState, WalletState, dispatch, NFT])
+
 	const walletStatus = () => {
 		if(isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)){
 			setWalletAddress(WalletState.wallet.address)
@@ -313,7 +337,7 @@ const BookPage = props => {
 				},
 				params: {
 					ownerAddress: WalletAddress,
-					tokenId: NFT.tokenId,
+					tokenId: UserCopy.token_id,
 					bookAddress: NFT.book_address
 				}
 			}).then(res => {
@@ -341,8 +365,9 @@ const BookPage = props => {
 						}).finally( ()=> { setLoading(false) })
 					}).catch(err => {
 						setLoading(false)
-						if(err.data.message === 'execution reverted: NalndaBooksSecondarySales: NFT not yet listed / already sold!')
-							dispatch(setSnackbar({show: true, message: "eBook already sold or not listed.", type: 3}))
+						if(isUsable(err.reason)){
+							if(err.reason.includes('NFT not yet listed / already sold')) dispatch(setSnackbar({show: true, message: "eBook already sold or not listed.", type: 3}))
+						}
 						else dispatch(setSnackbar('ERROR'))
 					})
 				}
@@ -355,17 +380,22 @@ const BookPage = props => {
 	}
 
 	const listHandler = () => {
-		if(NFT.copies >= NFT.min_primary_sales && (moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment()))) dispatch(showModal(SHOW_LIST_MODAL))
-		else if(NFT.copies < NFT.min_primary_sales) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${NFT.min_primary_sales} copies have been sold.`, type: 2}))
-		else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
+		dispatch(showModal(SHOW_LIST_MODAL))
+		console.log({copies: NFT.copies >= NFT.min_primary_sales})
+		console.log({secondarySalesFrom: moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment())})
+		// // if(NFT.copies >= NFT.min_primary_sales && (moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment()))) dispatch(showModal(SHOW_LIST_MODAL))
+		// if(moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment())) dispatch(showModal(SHOW_LIST_MODAL))
+		// else if(NFT.copies < NFT.min_primary_sales) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${NFT.min_primary_sales} copies have been sold.`, type: 2}))
+		// else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
 	}
 
 	const onListHandler = listPrice => {
 		GaTracker('event_book_list')
 		if(isUsable(WalletAddress)){
 			setLoading(true)
-			Contracts.listBookToMarketplace(NFT.book_address, NFT.tokenId, listPrice, WalletState.wallet.signer).then(res => {
+			Contracts.listBookToMarketplace(NFT.book_address, UserCopy.token_id, listPrice, WalletState.wallet.signer).then(res => {
 				setLoading(true)
+				console.log({orderId: parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)})
 				const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
 				axios({
 					url: BASE_URL + '/api/book/list',
@@ -374,7 +404,8 @@ const BookPage = props => {
 						ownerAddress: WalletAddress,
 						bookAddress: NFT.book_address,
 						bookPrice: listPrice,
-						bookOrderId: orderId
+						bookOrderId: orderId,
+						bookTokenId: UserCopy.token_id
 					}
 				}).then(res => {
 					if(res.status === 200){
@@ -387,7 +418,12 @@ const BookPage = props => {
 					dispatch(setSnackbar('ERROR'))
 				}).finally( ()=> { setLoading(false) })
 			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
+				if(isUsable(err.reason)){
+					if(err.reason.includes("Can't list the cover at this time")) dispatch(setSnackbar({show: true, message: "Please wait for some more time before listing the book.", type: 3}))
+					else if(err.reason.includes("Listing for this book is disabled")) dispatch(setSnackbar({show: true, message: "Listing this book is not allowed right now. Please try again later.", type: 3}))
+					else if(err.reason.includes("Seller should own the NFT to list")) dispatch(setSnackbar({show: true, message: "Book is already listed. Please contact us on support@nalnda.com", type: 3}))
+				}
+				else dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
 	}
@@ -410,6 +446,11 @@ const BookPage = props => {
 							axios({
 								url : BASE_URL + '/api/verify',
 								method : "POST",
+								headers: {
+									'address': WalletState.wallet.address,
+									'user-id': UserState.user.uid,
+									'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+								},
 								data : {
 									accountAddress: WalletAddress,
 									bookAddress: NFT.book_address,
@@ -419,11 +460,10 @@ const BookPage = props => {
 							}).then(res=>{
 								if(res.status === 200) {
 									GaTracker('navigate_book_reader')
-									navigate('/library/reader', {state: {book: {...NFT,submarineURL:res.data.url}, preview: false}}) 
-								} else {
-									dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+									navigate('/library/reader', {state: {book: {...NFT, url: res.data.url}, preview: false}}) 
 								}
-							}).catch(err => {
+								else dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+							}).catch(err => { console.error({err})
 							}).finally( () => setLoading(false))
 						}
 						else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
@@ -448,7 +488,6 @@ const BookPage = props => {
 	const quoteModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_QUOTE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
 	const purchaseNewCopyHandler = () => {
-
 		const purchase = () => {
 			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString(), WalletState.wallet.signer).then(res => {
 				dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
@@ -457,7 +496,7 @@ const BookPage = props => {
 				axios({
 					url: BASE_URL+'/api/book/purchase',
 					method: 'POST',
-					data: {ownerAddress: WalletAddress, bookAddress: NFT.book_address, tokenId}
+					data: {ownerAddress: WalletAddress, bookAddress: NFT.book_address, tokenId, purchasePrice: NFT.price}
 				}).then(res => {
 					if(res.status === 200) setOwner(true)
 					else dispatch(setSnackbar('NOT200'))
@@ -485,12 +524,9 @@ const BookPage = props => {
 				} else dispatch(setSnackbar('ERROR'))
 			})
 		}
-
 		GaTracker('event_book_purchase_new')
 		setLoading(true)
-		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)){
-			purchase()
-		}
+		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)) purchase()
 		else{
 			setLoading(true)
 			Wallet.connectWallet().then(res => {
@@ -517,7 +553,9 @@ const BookPage = props => {
 						newOwnerAddress: WalletAddress,
 						previousOwnerAddress: offer.previous_owner,
 						bookAddress: offer.book_address,
-						tokenId: offer.token_id
+						tokenId: offer.token_id,
+						purchasePrice: offer.price,
+						orderId: offer.order_id
 					}
 				}).then(res => {
 					if(res.status === 200) setOwner(true)
@@ -819,7 +857,7 @@ const BookPage = props => {
 						</div>
 					</div>
 					<PurchaseModal data={NFT} onNewBookPurchase={()=>purchaseNewCopyHandler()} onOldBookPurchase={offer=>purchaseOldCopyHandler(offer)}/>
-					<ListModal data={NFT} onListHandler={listPrice=>onListHandler(listPrice)} />
+					<ListModal book={NFT} userCopy={UserCopy} onListHandler={listPrice=>onListHandler(listPrice)} />
 					<ReviewModal ReviewForm={ReviewForm} setReviewForm={setReviewForm} reviewHandler={reviewHandler}/>
 					<QuoteModal QuotesForm={QuotesForm} setQuotesForm={setQuotesForm} quoteHandler={quoteHandler}/>
 				</>
