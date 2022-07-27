@@ -153,7 +153,7 @@ const ReaderPage = () => {
 			bookURL = BASE_URL+'/files/'+navParams.book.preview
 			setPreview(true)
 		} else {
-			bookURL = navParams.book.submarineURL
+			bookURL = navParams.book.url
 			setPreview(false)
 		}
 		try {
