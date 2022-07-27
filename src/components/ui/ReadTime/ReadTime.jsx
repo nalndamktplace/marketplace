@@ -14,6 +14,7 @@ import { useNavigate } from "react-router"
 
 const ReadTime = ({bookMeta, preview}) => {
 
+	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
 
 	const [readTime, setReadTime] = useState(0)
@@ -32,7 +33,16 @@ const ReadTime = ({bookMeta, preview}) => {
 
 	useEffect(() => {
 		if(!preview && isUsable(bookMeta) && isUsable(WalletAddress)){
-			axios(`${BASE_URL}/api/reader/read-time?bid=${bookMeta.id}&uid=${WalletAddress}`)
+			axios({
+				url: `${BASE_URL}/api/reader/read-time`,
+				method: "GET",
+				headers: {
+					'address': WalletAddress,
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
+				params: { bookAddress: bookMeta.book_address }
+			})
 			.then(res => {
 				if(res.status === 200) {
 					setReadTime(res.data.read_time)
@@ -40,7 +50,7 @@ const ReadTime = ({bookMeta, preview}) => {
 				}
 			}).catch(err => {dispatch(setSnackbar('ERROR'))})
 		}
-	}, [bookMeta, dispatch, WalletAddress, preview])
+	}, [bookMeta, dispatch, WalletAddress, preview, UserState])
 
 	useEffect(()=>{
 		if(!isUsable(bookMeta) && !isUsable(WalletAddress)) return
@@ -56,17 +66,22 @@ const ReadTime = ({bookMeta, preview}) => {
 				axios({
 					url: `${BASE_URL}/api/reader/read-time`,
 					method: 'PUT',
+					headers: {
+						'address': WalletAddress,
+						'user-id': UserState.user.uid,
+						'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+					},
 					data : {
-						uid : WalletAddress,
-						bid : bookMeta.id,
-						read_time : currentReadTime
+						bid: bookMeta.id,
+						bookAddress: bookMeta.book_address,
+						readTime: currentReadTime
 					}
 				}).then(res => {
 					if(res.status === 200) { setLastUpdate(res.data.read_time) }
 				}).catch(err => {dispatch(setSnackbar('ERROR'))})
 			}
 		}
-	},[bookMeta, readTime, WalletAddress, lastUpdate, dispatch, preview])
+	},[bookMeta, readTime, WalletAddress, lastUpdate, dispatch, preview, UserState])
 
 	return ( 
 		<div className="readtime">

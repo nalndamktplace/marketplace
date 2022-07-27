@@ -36,7 +36,7 @@ const PublishNftPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], ageGroup: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(90, 'days')})
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], ageGroup: [], price: '', pages: '', publication: '', isbn: '', synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(1, 'days')})
 	const [formProgress, setFormProgress] = useState(0)
 	const [loadingFromStorage, setLoadingFromStorage] = useState(true);
 
@@ -56,7 +56,7 @@ const PublishNftPage = props => {
 	}, [WalletState])
 
 	useEffect(()=>{
-		const ignoreFields = ["publication","attributes","isbn","primarySales","secondarySalesDate"] ;
+		const ignoreFields = ["publication","isbn","primarySales","secondarySalesDate"] ;
 		let filled = 0;
 		let total = Object.keys(FormInput).length ;
 		Object.keys(FormInput).forEach(key => {
@@ -99,98 +99,97 @@ const PublishNftPage = props => {
 	},[FormInput,loadingFromStorage])
 
 	async function listNFTForSale() {
-		GaTracker('event_publish_list')
-
-		setLoading(true)
-
-		let formData = new FormData()
-		formData.append("book",FormInput.book)
-		formData.append("cover",FormInput.cover)
-		formData.append("bookTitle",FormInput.title)
-		formData.append("synopsis", FormInput.synopsis)
-
-		axios({
-			url : BASE_URL + "/api/book/submarine",
-			method : "POST",
-			data : formData
-		}).then(res => {
-			const bookUrl = res.data.book.url
-			const coverUrl = res.data.cover.url
-			const { name, author, cover, book, genres, ageGroup, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
-			const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays())
-			let genreIDs = []
-			genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
-			const languageId = LANGUAGES.indexOf(language).toString()
-			if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
-				Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
-					const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
-					const status = tx.status
-					const txHash = tx.transactionHash
-					if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
-						let formData = new FormData()
-						formData.append("epub", FormInput.preview)
-						formData.append("name", name)
-						formData.append("author", author)
-						formData.append("cover", coverUrl)
-						formData.append("book", bookUrl)
-						formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
-						formData.append("ageGroup", JSON.stringify(ageGroup.sort((a,b) => a>b)))
-						formData.append("price", price)
-						formData.append("pages", pages)
-						formData.append("publication", publication)
-						formData.append("attributes", JSON.stringify(attributes))
-						formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
-						formData.append("language", language)
-						formData.append("published", published)
-						formData.append("secondarySalesFrom", secondaryFrom)
-						formData.append("publisherAddress", WalletAddress)
-						formData.append("bookAddress", bookAddress)
-						formData.append("txHash", txHash)
-						axios({
-							url: BASE_URL+'/api/book/publish',
-							method: 'POST',
-							data: formData
-						}).then(res4 => {
-							if(res4.status === 200){
-								deleteData('publish-book-form-data')
+		const { name, author, cover, book, genres, ageGroup, price, pages, publication, synopsis, language, published, secondaryFrom } = FormInput
+		if(isUsable(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isUsable(genres) && isUsable(ageGroup) && isUsable(price) && isUsable(pages) && isUsable(synopsis) && isUsable(language) && isUsable(published) && isUsable(secondaryFrom)){
+			GaTracker('event_publish_list')
+			setLoading(true)
+			let formData = new FormData()
+			formData.append("book",FormInput.book)
+			formData.append("cover",FormInput.cover)
+			formData.append("bookTitle",FormInput.title)
+			formData.append("synopsis", FormInput.synopsis)
+			axios({
+				url : BASE_URL + "/api/book/submarine",
+				method : "POST",
+				data : formData
+			}).then(res => {
+				const bookUrl = res.data.book.url
+				const coverUrl = res.data.cover.url
+				let genreIDs = []
+				genres.forEach(genre => genreIDs.push(GENRES.indexOf(genre).toString()))
+				const languageId = LANGUAGES.indexOf(language).toString()
+				const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays())
+				if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
+					Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
+						const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
+						const status = tx.status
+						const txHash = tx.transactionHash
+						if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
+							let formData = new FormData()
+							formData.append("epub", FormInput.preview)
+							formData.append("name", name)
+							formData.append("author", author)
+							formData.append("cover", coverUrl)
+							formData.append("book", bookUrl)
+							formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+							formData.append("ageGroup", JSON.stringify(ageGroup.sort((a,b) => a>b)))
+							formData.append("price", price)
+							formData.append("pages", pages)
+							formData.append("publication", publication)
+							formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
+							formData.append("language", language)
+							formData.append("published", published)
+							formData.append("secondarySalesFrom", secondaryFrom)
+							formData.append("publisherAddress", WalletAddress)
+							formData.append("bookAddress", bookAddress)
+							formData.append("txHash", txHash)
+							axios({
+								url: BASE_URL+'/api/book/publish',
+								method: 'POST',
+								data: formData
+							}).then(res4 => {
+								if(res4.status === 200){
+									deleteData('publish-book-form-data')
+									setLoading(false)
+									navigate('/library', {state: {tab: 'published'}})
+								}
+								else {
+									dispatch(setSnackbar('ERROR'))
+								}
+							})
+							.catch(err => {
+								if(isUsable(err.response)){
+									if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+									else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+								}
+								else dispatch(setSnackbar('NOT200'))
 								setLoading(false)
-								navigate('/library', {state: {tab: 'published'}})
-							}
-							else {
-								dispatch(setSnackbar('ERROR'))
-							}
-						})
-						.catch(err => {
-							if(isUsable(err.response)){
-								if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
-								else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
-							}
-							else dispatch(setSnackbar('NOT200'))
+							})
+						}
+						else{
 							setLoading(false)
-						})
-					}
-					else{
+							if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
+							else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
+						}
+					}).catch((err => {
+						dispatch(setSnackbar('NOT200'))
 						setLoading(false)
-						if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
-						else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
-					}
-				}).catch((err => {
-					dispatch(setSnackbar('NOT200'))
+					}))
+				}
+				else{
+					dispatch(setSnackbar({show: true, message: "Incomplete details", type: 3}))
 					setLoading(false)
-				}))
-			}
-			else{
-				dispatch(setSnackbar({show: true, message: "Incomplete details", type: 3}))
+				}
+			}).catch(err => {
+				if(isUsable(err.response)){
+					if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+					else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+				}
+				else dispatch(setSnackbar('NOT200'))
 				setLoading(false)
-			}
-		}).catch(err => {
-			if(isUsable(err.response)){
-				if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
-				else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
-			}
-			else dispatch(setSnackbar('NOT200'))
-			setLoading(false)
-		})
+			})
+		}
+		else dispatch(setSnackbar({show: true, message: "Incomplete details", type: 3}))
 	}
 
 	return (
@@ -254,7 +253,8 @@ const PublishNftPage = props => {
 								<div className='publish__data__preview__progress__container__value typo__color--n700'>{Math.round(formProgress*100)}%</div>
 								<ProgressBar progress={formProgress}/>
 							</div>
-							<Button type="primary" disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>
+							{/* <Button type="primary" disabled={formProgress!==1} size="lg" onClick={()=>listNFTForSale()}>Publish</Button> */}
+							<Button type="primary" disabled={false} size="lg" onClick={()=>listNFTForSale()}>Publish</Button>
 						</div>
 					</div>
 				</div>
