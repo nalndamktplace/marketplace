@@ -36,7 +36,7 @@ const PublishNftPage = props => {
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
 	const [WalletAddress, setWalletAddress] = useState(null)
-	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], ageGroup: [], price: '', pages: '', publication: '', isbn: '', attributes: [], synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(1, 'days')})
+	const [FormInput, setFormInput] = useState({ name: '', author: '', cover: null, preview: null, book: null, genres: [], ageGroup: [], price: '', pages: '', publication: '', isbn: '', synopsis: '', language: '', published: '', secondarySalesDate: '', primarySales: '', secondaryFrom: moment().add(1, 'days')})
 	const [formProgress, setFormProgress] = useState(0)
 	const [loadingFromStorage, setLoadingFromStorage] = useState(true);
 
@@ -56,7 +56,7 @@ const PublishNftPage = props => {
 	}, [WalletState])
 
 	useEffect(()=>{
-		const ignoreFields = ["publication","attributes","isbn","primarySales","secondarySalesDate"] ;
+		const ignoreFields = ["publication","isbn","primarySales","secondarySalesDate"] ;
 		let filled = 0;
 		let total = Object.keys(FormInput).length ;
 		Object.keys(FormInput).forEach(key => {
@@ -99,8 +99,8 @@ const PublishNftPage = props => {
 	},[FormInput,loadingFromStorage])
 
 	async function listNFTForSale() {
-		const { name, author, cover, book, genres, ageGroup, price, pages, publication, attributes, synopsis, language, published, secondaryFrom } = FormInput
-		if(isUsable(FormInput.book) && isUsable(FormInput.cover) && isUsable(FormInput.title) && isUsable(FormInput.synopsis) && isUsable(language) && isUsable(genres) && !isUsable(secondaryFrom) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
+		const { name, author, cover, book, genres, ageGroup, price, pages, publication, synopsis, language, published, secondaryFrom } = FormInput
+		if(isUsable(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isUsable(genres) && isUsable(ageGroup) && isUsable(price) && isUsable(pages) && isUsable(synopsis) && isUsable(language) && isUsable(published) && isUsable(secondaryFrom)){
 			GaTracker('event_publish_list')
 			setLoading(true)
 			let formData = new FormData()
@@ -136,7 +136,6 @@ const PublishNftPage = props => {
 							formData.append("price", price)
 							formData.append("pages", pages)
 							formData.append("publication", publication)
-							formData.append("attributes", JSON.stringify(attributes))
 							formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
 							formData.append("language", language)
 							formData.append("published", published)
