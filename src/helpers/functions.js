@@ -10,9 +10,11 @@ export const isUserLoggedIn = data => {
 	if(isUsable(data)){
 		const user = data.user
 		const tokens = data.tokens
-		if(isUsable(tokens.acsTkn)){
-			if(moment().isBefore(tokens.acsTkn.exp) && isFilled(user.uid)){
-				return true
+		if(isUsable(tokens)){
+			if(isUsable(tokens.acsTkn)){
+				if(moment().isBefore(tokens.acsTkn.exp) && isFilled(user.uid)){
+					return true
+				}
 			}
 		}
 	}
