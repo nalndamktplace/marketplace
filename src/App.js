@@ -35,6 +35,7 @@ import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
+import ReaderMobilePage from './pages/ReaderMobile'
 import PrivacyPolicyPage from './pages/Policies/Privacy'
 import TermsConditionPage from './pages/Policies/Terms'
 
@@ -68,6 +69,7 @@ function App() {
 									<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
 									<Route path='/collection' element={<CollectionPage/>}/>
 									<Route path='/library/reader' element={<ReaderPage/>}/>
+									<Route path='/library/reader/mobile' element={<ReaderMobilePage/>}/>
 									<Route path='/policy/terms' element={<TermsConditionPage/>}/>
 									<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
 									{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
