@@ -33,11 +33,11 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/reader/bookmarks',
+				url: `${BASE_URL}/api/reader/bookmarks`,
 				method: 'GET',
 				params: {
-					bid: bookMeta.id,
-					uid: WalletAddress
+					bookAddress: bookMeta.id,
+					ownerAddress: WalletAddress
 				}
 			}).then(res => {
 				if(res.status === 200) {
@@ -95,11 +95,11 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 				percent : rendition.currentLocation().start.percentage
 			}]
 			axios({
-				url: BASE_URL+'/api/reader/bookmarks',
+				url: `${BASE_URL}/api/reader/bookmarks`,
 				method: 'POST',
 				data: {
-					bid: bookMeta.id,
-					uid: WalletAddress,
+					bookAddress: bookMeta.id,
+					ownerAddress: WalletAddress,
 					bookmarks: JSON.stringify(newBookmarks),
 				}
 			}).then(res => {
@@ -125,11 +125,11 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 			setLoading(true)
 			let newBookmarks = bookmarks.filter((item,i) => i != itemIndex )
 			axios({
-				url: BASE_URL+'/api/reader/bookmarks',
+				url: `${BASE_URL}/api/reader/bookmarks`,
 				method: 'POST',
 				data: {
-					bid: bookMeta.id,
-					uid: WalletAddress,
+					bookAddress: bookMeta.book_address,
+					ownerAddress: WalletAddress,
 					bookmarks: JSON.stringify(newBookmarks),
 				}
 			}).then(res => {

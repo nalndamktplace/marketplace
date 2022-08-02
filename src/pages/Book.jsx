@@ -95,8 +95,11 @@ const BookPage = props => {
 			if(isUsable(NFT)){
 				setLoading(true)
 				axios({
-					url: BASE_URL+'/api/book/reviews?bid='+NFT.id,
-					method: 'GET'
+					url: `${BASE_URL}/api/book/reviews`,
+					method: 'GET',
+					params: {
+						bookAddress: NFT.book_address
+					}
 				}).then(res => {
 					if(res.status === 200){
 						setReviews(res.data.reviews)
@@ -117,8 +120,12 @@ const BookPage = props => {
 			if(isUsable(NFT) && isUsable(WalletAddress)){
 				setLoading(true)
 				axios({
-					url: BASE_URL+'/api/book/reviewed?bid='+NFT.id+'&uid='+WalletAddress,
-					method: 'GET'
+					url: `${BASE_URL}/api/book/reviewed`,
+					method: 'GET',
+					params: {
+						bookAddress: NFT.book_address,
+						ownerAddress: WalletAddress
+					}
 				}).then(res => {
 					if(res.status === 200){
 						if(isNotEmpty(res.data))
@@ -136,10 +143,10 @@ const BookPage = props => {
 			if(isUsable(NFT)){
 				setLoading(true)
 				axios({
-					url: BASE_URL+'/api/book/quotes',
+					url: `${BASE_URL}/api/book/quotes`,
 					method: 'GET',
 					params: {
-						bid: NFT.id
+						bookAddress: NFT.book_address
 					}
 				}).then(res => {
 					if(res.status === 200) setQuotes(res.data)
@@ -157,8 +164,12 @@ const BookPage = props => {
 			if(isUsable(NFT) && isUsable(WalletAddress)){
 				setLoading(true)
 				axios({
-					url: BASE_URL+'/api/book/quoted?bid='+NFT.id+'&uid='+WalletAddress,
-					method: 'GET'
+					url: `${BASE_URL}/api/book/quoted`,
+					method: 'GET',
+					params: {
+						bookAddress: NFT.book_address,
+						ownerAddress: WalletAddress
+					}
 				}).then(res => {
 					if(res.status === 200){
 						if(isNotEmpty(res.data))
@@ -184,8 +195,11 @@ const BookPage = props => {
 		if(isUsable(NFT)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/book/likes?bid='+NFT.id,
-				method: 'GET'
+				url: `${BASE_URL}/api/book/likes`,
+				method: 'GET',
+				params: {
+					bookAddress: NFT.book_address
+				}
 			}).then(res => {
 				if(res.status === 200) setLikes(res.data.likes)
 				else dispatch(setSnackbar('NOT200'))
@@ -199,8 +213,12 @@ const BookPage = props => {
 		if(isUsable(NFT) && isUsable(WalletAddress)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/book/liked?bid='+NFT.id+'&uid='+WalletAddress,
-				method: 'GET'
+				url: `${BASE_URL}/api/book/liked`,
+				method: 'GET',
+				params: {
+					bookAddress: NFT.book_address,
+					ownerAddress: WalletAddress
+				}
 			}).then(res => {
 				if(res.status === 200) setLiked(res.data.liked)
 			}).catch(err => {
@@ -432,11 +450,11 @@ const BookPage = props => {
 		setLoading(true)
 		try {
 			axios({
-				url: BASE_URL+'/api/verify',
+				url: `${BASE_URL}/api/verify`,
 				method: 'GET',
 				params: {
-					bid: NFT.book_address,
-					uid: WalletAddress
+					bookAddress: NFT.book_address,
+					ownerAddress: WalletAddress
 				}
 			}).then(res => {
 				if(res.status === 200){
@@ -581,11 +599,11 @@ const BookPage = props => {
 					GaTracker('event_book_unlike')
 				}
 				axios({
-					url: BASE_URL+'/api/book/likes',
+					url: `${BASE_URL}/api/book/likes`,
 					method: 'POST',
 					data: {
-						bid: NFT.id,
-						uid: WalletAddress,
+						bookAddress: NFT.book_address,
+						ownerAddress: WalletAddress,
 						likedState: !Liked
 					}
 				}).then(res => {
@@ -692,12 +710,12 @@ const BookPage = props => {
 			if(isNotEmpty(ReviewForm.body) && isNotEmpty(ReviewForm.rating) && isNotEmpty(ReviewForm.title)){
 				setLoading(true)
 				axios({
-					url: BASE_URL+'/api/book/reviews',
+					url: `${BASE_URL}/api/book/reviews`,
 					method: 'POST',
 					data: {
 						review: {...ReviewForm},
-						uid: WalletAddress,
-						bid: NFT.id
+						bookAddress: NFT.book_address,
+						ownerAddress: WalletAddress
 					}
 				}).then(res => {
 					if(res.status === 200) {
@@ -722,12 +740,12 @@ const BookPage = props => {
 			if(isNotEmpty(QuotesForm.quote)){
 				setLoading(true)
 				axios({
-					url: BASE_URL+'/api/book/quotes',
+					url: `${BASE_URL}/api/book/quotes`,
 					method: 'POST',
 					data: {
 						quote: {body:QuotesForm.quote},
-						uid: WalletAddress,
-						bid: NFT.id
+						bookAddress: NFT.book_address,
+						ownerAddress: WalletAddress
 					}
 				}).then(res => {
 					if(res.status === 200){
