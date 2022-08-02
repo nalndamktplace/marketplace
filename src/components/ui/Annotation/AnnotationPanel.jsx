@@ -38,11 +38,11 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/reader/annotations',
+				url: `${BASE_URL}/api/reader/annotations`,
 				method: 'GET',
 				params: {
-					bid: bookMeta.book_address,
-					uid: WalletAddress
+					bookAddress: bookMeta.book_address,
+					ownerAddress: WalletAddress
 				}
 			}).then(res => {
 				if(res.status === 200) {
@@ -95,11 +95,11 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 			setLoading(true)
 			let newAnnotations = Annotations.filter((item,i) => i !== itemIndex )
 			axios({
-				url: BASE_URL+'/api/reader/annotations',
+				url: `${BASE_URL}/api/reader/annotations`,
 				method: 'POST',
 				data: {
-					bid: bookMeta.book_address,
-					uid: WalletAddress,
+					bookAddress: bookMeta.book_address,
+					ownerAddress: WalletAddress,
 					annotations : JSON.stringify(newAnnotations),
 				}
 			}).then(res => {
@@ -132,11 +132,11 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 				setLoading(true)
 				let newAnnotations = [...Annotations,annotation]
 				axios({
-					url: BASE_URL+'/api/reader/annotations',
+					url: `${BASE_URL}/api/reader/annotations`,
 					method: 'POST',
 					data: {
-						bid: bookMeta.book_address,
-						uid: WalletAddress,
+						bookAddress: bookMeta.book_address,
+						ownerAddress: WalletAddress,
 						annotations : JSON.stringify(newAnnotations),
 					}
 				}).then(res => {

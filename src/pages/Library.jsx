@@ -176,11 +176,11 @@ const LibraryPage = props => {
 		setLoading(true)
 		try {
 			axios({
-				url: BASE_URL+'/api/verify',
+				url: `${BASE_URL}/api/verify`,
 				method: 'GET',
 				params: {
-					bid: NFT.book_address,
-					uid: WalletAddress
+					bookAddress: NFT.book_address,
+					ownerAddress: WalletAddress
 				}
 			}).then(res => {
 				if(res.status === 200){

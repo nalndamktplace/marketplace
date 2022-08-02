@@ -72,7 +72,6 @@ const ReadTime = ({bookMeta, preview}) => {
 						'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 					},
 					data : {
-						bid: bookMeta.id,
 						bookAddress: bookMeta.book_address,
 						readTime: currentReadTime
 					}

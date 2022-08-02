@@ -351,11 +351,11 @@ const ReaderPage = () => {
 				percent : rendition.currentLocation().start.percentage
 			};
 			axios({
-				url: BASE_URL+'/api/reader/bookmarks',
+				url: `${BASE_URL}/api/reader/bookmarks`,
 				method: 'POST',
 				data: {
-					bid: bookMeta.id,
-					uid: WalletAddress,
+					bookAddress: bookMeta.book_address,
+					ownerAddress: WalletAddress,
 					bookmarks: JSON.stringify(newBookmark),
 				}
 			}).then(res => {
@@ -378,11 +378,11 @@ const ReaderPage = () => {
 			if(!isUsable(bookMeta)) return
 			setLoading(true)
 			axios({
-				url: BASE_URL+'/api/reader/bookmarks',
+				url: `${BASE_URL}/api/reader/bookmarks`,
 				method: 'POST',
 				data: {
-					bid: bookMeta.id,
-					uid: WalletAddress,
+					bookAddress: bookMeta.book_address,
+					ownerAddress: WalletAddress,
 					bookmarks: "",
 				}
 			}).then(res => {
