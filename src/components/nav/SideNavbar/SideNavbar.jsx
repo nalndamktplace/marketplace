@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+
+import { useAuth0 } from "@auth0/auth0-react"
 
 import Button from "../../ui/Buttons/Button"
 
-import { isUsable } from "../../../helpers/functions"
 import GaTracker from "../../../trackers/ga-tracker"
+import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
+import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/functions"
 
 import {ReactComponent as CloseIcon} from "../../../assets/icons/close-icon.svg"
 import {ReactComponent as GithubIcon} from "../../../assets/icons/github.svg"
@@ -15,7 +19,12 @@ import {ReactComponent as ArrowLeftIcon} from "../../../assets/icons/arrow-left.
 
 const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
 
+	const Auth0 = useAuth0()
+	const dispatch = useDispatch()
     const navigate = useNavigate()
+
+	const UserState = useSelector(state => state.UserState)
+
     const [SubMenuOpen, setSubMenuOpen] = useState(false)
 	const [ActiveSubMenu, setActiveSubMenu] = useState(null)
 
@@ -25,6 +34,11 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		{name:"telegram",uri:"https://t.me/nalndamktplace",icon:<TelegramIcon />},
 		{name:"github",uri:"https://github.com/nalndamktplace",icon:<GithubIcon />}
 	]
+
+	const loginHandler = () => {
+		// loginWithPopup()
+		Auth0.loginWithRedirect()
+	}
 
 	useEffect(()=>{
 		MenuOpen && window.scrollTo(0,0)
@@ -72,8 +86,11 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 			return navItem.title
 		}
 		let itemsDOM = []
+
 		item.subMenu.forEach(navItem => {
-			itemsDOM.push(<div onClick={()=>{menuItemClickHandler(navItem);setSubMenuOpen(false)}} key={navItem.id} className='side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
+			if(navItem.id === "NI4SMI2" && isWalletConnected(WalletState)){}
+			else if(navItem.id === "NI4SMI3" && !isWalletConnected(WalletState)){}
+			else itemsDOM.push(<div onClick={()=>{menuItemClickHandler(navItem);setSubMenuOpen(false)}} key={navItem.id} className='side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 		})
 		return itemsDOM
 	}
@@ -92,7 +109,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 	const renderNavItems = () => {
 		const domElements = []
 		NAV_ITEMS.forEach(item => {
-			if(!isUsable(WalletState.wallet.provider) && item.id === "NI4") return
+			if(!isUserLoggedIn(UserState) && item.id === "NI4") return
 			domElements.push(
 				<div key={item.id} className="side-navbar__container__item typo__act utils__cursor--pointer" onClick={()=>menuItemClickHandler(item)}>
 					{isUsable(item.icon) && <item.icon/>}
@@ -102,6 +119,11 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		})
 		return domElements
 	}
+
+	useEffect(() => {
+		if(Auth0.isLoading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [Auth0.isLoading, dispatch])
 
     return (
         <div className={getMenuClasses()}>
@@ -127,7 +149,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
                     {SubMenuOpen && ActiveSubMenu && renderSubMenuItems(ActiveSubMenu)}
                 </div>
 				<div className="side-navbar__container__spacer"></div>
-                {!isUsable(WalletState.wallet.provider) && (<Button type="primary" size="xl" onClick={()=>handleWalletConnect()}>Connect Wallet</Button>)}
+                {!isUserLoggedIn(UserState)? (<Button type="primary" size="xl" onClick={()=>loginHandler()}>Login</Button>):null}
                 <div className="side-navbar__container__socials">{renderSocialIcons()}</div>
             </div>
         </div>
