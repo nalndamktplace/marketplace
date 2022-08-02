@@ -23,7 +23,6 @@ import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/fu
 
 import { unsetUser } from "../../../store/actions/user"
 
-
 import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
 import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
