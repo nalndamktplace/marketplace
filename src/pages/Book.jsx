@@ -399,12 +399,10 @@ const BookPage = props => {
 
 	const listHandler = () => {
 		dispatch(showModal(SHOW_LIST_MODAL))
-		console.log({copies: NFT.copies >= NFT.min_primary_sales})
-		console.log({secondarySalesFrom: moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment())})
-		// // if(NFT.copies >= NFT.min_primary_sales && (moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment()))) dispatch(showModal(SHOW_LIST_MODAL))
-		// if(moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment())) dispatch(showModal(SHOW_LIST_MODAL))
+		// if(NFT.copies >= NFT.min_primary_sales && (moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment()))) dispatch(showModal(SHOW_LIST_MODAL))
+		if(moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment())) dispatch(showModal(SHOW_LIST_MODAL))
 		// else if(NFT.copies < NFT.min_primary_sales) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${NFT.min_primary_sales} copies have been sold.`, type: 2}))
-		// else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
+		else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
 	}
 
 	const onListHandler = listPrice => {
@@ -413,7 +411,6 @@ const BookPage = props => {
 			setLoading(true)
 			Contracts.listBookToMarketplace(NFT.book_address, UserCopy.token_id, listPrice, WalletState.wallet.signer).then(res => {
 				setLoading(true)
-				console.log({orderId: parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)})
 				const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
 				axios({
 					url: BASE_URL + '/api/book/list',
