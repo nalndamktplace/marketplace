@@ -12,7 +12,7 @@ import { ReactComponent as ClockIcon } from "../../../assets/icons/clock.svg"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 
-const ReadTime = ({bookMeta, preview}) => {
+const ReadTime = ({mobileView, bookMeta, preview}) => {
 
 	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
@@ -25,14 +25,16 @@ const ReadTime = ({bookMeta, preview}) => {
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		if(isUsable(preview) && !preview){
-			if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
-			else navigate(-1)
+		if(!isUsable(mobileView) || mobileView === false){
+			if(isUsable(preview) && !preview){
+				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+				else navigate(-1)
+			}
 		}
-	}, [WalletState, navigate, preview])
+	}, [mobileView, WalletState, navigate, preview])
 
 	useEffect(() => {
-		if(!preview && isUsable(bookMeta) && isUsable(WalletAddress)){
+		if(!preview && isUsable(bookMeta) && (isUsable(WalletAddress) || (isUsable(mobileView) && mobileView===true))){
 			axios({
 				url: `${BASE_URL}/api/reader/read-time`,
 				method: "GET",
@@ -50,14 +52,14 @@ const ReadTime = ({bookMeta, preview}) => {
 				}
 			}).catch(err => {dispatch(setSnackbar('ERROR'))})
 		}
-	}, [bookMeta, dispatch, WalletAddress, preview, UserState])
+	}, [mobileView, bookMeta, dispatch, WalletAddress, preview, UserState])
 
 	useEffect(()=>{
-		if(!isUsable(bookMeta) && !isUsable(WalletAddress)) return
+		if(!isUsable(bookMeta) && (!isUsable(WalletAddress) && (!isUsable(mobileView) && mobileView!==true))) return
 		const updateReadTime = () => {setReadTime(s => s+1)}
 		let intervalHandler = setInterval(updateReadTime,1000)
 		return () => { clearInterval(intervalHandler) }
-	},[bookMeta,WalletAddress])
+	},[mobileView, bookMeta,WalletAddress])
 
 	useEffect(()=>{
 		if(!preview){

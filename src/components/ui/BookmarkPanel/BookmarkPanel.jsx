@@ -12,7 +12,7 @@ import { BASE_URL } from "../../../config/env"
 import {ReactComponent as TrashIcon} from "../../../assets/icons/trash-icon.svg"
 import GaTracker from "../../../trackers/ga-tracker"
 
-const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},onGoto=()=>{}}) => {
+const BookMarkPanel = ({mobileView, preview, rendition, bookMeta, onAdd=()=>{}, onRemove=()=>{}, onGoto=()=>{}}) => {
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -54,11 +54,13 @@ const BookMarkPanel = ({preview,rendition,bookMeta,onAdd=()=>{},onRemove=()=>{},
 	}, [bookMeta, WalletAddress, dispatch, preview])
 
 	useEffect(() => {
-		if(isUsable(preview) && !preview){
-			if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
-			else navigate(-1)
+		if(!isUsable(mobileView) || mobileView === false){
+			if(isUsable(preview) && !preview){
+				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+				else navigate(-1)
+			}
 		}
-	}, [WalletState, navigate, preview])
+	}, [mobileView, WalletState, navigate, preview])
 
 	const renderBookmarkedItems = () => {
 		let domItems = []

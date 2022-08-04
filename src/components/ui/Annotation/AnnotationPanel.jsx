@@ -11,7 +11,7 @@ import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 import { BASE_URL } from "../../../config/env"
 import Button from "../Buttons/Button"
 
-const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=()=>{},hideModal=()=>{}}) => {
+const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotationRef, onRemove=()=>{}, hideModal=()=>{}}) => {
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
@@ -28,11 +28,14 @@ const AnnotationPanel = ({preview,rendition,bookMeta,addAnnotationRef,onRemove=(
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		if(isUsable(preview) && !preview){
-			if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
-			else navigate(-1)
+		if(!isUsable(mobileView) || mobileView === false){
+			console.log("Checking wallet")
+			if(isUsable(preview) && !preview){
+				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+				else navigate(-1)
+			}
 		}
-	}, [WalletState, navigate, preview])
+	}, [WalletState, navigate, preview, mobileView])
 
 	useEffect(() => {
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
