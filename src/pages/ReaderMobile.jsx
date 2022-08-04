@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router"
 import { useSearchParams } from "react-router-dom"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 
@@ -37,7 +36,6 @@ import { ReaderBaseTheme } from "../config/readerTheme"
 const ReaderMobilePage = () => {
 
 	const dispatch = useDispatch()
-	const navigate = useNavigate()
 
 	const [searchParams] = useSearchParams()
 
@@ -48,7 +46,7 @@ const ReaderMobilePage = () => {
 	const [WalletAddress, setWalletAddress] = useState(null)
 	// Reader
 	const [ShowUI, setShowUI] = useState(true)
-	const [Preview, setPreview] = useState(null)
+	const [Preview, setPreview] = useState(false)
 	const [BookUrl, setBookUrl] = useState(null)
 	const [BookMeta, setBookMeta] = useState({})
 	const [Progress, setProgress] = useState(0)
@@ -143,6 +141,8 @@ const ReaderMobilePage = () => {
 	}
 
 	const addBookMark = () => {
+		console.log("adding bookmark")
+		console.log({Preview})
 		GaTracker('event_bookmarkpanel_bookmark')
 		if(isUsable(Preview) && !Preview && isUsable(BookMeta) && isUsable(WalletAddress)){
 			if(!isUsable(Rendition)) return
@@ -210,16 +210,33 @@ const ReaderMobilePage = () => {
 	}, [IsErrored, dispatch])
 
 	useEffect(() => {
-		const book = searchParams.get('bk')
-		const bookUrl = searchParams.get('bkul')
-		const preview = searchParams.get('pw')
+		console.log({IsErrored, IsReady})
+	}, [IsErrored, IsReady])
+
+	useEffect(() => {
+		const bookPreview = searchParams.get('bkpw')
+		const bookTitle = searchParams.get('bkte')
+		const bookId = searchParams.get('bkid')
+		const preview = searchParams.get('pw')==="false"?false:true
 		const bookAddress = searchParams.get('bkas')
 		const walletAddress = searchParams.get('oras')
-		if(isUsable(book) && isUsable(preview) && isFilled(bookAddress) && isFilled(walletAddress)){
+		const base = searchParams.get('be')
+		const token = searchParams.get('tn')
+		const cid = searchParams.get('cd')
+		const fileName = searchParams.get('fe')
+		const bookUrl = `${base}?token=${token}&cid=${cid}&fileName=${fileName}`
+		console.log({
+			book: {id: bookId, title: bookTitle, preview: bookPreview},
+			bookUrl,
+			preview,
+			bookAddress,
+			walletAddress,
+		})
+		if(isFilled(bookPreview) && isFilled(bookTitle) && isFilled(bookId) && isUsable(preview) && isFilled(bookAddress) && isFilled(walletAddress)){
 			if(!preview && !isFilled(bookUrl)) setIsErrored(true)
 			setBookUrl(bookUrl)
 			setPreview(preview)
-			setBookMeta(book)
+			setBookMeta({id: bookId, title: bookTitle, preview: bookPreview, book_address: bookAddress})
 			setBookAddress(bookAddress)
 			setWalletAddress(walletAddress)
 			setIsReady(true)
@@ -244,10 +261,12 @@ const ReaderMobilePage = () => {
 	},[ShowUI,hideAllPanel])
 
 	useEffect(()=>{
-		if(IsReady){
+		if(IsReady===true){
 			setLoading(true)
 			let bookURL = BookUrl
-			if(Preview) bookURL = BASE_URL+'/files/'+BookMeta.preview
+			console.log({Preview})
+			if(Preview === false) bookURL = BASE_URL+'/files/'+BookMeta.preview
+			console.log({bookURL})
 			try {
 				const book = Epub(bookURL,{openAs:"epub"})
 				book.ready.then(()=>{
@@ -277,7 +296,7 @@ const ReaderMobilePage = () => {
 	},[IsReady, dispatch, BookMeta, BookUrl, Preview])
 
 	useEffect(()=>{
-		if(IsReady){
+		if(IsReady===true){
 			if(!isUsable(Rendition)) return
 			const handleResize = () => {
 				GaTracker('event_reader_resize')
@@ -304,7 +323,7 @@ const ReaderMobilePage = () => {
 	},[IsReady, Rendition])
 
 	useEffect(()=>{
-		if(IsReady){
+		if(IsReady===true){
 			if(!isUsable(Rendition)) return
 			if(!isUsable(CurrentLocationCFI) && !isFilled(CurrentLocationCFI)) return
 			Rendition.book.loaded.navigation.then(function(){
@@ -318,7 +337,8 @@ const ReaderMobilePage = () => {
 	},[IsReady, Rendition, CurrentLocationCFI])
 
 	useEffect(()=>{
-		if(IsReady){
+		console.log("bookmark useffect")
+		if(IsReady===true){
 			if(!isUsable(Rendition)) return
 			if(!isUsable(BookMeta)) return
 			const handleRelocated = (event)=>{
@@ -350,7 +370,7 @@ const ReaderMobilePage = () => {
 	},[IsReady, Rendition, BookMeta, updateBookmarkedStatus, saveLastReadPage, setCurrentLocationCFI])
 
 	useEffect(()=>{
-		if(IsReady){
+		if(IsReady===true){
 			if (!isUsable(Rendition)) return
 			if (!isUsable(BookMeta)) return
 			const bookKey = `${BookMeta.id}:locations`
@@ -370,7 +390,7 @@ const ReaderMobilePage = () => {
 	},[IsReady, Rendition, BookMeta])
 
 	useEffect(() => {
-		if(IsReady){
+		if(IsReady===true){
 			if(!isUsable(Rendition)) return
 			if(seeking.current === true){
 				Rendition.display(Rendition.book.locations.cfiFromLocation(debouncedProgress))
@@ -380,7 +400,7 @@ const ReaderMobilePage = () => {
 	}, [IsReady, debouncedProgress, Rendition, seeking])
 
 	useEffect(() => {
-		if(IsReady){
+		if(IsReady===true){
 			if(!isUsable(window.localStorage)) return
 			if(!isUsable(BookMeta)) return
 			if(!isUsable(Rendition)) return
@@ -393,7 +413,7 @@ const ReaderMobilePage = () => {
 	}, [IsReady, BookMeta, Rendition])
 
 	useEffect(()=>{
-		if(IsReady){
+		if(IsReady===true){
 			if(!isUsable(Rendition)) return
 			if(!isUsable(BookMeta)) return
 			const handleSelected = (cfiRange,contents)=>{
@@ -410,7 +430,7 @@ const ReaderMobilePage = () => {
 	},[IsReady, Rendition, BookMeta])
 
 	useEffect(()=>{
-		if(IsReady){
+		if(IsReady===true){
 			if(!isUsable(Rendition)) return
 			if(!isUsable(BookMeta)) return
 			const handleMarkClicked = (cfiRange,data,contents)=>{
@@ -426,9 +446,8 @@ const ReaderMobilePage = () => {
 			<div className="reader">
 				<div className={"reader__header" + (ShowUI?" reader__header--show":"")}>
 					<div className="reader__header__left">
-						<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 						<div className="reader__header__left__timer">
-							{Rendition && <ReadTimer preview={Preview} BookMeta={BookMeta}/>}
+							{Rendition && <ReadTimer mobileView={true} preview={Preview} BookMeta={BookMeta}/>}
 						</div>
 					</div>
 					<div className="reader__header__center">
@@ -464,7 +483,7 @@ const ReaderMobilePage = () => {
 						<TocPanel onSelect={()=>{hideAllPanel({toc: false});setShowTocPanel(false)}} Rendition={Rendition}/>
 					</SidePanel>
 					<SidePanel show={ShowAnnotationPanel} setShow={setShowAnnotationPanel} position="right" title="Annotations">
-						<AnnotationPanel preview={Preview} Rendition={Rendition} BookMeta={BookMeta} show={ShowAnnotationPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setShowAnnotationPanel(false)}} onRemove={()=>{setShowAnnotationPanel(false)}} />
+						<AnnotationPanel mobileView={true} preview={Preview} Rendition={Rendition} BookMeta={BookMeta} show={ShowAnnotationPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setShowAnnotationPanel(false)}} onRemove={()=>{setShowAnnotationPanel(false)}} />
 					</SidePanel>
 					<SidePanel show={ShowCustomizerPanel} setShow={setShowCustomizerPanel} position="right-bottom" title="Preferences">
 						<Customizer initialFontSize={100} Rendition={Rendition}/>
