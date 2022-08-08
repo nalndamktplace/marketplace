@@ -18,14 +18,16 @@ import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 import DarkModeReducer from './store/reducers/darkmode'
 
-import IndexPage from './pages/Index'
 import BookPage from './pages/Book'
+import IndexPage from './pages/Index'
 import ReaderPage from './pages/Reader'
-import LibraryPage from './pages/Library'
 import ExplorePage from './pages/Explore'
+import LibraryPage from './pages/Library'
 import ProfilePage from './pages/Profile'
 import PublishNftPage from './pages/Publish'
 import CollectionPage from './pages/Collection'
+import PrivacyPolicyPage from './pages/Policies/Privacy'
+import TermsConditionPage from './pages/Policies/Terms'
 //	/*	Page to debug App
 //		Uncomment the lines below to activate page	*/
 // import InterfaceDebugPage from './Debug/Interface'
@@ -35,9 +37,6 @@ import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
-import ReaderMobilePage from './pages/ReaderMobile'
-import PrivacyPolicyPage from './pages/Policies/Privacy'
-import TermsConditionPage from './pages/Policies/Terms'
 
 const rootReducer = combineReducers({
 	UserState: UserReducer,
@@ -69,7 +68,6 @@ function App() {
 									<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
 									<Route path='/collection' element={<CollectionPage/>}/>
 									<Route path='/library/reader' element={<ReaderPage/>}/>
-									<Route path='/library/reader/mobile' element={<ReaderMobilePage/>}/>
 									<Route path='/policy/terms' element={<TermsConditionPage/>}/>
 									<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
 									{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
