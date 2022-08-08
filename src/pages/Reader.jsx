@@ -167,7 +167,8 @@ const ReaderPage = () => {
 					manager: "continuous",
 					flow: "paginated",
 					snap: "true",
-					gap : 40
+					gap : 40,
+					allowScriptedContent: true
 				});
 				_rendition.themes.default(ReaderBaseTheme)
 				_rendition.display();
