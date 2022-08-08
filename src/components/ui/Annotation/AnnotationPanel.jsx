@@ -29,7 +29,6 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 
 	useEffect(() => {
 		if(!isUsable(mobileView) || mobileView === false){
-			console.log("Checking wallet")
 			if(isUsable(preview) && !preview){
 				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
 				else navigate(-1)
