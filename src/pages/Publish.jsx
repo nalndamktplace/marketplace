@@ -31,6 +31,7 @@ const PublishNftPage = props => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
+	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
 
 	const [Loading, setLoading] = useState(false)
@@ -111,6 +112,11 @@ const PublishNftPage = props => {
 			axios({
 				url : BASE_URL + "/api/book/submarine",
 				method : "POST",
+				headers: {
+					'user-id': UserState.user.uid,
+					'address': UserState.user.wallet,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
 				data : formData
 			}).then(res => {
 				const bookUrl = res.data.book.url
