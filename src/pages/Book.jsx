@@ -834,7 +834,7 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
 										<div className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Read Time</div>
-										<div className='book__data__container__desc__summary__data'>{moment.utc(totalReadTime*1000).format('m')} minutes</div>
+										<div className='book__data__container__desc__summary__data'>{Math.ceil(totalReadTime/60)} minutes</div>
 									</div>
 								</div>
 								<div className="book__data__container__desc__right">
