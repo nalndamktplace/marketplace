@@ -216,7 +216,7 @@ const IndexPage = props => {
 
 		let mediumArticlesDOM = []
 		if(isFilled(MediumData.items))
-			MediumData.items.forEach((item, index) => {
+			MediumData.items.slice(0,3).forEach((item, index) => {
 				mediumArticlesDOM.push(
 					<div className='index__medium__article' onClick={()=>window.open(item.link, "_blank")}>
 						<img src={item.thumbnail} alt={item.title} className='index__medium__article__banner'/>
@@ -265,7 +265,10 @@ const IndexPage = props => {
 				{renderGenres()}
 			</div>
 			<div className="index__section">
-				<h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">{isUsable(MediumData.feed)?MediumData.feed.title:'Loading...'}</h4>
+				<div className="index__medium__header">
+					<h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">{isUsable(MediumData.feed)?MediumData.feed.title:'Loading Stories By Nalnda...'}</h4>
+					<Button type='secondary' onClick={()=>window.open('https://nalndamktplace.medium.com/', '_blank')} >View More</Button>
+				</div>
 				<div className="index__medium">
 					{renderMediumArticles()}
 				</div>

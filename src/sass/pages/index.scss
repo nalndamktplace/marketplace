@@ -435,6 +435,15 @@
 		@include respond(tabPort){ grid-template-columns: repeat(2, 1fr); }
 		@include respond(phone){ grid-template-columns: repeat(1, 1fr); }
 
+		&__header{
+			display: flex;
+			flex-direction: row;
+			align-items: baseline;
+			justify-content: space-between;
+
+			@include respond(tabLand){ flex-direction: column; }
+		}
+
 		&__article{
 			border: 0.1rem solid rgba($color-black, 0.2);
 			border-radius: 1.2rem;
