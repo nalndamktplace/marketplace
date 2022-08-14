@@ -570,7 +570,8 @@ const BookPage = props => {
 						bookAddress: offer.book_address,
 						tokenId: offer.token_id,
 						purchasePrice: offer.price,
-						orderId: offer.order_id
+						orderId: offer.order_id,
+						daScore: offer.da_score
 					}
 				}).then(res => {
 					if(res.status === 200) setOwner(true)
