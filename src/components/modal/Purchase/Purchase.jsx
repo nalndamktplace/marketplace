@@ -74,6 +74,7 @@ const PurchaseModal = props => {
 							<p className='utils__margin__bottom--n'>Order: {offer.order_id}</p>
 							<p className='utils__margin__bottom--n utils__d__flex utils__align__center'>Price: {offer.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{offer.price}</>}</p>
 							<p className='utils__margin__bottom--n'>Token: {offer.token_id}</p>
+							<p className='utils__margin__bottom--n'>DA Score: {offer.da_score}</p>
 							<p className='utils__margin__bottom--n'>Address: {offer.book_address}</p>
 							<p className='utils__margin__bottom--n'>Seller: {offer.previous_owner}</p>
 							<div className="modal__purchase__data__offers__item__cta">
