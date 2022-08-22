@@ -23,7 +23,6 @@ import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/fu
 
 import { unsetUser } from "../../../store/actions/user"
 
-import Logo from "../../../assets/logo/logo.png" 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
 import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
 import {ReactComponent as GridIcon} from "../../../assets/icons/layout-grid.svg"
@@ -250,7 +249,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
 				<div className="header__content__logo utils__cursor--pointer" onClick={()=>navigate('/')}>
-					<img className="header__content__logo__image" src={Logo} alt={'N'}/>
+					<img className="header__content__logo__image" src={"https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/779d7e7d-76f3-41e7-8e3c-457d77865300/logo"} alt={'N'}/>
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
 				<div className={getSearchBarClasses()}>
