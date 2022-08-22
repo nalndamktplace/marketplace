@@ -317,7 +317,6 @@ const BookPage = props => {
 				if(res.status === 200) setUserCopy(res.data)
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
-				console.error({err})
 				dispatch(setSnackbar('ERROR'))
 			})
 		}
@@ -478,7 +477,7 @@ const BookPage = props => {
 									navigate('/library/reader', {state: {book: {...NFT, url: res.data.url}, preview: false}}) 
 								}
 								else dispatch(setSnackbar({show:true,message : "Error", type : 4}))
-							}).catch(err => { console.error({err})
+							}).catch(err => { dispatch(setSnackbar('ERROR'))
 							}).finally( () => setLoading(false))
 						}
 						else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
@@ -774,7 +773,7 @@ const BookPage = props => {
 						<div className="book__data__container">
 							<div>
 								<div className='book__data__container__cover'>
-									<img className='book__data__container__cover__image' src={NFT.cover} alt={NFT.name} />
+									<img className='book__data__container__cover__image' src={NFT.cover_display_url?NFT.cover_display_url:NFT.cover_public_url?NFT.cover_public_url:NFT.cover} alt={NFT.name} />
 								</div>
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
