@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
@@ -7,6 +7,8 @@ import { Auth0Provider } from "@auth0/auth0-react"
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import './main.scss'
+
+import { Grid } from 'react-spinners-css'
 
 import Spinner from './components/ui/Spinner/Spinner'
 import Snackbar from './components/ui/Snackbar/Snackbar'
@@ -57,22 +59,24 @@ function App() {
 					<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
 						<Router>
 							<ScrollToTop>
-								<Routes>
-									<Route path='/*' element={<IndexPage/>}/>
-									<Route path='/' element={<IndexPage/>}/>
-									<Route path='/book' element={<BookPage/>}/>
-									<Route path='/book/preview' element={<ReaderPage/>}/>
-									<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
-									<Route path='/explore' element={<ExplorePage/>}/>
-									<Route path='/profile' element={<ProfilePage />}/>
-									<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
-									<Route path='/collection' element={<CollectionPage/>}/>
-									<Route path='/library/reader' element={<ReaderPage/>}/>
-									<Route path='/policy/terms' element={<TermsConditionPage/>}/>
-									<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
-									{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
-									{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
-								</Routes>
+								<Suspense fallback={<div className={"spinner spinner--show"}><div className="spinner__container"><Grid color='#00a2e8'/></div></div>}>
+									<Routes>
+										<Route path='/*' element={<IndexPage/>}/>
+										<Route path='/' element={<IndexPage/>}/>
+										<Route path='/book' element={<BookPage/>}/>
+										<Route path='/book/preview' element={<ReaderPage/>}/>
+										<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
+										<Route path='/explore' element={<ExplorePage/>}/>
+										<Route path='/profile' element={<ProfilePage />}/>
+										<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
+										<Route path='/collection' element={<CollectionPage/>}/>
+										<Route path='/library/reader' element={<ReaderPage/>}/>
+										<Route path='/policy/terms' element={<TermsConditionPage/>}/>
+										<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
+										{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
+										{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
+									</Routes>
+								</Suspense>
 							</ScrollToTop>
 						</Router>
 						<Snackbar/>
