@@ -22,7 +22,7 @@ const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show'
 
     return (
         <div className='book-item' data-layout={layout}>
-            <img className='book-item__cover' onClick={()=>onOpen()} src={book.cover} alt={book.name} />
+            <img className='book-item__cover' onClick={()=>onOpen()} src={book.cover_public_url?book.cover_public_url:book.cover} alt={book.name} />
             <div className="book-item__data">
                 <div onClick={()=>onOpen()} className='book-item__data__name typo__head typo__head--6 typo__transform--capital'>{book.title}</div>
                 <div onClick={()=>onOpen()} className='book-item__data__author typo__subtitle typo__transform--upper'>{book.author}</div>

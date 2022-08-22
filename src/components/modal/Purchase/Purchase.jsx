@@ -102,7 +102,7 @@ const PurchaseModal = props => {
 					<React.Fragment>
 						<div className="modal__purchase__data__book">
 							<div className="modal__purchase__data__book__cover">
-								<img src={props.data.cover} alt={props.data.title + ' cover'}/>
+								<img src={props.data.cover_public_url?props.data.cover_public_url:props.data.cover} alt={props.data.title + ' cover'}/>
 							</div>
 							<div className="modal__purchase__data__book__info">
 								<p className='utils__margin__bottom--n typo__head--6 typo__transform--capital'>{props.data.title}</p>

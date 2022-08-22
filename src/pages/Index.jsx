@@ -120,7 +120,7 @@ const IndexPage = props => {
 				books.forEach(book => {
 					booksDOM.push(
 						<div className="index__collection__books__item" key={book.id+'|'+collection.id} onClick={()=>openHandler(book)}>
-							<img src={book.cover} alt={book.name} className="index__collection__books__item__cover" />
+							<img src={book.cover_public_url?book.cover_public_url:book.cover} alt={book.name} className="index__collection__books__item__cover" />
 							<div className="index__collection__books__item__data">
 								<p className='index__collection__books__item__data__name typo__head typo__head--6'>
 									{(book?.title||"").slice(0,40)}
@@ -164,7 +164,7 @@ const IndexPage = props => {
 		Highlights.forEach(highlight => {
 			highlightsDOM.push(
 				<div key={highlight.id} className='index__book__container__item' onClick={()=>openHandler(highlight)}>
-					<img className='index__book__container__item__cover' src={highlight.cover} alt={highlight.title} />
+					<img className='index__book__container__item__cover' src={highlight.cover_public_url?highlight.cover_public_url:highlight.cover} alt={highlight.title} />
 				</div>
 			)
 		})
@@ -178,7 +178,7 @@ const IndexPage = props => {
 			if(isUsable(collection) && isFilled(collection.books)){
 				collection.books.forEach(book => {
 					if(collectionDOM.length<3)
-						collectionDOM.push(<img src={book.cover} alt={book.title} className="index__featured__container__row__item__container__image"/>)
+						collectionDOM.push(<img src={book.cover_public_url?book.cover_public_url:book.cover} alt={book.title} className="index__featured__container__row__item__container__image"/>)
 				})
 			}
 			return collectionDOM
