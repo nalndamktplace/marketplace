@@ -136,6 +136,7 @@ const PublishNftPage = props => {
 							formData.append("name", name)
 							formData.append("author", author)
 							formData.append("cover", coverUrl)
+							formData.append("coverFile", FormInput.cover)
 							formData.append("book", bookUrl)
 							formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
 							formData.append("ageGroup", JSON.stringify(ageGroup.sort((a,b) => a>b)))
