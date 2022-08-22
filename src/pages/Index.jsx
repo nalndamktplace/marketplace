@@ -219,7 +219,7 @@ const IndexPage = props => {
 			MediumData.items.slice(0,3).forEach((item, index) => {
 				mediumArticlesDOM.push(
 					<div className='index__medium__article' onClick={()=>window.open(item.link, "_blank")}>
-						<img src={item.thumbnail} alt={item.title} className='index__medium__article__banner' loading="lazy"/>
+						<img src={item.thumbnail.replace("1024", "512")} alt={item.title} className='index__medium__article__banner' loading="lazy"/>
 						<div className='index__medium__article__data'>
 							<h5 className='typo__head typo__head--6'>{item.title}</h5>
 							<p className='typo__cap'>{moment(item.pubDate).format("DD MMM, YYYY")}</p>
