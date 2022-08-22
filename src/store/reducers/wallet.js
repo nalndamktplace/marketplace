@@ -13,14 +13,15 @@ const initState = {
 const handleData = (state = initState, action) => {
 	switch (action.type) {
 		case SET_WALLET:
+			const walletState = {
+				wallet: action.data.wallet,
+				provider: action.data.provider,
+				signer: action.data.signer,
+				address: action.data.address
+			}
 			return {
 				...state,
-				wallet: {
-					wallet: action.data.wallet,
-					provider: action.data.provider,
-					signer: action.data.signer,
-					address: action.data.address
-				},
+				wallet: walletState,
 				support: true
 			}
 		case CLEAR_WALLET:
