@@ -182,7 +182,7 @@ const ExplorePage = () => {
 						{isUsable(Nfts) && Nfts.length > 0
 							? 	renderNfts()
 							: 	<div className='explore__data__books__wrapper__empty'>
-									<img src={BooksShelf} alt="books shelf" className="explore__data__books__wrapper__image" />
+									<img src={BooksShelf} alt="books shelf" className="explore__data__books__wrapper__image" loading="lazy"/>
 									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 								</div>
 						}

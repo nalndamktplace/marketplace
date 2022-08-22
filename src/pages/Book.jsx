@@ -764,7 +764,7 @@ const BookPage = props => {
 	return (
 		<Page>
 			<div className="book__bg">
-				<img src={BackgroundBook} alt="background"/>
+				<img src={BackgroundBook} alt="background" loading="lazy"/>
 			</div>
 			{isUsable(NFT)?
 				<>
@@ -773,7 +773,7 @@ const BookPage = props => {
 						<div className="book__data__container">
 							<div>
 								<div className='book__data__container__cover'>
-									<img className='book__data__container__cover__image' src={NFT.cover_display_url?NFT.cover_display_url:NFT.cover_public_url?NFT.cover_public_url:NFT.cover} alt={NFT.name} />
+									<img className='book__data__container__cover__image' src={NFT.cover_display_url?NFT.cover_display_url:NFT.cover_public_url?NFT.cover_public_url:NFT.cover} alt={NFT.name}/>
 								</div>
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
