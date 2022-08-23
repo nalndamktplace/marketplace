@@ -14,6 +14,7 @@ import Constants from '../../../config/constants'
 import { BASE_URL } from '../../../config/env'
 import { getData, logout } from '../../../helpers/storage'
 import { isUsable, isUserLoggedIn } from '../../../helpers/functions'
+import GaTracker from '../../../trackers/ga-tracker'
 
 const UserHOC = props => {
 
@@ -35,6 +36,7 @@ const UserHOC = props => {
 	}, [Loading, Auth0.isLoading, dispatch])
 
 	useEffect(() => {
+		GaTracker('event_userHoc_login')
 		if(Auth0.isAuthenticated && isUsable(Auth0.user)){
 			setLoading(true)
 			axios({
@@ -57,6 +59,7 @@ const UserHOC = props => {
 			if(isUserLoggedIn(userData)){
 				const accessTokenExpiry = userData.tokens.acsTkn.exp
 				if(moment(accessTokenExpiry).diff(moment())<0){
+					GaTracker('event_userHoc_jwt_expire')
 					Auth0.logout()
 					dispatch(unsetUser())
 					dispatch(clearWallet())

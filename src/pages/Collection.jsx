@@ -21,6 +21,7 @@ import BooksShelf from '../assets/images/books-shelf.webp'
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
+import GaTracker from '../trackers/ga-tracker'
 
 const CollectionPage = () => {
 
@@ -43,6 +44,47 @@ const CollectionPage = () => {
 	// const [maxPage, setMaxPage] = useState(10)
 	const [AllNfts, setAllNfts] = useState([])
 	const [maxPrice, setMaxPrice] = useState(100);
+
+	const buyHandler = nft => {
+		GaTracker('event_collection_purchase_new')
+		setLoading(true)
+		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
+			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
+			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
+			axios({
+				url: BASE_URL+'/api/book/purchase',
+				method: 'POST',
+				data: {ownerAddress: WalletAddress, bookAddress: nft.book_address, tokenId}
+			}).then(res => {
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+			axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: nft.book_address, copies: tokenId } }).then(res => {
+				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			})
+		}).catch(err => {
+			setLoading(false)
+			if(err.code === 4001)
+				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
+			else dispatch(setSnackbar('ERROR'))
+		})
+	}
+
+	const openHandler = nft => {
+		GaTracker('navigate_collection_book')
+		navigate('/book', {state: nft})
+	}
+
+	const renderNfts = () => {
+		let nftDOM = []
+		Nfts.forEach(nft => {
+			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>)
+		})
+		return nftDOM
+	}
 
 	useEffect(() => { setCollection(params.state) }, [params])
 
@@ -123,42 +165,9 @@ const CollectionPage = () => {
 		setMaxPrice(maxNftPrice||100)
 	},[AllNfts])
 
-	const buyHandler = nft => {
-		setLoading(true)
-		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
-			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
-			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
-			axios({
-				url: BASE_URL+'/api/book/purchase',
-				method: 'POST',
-				data: {ownerAddress: WalletAddress, bookAddress: nft.book_address, tokenId}
-			}).then(res => {
-				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
-			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
-			}).finally(() => setLoading(false))
-			axios({ url: BASE_URL+'/api/book/copies', method: 'POST', data: { bookAddress: nft.book_address, copies: tokenId } }).then(res => {
-				if(res.status !== 200) dispatch(setSnackbar('NOT200'))
-			}).catch(err => {
-				dispatch(setSnackbar('ERROR'))
-			})
-		}).catch(err => {
-			setLoading(false)
-			if(err.code === 4001)
-				dispatch(setSnackbar({show: true, message: "Transaction denied by user.", type: 3}))
-			else dispatch(setSnackbar('ERROR'))
-		})
-	}
-
-	const openHandler = nft => { navigate('/book', {state: nft}) }
-
-	const renderNfts = () => {
-		let nftDOM = []
-		Nfts.forEach(nft => {
-			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>)
-		})
-		return nftDOM
-	}
+	useEffect(() => {
+		GaTracker('page_view_collection')
+	}, [])
 
 	return (
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>

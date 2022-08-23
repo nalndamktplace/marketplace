@@ -68,6 +68,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [])
 
 	useEffect(() => {
+		GaTracker('event_header_search')
 		if(SearchQuery.length>3 && SearchQuery.length<16){
 			setLoading(true)
 			axios({
@@ -126,6 +127,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const menuItemClickHandler = navItem => {
 		if(isUsable(navItem.action)) {
+			GaTracker('event_header_action')
 			setMenuOpen(false)
 			navItem.action()
 		} else if(isUsable(navItem.url)) {
@@ -138,6 +140,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			GaTracker('external_link_header_'+navItem.title)
 		} else if(isUsable(navItem.subMenu)){
 			setSubMenuOpen(true)
+			GaTracker('event_header_subMenu_open')
 		}
 	}
 
@@ -153,6 +156,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}
 
 	const logOutHandler = () => {
+		GaTracker('event_header_user_logout')
 		Auth0.logout()
 		handleWalletDisconnect()
 		dispatch(unsetUser())

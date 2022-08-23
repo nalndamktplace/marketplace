@@ -33,6 +33,7 @@ const ProfilePage = () => {
 	const [DisplayPicUrl, setDisplayPicUrl] = useState(null)
 
 	const saveHandler = () => {
+		GaTracker('event_profile_save')
 		if(isFilled(FormInput.fullName) && isFilled(FormInput.bio)){
 			setLoading(true)
 			axios({
@@ -100,6 +101,7 @@ const ProfilePage = () => {
 	}
 
 	const walletOnClickHandler = () => {
+		GaTracker('event_profile_wallet')
 		if(isWalletConnected(WalletState)){}
 		else{
 			Wallet.connectWallet().then(res => {

@@ -398,9 +398,7 @@ const BookPage = props => {
 
 	const listHandler = () => {
 		dispatch(showModal(SHOW_LIST_MODAL))
-		// if(NFT.copies >= NFT.min_primary_sales && (moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment()))) dispatch(showModal(SHOW_LIST_MODAL))
 		if(moment(NFT.secondary_sales_from).isSame(moment()) || moment(NFT.secondary_sales_from).isBefore(moment())) dispatch(showModal(SHOW_LIST_MODAL))
-		// else if(NFT.copies < NFT.min_primary_sales) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${NFT.min_primary_sales} copies have been sold.`, type: 2}))
 		else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
 	}
 
@@ -443,6 +441,7 @@ const BookPage = props => {
 	}
 
 	const readHandler = async () => {
+		GaTracker('event_book_read')
 		setLoading(true)
 		try {
 			axios({

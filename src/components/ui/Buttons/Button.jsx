@@ -1,3 +1,5 @@
+import GaTracker from '../../../trackers/ga-tracker'
+
 const Button = ({children,className="",type="",size="md",icon="",disabled=false,onClick={}}) => {
     
     const getButtonClasses = () => {
@@ -8,7 +10,11 @@ const Button = ({children,className="",type="",size="md",icon="",disabled=false,
     }
     
     return ( 
-        <button className={getButtonClasses()} onClick={typeof onClick === "function" ? onClick : ()=>{}} disabled={disabled}>{children}</button> 
+        <button className={getButtonClasses()} onClick={()=>{
+			GaTracker(`event_button_${children.toString()}`)
+			if(typeof onClick === "function") onClick()
+		}
+		} disabled={disabled}>{children}</button> 
     )
 }
 

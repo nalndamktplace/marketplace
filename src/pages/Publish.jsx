@@ -70,6 +70,7 @@ const PublishNftPage = props => {
 	useEffect(()=>{
 		if(!window.localStorage) return ;
 		try{
+			GaTracker('event_publish_load_data')
 			let FormInputValues = JSON.parse(window.localStorage.getItem("publish-book-form-data"));
 			if(!isUsable(FormInputValues)) {
 				setLoadingFromStorage(false);
@@ -94,6 +95,7 @@ const PublishNftPage = props => {
 	},[])
 
 	useEffect(()=>{
+		GaTracker('event_publish_save_data')
 		if(loadingFromStorage) return ;
 		if(!window.localStorage) return ;
 		window.localStorage.setItem("publish-book-form-data",JSON.stringify(FormInput));

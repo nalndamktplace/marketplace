@@ -64,7 +64,6 @@ const ReaderPage = () => {
 	const addAnnotationRef = useRef()
 	const seeking = useRef(false);
 
-	// todo confirm what to do for preview
 	const connectWallet = useCallback(
 		() => {
 			Wallet.connectWallet().then(res => {
@@ -78,6 +77,7 @@ const ReaderPage = () => {
 
 	const saveLastReadPage = useCallback(
 		(cfi) => {
+			GaTracker('event_reader_lastPage_save')
 			if(!isUsable(window.localStorage)) return
 			if(!isUsable(bookMeta)) return
 			const bookKey = `${bookMeta.id}:lastread`
@@ -108,6 +108,7 @@ const ReaderPage = () => {
 
 	const updateBookmarkedStatus = useCallback(
 		() => {
+			GaTracker('event_reader_page_bookmark')
 			const pageBookmarked = isCurrentPageBookmarked()
 			setPageBookmarked(pageBookmarked)
 		},[isCurrentPageBookmarked]
@@ -115,6 +116,7 @@ const ReaderPage = () => {
 
 	const hideAllPanel = useCallback(
 		({customizer=true,annotation=true,toc=true}={}) => {
+			GaTracker('event_reader_panels_hide')
 			customizer && setCustomizerPanel(false)
 			annotation && setAnnotaionPanel(false)
 			toc && setTocPanel(false)
@@ -125,8 +127,14 @@ const ReaderPage = () => {
 	useEffect(() => { GaTracker('page_view_reader') }, [])
 
 	useEffect(()=>{
-		if(fullscreen===true) openFullscreen()
-		else closeFullscreen()
+		if(fullscreen===true){
+			GaTracker('event_reader_screen_full')
+			openFullscreen()
+		}
+		else{
+			GaTracker('event_reader_screen_window')
+			closeFullscreen()
+		}
 	},[fullscreen])	
 
 	useEffect(() => {
@@ -150,9 +158,11 @@ const ReaderPage = () => {
 		let bookURL = null
 		const navParams = params.state
 		if(isUsable(navParams.preview) && navParams.preview === true){
+			GaTracker('event_reader_mode_preview')
 			bookURL = BASE_URL+'/files/'+navParams.book.preview
 			setPreview(true)
 		} else {
+			GaTracker('event_reader_mode_live')
 			bookURL = navParams.book.url
 			setPreview(false)
 		}
@@ -233,6 +243,7 @@ const ReaderPage = () => {
 		}
 		const handleClick = () => { setShowUI(s=>!s)}
 		const handleKeyUp = (e) => {
+			GaTracker('event_reader_navigate_keys')
 			if ((e.key === "ArrowLeft") || (e.keyCode || e.which) === 37) {
 				rendition.prev();
 			}
@@ -293,6 +304,7 @@ const ReaderPage = () => {
 		if(!isUsable(rendition)) return
 		if(!isUsable(bookMeta)) return
 		const handleSelected = (cfiRange,contents)=>{
+			GaTracker('event_reader_content_selected')
 			rendition.book.getRange(cfiRange).then((range)=>{
 				setAnnotationSelection({cfiRange,text : range?.toString()})
 				setShowContextMenu(true)

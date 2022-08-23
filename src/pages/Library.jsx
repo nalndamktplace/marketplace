@@ -23,7 +23,6 @@ import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import GaTracker from '../trackers/ga-tracker'
-import { setUser } from '../store/actions/user'
 
 const LibraryPage = props => {
 
@@ -66,6 +65,7 @@ const LibraryPage = props => {
 	)
 
 	useEffect(() => {
+		GaTracker('event_library_filter')
 		let nfts = AllNfts
 		if(isUsable(nfts)){
 			Filters.forEach(filter => {

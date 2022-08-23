@@ -16,6 +16,7 @@ const TocPanel = ({ rendition, onGoto = () => {}, onSelect = () => {} }) => {
     }, [rendition]);
 
     const renderTOCItems = () => {
+		GaTracker('event_toc_panel_show')
         let domItems = [];
         if (!isUsable(rendition)) return "";
         tocItems.forEach((item, i) => {

@@ -32,79 +32,12 @@ const IndexPage = props => {
 	const [MediumData, setMediumData] = useState([])
 
 	const publishHandler = () => {
+		GaTracker('navigate_index_publish')
 		if(isUsable(IsLoggedIn)){
 			if(IsLoggedIn) navigate('/publish')
 			else dispatch(setSnackbar('NOT_LOGGED_IN'))
 		}
 	}
-
-	useEffect(() => { GaTracker('page_view_index') }, [])
-
-	useEffect(() => {
-		axios({
-			url: "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@nalndamktplace",
-			method: 'GET'
-		}).then(res => {
-			if(res.status === 200) setMediumData(res.data)
-		}).catch(err => {})
-	}, [])
-
-	useEffect(() => {
-		if(IsLoading) dispatch(showSpinner())
-		else dispatch(hideSpinner())
-	}, [dispatch, IsLoading])
-
-	useEffect(() => {
-		setIsLoading(true)
-		axios({
-			url: BASE_URL+'/api/collections/highlights',
-			method: 'GET'
-		}).then(res => {
-			if(res.status === 200) setHighlights(res.data)
-		}).catch(err => {
-		}).finally(() => setIsLoading(false))
-	}, [dispatch])
-
-	useEffect(() => {
-		setIsLoading(true)
-		axios({
-			url: BASE_URL+'/api/collections/genres',
-			method: 'GET'
-		}).then(res => {
-			if(res.status === 200) setGenres(res.data)
-		}).catch(err => {
-		}).finally(() => setIsLoading(false))
-	}, [])
-
-	useEffect(() => {
-		setCollections([])
-		setIsLoading(true)
-		axios({
-			url: BASE_URL+'/api/collections',
-			method: 'GET'
-		}).then(res => {
-			if(res.status === 200) setCollections(res.data)
-		}).catch(err => {
-		}).finally(() => setIsLoading(false))
-	}, [dispatch])
-
-	useEffect(() => {
-		if(isFilled(Collections)){
-			setCollectionBooks([])
-			Collections.forEach(collection => {
-				setIsLoading(true)
-				axios({
-					url: BASE_URL+'/api/collections/books?cid='+collection.id,
-					method: 'GET'
-				}).then(res => {
-					if(res.status === 200) setCollectionBooks(old => [...old, {id: collection.id, order: collection.order, name: collection.name, books: res.data}])
-					else dispatch(setSnackbar('NOT200'))
-				}).catch(err => {
-					// Do Nothing
-				}).finally(() => setIsLoading(false))
-			})
-		}
-	}, [Collections, dispatch])
 
 	const openHandler = nft => {
 		GaTracker('navigate_index_book')
@@ -188,7 +121,7 @@ const IndexPage = props => {
 		if(isFilled(CollectionBooks)){
 			CollectionBooks.sort((a,b) => a.order > b.order).forEach(collection => {
 				collectionsDOM.push(
-					<div onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="index__featured__container__row__item" key={collection.id}>
+					<div onClick={()=>{GaTracker('navigate_index_collection');navigate('/collection', {state: {id: collection.id, name: collection.name}})}} className="index__featured__container__row__item" key={collection.id}>
 						<div className="index__featured__container__row__item__container">
 							{renderCollection(collection)}
 						</div>
@@ -218,7 +151,7 @@ const IndexPage = props => {
 		if(isFilled(MediumData.items))
 			MediumData.items.slice(0,3).forEach((item, index) => {
 				mediumArticlesDOM.push(
-					<div className='index__medium__article' onClick={()=>window.open(item.link, "_blank")}>
+					<div className='index__medium__article' onClick={()=>{GaTracker('external_link_medium_article');window.open(item.link, "_blank")}}>
 						<img src={item.thumbnail.replace("1024", "512")} alt={item.title} className='index__medium__article__banner' loading="lazy"/>
 						<div className='index__medium__article__data'>
 							<h5 className='typo__head typo__head--6'>{item.title}</h5>
@@ -232,6 +165,74 @@ const IndexPage = props => {
 			})
 		return mediumArticlesDOM
 	}
+
+	useEffect(() => { GaTracker('page_view_index') }, [])
+
+	useEffect(() => {
+		axios({
+			url: "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@nalndamktplace",
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setMediumData(res.data)
+		}).catch(err => {})
+	}, [])
+
+	useEffect(() => {
+		if(IsLoading) dispatch(showSpinner())
+		else dispatch(hideSpinner())
+	}, [dispatch, IsLoading])
+
+	useEffect(() => {
+		setIsLoading(true)
+		axios({
+			url: BASE_URL+'/api/collections/highlights',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setHighlights(res.data)
+		}).catch(err => {
+		}).finally(() => setIsLoading(false))
+	}, [dispatch])
+
+	useEffect(() => {
+		setIsLoading(true)
+		axios({
+			url: BASE_URL+'/api/collections/genres',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setGenres(res.data)
+		}).catch(err => {
+		}).finally(() => setIsLoading(false))
+	}, [])
+
+	useEffect(() => {
+		setCollections([])
+		setIsLoading(true)
+		axios({
+			url: BASE_URL+'/api/collections',
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setCollections(res.data)
+		}).catch(err => {
+		}).finally(() => setIsLoading(false))
+	}, [dispatch])
+
+	useEffect(() => {
+		if(isFilled(Collections)){
+			setCollectionBooks([])
+			Collections.forEach(collection => {
+				setIsLoading(true)
+				axios({
+					url: BASE_URL+'/api/collections/books?cid='+collection.id,
+					method: 'GET'
+				}).then(res => {
+					if(res.status === 200) setCollectionBooks(old => [...old, {id: collection.id, order: collection.order, name: collection.name, books: res.data}])
+					else dispatch(setSnackbar('NOT200'))
+				}).catch(err => {
+					// Do Nothing
+				}).finally(() => setIsLoading(false))
+			})
+		}
+	}, [Collections, dispatch])
 
 	return (
 		<Page containerClass='index'>

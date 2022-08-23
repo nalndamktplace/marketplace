@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { unsetSnackbar } from '../../../store/actions/snackbar'
 
 import {ReactComponent as CloseIcon} from '../../../assets/icons/close-icon.svg'
+import GaTracker from '../../../trackers/ga-tracker'
 
 const Snackbar = props => {
 
@@ -26,6 +27,7 @@ const Snackbar = props => {
 	const getSnackbarClasses = () => {
 		let classes = ['snackbar']
 		if(SnackbarState.show === false) classes.push('snackbar--hidden') 
+		else GaTracker('event_snackbar_show')
 		return classes.join(" ")
 	}
 

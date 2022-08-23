@@ -36,6 +36,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 	]
 
 	const loginHandler = () => {
+		GaTracker('event_sidenavbar_login')
 		// loginWithPopup()
 		Auth0.loginWithRedirect()
 	}
@@ -47,6 +48,7 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 
     const menuItemClickHandler = navItem => {
 		if(isUsable(navItem.action)) {
+			GaTracker('event_sidenavbar_action')
 			setMenuOpen(false)
 			navItem.action()
 		} else if(isUsable(navItem.url)) {

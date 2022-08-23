@@ -11,6 +11,7 @@ import { setSnackbar } from '../../../store/actions/snackbar'
 import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 
 import { isUserLoggedIn, isWalletConnected } from '../../../helpers/functions'
+import GaTracker from '../../../trackers/ga-tracker'
 
 const WalletHOC = props => {
 
@@ -22,6 +23,7 @@ const WalletHOC = props => {
 	useEffect(() => {
 		if(isUserLoggedIn(UserState) && Wallet.web3Modal.cachedProvider){
 			Wallet.connectWallet().then(res => {
+				GaTracker('event_walletHoc_wallet_connect')
 				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
 			}).catch(err => { })
 		}
@@ -29,15 +31,15 @@ const WalletHOC = props => {
 
 	useEffect(() => {
 		if(isWalletConnected(WalletState)){
-			WalletState.wallet.wallet.on("accountsChanged", accounts => console.log({accounts}))
-			WalletState.wallet.wallet.on("chainChanged", chainId => console.log({chainId}))
-			WalletState.wallet.wallet.on("disconnect", () => console.log("Wallet Disconnected"))
+			WalletState.wallet.wallet.on("accountsChanged", accounts => {GaTracker('event_walletHoc_account_changed');console.log({accounts})})
+			WalletState.wallet.wallet.on("chainChanged", chainId => {GaTracker('event_walletHoc_chain_changed');console.log({chainId})})
+			WalletState.wallet.wallet.on("disconnect", () => {GaTracker('event_walletHoc_wallet_disconnect');console.log("Wallet Disconnected")})
 		}
 		return () => {
 			if(isWalletConnected(WalletState)){
-				WalletState.wallet.wallet.on("accountsChanged", accounts => console.log({accounts}))
-				WalletState.wallet.wallet.on("chainChanged", chainId => console.log({chainId}))
-				WalletState.wallet.wallet.on("disconnect", () => console.log("Wallet Disconnected"))
+				WalletState.wallet.wallet.on("accountsChanged", accounts => {GaTracker('event_walletHoc_account_changed');console.log({accounts})})
+				WalletState.wallet.wallet.on("chainChanged", chainId => {GaTracker('event_walletHoc_chain_changed');console.log({chainId})})
+				WalletState.wallet.wallet.on("disconnect", () => {GaTracker('event_walletHoc_wallet_disconnect');console.log("Wallet Disconnected")})
 			}
 		}
 	}, [WalletState])

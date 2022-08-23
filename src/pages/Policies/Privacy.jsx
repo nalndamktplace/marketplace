@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Page from '../../components/hoc/Page/Page'
+import GaTracker from '../../trackers/ga-tracker'
 
-const PrivacyPolicyPage = props => {
+const PrivacyPolicyPage = () => {
+
+	useEffect(() => {
+		GaTracker('page_view_privacy')
+	}, [])
 
 	return (
 		<Page showRibbion={false}>
