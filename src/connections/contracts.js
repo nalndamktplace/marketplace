@@ -1,5 +1,4 @@
 
-import Wallet from "./wallet"
 import GaTracker from '../trackers/ga-tracker'
 
 import { NALNDA_TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS } from "../config/contracts"
