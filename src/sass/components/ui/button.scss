@@ -11,6 +11,10 @@
 	align-items: center ;
 	justify-content: center ;
 
+	&--fluidic{
+		width: 100%;
+	}
+
 	&:hover {
 		background-color: $color-neutral-200 ;
 		color: $color-neutral-700 ;
@@ -49,25 +53,30 @@
 	}
 
 	&--primary { 
-		background: linear-gradient(to right,$color-primary,$color-primary-dark) ; 
+		border: 0.2rem solid $color-primary;
+		// background: linear-gradient(to right,$color-primary,$color-primary-dark) ; 
+		background: $color-primary ;
 		background-color: $color-primary ;
 		color: $color-white ;
 
 		&:hover {
-			background: linear-gradient(to right,$color-primary,$color-primary-dark) ; 
+			border: 0.2rem solid $color-primary;
+			background: $color-primary ;
 			background-color: $color-primary ;
 			color: $color-white ;
 		}
 	}
 
 	&--secondary { 
-		background: linear-gradient(to right,$color-secondary,$color-secondary-dark) ; 
-		background-color: $color-secondary ;
-		color: $color-white ;
+		border: 0.2rem solid $color-primary;
+		background-color: $color-white ;
+		color: $color-primary ;
 		&:hover {
-			background:linear-gradient(to right,$color-secondary,$color-secondary-dark);
-			background-color: $color-secondary ;
-			color: $color-white ;
+			border: 0.2rem solid $color-primary;
+			border-width: 0.2rem;
+			border-style: solid;
+			background-color: $color-white ;
+			color: $color-primary ;
 		}
 	}
 
