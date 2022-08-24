@@ -218,7 +218,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 						<div className="header__content__search__result__info">
 							<div className='header__content__search__result__info__name typo__head typo__subtitle typo__transform--capital'>{result.title}</div>
 							<div className='header__content__search__result__info__author typo__subtitle typo__subtitle--2 typo__transform--upper'>{result.author}</div>
-							<div className='index__collection__books__item__data__price typo__act typo__color--success'>{result.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{result.price}</>}</div>
+							<div className='index__collection__books__item__data__price typo__act typo__color--success'>{result.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{result.price}</>}</div>
 						</div>
 					</div>
 				)

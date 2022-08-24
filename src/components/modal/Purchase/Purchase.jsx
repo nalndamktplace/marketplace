@@ -72,7 +72,7 @@ const PurchaseModal = props => {
 					offersDOM.push(
 						<div className="modal__purchase__data__offers__item" key={offer.book_address+'-'+offer.order_id}>
 							<p className='utils__margin__bottom--n'>Order: {offer.order_id}</p>
-							<p className='utils__margin__bottom--n utils__d__flex utils__align__center'>Price: {offer.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{offer.price}</>}</p>
+							<p className='utils__margin__bottom--n utils__d__flex utils__align__center'>Price: {offer.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{offer.price}</>}</p>
 							<p className='utils__margin__bottom--n'>Token: {offer.token_id}</p>
 							<p className='utils__margin__bottom--n'>DA Score: {offer.da_score}</p>
 							<p className='utils__margin__bottom--n'>Address: {offer.book_address}</p>
@@ -107,7 +107,7 @@ const PurchaseModal = props => {
 							<div className="modal__purchase__data__book__info">
 								<p className='utils__margin__bottom--n typo__head--6 typo__transform--capital'>{props.data.title}</p>
 								<p className='utils__margin__bottom--n typo__body--3 typo__transform--upper'>{props.data.author}</p>
-								<p className='utils__margin__bottom--n typo__body--2 typo__transform--upper utils__d__flex utils__align__center'>{props.data.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{props.data.price}</>}</p>
+								<p className='utils__margin__bottom--n typo__body--2 typo__transform--upper utils__d__flex utils__align__center'>{props.data.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{props.data.price}</>}</p>
 							</div>
 						</div>
 						<div className="modal__purchase__data__cta">

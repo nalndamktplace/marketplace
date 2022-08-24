@@ -60,7 +60,7 @@ const IndexPage = props => {
 									{book?.title?.length > 40 && "..."}
 								</p>
 								<p className='index__collection__books__item__data__author typo__subtitle'>{book.author}</p>
-								<div className='index__collection__books__item__data__price typo__act typo__color--success'>{book.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{book.price}</>}</div>
+								<div className='index__collection__books__item__data__price typo__act typo__color--success'>{book.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{book.price}</>}</div>
 							</div>
 						</div>
 					)

@@ -777,7 +777,7 @@ const BookPage = props => {
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__color--n500 typo__head typo__head--6 typo__transform--upper">{NFT.author}</h5>
-									{Owner||Published?null:<div className='book__data__container__meta__price typo-head--6 typo__act typo__color--success'>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{NFT.price}</>}</div>}
+									{Owner||Published?null:<div className='book__data__container__meta__price typo-head--6 typo__act typo__color--success'>{NFT.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{NFT.price}</>}</div>}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
 											<Stars size={'small'} rating={Rating}/>
@@ -826,7 +826,7 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
-										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price===0?"FREE":<><USDCIcon stroke='currentColor' width={20} height={20}/>{NFT.price}</>}</div>
+										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{NFT.price}</>}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Published On</div>
 										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
