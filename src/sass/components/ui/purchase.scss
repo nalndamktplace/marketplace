@@ -1,0 +1,127 @@
+.purchase{
+	background-color: $color-white;
+	border-radius: 2rem;
+	box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
+	z-index: 800;
+	padding: 2.4rem;
+	max-height: 90vh;
+	width: 28vw;
+
+	@include respond(phone){
+		width: 90vw;
+	}
+
+	&__wrapper{
+		position: fixed ;
+		top: 50% ;
+		left: 50% ;
+		min-height: max-content ;
+		max-height: 100%;
+		transform: translate(-50%,-50%);
+		background-color: $color-white ;
+		box-shadow: 0 0.2rem 1.6rem rgba($color-black, 0.24);
+		z-index: 999 ;
+		border-radius: 2rem;
+		transition: all 200ms ease-out ;
+	
+		@include respond(tabPort) {
+			max-width: 90%;
+		}
+	
+		&__header {
+			display: flex ;
+			align-items: center ;
+			margin-bottom: 1rem ;
+			padding-bottom: 0 ;
+			&__title {
+				flex: 1 ;
+				color: $color-neutral-600 ;
+			}
+		}
+	
+		&__content {
+			padding-top: 0.8rem;
+
+			&__options{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
+
+				&__item{
+					border: 0.1rem solid $color-neutral-300;
+					border-radius: 0.8rem;
+					padding: 2.4rem;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					transition: all 0.4s ease-in-out;
+					cursor: pointer;
+					flex: 1;
+
+					&:hover{
+						background-color: $color-neutral-100;
+					}
+
+					&:first-child{margin-right: 2.4rem;}
+				}
+			}
+		
+			&__offers{
+
+				&__count{
+					padding-bottom: 1.2rem;
+				}
+
+				&__list{
+					max-height: 72vh;
+					overflow-y: scroll;
+				}
+				
+				&__item{
+					padding: 1rem ;
+					border-radius: 0.8rem ;
+					border: 0.2rem solid $color-white;
+					transition: all 0.4s ease-in-out;
+	
+					&:not(:last-child){ margin-bottom: 0.8rem; }
+					&:hover { background-color: $color-neutral-200 ; }
+					
+					&--active{
+						border: 0.2rem solid $color-primary;
+					}
+				}
+
+				&__cta{
+					display: flex;
+					padding-top: 1.2rem;
+					width: 100%;
+					flex-direction: row;
+					align-items: center;
+					justify-content: center;
+
+					&__button{
+						flex: 1;
+
+						&:first-child{
+							margin-right: 2.4rem;
+						}
+					}
+				}
+			}
+		}
+	
+		&--close {
+			transform: translate(-50%,-50%) scale(0) ;
+			opacity: 0 ;
+			pointer-events: none ;
+		}
+	
+		&--open {
+			transform: translate(-50%,-50%) scale(1) ;
+			opacity: 1;
+			pointer-events: all ;
+		}
+	}
+}
