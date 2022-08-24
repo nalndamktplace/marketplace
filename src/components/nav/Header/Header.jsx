@@ -253,7 +253,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		<header className="header" data-nopadding={noPadding}>
 			<div className="header__content">
 				<div className="header__content__logo utils__cursor--pointer" onClick={()=>navigate('/')}>
-					<img className="header__content__logo__image" src={"https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/779d7e7d-76f3-41e7-8e3c-457d77865300/logo"} alt={'N'}/>
+					<img className="header__content__logo__image" src={"https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/779d7e7d-76f3-41e7-8e3c-457d77865300/square160"} alt={'N'}/>
 					<div className="header__content__logo__name typo__logo">NALNDA</div>
 				</div>
 				<div className={getSearchBarClasses()}>

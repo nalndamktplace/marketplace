@@ -18,7 +18,6 @@ import { BASE_URL } from '../config/env'
 import { ACCOUNT_PAGE_FILTERS } from '../config/filters'
 
 import BookItem from '../components/ui/BookItem/BookItem'
-import BooksShelf from '../assets/images/books-shelf.webp'
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
@@ -252,7 +251,7 @@ const LibraryPage = props => {
 						{isUsable(Nfts) && Nfts.length > 0
 							? 	renderNfts()
 							: 	<div className='account__data__books__wrapper__empty'>
-									<img src={BooksShelf} alt="books shelf" className="account__data__books__wrapper__image" loading="lazy"/>
+									<img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/fb06196e-29ca-4c59-9460-6fdbd43fa700/square240' alt="books shelf" className="account__data__books__wrapper__image" loading="lazy"/>
 									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 								</div>
 						}

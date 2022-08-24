@@ -5,7 +5,6 @@ import GaTracker from '../../../trackers/ga-tracker'
 
 import {ReactComponent as MediumIcon} from "../../../assets/icons/medium.svg"
 import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
-import {ReactComponent as Logo} from "../../../assets/logo/solid-no-padding.svg"
 import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
 
 const Footer = props => {
@@ -17,7 +16,7 @@ const Footer = props => {
 			<div className="footer__row">
 				<div className="footer__row__item">
 					<div className="footer__row__item__logo">
-						<Logo width={48} height={48}/>
+						<img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/528914cf-f059-44da-80d1-8680504a9200/square160' style={{width: 48, height: 48, objectFit: 'contain'}} alt={'N'}/>
 						<h3 className='typo__head--3 typo__logo typo__logo--white'>NALNDA</h3>
 					</div>
 				</div>
