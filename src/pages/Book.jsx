@@ -313,7 +313,10 @@ const BookPage = props => {
 				},
 				params: {walletAddress: WalletState.wallet.address, bookAddress: NFT.book_address}
 			}).then(res => {
-				if(res.status === 200) setUserCopy(res.data)
+				if(res.status === 200) {
+					setUserCopy(res.data)
+					setListed(res.data.listed)
+				}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
@@ -571,7 +574,10 @@ const BookPage = props => {
 						daScore: offer.da_score
 					}
 				}).then(res => {
-					if(res.status === 200) setOwner(true)
+					if(res.status === 200){
+						dispatch(hideModal())
+						setOwner(true)
+					}
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
 					dispatch(setSnackbar('ERROR'))
