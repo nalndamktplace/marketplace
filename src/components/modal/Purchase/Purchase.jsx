@@ -11,11 +11,9 @@ import GaTracker from '../../../trackers/ga-tracker'
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { isFilled, isUsable } from '../../../helpers/functions'
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
-import { hideModal, SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
+import { SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { BASE_URL } from '../../../config/env'
-
-import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
 
 const PurchaseModal = props => {
 

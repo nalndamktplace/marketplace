@@ -1,7 +1,5 @@
 import Stars from "../Stars/Stars"
 
-import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
-
 const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show', onRead=()=>{}}) => {
 	// todo add CTA case for publisher & owner
 	const renderCTA = () => {

@@ -16,8 +16,6 @@ import GaTracker from '../trackers/ga-tracker'
 import { BASE_URL } from '../config/env'
 import { isFilled, isUsable } from '../helpers/functions'
 
-import {ReactComponent as USDCIcon} from "../assets/icons/usdc.svg"
-
 const IndexPage = props => {
 
 	const navigate = useNavigate()

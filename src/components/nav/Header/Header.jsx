@@ -24,7 +24,6 @@ import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/fu
 import { unsetUser } from "../../../store/actions/user"
 
 import {ReactComponent as UserIcon} from '../../../assets/icons/user.svg'
-import {ReactComponent as USDCIcon} from "../../../assets/icons/usdc.svg"
 import {ReactComponent as GridIcon} from "../../../assets/icons/layout-grid.svg"
 import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
