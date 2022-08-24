@@ -4,7 +4,6 @@ import { createStore, combineReducers } from 'redux'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import { Auth0Provider } from "@auth0/auth0-react"
-import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import './main.scss'
 
@@ -56,34 +55,32 @@ function App() {
 		<Auth0Provider domain={process.env.REACT_APP_AUTH0_DOMAIN} clientId={process.env.REACT_APP_AUTH0_CLIENT_ID} redirectUri={window.location.origin} >
 			<div className="typo">
 				<Provider store={store}>
-					<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-						<Router>
-							<ScrollToTop>
-								<Suspense fallback={<div className={"spinner spinner--show"}><div className="spinner__container"><Grid color='#00a2e8'/></div></div>}>
-									<Routes>
-										<Route path='/*' element={<IndexPage/>}/>
-										<Route path='/' element={<IndexPage/>}/>
-										<Route path='/book' element={<BookPage/>}/>
-										<Route path='/book/preview' element={<ReaderPage/>}/>
-										<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
-										<Route path='/explore' element={<ExplorePage/>}/>
-										<Route path='/profile' element={<ProfilePage />}/>
-										<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
-										<Route path='/collection' element={<CollectionPage/>}/>
-										<Route path='/library/reader' element={<ReaderPage/>}/>
-										<Route path='/policy/terms' element={<TermsConditionPage/>}/>
-										<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
-										{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
-										{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
-									</Routes>
-								</Suspense>
-							</ScrollToTop>
-						</Router>
-						<Snackbar/>
-						<Spinner/>
-						<WalletHOC/>
-						<UserHOC/>
-					</GoogleOAuthProvider>
+					<Router>
+						<ScrollToTop>
+							<Suspense fallback={<div className={"spinner spinner--show"}><div className="spinner__container"><Grid color='#00a2e8'/></div></div>}>
+								<Routes>
+									<Route path='/*' element={<IndexPage/>}/>
+									<Route path='/' element={<IndexPage/>}/>
+									<Route path='/book' element={<BookPage/>}/>
+									<Route path='/book/preview' element={<ReaderPage/>}/>
+									<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
+									<Route path='/explore' element={<ExplorePage/>}/>
+									<Route path='/profile' element={<ProfilePage />}/>
+									<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
+									<Route path='/collection' element={<CollectionPage/>}/>
+									<Route path='/library/reader' element={<ReaderPage/>}/>
+									<Route path='/policy/terms' element={<TermsConditionPage/>}/>
+									<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
+									{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
+									{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
+								</Routes>
+							</Suspense>
+						</ScrollToTop>
+					</Router>
+					<Snackbar/>
+					<Spinner/>
+					<WalletHOC/>
+					<UserHOC/>
 				</Provider>
 			</div>
 		</Auth0Provider>
