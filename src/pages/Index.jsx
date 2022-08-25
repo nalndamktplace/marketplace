@@ -147,8 +147,9 @@ const IndexPage = props => {
 
 		const getImageUrl = url => {
 			url = url.replace("1024", "512")
-			if(url.lastIndexOf('.')>36){
-				url = url.slice(0, url.lastIndexOf('.'))
+			const lastIndexOfDot = url.lastIndexOf('.')
+			if(lastIndexOfDot>36){
+				url = url.slice(0, lastIndexOfDot)
 				url += ".webp"
 			}
 			return url
