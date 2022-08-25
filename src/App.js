@@ -19,16 +19,7 @@ import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 import DarkModeReducer from './store/reducers/darkmode'
 
-import BookPage from './pages/Book'
 import IndexPage from './pages/Index'
-import ReaderPage from './pages/Reader'
-import ExplorePage from './pages/Explore'
-import LibraryPage from './pages/Library'
-import ProfilePage from './pages/Profile'
-import PublishNftPage from './pages/Publish'
-import CollectionPage from './pages/Collection'
-import PrivacyPolicyPage from './pages/Policies/Privacy'
-import TermsConditionPage from './pages/Policies/Terms'
 //	/*	Page to debug App
 //		Uncomment the lines below to activate page	*/
 // import InterfaceDebugPage from './Debug/Interface'
@@ -38,6 +29,16 @@ import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
+
+const BookPage = React.lazy(() => import('./pages/Book'))
+const ReaderPage = React.lazy(() => import('./pages/Reader'))
+const ExplorePage = React.lazy(() => import('./pages/Explore'))
+const LibraryPage = React.lazy(() => import('./pages/Library'))
+const ProfilePage = React.lazy(() => import('./pages/Profile'))
+const PublishNftPage = React.lazy(() => import('./pages/Publish'))
+const CollectionPage = React.lazy(() => import('./pages/Collection'))
+const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
+const TermsConditionPage = React.lazy(() => import('./pages/Policies/Terms'))
 
 const rootReducer = combineReducers({
 	UserState: UserReducer,
