@@ -145,22 +145,19 @@ const IndexPage = props => {
 			return categoriesDOM
 		}
 
-		// const getImageUrl = url => {
-		// 	url = url.replace("1024", "512")
-		// 	const lastIndexOfDot = url.lastIndexOf('.')
-		// 	if(lastIndexOfDot>36){
-		// 		url = url.slice(0, lastIndexOfDot)
-		// 		url += ".webp"
-		// 	}
-		// 	return url
-		// }
+		const getImageUrl = url => {
+			url = url.replace("1024", "512")
+			const lastIndexOfDot = url.lastIndexOf('.')
+
+			return lastIndexOfDot>36? url.slice(0, lastIndexOfDot)+".webp": url
+		}
 
 		let mediumArticlesDOM = []
 		if(isFilled(MediumData.items))
 			MediumData.items.slice(0,3).forEach((item, index) => {
 				mediumArticlesDOM.push(
 					<div className='index__medium__article' onClick={()=>{GaTracker('external_link_medium_article');window.open(item.link, "_blank")}}>
-						<img src={item.thumbnail} alt={item.title} className='index__medium__article__banner' loading="lazy"/>
+						<img src={getImageUrl(item.thumbnail)} alt={item.title} className='index__medium__article__banner' loading="lazy"/>
 						<div className='index__medium__article__data'>
 							<h5 className='typo__head typo__head--6'>{item.title}</h5>
 							<p className='typo__cap'>{moment(item.pubDate).format("DD MMM, YYYY")}</p>
