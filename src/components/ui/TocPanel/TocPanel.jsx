@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { isUsable } from "../../../helpers/functions";
-import GaTracker from "../../../trackers/ga-tracker";
-import Button from "../Buttons/Button";
+import { useEffect, useState } from "react"
+import { isUsable } from "../../../helpers/functions"
+import GaTracker from "../../../trackers/ga-tracker"
 
 const TocPanel = ({ rendition, onGoto = () => {}, onSelect = () => {} }) => {
     const [tocItems, setTocItems] = useState([]);

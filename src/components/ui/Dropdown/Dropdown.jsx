@@ -3,10 +3,6 @@ import React, { useState } from 'react'
 const Dropdown = ({ button = "", options = "" }) => {
 	const [DropdownOpen, setDropdownOpen] = useState(false)
 
-	const toggleDropdown = (state) => {
-		setDropdownOpen(state)
-	}
-
 	const getClasses = () => {
 		let classes = ["dropdown__options"]
 		if (DropdownOpen) classes.push("dropdown__options--open")

@@ -11,7 +11,7 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
-import Pagination from '../components/ui/Pagination/Pagination'
+// import Pagination from '../components/ui/Pagination/Pagination'
 import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
 
 import { BASE_URL } from '../config/env'
@@ -42,8 +42,8 @@ const LibraryPage = props => {
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
 	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
-	const [currentPage, setCurrentPage] = useState(1)
-	const [maxPage, setMaxPage] = useState(10)
+	// const [currentPage, setCurrentPage] = useState(1)
+	// const [maxPage, setMaxPage] = useState(10)
 	const [maxPrice, setMaxPrice] = useState(100);
 
 	useEffect(() => { GaTracker('page_view_account') }, [])
@@ -255,9 +255,9 @@ const LibraryPage = props => {
 									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 								</div>
 						}
-						<div className="account__data__books__wrapper__pagination">
+						{/* <div className="account__data__books__wrapper__pagination">
 							<Pagination max={maxPage} current={currentPage} onPageChange={(p)=>setCurrentPage(p)} />
-						</div>
+						</div> */}
 					</div>
 					
 				</div>

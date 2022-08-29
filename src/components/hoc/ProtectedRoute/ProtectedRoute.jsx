@@ -1,18 +1,13 @@
-import axios from 'axios'
 import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import Wallet from "../../../connections/wallet"
 
-import { isUsable, isUserLoggedIn, isWalletConnected } from "../../../helpers/functions"
+import { isUserLoggedIn, isWalletConnected } from "../../../helpers/functions"
 import { setWallet } from "../../../store/actions/wallet"
 import { setSnackbar } from "../../../store/actions/snackbar"
 import { hideSpinner, showSpinner } from "../../../store/actions/spinner"
-
-import { BASE_URL } from '../../../config/env'
-import { setUser } from '../../../store/actions/user'
-import { useCallback } from 'react'
 
 const ProtectedRoute = ({element}) => {
 	const dispatch = useDispatch()
