@@ -2,7 +2,6 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Modal from '../../hoc/Modal/Modal'
 import Button from '../../ui/Buttons/Button'
 import Backdrop from '../../hoc/Backdrop/Backdrop'
 
@@ -14,6 +13,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import { SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
+import { ReactComponent as Error404Icon } from "../../../assets/icons/error-404.svg"
 
 import { BASE_URL } from '../../../config/env'
 
@@ -142,10 +142,18 @@ const PurchaseModal = ({onOldBookPurchase,onNewBookPurchase,data}) => {
 								<p className='typo__body utils__d__flex typo__align--center'>Purchase new copy for</p>
 								<h5 className='typo__head typo__head--4 typo__transform--upper utils__d__flex utils__align__center'>{data.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 32, height: 32, objectFit: 'contain'}} alt="USDC"/>&nbsp;{parseFloat(data.price).toFixed(2)}</>}</h5>
 							</div>
-							<div className="purchase__wrapper__content__options__item" onClick={()=>setShowOffers(true)}>
-								<p className='typo__body utils__d__flex typo__align--center'>Old copies start from</p>
-								<h5 className='typo__head typo__head--4 typo__transform--upper utils__d__flex utils__align__center'>{data.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 32, height: 32, objectFit: 'contain'}} alt="USDC"/>&nbsp;{getLowestPrice()}</>}</h5>
-							</div>
+							{isFilled(Offers)
+								?
+								<div className="purchase__wrapper__content__options__item" onClick={()=>setShowOffers(true)}>
+									<p className='typo__body utils__d__flex typo__align--center'>Old copies start from</p>
+									<h5 className='typo__head typo__head--4 typo__transform--upper utils__d__flex utils__align__center'>{data.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 32, height: 32, objectFit: 'contain'}} alt="USDC"/>&nbsp;{getLowestPrice()}</>}</h5>
+								</div>
+								:
+								<div className="purchase__wrapper__content__options__item">
+									<p className='typo__body utils__d__flex typo__align--center'>No old copies available yet.</p>
+									<h5 className='typo__head typo__head--4 typo__transform--upper utils__d__flex utils__align__center'>&nbsp;<Error404Icon height={32} width={32}/></h5>
+								</div>
+							}
 						</div>
 					}
 				</div>
