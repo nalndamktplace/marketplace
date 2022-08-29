@@ -274,11 +274,11 @@
 						border-bottom: 0.2rem solid $color-neutral-200 ;
 						overflow-x: auto ;
 
-						-ms-overflow-style: none; /* Internet Explorer 10+ */
-						scrollbar-width: none; /* Firefox */
-						overflow: -moz-scrollbars-none; /* Old Firefox */
+						-ms-overflow-style: none;
+						scrollbar-width: none;
+						overflow: -moz-scrollbars-none;
 						
-						&::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+						&::-webkit-scrollbar { display: none; }
 
 						&__item{
 							display: flex ;

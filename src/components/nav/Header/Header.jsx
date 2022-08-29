@@ -84,10 +84,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
-	const loginHandler = () => {
-		// loginWithPopup()
-		Auth0.loginWithRedirect()
-	}
+	const loginHandler = () => Auth0.loginWithRedirect()
 
 	const handleWalletConnect = () => {
 		if(!isWalletConnected(WalletState)){

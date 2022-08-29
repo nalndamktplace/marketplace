@@ -1,7 +1,6 @@
 import Stars from "../Stars/Stars"
 
 const BookItem = ({book,onBuy=()=>{},onOpen=()=>{},layout="GRID", state = 'show', onRead=()=>{}}) => {
-	// todo add CTA case for publisher & owner
 	const renderCTA = () => {
 		if(book.status === 1)
 			switch (state) {

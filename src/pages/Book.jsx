@@ -282,7 +282,6 @@ const BookPage = props => {
 				}
 			}).then(res => { if(res.status === 200) setOwner(true)
 			}).catch(err => {
-				// if(!isUsable(err.response.status))
 			}).finally(() => setLoading(false))
 		}
 	}, [params, dispatch, WalletAddress])

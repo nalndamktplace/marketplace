@@ -31,10 +31,10 @@
         overflow-y: auto ;
         padding-bottom: 10rem ;
         
-        -ms-overflow-style: none; /* Internet Explorer 10+ */
-        scrollbar-width: none; /* Firefox */
-        overflow: -moz-scrollbars-none; /* Old Firefox */
-        &::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        overflow: -moz-scrollbars-none;
+        &::-webkit-scrollbar { display: none; }
 
         &__accordian {
             max-height: 48rem ;

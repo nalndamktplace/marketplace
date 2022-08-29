@@ -25,9 +25,6 @@ const getBooks = async function getBooks (index){
 	return books
 }
 
-// todo check 90 < daysForSecondarySale < 150
-// todo 1 <= language <= 100
-// todo 1 <= genre <= 60
 const listNftForSales = async function listNftForSales(authorAddress, coverUrl, price, daysForSecondarySale, language, genres, signer){
 	GaTracker('event_contracts_list_nft')
 	let marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
@@ -56,9 +53,6 @@ const getBookUri = async function getBookUri(bookAddress, signer){
 
 const listBookToMarketplace = async function listBookToMarketplace(bookAddress, bookTokenId, bookPrice, signer) {
 	GaTracker('event_contracts_list_book')
-	// const bookContract = new ethers.Contract(bookAddress, book.abi, signer)
-	// const approval = await bookContract.setApprovalForAll(MARKET_CONTRACT_ADDRESS, true)
-	// const ap = await approval.wait()
 	const marketplaceContract = new ethers.Contract(MARKET_CONTRACT_ADDRESS, marketplace.abi, signer)
 	const listing = await marketplaceContract.listCover(bookAddress, bookTokenId, ethers.utils.parseEther(bookPrice))
 	return await listing.wait()

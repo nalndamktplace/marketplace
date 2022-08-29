@@ -97,11 +97,11 @@
 			width: 100%;
 			overflow: auto ;
 
-			-ms-overflow-style: none; /* Internet Explorer 10+ */
-			scrollbar-width: none; /* Firefox */
-			overflow: -moz-scrollbars-none; /* Old Firefox */
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+			overflow: -moz-scrollbars-none;
 			
-			&::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+			&::-webkit-scrollbar { display: none; }
 			
 			&__wrapper{
 				display: flex;
@@ -130,22 +130,6 @@
 					width  : calc(var(--cover-size));
 					height : calc(var(--cover-size) * 1.6);
 					object-fit: cover;
-
-					// width : calc(((100vw - (32rem + ((4rem)*4)))/5));
-					// height: calc(((100vw - (32rem + ((4rem)*4)))/5)*1.6);
-					
-					// @include respond(desk){
-					// 	width: calc(((100vw - (16rem + ((4rem)*4)))/5));
-					// 	height: calc(((100vw - (16rem + ((4rem)*4)))/5)*1.6);
-					// }
-					// @include respond(retinaBig){
-					// 	width: calc(((100vw - (24rem + ((4rem)*4)))/5));
-					// 	height: calc(((100vw - (24rem + ((4rem)*4)))/5)*1.6);
-					// }
-					// @include respond(tabLand){
-					// 	width: calc(((100vw - (8rem + ((4rem)*4)))/1.5));
-					// 	height: calc(((100vw - (8rem + ((4rem)*4)))/1.5)*1.6);
-					// }
 				}
 
 				&__data{

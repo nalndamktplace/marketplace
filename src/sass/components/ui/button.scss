@@ -33,11 +33,6 @@
 		margin-left: 1rem ;
 	}
 
-	// &--sm { font-size: 1.75rem ; font-weight: 600 ; padding: 0.75rem 1.50rem ; border-radius: 0.4rem ; }
-	// &--md { font-size: 1.75rem ; font-weight: 600 ; padding: 1.00rem 1.75rem ; border-radius: 0.64rem ;}
-	// &--lg { font-size: 2.00rem ; font-weight: 700 ; padding: 1.50rem 2.00rem ; border-radius: 0.8rem ;}
-	// &--xl { font-size: 2.25rem ; font-weight: 700 ; padding: 1.75rem 2.50rem ; border-radius: 0.8rem ;}
-
 	&__icon {
 		margin-right: 1.00rem ;
 		width: 2.4rem;
@@ -54,7 +49,6 @@
 
 	&--primary { 
 		border: 0.2rem solid $color-primary;
-		// background: linear-gradient(to right,$color-primary,$color-primary-dark) ; 
 		background: $color-primary ;
 		background-color: $color-primary ;
 		color: $color-white ;

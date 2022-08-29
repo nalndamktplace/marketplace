@@ -18,7 +18,6 @@ const handleData = (state = initState, action) => {
 		case UNSET_SNACKBAR:
 			return {
 				...state,
-				// ...initState
 				show: false,
 				message: null,
 				type: null

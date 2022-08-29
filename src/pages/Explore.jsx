@@ -14,7 +14,6 @@ import Page from '../components/hoc/Page/Page'
 import Contracts from '../connections/contracts'
 import Button from '../components/ui/Buttons/Button'
 import BookItem from '../components/ui/BookItem/BookItem'
-// import Pagination from '../components/ui/Pagination/Pagination'
 import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
 
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
@@ -37,8 +36,6 @@ const ExplorePage = () => {
 	const [Loading, setLoading] = useState(false)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
 	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
-	// const [currentPage, setCurrentPage] = useState(1)
-	// const [maxPage, setMaxPage] = useState(10)
 	const [AllNfts, setAllNfts] = useState([])
 	const [maxPrice, setMaxPrice] = useState(100);
 
@@ -185,9 +182,6 @@ const ExplorePage = () => {
 									<h4 className="typo__head typo__head--4">No eBooks yet</h4>
 								</div>
 						}
-						{/* <div className="explore__data__books__wrapper__pagination">
-							<Pagination max={maxPage} current={currentPage} onPageChange={(p)=>setCurrentPage(p)} />
-						</div> */}
 					</div>
 					
 				</div>

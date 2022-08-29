@@ -121,7 +121,6 @@ const ProfilePage = () => {
 				url: BASE_URL+'/api/user/profile',
 				method: 'GET',
 				headers: {
-					// 'address': WalletState.wallet.address,
 					'user-id': UserState.user.uid,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				}

@@ -226,7 +226,6 @@ const IndexPage = props => {
 					if(res.status === 200) setCollectionBooks(old => [...old, {id: collection.id, order: collection.order, name: collection.name, books: res.data}])
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
-					// Do Nothing
 				}).finally(() => setIsLoading(false))
 			})
 		}
