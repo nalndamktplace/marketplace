@@ -35,6 +35,7 @@ const ReaderPage = React.lazy(() => import('./pages/Reader'))
 const ExplorePage = React.lazy(() => import('./pages/Explore'))
 const LibraryPage = React.lazy(() => import('./pages/Library'))
 const ProfilePage = React.lazy(() => import('./pages/Profile'))
+const ItoPublishPage = React.lazy(() => import('./pages/Ito'))
 const PublishNftPage = React.lazy(() => import('./pages/Publish'))
 const CollectionPage = React.lazy(() => import('./pages/Collection'))
 const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
@@ -65,6 +66,7 @@ function App() {
 									<Route path='/book' element={<BookPage/>}/>
 									<Route path='/book/preview' element={<ReaderPage/>}/>
 									<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
+									<Route path='/publish/ito' element={<ProtectedRoute element={<ItoPublishPage/>} />}/>
 									<Route path='/explore' element={<ExplorePage/>}/>
 									<Route path='/profile' element={<ProfilePage />}/>
 									<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
