@@ -74,6 +74,17 @@
 		}
 	}
 
+	&--text { 
+		border: 0.2rem solid rgba($color-white, 0);
+		background-color: rgba($color-white, 0) ;
+		color: $color-white ;
+		&:hover {
+			border: 0.2rem solid rgba($color-white, 100);
+			background-color: rgba($color-white, 0) ;
+			color: $color-white ;
+		}
+	}
+
 	&--white { 
 		mix-blend-mode: screen;
 		background-color: transparent ; 
