@@ -76,6 +76,11 @@ const buyListedCover = async function buyListedCover(bookOrderId, bookPrice, sig
 	return tx
 }
 
+const createNewItoBook = async function createNewBook(authorAddress, idos, coverUrl, price, daysForSecondarySale, language, genres, signer) {
+	GaTracker('event_contracts_create_ito')
+	
+}
+
 const Contracts = {
 	nalndaToken,
 	marketplace,
@@ -87,7 +92,8 @@ const Contracts = {
 	getBookUri,
 	listBookToMarketplace,
 	unlistBookFromMarketplace,
-	buyListedCover
+	buyListedCover,
+	createNewItoBook,
 }
 
 export default Contracts
