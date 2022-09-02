@@ -99,10 +99,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore" ,url: "/explore",uri: null, icon: CompassIcon ,action: null, subMenu: null },
 		{ id: "NI2",title: "Publish" ,url: "/publish" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
-		{ id: "NI3",title: "Resources",url: null ,uri: null, icon: GridIcon ,action: null,
+		// { id: "NI3",title: "Ito" ,url: "/publish/ito" ,uri: null, icon: PlusSquareIcon ,action: null, subMenu: null },
+		{ id: "NI4",title: "Resources",url: null ,uri: null, icon: GridIcon ,action: null,
 			subMenu: [
-				{id: "NI3SMI1",title: "Blog" ,url: null,uri: "https://nalndamktplace.medium.com/",icon: null,action: null,},
-				{id: "NI3SMI2",title: "Whitepaper",url: null,uri: "https://docs.nalnda.com/" ,icon: null,action: null,},
+				{id: "NI4SMI1",title: "Blog" ,url: null,uri: "https://nalndamktplace.medium.com/",icon: null,action: null,},
+				{id: "NI4SMI2",title: "Whitepaper",url: null,uri: "https://docs.nalnda.com/" ,icon: null,action: null,},
 			],
 		},
 		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
