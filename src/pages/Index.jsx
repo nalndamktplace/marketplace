@@ -16,6 +16,8 @@ import GaTracker from '../trackers/ga-tracker'
 import { BASE_URL } from '../config/env'
 import { isFilled, isUsable } from '../helpers/functions'
 
+// import AnalyticsBackground from '../assets/images/background-analytics.png'
+
 const IndexPage = props => {
 
 	const navigate = useNavigate()
@@ -28,6 +30,7 @@ const IndexPage = props => {
 	const [CollectionBooks, setCollectionBooks] = useState([])
 	const [Genres, setGenres] = useState([])
 	const [MediumData, setMediumData] = useState([])
+	const [Analytics, setAnalytics] = useState(null)
 
 	const publishHandler = () => {
 		GaTracker('navigate_index_publish')
@@ -164,6 +167,17 @@ const IndexPage = props => {
 		return mediumArticlesDOM
 	}
 
+	const renderAnalytics = () => {
+		let analyticsDOM = []
+		if(isUsable(Analytics)){
+			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.titles.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Titles Listed</h6></div>)
+			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.copies.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Copies Sold</h6></div>)
+			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.readTime.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Read Time</h6></div>)
+			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.users.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Active Users</h6></div>)
+		}
+		return analyticsDOM
+	}
+
 	useEffect(() => { GaTracker('page_view_index') }, [])
 
 	useEffect(() => {
@@ -231,24 +245,40 @@ const IndexPage = props => {
 		}
 	}, [Collections, dispatch])
 
+	useEffect(() => {
+		axios({
+			url: `${BASE_URL}/api/analytics/public`,
+			method: 'GET'
+		}).then(res => {
+			if(res.status === 200) setAnalytics(res.data)
+		}).catch(err => {})
+	}, [])
+
 	return (
 		<Page containerClass='index'>
 			<div className="index__hero">
-				<div className="index__bg">
-				</div>
+				<div className="index__bg"/>
 				<div className="index__content">
 					<div className="index__content__container">
 						<h1 className="typo__head typo__head--2 typo__weight--heavy typo__color--white typo__transform--capital">experience<br/> books beyond<br/> reading</h1>
 						<h3 className="typo__head typo__head--4 typo__transform--capital typo__color--white">decentralised marketplace for NFT based <span style={{textTransform: 'none'}}>eBooks</span>.</h3>
 						<div className="index__content__container__row">
-							<Button size="xl" type="white" onClick={() => navigate('/explore')}>Explore</Button>
-							<Button size="xl" type="outline-white" onClick={() => publishHandler()}>Publish</Button>
+							<Button type="white" onClick={() => navigate('/explore')}>Explore</Button>
+							<Button type="text" onClick={() => publishHandler()}>Publish</Button>
 						</div>
 					</div>
 				</div>
 				<div className="index__book">
 					<div className="index__book__container">
 						{renderHighlights()}
+					</div>
+				</div>
+			</div>
+			<div className="index__analytics">
+				<div className="index__analytics__container">
+					{/* <img src={AnalyticsBackground} className="index__analytics__container__bg" alt={""}/> */}
+					<div className="index__analytics__container__row">
+						{renderAnalytics()}
 					</div>
 				</div>
 			</div>
