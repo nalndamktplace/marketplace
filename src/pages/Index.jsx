@@ -172,7 +172,7 @@ const IndexPage = props => {
 		if(isUsable(Analytics)){
 			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.titles.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Titles Listed</h6></div>)
 			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.copies.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Copies Sold</h6></div>)
-			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.readTime.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Read Time</h6></div>)
+			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.readTime.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Mins Read Time</h6></div>)
 			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.users.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Active Users</h6></div>)
 		}
 		return analyticsDOM
