@@ -540,18 +540,19 @@ const BookPage = props => {
 		}
 		GaTracker('event_book_purchase_new')
 		setLoading(true)
-		if(isUsable(WalletState.wallet.signer) && isUsable(WalletAddress)) purchase()
+		if(isUsable(WalletAddress)) purchase()
 		else{
-			setLoading(true)
-			Wallet.connectWallet().then(res => {
-				setLoading(false)
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				setWalletAddress(res.address)
-				purchase()
-			}).catch(err => {
-				dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
-				setLoading(false)
-			})
+			// setLoading(true)
+			// Wallet.connectWallet().then(res => {
+			// 	setLoading(false)
+			// 	dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+			// 	setWalletAddress(res.address)
+			// 	purchase()
+			// }).catch(err => {
+			// 	dispatch(setSnackbar({show: true, message: "Error while connecting wallet." ,type: 4}))
+			// 	setLoading(false)
+			// })
+			dispatch(setSnackbar({show: true, message: "Please connect your WEB3 wallet.", type: 3}))
 		}
 	}
 
