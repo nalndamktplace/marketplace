@@ -3,7 +3,7 @@ import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import { Auth0Provider } from "@auth0/auth0-react"
+import { Auth0Provider } from '@auth0/auth0-react'
 
 import './main.scss'
 
@@ -29,6 +29,7 @@ import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
+import InternHirePage from './pages/Intern'
 
 const BookPage = React.lazy(() => import('./pages/Book'))
 const ReaderPage = React.lazy(() => import('./pages/Reader'))
@@ -42,52 +43,113 @@ const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
 const TermsConditionPage = React.lazy(() => import('./pages/Policies/Terms'))
 
 const rootReducer = combineReducers({
-	UserState: UserReducer,
-	ModalState: ModalReducer,
-	WalletState: WalletReducer,
-	SpinnerState: SpinnerReducer,
-	SnackbarState: SnackbarReducer,
-	DarkModeState : DarkModeReducer
+    UserState: UserReducer,
+    ModalState: ModalReducer,
+    WalletState: WalletReducer,
+    SpinnerState: SpinnerReducer,
+    SnackbarState: SnackbarReducer,
+    DarkModeState: DarkModeReducer,
 })
 
 const store = createStore(rootReducer)
 
 function App() {
-	return (
-		<Auth0Provider domain={process.env.REACT_APP_AUTH0_DOMAIN} clientId={process.env.REACT_APP_AUTH0_CLIENT_ID} redirectUri={window.location.origin} >
-			<div className="typo">
-				<Provider store={store}>
-					<Router>
-						<ScrollToTop>
-							<Suspense fallback={<div className={"spinner spinner--show"}><div className="spinner__container"><Grid color='#00a2e8'/></div></div>}>
-								<Routes>
-									<Route path='/*' element={<IndexPage/>}/>
-									<Route path='/' element={<IndexPage/>}/>
-									<Route path='/book' element={<BookPage/>}/>
-									<Route path='/book/preview' element={<ReaderPage/>}/>
-									<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage/>} />}/>
-									<Route path='/publish/ito' element={<ProtectedRoute element={<ItoPublishPage/>} />}/>
-									<Route path='/explore' element={<ExplorePage/>}/>
-									<Route path='/profile' element={<ProfilePage />}/>
-									<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />}/>
-									<Route path='/collection' element={<CollectionPage/>}/>
-									<Route path='/library/reader' element={<ReaderPage/>}/>
-									<Route path='/policy/terms' element={<TermsConditionPage/>}/>
-									<Route path='/policy/privacy' element={<PrivacyPolicyPage/>}/>
-									{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
-									{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
-								</Routes>
-							</Suspense>
-						</ScrollToTop>
-					</Router>
-					<Snackbar/>
-					<Spinner/>
-					<WalletHOC/>
-					<UserHOC/>
-				</Provider>
-			</div>
-		</Auth0Provider>
-	)
+    return (
+        <Auth0Provider
+            domain={process.env.REACT_APP_AUTH0_DOMAIN}
+            clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+            redirectUri={window.location.origin}
+        >
+            <div className="typo">
+                <Provider store={store}>
+                    <Router>
+                        <ScrollToTop>
+                            <Suspense
+                                fallback={
+                                    <div className={'spinner spinner--show'}>
+                                        <div className="spinner__container">
+                                            <Grid color="#00a2e8" />
+                                        </div>
+                                    </div>
+                                }
+                            >
+                                <Routes>
+                                    <Route path="/*" element={<IndexPage />} />
+                                    <Route path="/" element={<IndexPage />} />
+                                    <Route
+                                        path="/hire/intern"
+                                        element={<InternHirePage />}
+                                    />
+                                    <Route
+                                        path="/book"
+                                        element={<BookPage />}
+                                    />
+                                    <Route
+                                        path="/book/preview"
+                                        element={<ReaderPage />}
+                                    />
+                                    <Route
+                                        path="/publish"
+                                        element={
+                                            <ProtectedRoute
+                                                element={<PublishNftPage />}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path="/publish/ito"
+                                        element={
+                                            <ProtectedRoute
+                                                element={<ItoPublishPage />}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path="/explore"
+                                        element={<ExplorePage />}
+                                    />
+                                    <Route
+                                        path="/profile"
+                                        element={<ProfilePage />}
+                                    />
+                                    <Route
+                                        path="/library"
+                                        element={
+                                            <ProtectedRoute
+                                                element={<LibraryPage />}
+                                            />
+                                        }
+                                    />
+                                    <Route
+                                        path="/collection"
+                                        element={<CollectionPage />}
+                                    />
+                                    <Route
+                                        path="/library/reader"
+                                        element={<ReaderPage />}
+                                    />
+                                    <Route
+                                        path="/policy/terms"
+                                        element={<TermsConditionPage />}
+                                    />
+                                    <Route
+                                        path="/policy/privacy"
+                                        element={<PrivacyPolicyPage />}
+                                    />
+                                    {/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
+                                    {/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
+                                </Routes>
+                            </Suspense>
+                        </ScrollToTop>
+                    </Router>
+                    <Snackbar />
+                    <Spinner />
+                    <WalletHOC />
+                    <UserHOC />
+                </Provider>
+            </div>
+        </Auth0Provider>
+    )
 }
 
 export default App
