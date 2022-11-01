@@ -15,6 +15,8 @@ import Contracts from '../connections/contracts'
 import Button from '../components/ui/Buttons/Button'
 import BookItem from '../components/ui/BookItem/BookItem'
 import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
+import { showModal, SHOW_SEARCH_MODAL } from '../store/actions/modal'
+import SearchModal from '../components/modal/Search/SearchModal'
 
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as SearchIcon} from "../assets/icons/search.svg"
@@ -154,6 +156,10 @@ const ExplorePage = () => {
 		setMaxPrice(maxNftPrice||100)
 	},[AllNfts])
 
+	const onSearch = () => {
+		dispatch(showModal(SHOW_SEARCH_MODAL));
+	}
+
 	return (
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
@@ -167,7 +173,7 @@ const ExplorePage = () => {
 							<div className="typo__body typo__color--n500">Found <span className="typo__color--n700" style={{fontWeight:"500"}}>{Nfts.length}</span> results</div>
 						</div>{
 							window.innerWidth<600?<div className="explore__data__books__header__layout">
-							<Button className="account__data__books__header__layout__button typo__act" ><SearchIcon/></Button>
+							<Button className="account__data__books__header__layout__button typo__act" onClick={()=>onSearch()} ><SearchIcon/></Button>
 						</div>:null
 						}
 						
@@ -184,6 +190,7 @@ const ExplorePage = () => {
 					
 				</div>
 			</div>
+			<SearchModal/>
 		</Page>
 	)
 }
