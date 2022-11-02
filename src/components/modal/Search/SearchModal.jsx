@@ -50,7 +50,7 @@ const Modal = ({
             ) : null}
           </div>
         </div>
-        <div className="modal__wrapper__content">{children}</div>
+        <div className="modal_search__content">{children}</div>
       </div>
     </Backdrop>
   );
