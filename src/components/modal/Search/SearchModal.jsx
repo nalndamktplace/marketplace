@@ -2,29 +2,88 @@ import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 
-import Modal from "../../hoc/Modal/Modal";
 import Button from "../../ui/Buttons/Button";
-import InputField from "../../ui/Input/Input";
 import Backdrop from "../../hoc/Backdrop/Backdrop";
 
 import { hideModal, SHOW_SEARCH_MODAL } from "../../../store/actions/modal";
 
+import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg";
 import { ReactComponent as SearchIcon } from "../../../assets/icons/search.svg";
-import GaTracker from "../../../trackers/ga-tracker";
-import { FEEDBACK_CATEGORIES } from "../../../config/feedbackCategory";
-import { isFilled, isUsable } from "../../../helpers/functions";
+
+import { isFilled } from "../../../helpers/functions";
 import { BASE_URL } from "../../../config/env";
 import axios from "axios";
 import { setSnackbar } from "../../../store/actions/snackbar";
+
+const Modal = ({
+  title = "",
+  open = false,
+  toggleModal,
+  children,
+  cancellable,
+}) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    window.document.documentElement.style.overflowY = open ? "hidden" : "auto";
+  }, [open]);
+
+  const getClasses = () => {
+    let classes = ["modal_search__wrapper"];
+    if (open) classes.push("modal__wrapper--open");
+    else classes.push("modal__wrapper--close");
+    return classes.join(" ");
+  };
+
+  return (
+    <Backdrop show={open} hideOnClick={true}>
+      <div className={getClasses()}>
+        <div className="modal__wrapper__header">
+          <div className="modal__wrapper__header__title typo__head--6">
+            {title}
+          </div>
+          <div className="modal__wrapper__header__close-button">
+            {cancellable ? (
+              <Button type="icon" onClick={() => dispatch(hideModal())}>
+                <CloseIcon />
+              </Button>
+            ) : null}
+          </div>
+        </div>
+        <div className="modal__wrapper__content">{children}</div>
+      </div>
+    </Backdrop>
+  );
+};
 
 const SearchModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const ModalState = useSelector((state) => state.ModalState);
+  const [Loading, setLoading] = useState(false);
   const [Show, setShow] = useState(false);
   const [SearchResults, setSearchResults] = useState([]);
   const [SearchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (SearchQuery.length > 3 && SearchQuery.length < 16) {
+      setLoading(true);
+      axios({
+        url: BASE_URL + "/api/book/search",
+        method: "GET",
+        params: { query: SearchQuery },
+      })
+        .then((res) => {
+          if (res.status === 200) setSearchResults(res.data);
+          else dispatch(setSnackbar("NOT200"));
+        })
+        .catch((err) => {
+          dispatch(setSnackbar("ERROR"));
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [dispatch, SearchQuery]);
 
   useEffect(() => {
     if (ModalState.show === true && ModalState.type === SHOW_SEARCH_MODAL) {
@@ -36,15 +95,8 @@ const SearchModal = () => {
     if (state === false) dispatch(hideModal());
   };
 
-  // const getSearchBarClasses = () => {
-  //   let classes = ["header__content__search dropdown"];
-  //   if (isFilled(SearchQuery) && SearchQuery.length > 3)
-  //     classes.push("dropdown--open");
-  //   return classes.join(" ");
-  // };
-
   const getSearchResultsClasses = () => {
-    let classes = ["dropdown__options"];
+    let classes = ["modal_search__options"];
     if (isFilled(SearchQuery) && SearchQuery.length > 3)
       classes.push("dropdown__options--open");
     return classes.join(" ");
@@ -116,8 +168,10 @@ const SearchModal = () => {
             className="modal_search__input"
           />
           <div className="modal_search__icon">
-            <SearchIcon width={24} height={24} stroke="currentColor"  />
+            <SearchIcon width={24} height={24} stroke="currentColor" />
           </div>
+        </div>
+        <div>
           <div className={getSearchResultsClasses()}>
             {renderSearchResults()}
           </div>
