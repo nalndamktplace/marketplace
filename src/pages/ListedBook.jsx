@@ -1,7 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import Page from '../components/hoc/Page/Page'
@@ -40,11 +40,11 @@ import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
 
 
-const BookPage = props => {
+const ListedBookPage = props => {
 
 	const TABS = [{id: 'TAB01', label: 'Synopsis', icon : <SynopsisIcon />}, {id: 'TAB02', label: 'reviews',icon : <ReviewIcon />}, {id: 'TAB03', label: 'quotes',icon:<BlockQuoteIcon/>}]
 
-	const params = useLocation()
+	const params = useParams()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const isLoggedIn = useIsLoggedIn()
@@ -61,8 +61,6 @@ const BookPage = props => {
 	const [Listed, setListed] = useState(null)
 	const [UserCopy, setUserCopy] = useState(null)
 	const [Published, setPublished] = useState(null)
-	// ListedNFT
-	const [bookID, setBookID] = useState(null)
 	// Likes
 	const [Likes, setLikes] = useState(0)
 	const [Liked, setLiked] = useState(false)
@@ -89,6 +87,7 @@ const BookPage = props => {
 		else if(ActiveTab === 'TAB02') GaTracker('tab_view_book_reviews')
 		else GaTracker('tab_view_book_quotes')
 	}, [ActiveTab])
+
 
 	useEffect(() => { if(isUsable(NFT)) setListed(NFT.listed === 1?true:false) }, [NFT])
 
@@ -268,25 +267,37 @@ const BookPage = props => {
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
 
 	useEffect(() => {
-		setNFT(params.state)
-		if(isUsable(WalletAddress)){
-			setLoading(true)
-			const book = params.state
-			if(book.new_owner === WalletAddress) setOwner(true)
-			else setOwner(false)
-			if(book.publisher_address === WalletAddress) setPublished(true)
-			else setPublished(false)
-			axios({
-				url: BASE_URL+'/api/book/owner',
-				method: 'GET',
-				params: {
-					ownerAddress: WalletAddress,
-					bookAddress: book.book_address
-				}
-			}).then(res => { if(res.status === 200) setOwner(true)
-			}).catch(err => {
-			}).finally(() => setLoading(false))
-		}
+        const bookID = params.bookID
+        console.log(bookID)
+        axios({
+            url: `${BASE_URL}/api/book/listedbook`,
+            method: 'GET',
+            params: {
+                bookID
+            }
+        }).then(res=>{
+            setNFT(res.data[0])
+        }).then( () =>{
+            if(isUsable(WalletAddress)){
+                setLoading(true)
+                const book = NFT
+                if(book.new_owner === WalletAddress) setOwner(true)
+                else setOwner(false)
+                if(book.publisher_address === WalletAddress) setPublished(true)
+                else setPublished(false)
+                axios({
+                    url: BASE_URL+'/api/book/owner',
+                    method: 'GET',
+                    params: {
+                        ownerAddress: WalletAddress,
+                        bookAddress: book.book_address
+                    }
+                }).then(res => { if(res.status === 200) setOwner(true)
+                }).catch(err => {
+                }).finally(() => setLoading(false))
+            } }
+        )
+		
 	}, [params, dispatch, WalletAddress])
 
 	useEffect(() => { if(isUsable(NFT) && isUsable(Published) && isUsable(Owner)) setLoading(false) }, [NFT, Published, Owner])
@@ -429,7 +440,6 @@ const BookPage = props => {
 						dispatch(hideModal())
 						dispatch(setSnackbar({show: true, message: "Book listed on marketplace.", type: 1}))
 						if(res.data){
-							setBookID(res.data)
 							dispatch(showModal(SHOW_SHARE_MODAL))
 						}
 					}
@@ -886,7 +896,7 @@ const BookPage = props => {
 					<ListModal book={NFT} userCopy={UserCopy} onListHandler={listPrice=>onListHandler(listPrice)} />
 					<ReviewModal ReviewForm={ReviewForm} setReviewForm={setReviewForm} reviewHandler={reviewHandler}/>
 					<QuoteModal QuotesForm={QuotesForm} setQuotesForm={setQuotesForm} quoteHandler={quoteHandler}/>
-					<ShareListModal bookID={bookID} />
+					<ShareListModal />
 				</>
 				:null
 			}
@@ -894,4 +904,4 @@ const BookPage = props => {
 	)
 }
 
-export default BookPage
+export default ListedBookPage

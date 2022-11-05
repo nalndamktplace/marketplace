@@ -32,6 +32,7 @@ import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 import InternHirePage from './pages/Intern'
 
 const BookPage = React.lazy(() => import('./pages/Book'))
+const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 const ReaderPage = React.lazy(() => import('./pages/Reader'))
 const ExplorePage = React.lazy(() => import('./pages/Explore'))
 const LibraryPage = React.lazy(() => import('./pages/Library'))
@@ -87,6 +88,10 @@ function App() {
                                     <Route
                                         path="/book/preview"
                                         element={<ReaderPage />}
+                                    />
+                                    <Route 
+                                        path="/listbook/:bookID" 
+                                        element={<ListedBookPage />} 
                                     />
                                     <Route
                                         path="/publish"
