@@ -16,7 +16,7 @@ import GaTracker from "../trackers/ga-tracker";
 import { BASE_URL } from "../config/env";
 import { isFilled, isUsable } from "../helpers/functions";
 import Carousel from "../components/ui/Carousel/Carousel";
-
+import carouselLinks from '../config/carouselLinks.json'
 // import AnalyticsBackground from '../assets/images/background-analytics.png'
 
 const IndexPage = (props) => {
@@ -114,31 +114,6 @@ const IndexPage = (props) => {
       });
     }
     return collectionsDOM;
-  };
-
-  const renderHighlights = () => {
-    let highlightsDOM = [];
-    Highlights.forEach((highlight) => {
-      highlightsDOM.push(
-        <div
-          key={highlight.id}
-          className="index__book__container__item"
-          onClick={() => openHandler(highlight)}
-        >
-          <img
-            className="index__book__container__item__cover"
-            src={
-              highlight.cover_public_url
-                ? highlight.cover_public_url
-                : highlight.cover
-            }
-            alt={highlight.title}
-            loading="lazy"
-          />
-        </div>
-      );
-    });
-    return highlightsDOM;
   };
 
   const renderCollections2 = () => {
@@ -374,7 +349,7 @@ const IndexPage = (props) => {
 
   return (
     <Page containerClass="index" fluid>
-      <Carousel />
+      <Carousel links={carouselLinks} />
       <div className="index__analytics">
         <div className="index__analytics__container">
           {/* <img src={AnalyticsBackground} className="index__analytics__container__bg" alt={""}/> */}

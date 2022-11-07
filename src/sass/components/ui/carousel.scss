@@ -10,7 +10,7 @@
       object-fit: cover;
       top: 0;
       left: 0;
-      min-height: 500px;
+      max-height: -webkit-fill-available;
   }
 
   .carousel-indicators [data-bs-target]{
