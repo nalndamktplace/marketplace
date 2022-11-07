@@ -6,14 +6,7 @@ import FeedbackModal from "../../modal/Feedback/FeedbackModal";
 import Footer from "../../nav/Footer/Footer";
 import Header from "../../nav/Header/Header";
 
-const Page = ({
-  fluid,
-  containerClass,
-  noPadding,
-  showRibbion,
-  noFooter,
-  children,
-}) => {
+const Page = ({ fluid, containerClass, noPadding,  showRibbion, noFooter, children,}) => {
   const dispatch = useDispatch();
 
   const getClasses = () => {

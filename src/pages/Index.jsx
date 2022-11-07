@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
-import StatsMarquee from '../components/ui/Markee/StatsMarquee'
+import StatsMarquee from '../components/ui/StatsMarquee/StatsMarquee'
 
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
