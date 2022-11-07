@@ -7,7 +7,7 @@ import FilePicker from '../FilePicker/FilePicker'
 
 import { isUsable } from '../../../helpers/functions'
 
-const InputField = ({required=true,...props}) => {
+const InputField = ({required=true,readOnly=false, ...props}) => {
 
 	const [ShowValues, setShowValues] = useState(false)
 
@@ -18,7 +18,7 @@ const InputField = ({required=true,...props}) => {
 			case 'date':
 				return <input className='input__group__field typo__body' type={'date'} required={required} defaultValue={isUsable(props.min)?moment(props.min).format('YYYY-MM-DD'):null} min={isUsable(props.min)?moment(props.min).format('YYYY-MM-DD'):null} value={props.value} onChange={props.onChange}/>
 			case 'string':
-				return <input className='input__group__field typo__body' type={'text'} required={required} value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
+				return <input className='input__group__field typo__body' type={'text'} readOnly={readOnly} required={required} value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'email':
 				return <input className='input__group__field typo__body' type={'email'} required={required} value={props.value} onChange={props.onChange} placeholder={props.placeholder}/>
 			case 'number':
