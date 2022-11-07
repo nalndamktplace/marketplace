@@ -71,7 +71,7 @@ const CollectionPage = () => {
 
 	const openHandler = nft => {
 		GaTracker('navigate_collection_book')
-		navigate('/book', {state: nft})
+		navigate(`/book/${nft.id}`)
 	}
 
 	const renderNfts = () => {

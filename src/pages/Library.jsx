@@ -214,7 +214,7 @@ const LibraryPage = props => {
 
 	const openHandler = nft => {
 		GaTracker('navigate_account_book')
-		navigate('/book', {state: nft})
+		navigate(`/book/${nft.id}`)
 	}
 
 	const renderNfts = () => {

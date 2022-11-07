@@ -42,7 +42,7 @@ const IndexPage = props => {
 
 	const openHandler = nft => {
 		GaTracker('navigate_index_book')
-		navigate('/book', {state: nft})
+		navigate(`/book/${nft.id}`)
 	}
 
 	const renderGenres = () => {

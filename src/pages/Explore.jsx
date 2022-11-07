@@ -69,7 +69,7 @@ const ExplorePage = () => {
 
 	const openHandler = nft => {
 		GaTracker('navigate_explore_book')
-		navigate('/book', {state: nft})
+		navigate(`/book/${nft.id}`)
 	}
 
 	const renderNfts = () => {

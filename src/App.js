@@ -82,7 +82,7 @@ function App() {
                                         element={<InternHirePage />}
                                     />
                                     <Route
-                                        path="/book"
+                                        path="/book/:bookID"
                                         element={<BookPage />}
                                     />
                                     <Route

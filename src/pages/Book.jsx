@@ -1,7 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import Page from '../components/hoc/Page/Page'
@@ -44,7 +44,7 @@ const BookPage = props => {
 
 	const TABS = [{id: 'TAB01', label: 'Synopsis', icon : <SynopsisIcon />}, {id: 'TAB02', label: 'reviews',icon : <ReviewIcon />}, {id: 'TAB03', label: 'quotes',icon:<BlockQuoteIcon/>}]
 
-	const params = useLocation()
+	const params = useParams()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const isLoggedIn = useIsLoggedIn()
@@ -266,27 +266,37 @@ const BookPage = props => {
 	}, [WalletState])
 
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
-
 	useEffect(() => {
-		setNFT(params.state)
-		if(isUsable(WalletAddress)){
-			setLoading(true)
-			const book = params.state
-			if(book.new_owner === WalletAddress) setOwner(true)
-			else setOwner(false)
-			if(book.publisher_address === WalletAddress) setPublished(true)
-			else setPublished(false)
-			axios({
-				url: BASE_URL+'/api/book/owner',
-				method: 'GET',
-				params: {
-					ownerAddress: WalletAddress,
-					bookAddress: book.book_address
-				}
-			}).then(res => { if(res.status === 200) setOwner(true)
-			}).catch(err => {
-			}).finally(() => setLoading(false))
-		}
+        const bookID = params.bookID
+        axios({
+            url: `${BASE_URL}/api/book/single`,
+            method: 'GET',
+            params: {
+                bookID
+            }
+        }).then(res=>{
+            setNFT(res.data[0])
+        }).then( () =>{
+            if(isUsable(WalletAddress)){
+                setLoading(true)
+                const book = NFT
+                if(book.new_owner === WalletAddress) setOwner(true)
+                else setOwner(false)
+                if(book.publisher_address === WalletAddress) setPublished(true)
+                else setPublished(false)
+                axios({
+                    url: BASE_URL+'/api/book/owner',
+                    method: 'GET',
+                    params: {
+                        ownerAddress: WalletAddress,
+                        bookAddress: book.book_address
+                    }
+                }).then(res => { if(res.status === 200) setOwner(true)
+                }).catch(err => {
+                }).finally(() => setLoading(false))
+            } }
+        )
+		
 	}, [params, dispatch, WalletAddress])
 
 	useEffect(() => { if(isUsable(NFT) && isUsable(Published) && isUsable(Owner)) setLoading(false) }, [NFT, Published, Owner])
