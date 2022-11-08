@@ -276,28 +276,29 @@ const BookPage = props => {
             }
         }).then(res=>{
             setNFT(res.data[0])
-        }).then( () =>{
-            if(isUsable(WalletAddress)){
-                setLoading(true)
-                const book = NFT
-                if(book.new_owner === WalletAddress) setOwner(true)
-                else setOwner(false)
-                if(book.publisher_address === WalletAddress) setPublished(true)
-                else setPublished(false)
-                axios({
-                    url: BASE_URL+'/api/book/owner',
-                    method: 'GET',
-                    params: {
-                        ownerAddress: WalletAddress,
-                        bookAddress: book.book_address
-                    }
-                }).then(res => { if(res.status === 200) setOwner(true)
-                }).catch(err => {
-                }).finally(() => setLoading(false))
-            } }
-        )
-		
-	}, [params, dispatch, WalletAddress])
+        })
+	}, [params])
+	
+	useEffect(() =>{
+		if(isUsable(WalletAddress) && isUsable(NFT)){
+			setLoading(true)
+			const book = NFT
+			if(book.new_owner === WalletAddress) setOwner(true)
+			else setOwner(false)
+			if(book.publisher_address === WalletAddress) setPublished(true)
+			else setPublished(false)
+			axios({
+				url: BASE_URL+'/api/book/owner',
+				method: 'GET',
+				params: {
+					ownerAddress: WalletAddress,
+					bookAddress: book.book_address
+				}
+			}).then(res => { if(res.status === 200) setOwner(true)
+			}).catch(err => {
+			}).finally(() => setLoading(false))
+		} }, [NFT, params, dispatch, WalletAddress]
+	)
 
 	useEffect(() => { if(isUsable(NFT) && isUsable(Published) && isUsable(Owner)) setLoading(false) }, [NFT, Published, Owner])
 

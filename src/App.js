@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate} from 'react-router-dom'
 
 import { Auth0Provider } from '@auth0/auth0-react'
 
@@ -54,16 +54,22 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer)
 
+
 function App() {
+    let navigate = useNavigate();
+    const onRedirectCallback = (appState) => {
+      navigate(appState?.returnTo || window.location.pathname);
+    };
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}
             clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
             redirectUri={window.location.origin}
+            onRedirectCallback={onRedirectCallback}
         >
             <div className="typo">
                 <Provider store={store}>
-                    <Router>
+                    
                         <ScrollToTop>
                             <Suspense
                                 fallback={
@@ -146,7 +152,6 @@ function App() {
                                 </Routes>
                             </Suspense>
                         </ScrollToTop>
-                    </Router>
                     <Snackbar />
                     <Spinner />
                     <WalletHOC />

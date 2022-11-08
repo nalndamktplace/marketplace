@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router"
+import { useLocation, useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 
 import { useAuth0 } from "@auth0/auth0-react"
@@ -35,7 +35,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-
+	const params = useLocation();
+	 
 	const UserState = useSelector(state=>state.UserState)
 	const WalletState = useSelector(state=>state.WalletState)
 
@@ -84,7 +85,9 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
-	const loginHandler = () => Auth0.loginWithRedirect()
+	const loginHandler = () => {
+		Auth0.loginWithRedirect({appState: { returnTo: params.pathname }})
+	}
 
 	const handleWalletConnect = () => {
 		if(!isWalletConnected(WalletState)){
