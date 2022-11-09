@@ -284,9 +284,7 @@ const ListedBookPage = props => {
 			setSecondaryNFT(res.data.secondary_book)
         })
 	}, [params])
-	useEffect(() =>{
-		const bookID = params.bookID
-	}, [params])
+	
 	useEffect(() =>{
 		if(isUsable(WalletAddress)){
 			setLoading(true)
@@ -797,6 +795,8 @@ const ListedBookPage = props => {
 										</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>DA Score</div>
 										<div className='book__data__container__desc__summary__data'>{secondaryNFT.da_score}</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Token ID</div>
+										<div className='book__data__container__desc__summary__data'>{secondaryNFT.token_id}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
