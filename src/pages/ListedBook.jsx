@@ -396,6 +396,7 @@ const ListedBookPage = props => {
 								setListed(false)
 								dispatch(hideModal())
 								dispatch(setSnackbar({show: true, message: "Book unlisted from marketplace.", type: 1}))
+								navigate('/')
 							}
 							else dispatch(setSnackbar('NOT200'))
 						}).catch(err => {
