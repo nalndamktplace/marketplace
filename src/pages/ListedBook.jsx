@@ -268,7 +268,6 @@ const ListedBookPage = props => {
 
 	useEffect(() => {
         const bookID = params.bookID
-        console.log(bookID)
         axios({
             url: `${BASE_URL}/api/book/listedbook`,
             method: 'GET',
