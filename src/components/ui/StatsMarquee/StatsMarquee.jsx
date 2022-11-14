@@ -28,7 +28,7 @@ function StatsMarquee(){
 
     return (
         <div className='stats-marquee'>
-        <marquee>
+        <marquee scrollamount="4">
 			<div className='stats-marquee__content' >
 			{renderAnalytics()}
         
