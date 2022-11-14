@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
-import { BrowserRouter as Router, Routes, Route, useNavigate} from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import { Auth0Provider } from '@auth0/auth0-react'
 
@@ -54,14 +54,13 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer)
 
-
 function App() {
-    let navigate = useNavigate();
+    let navigate = useNavigate()
 
     const onRedirectCallback = (appState) => {
-      navigate(appState?.returnTo || window.location.pathname);
-    };
-    
+        navigate(appState?.returnTo || window.location.pathname)
+    }
+
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}
@@ -71,89 +70,88 @@ function App() {
         >
             <div className="typo">
                 <Provider store={store}>
-                    
-                        <ScrollToTop>
-                            <Suspense
-                                fallback={
-                                    <div className={'spinner spinner--show'}>
-                                        <div className="spinner__container">
-                                            <Grid color="#00a2e8" />
-                                        </div>
+                    <ScrollToTop>
+                        <Suspense
+                            fallback={
+                                <div className={'spinner spinner--show'}>
+                                    <div className="spinner__container">
+                                        <Grid color="#00a2e8" />
                                     </div>
-                                }
-                            >
-                                <Routes>
-                                    <Route path="/*" element={<IndexPage />} />
-                                    <Route path="/" element={<IndexPage />} />
-                                    <Route
-                                        path="/hire/intern"
-                                        element={<InternHirePage />}
-                                    />
-                                    <Route
-                                        path="/book/:bookID"
-                                        element={<BookPage />}
-                                    />
-                                    <Route
-                                        path="/book/preview"
-                                        element={<ReaderPage />}
-                                    />
-                                    <Route 
-                                        path="/listbook/:bookID" 
-                                        element={<ListedBookPage />} 
-                                    />
-                                    <Route
-                                        path="/publish"
-                                        element={
-                                            <ProtectedRoute
-                                                element={<PublishNftPage />}
-                                            />
-                                        }
-                                    />
-                                    <Route
-                                        path="/publish/ito"
-                                        element={
-                                            <ProtectedRoute
-                                                element={<ItoPublishPage />}
-                                            />
-                                        }
-                                    />
-                                    <Route
-                                        path="/explore"
-                                        element={<ExplorePage />}
-                                    />
-                                    <Route
-                                        path="/profile"
-                                        element={<ProfilePage />}
-                                    />
-                                    <Route
-                                        path="/library"
-                                        element={
-                                            <ProtectedRoute
-                                                element={<LibraryPage />}
-                                            />
-                                        }
-                                    />
-                                    <Route
-                                        path="/collection"
-                                        element={<CollectionPage />}
-                                    />
-                                    <Route
-                                        path="/library/reader"
-                                        element={<ReaderPage />}
-                                    />
-                                    <Route
-                                        path="/policy/terms"
-                                        element={<TermsConditionPage />}
-                                    />
-                                    <Route
-                                        path="/policy/privacy"
-                                        element={<PrivacyPolicyPage />}
-                                    />
-                                    {/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
-                                    {/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
-                                </Routes>
-                            </Suspense>
-                        </ScrollToTop>
+                                </div>
+                            }
+                        >
+                            <Routes>
+                                <Route path="/*" element={<IndexPage />} />
+                                <Route path="/" element={<IndexPage />} />
+                                <Route
+                                    path="/hire/intern"
+                                    element={<InternHirePage />}
+                                />
+                                <Route
+                                    path="/book/:bookID"
+                                    element={<BookPage />}
+                                />
+                                <Route
+                                    path="/book/preview"
+                                    element={<ReaderPage />}
+                                />
+                                <Route
+                                    path="/listbook/:bookID"
+                                    element={<ListedBookPage />}
+                                />
+                                <Route
+                                    path="/publish"
+                                    element={
+                                        <ProtectedRoute
+                                            element={<PublishNftPage />}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/publish/ito"
+                                    element={
+                                        <ProtectedRoute
+                                            element={<ItoPublishPage />}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/explore"
+                                    element={<ExplorePage />}
+                                />
+                                <Route
+                                    path="/profile"
+                                    element={<ProfilePage />}
+                                />
+                                <Route
+                                    path="/library"
+                                    element={
+                                        <ProtectedRoute
+                                            element={<LibraryPage />}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/collection"
+                                    element={<CollectionPage />}
+                                />
+                                <Route
+                                    path="/library/reader"
+                                    element={<ReaderPage />}
+                                />
+                                <Route
+                                    path="/policy/terms"
+                                    element={<TermsConditionPage />}
+                                />
+                                <Route
+                                    path="/policy/privacy"
+                                    element={<PrivacyPolicyPage />}
+                                />
+                                {/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
+                                {/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
+                            </Routes>
+                        </Suspense>
+                    </ScrollToTop>
                     <Snackbar />
                     <Spinner />
                     <WalletHOC />

@@ -1,5 +1,6 @@
 .index{
 	--header-height : 12rem ;
+	@include respond(phone){--header-height: 8rem;}
 	margin-top: var(--header-height) ;
 	
 	&__hero{

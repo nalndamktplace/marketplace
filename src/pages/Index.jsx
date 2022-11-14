@@ -8,29 +8,21 @@ import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
 import StatsMarquee from '../components/ui/StatsMarquee/StatsMarquee'
 
-// import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel'
-// import 'pure-react-carousel/dist/react-carousel.es.css'
 import {Carousel} from 'react-responsive-carousel'
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-import useIsLoggedIn from '../hook/useIsLoggedIn'
-
 import GaTracker from '../trackers/ga-tracker'
 import { BASE_URL } from '../config/env'
 import { isFilled, isUsable } from '../helpers/functions'
 
-import carouselLinks from '../config/carouselLinks.json'
-
 const IndexPage = (props) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const IsLoggedIn = useIsLoggedIn()
 
     const [IsLoading, setIsLoading] = useState(false)
-    const [Highlights, setHighlights] = useState([])
     const [Collections, setCollections] = useState([])
     const [CollectionBooks, setCollectionBooks] = useState([])
     const [Genres, setGenres] = useState([])
@@ -241,19 +233,6 @@ const IndexPage = (props) => {
         if (IsLoading) dispatch(showSpinner())
         else dispatch(hideSpinner())
     }, [dispatch, IsLoading])
-
-    useEffect(() => {
-        setIsLoading(true)
-        axios({
-            url: BASE_URL + '/api/collections/highlights',
-            method: 'GET',
-        })
-            .then((res) => {
-                if (res.status === 200) setHighlights(res.data)
-            })
-            .catch((err) => {})
-            .finally(() => setIsLoading(false))
-    }, [dispatch])
 
     useEffect(() => {
         setIsLoading(true)

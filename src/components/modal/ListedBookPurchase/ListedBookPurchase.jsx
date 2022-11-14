@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import Backdrop from '../../hoc/Backdrop/Backdrop'
 
 import GaTracker from '../../../trackers/ga-tracker'
 
 import { isFilled, isUsable } from '../../../helpers/functions'
-import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import { SHOW_PURCHASE_MODAL } from '../../../store/actions/modal'
 
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.svg"
@@ -15,13 +14,11 @@ import { ReactComponent as Error404Icon } from "../../../assets/icons/error-404.
 
 const ListedBookPurchaseModal = ({ onOldBookPurchase, data }) => {
 
-	const dispatch = useDispatch()
-
 	const ModalState = useSelector(state => state.ModalState)
 
 	const [Show, setShow] = useState(false)
 	const [Offers, setOffers] = useState([])
-	const [Loading, setLoading] = useState(false)
+
 	const getClasses = () => {
 		let classes = ["purchase purchase__wrapper"]
 		if (Show) classes.push("purchase__wrapper--open")
@@ -36,11 +33,6 @@ const ListedBookPurchaseModal = ({ onOldBookPurchase, data }) => {
 	useEffect(() => {
 		window.document.documentElement.style.overflowY = Show ? "hidden" : "auto"
 	}, [Show])
-
-	useEffect(() => {
-		if (Loading) dispatch(showSpinner())
-		else dispatch(hideSpinner())
-	}, [Loading, dispatch])
 
 	useEffect(() => {
 		if (ModalState.show === true && ModalState.type === SHOW_PURCHASE_MODAL) {
