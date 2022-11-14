@@ -38,13 +38,13 @@ const Modal = ({
   return (
     <Backdrop show={open} hideOnClick={true}>
       <div className={getClasses()}>
-        <div className="modal__wrapper__header">
+        <div className="modal_search__header">
           <div className="modal__wrapper__header__title typo__head--6">
             {title}
           </div>
           <div className="modal__wrapper__header__close-button">
             {cancellable ? (
-              <Button type="icon" onClick={() => dispatch(hideModal())}>
+              <Button type="icon" className="modal_search__wrapper__close-icon" onClick={() => dispatch(hideModal())}>
                 <CloseIcon />
               </Button>
             ) : null}
@@ -171,10 +171,8 @@ const SearchModal = () => {
             <SearchIcon width={24} height={24} stroke="currentColor" />
           </div>
         </div>
-        <div>
           <div className={getSearchResultsClasses()}>
             {renderSearchResults()}
-          </div>
         </div>
       </Modal>
     </Backdrop>
