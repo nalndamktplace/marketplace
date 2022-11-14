@@ -32,7 +32,6 @@ import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 import InternHirePage from './pages/Intern'
 
 const BookPage = React.lazy(() => import('./pages/Book'))
-const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 const ReaderPage = React.lazy(() => import('./pages/Reader'))
 const ExplorePage = React.lazy(() => import('./pages/Explore'))
 const LibraryPage = React.lazy(() => import('./pages/Library'))
@@ -42,6 +41,7 @@ const PublishNftPage = React.lazy(() => import('./pages/Publish'))
 const CollectionPage = React.lazy(() => import('./pages/Collection'))
 const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
 const TermsConditionPage = React.lazy(() => import('./pages/Policies/Terms'))
+const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 
 const rootReducer = combineReducers({
     UserState: UserReducer,
@@ -57,9 +57,11 @@ const store = createStore(rootReducer)
 
 function App() {
     let navigate = useNavigate();
+
     const onRedirectCallback = (appState) => {
       navigate(appState?.returnTo || window.location.pathname);
     };
+    
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}

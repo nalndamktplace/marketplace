@@ -269,7 +269,7 @@ const BookPage = props => {
 	useEffect(() => {
         const bookID = params.bookID
         axios({
-            url: `${BASE_URL}/api/book/single`,
+            url: `${BASE_URL}/api/book`,
             method: 'GET',
             params: {
                 bookID

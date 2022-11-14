@@ -48,7 +48,7 @@ const ShareListModal = ({ bookID }) => {
                     <div className="utils__margin__top--m">
                         Share on
                         <div className="utils__d__flex utils__justify__center utils__align__center">
-                            <div onClick={() => { GaTracker('social_link_twitter'); window.open(`https://twitter.com/intent/tweet?text=Hey,%20Checkout%20this%20Book%20on%20Nalnda!&url=https://nalnda.com/listbook/${bookID}`, "_blank") }} className="footer__row__item__socials__item">
+                            <div onClick={() => { GaTracker('social_link_twitter'); window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent("Hey, Checkout this Book on Nalnda!")}&url=https://nalnda.com/listbook/${bookID}`, "_blank") }} className="footer__row__item__socials__item">
                                 <TwitterIcon />
                             </div>
 
@@ -56,10 +56,10 @@ const ShareListModal = ({ bookID }) => {
                                 <FacebookIcon />
                             </div>
 
-                            <div onClick={() => { GaTracker('social_link_whatsapp'); window.open(`https://api.whatsapp.com/send?text=Hey,%20Checkout%20this%20Book%20on%20Nalnda%20https://nalnda.com/listbook/${bookID}`, "_blank") }} className="footer__row__item__socials__item">
+                            <div onClick={() => { GaTracker('social_link_whatsapp'); window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Hey, Checkout this Book on Nalnda! https://nalnda.com/listbook/${bookID}`)}`, "_blank") }} className="footer__row__item__socials__item">
                                 <WhatsAppIcon />
                             </div>
-                            <div onClick={() => { GaTracker('social_link_telegram'); window.open(`https://telegram.me/share/url?url=https://nalnda.com/listbook/${bookID}&text=Hey,%20Checkout%20this%20Book%20on%20Nalnda`, "_blank") }} className="footer__row__item__socials__item">
+                            <div onClick={() => { GaTracker('social_link_telegram'); window.open(`https://telegram.me/share/url?url=https://nalnda.com/listbook/${bookID}&${encodeURIComponent("Hey, Checkout this Book on Nalnda!")}`, "_blank") }} className="footer__row__item__socials__item">
                                 <TelegramIcon />
                             </div>
                         </div>

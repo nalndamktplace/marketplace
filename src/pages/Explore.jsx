@@ -90,7 +90,7 @@ const ExplorePage = () => {
 	useEffect(() => {
 		setLoading(true)
 		axios({
-			url: BASE_URL + '/api/book/all',
+			url: BASE_URL + '/api/book',
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setAllNfts(res.data)
