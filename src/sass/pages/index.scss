@@ -358,10 +358,10 @@
 		display: flex ;
 		align-items: center ;
 		justify-content: center ;
-		padding: 4rem 1rem ;
+		padding: 4rem 0 ;
 
 		&__container {
-			max-width: 90%;
+			width: 100%;
 
 			&__row {
 				display: grid;
@@ -370,7 +370,6 @@
 				row-gap: 4rem;
 
 				&__item {
-					min-width: 32rem;
 					background-color: $color-neutral-200 ;
 					border-radius: 1rem ;
 					padding: 2rem ;

@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
+import StatsMarquee from '../components/ui/StatsMarquee/StatsMarquee'
 
 import { setSnackbar } from '../store/actions/snackbar'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -30,7 +31,6 @@ const IndexPage = props => {
 	const [CollectionBooks, setCollectionBooks] = useState([])
 	const [Genres, setGenres] = useState([])
 	const [MediumData, setMediumData] = useState([])
-	const [Analytics, setAnalytics] = useState(null)
 
 	const publishHandler = () => {
 		GaTracker('navigate_index_publish')
@@ -167,17 +167,6 @@ const IndexPage = props => {
 		return mediumArticlesDOM
 	}
 
-	const renderAnalytics = () => {
-		let analyticsDOM = []
-		if(isUsable(Analytics)){
-			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.titles.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Titles Listed</h6></div>)
-			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.copies.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Copies Sold</h6></div>)
-			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.readTime.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Hours Read Time</h6></div>)
-			analyticsDOM.push(<div className='index__analytics__container__row__item'><h1 className='typo__head typo__head--1'>{Analytics.users.toLocaleString()}</h1><h6 className='typo__body typo__body--2'>Active Users</h6></div>)
-		}
-		return analyticsDOM
-	}
-
 	useEffect(() => { GaTracker('page_view_index') }, [])
 
 	useEffect(() => {
@@ -245,17 +234,9 @@ const IndexPage = props => {
 		}
 	}, [Collections, dispatch])
 
-	useEffect(() => {
-		axios({
-			url: `${BASE_URL}/api/analytics/public`,
-			method: 'GET'
-		}).then(res => {
-			if(res.status === 200) setAnalytics(res.data)
-		}).catch(err => {})
-	}, [])
-
 	return (
 		<Page containerClass='index'>
+			<StatsMarquee />
 			<div className="index__hero">
 				<div className="index__bg"/>
 				<div className="index__content">
@@ -271,14 +252,6 @@ const IndexPage = props => {
 				<div className="index__book">
 					<div className="index__book__container">
 						{renderHighlights()}
-					</div>
-				</div>
-			</div>
-			<div className="index__analytics">
-				<div className="index__analytics__container">
-					{/* <img src={AnalyticsBackground} className="index__analytics__container__bg" alt={""}/> */}
-					<div className="index__analytics__container__row">
-						{renderAnalytics()}
 					</div>
 				</div>
 			</div>
