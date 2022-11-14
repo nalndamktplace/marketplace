@@ -272,7 +272,7 @@ const BookPage = props => {
             url: `${BASE_URL}/api/book`,
             method: 'GET',
             params: {
-                bookID
+                id: bookID
             }
         }).then(res=>{
             setNFT(res.data[0])
