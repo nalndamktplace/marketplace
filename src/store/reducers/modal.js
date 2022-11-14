@@ -1,4 +1,4 @@
-import { HIDE_MODAL, SHOW_FEEDBACK_MODAL, SHOW_LIST_MODAL, SHOW_LOGIN_MODAL, SHOW_PURCHASE_MODAL, SHOW_SHARE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from "../actions/modal"
+import { HIDE_MODAL, SHOW_FEEDBACK_MODAL, SHOW_SEARCH_MODAL, SHOW_LIST_MODAL, SHOW_LOGIN_MODAL, SHOW_PURCHASE_MODAL, SHOW_SHARE_MODAL, SHOW_QUOTE_MODAL, SHOW_REVIEW_MODAL } from "../actions/modal"
 
 const initState = {
 	type: null,
@@ -36,6 +36,12 @@ const handleData = (state = initState, action) => {
 				...state,
 				show: true,
 				type: SHOW_QUOTE_MODAL
+			}
+		case SHOW_SEARCH_MODAL:
+			return {
+				...state,
+				show: true,
+				type: SHOW_SEARCH_MODAL
 			}
 		case SHOW_FEEDBACK_MODAL:
 			return {

@@ -15,10 +15,11 @@ import Contracts from '../connections/contracts'
 import Button from '../components/ui/Buttons/Button'
 import BookItem from '../components/ui/BookItem/BookItem'
 import FilterPanel from '../components/ui/FilterPanel/FilterPanel'
+import { showModal, SHOW_SEARCH_MODAL } from '../store/actions/modal'
+import SearchModal from '../components/modal/Search/SearchModal'
 
 import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
-import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
-import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
+import {ReactComponent as SearchIcon} from "../assets/icons/search.svg"
 import GaTracker from '../trackers/ga-tracker'
 
 const ExplorePage = () => {
@@ -35,10 +36,8 @@ const ExplorePage = () => {
 	const [Filters, setFilters] = useState(DEFAULT_FILTERS)
 	const [Loading, setLoading] = useState(false)
 	const [FiltersPanelOpen, setFiltersPanelOpen] = useState(false)
-	const [layout, setLayout] = useState(window.innerWidth<600?"LIST":"GRID")
 	const [AllNfts, setAllNfts] = useState([])
 	const [maxPrice, setMaxPrice] = useState(100);
-
 	const buyHandler = nft => {
 		GaTracker('event_explore_purchase_new')
 		setLoading(true)
@@ -75,7 +74,7 @@ const ExplorePage = () => {
 	const renderNfts = () => {
 		let nftDOM = []
 		Nfts.forEach(nft => {
-			nftDOM.push(<BookItem layout={layout} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>)
+			nftDOM.push(<BookItem layout={window.innerWidth<600?"LIST":"GRID"} key={nft.id} book={nft} onBuy={()=>buyHandler(nft)} onOpen={()=>openHandler(nft)}/>)
 		})
 		return nftDOM
 	}
@@ -157,6 +156,10 @@ const ExplorePage = () => {
 		setMaxPrice(maxNftPrice||100)
 	},[AllNfts])
 
+	const onSearch = () => {
+		dispatch(showModal(SHOW_SEARCH_MODAL));
+	}
+
 	return (
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
@@ -168,13 +171,14 @@ const ExplorePage = () => {
 						<div className='explore__data__books__header__filter'>
 							<Button type="icon" onClick={()=>setFiltersPanelOpen(s=>!s)}><FilterIcon fill={FiltersPanelOpen?"currentColor":"transparent"} /></Button>
 							<div className="typo__body typo__color--n500">Found <span className="typo__color--n700" style={{fontWeight:"500"}}>{Nfts.length}</span> results</div>
-						</div>
-						<div className="explore__data__books__header__layout">
-							<Button className="account__data__books__header__layout__button typo__act" onClick={()=>setLayout("LIST")}><ListViewIcon/><span>List</span></Button>
-							<Button className="account__data__books__header__layout__button typo__act" onClick={()=>setLayout("GRID")}><GridViewIcon/><span>GRID</span></Button>
-						</div>
+						</div>{
+							window.innerWidth<600?<div className="explore__data__books__header__layout">
+							<Button className="account__data__books__header__layout__button typo__act" onClick={()=>onSearch()} ><SearchIcon/></Button>
+						</div>:null
+						}
+						
 					</div>
-					<div className="explore__data__books__wrapper" data-layout={layout}>
+					<div className="explore__data__books__wrapper" data-layout={window.innerWidth<600?"LIST":"GRID"}>
 						{isUsable(Nfts) && Nfts.length > 0
 							? 	renderNfts()
 							: 	<div className='explore__data__books__wrapper__empty'>
@@ -186,6 +190,7 @@ const ExplorePage = () => {
 					
 				</div>
 			</div>
+			<SearchModal/>
 		</Page>
 	)
 }
