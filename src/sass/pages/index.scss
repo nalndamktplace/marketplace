@@ -55,12 +55,12 @@
 	}
 
 	&__section{
-		margin: 8rem 0;
+		margin: 8rem 0 ;
 	}
 
 	&__collection{
 		width: 100%;
-		&:not(:last-child){margin-bottom: 4.8rem;}
+		&:not(:last-child){margin-bottom: 0;}
 
 		&__header {
 			display: flex ;
