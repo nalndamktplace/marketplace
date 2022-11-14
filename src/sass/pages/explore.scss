@@ -71,7 +71,6 @@
 
 					&__button {
 						@include respond(phone) {
-							&>span {display: none ;}
 							&>svg {margin: 0 ;}
 						}
 					}
