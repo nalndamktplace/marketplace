@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate} from 'react-router-dom'
 
 import { Auth0Provider } from '@auth0/auth0-react'
 
@@ -32,7 +32,6 @@ import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
 import InternHirePage from './pages/Intern'
 
 const BookPage = React.lazy(() => import('./pages/Book'))
-const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 const ReaderPage = React.lazy(() => import('./pages/Reader'))
 const ExplorePage = React.lazy(() => import('./pages/Explore'))
 const LibraryPage = React.lazy(() => import('./pages/Library'))
@@ -42,6 +41,7 @@ const PublishNftPage = React.lazy(() => import('./pages/Publish'))
 const CollectionPage = React.lazy(() => import('./pages/Collection'))
 const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
 const TermsConditionPage = React.lazy(() => import('./pages/Policies/Terms'))
+const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 
 const rootReducer = combineReducers({
     UserState: UserReducer,
@@ -54,16 +54,24 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer)
 
+
 function App() {
+    let navigate = useNavigate();
+
+    const onRedirectCallback = (appState) => {
+      navigate(appState?.returnTo || window.location.pathname);
+    };
+    
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}
             clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
             redirectUri={window.location.origin}
+            onRedirectCallback={onRedirectCallback}
         >
             <div className="typo">
                 <Provider store={store}>
-                    <Router>
+                    
                         <ScrollToTop>
                             <Suspense
                                 fallback={
@@ -82,7 +90,7 @@ function App() {
                                         element={<InternHirePage />}
                                     />
                                     <Route
-                                        path="/book"
+                                        path="/book/:bookID"
                                         element={<BookPage />}
                                     />
                                     <Route
@@ -146,7 +154,6 @@ function App() {
                                 </Routes>
                             </Suspense>
                         </ScrollToTop>
-                    </Router>
                     <Snackbar />
                     <Spinner />
                     <WalletHOC />

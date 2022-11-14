@@ -69,7 +69,7 @@ const ExplorePage = () => {
 
 	const openHandler = nft => {
 		GaTracker('navigate_explore_book')
-		navigate('/book', {state: nft})
+		navigate(`/book/${nft.id}`)
 	}
 
 	const renderNfts = () => {
@@ -90,7 +90,7 @@ const ExplorePage = () => {
 	useEffect(() => {
 		setLoading(true)
 		axios({
-			url: BASE_URL + '/api/book/all',
+			url: BASE_URL + '/api/book',
 			method: 'GET'
 		}).then(res => {
 			if(res.status === 200) setAllNfts(res.data)
