@@ -4,8 +4,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import React, { useEffect, useState } from "react";
 
-import Page from "../components/hoc/Page/Page";
-import Button from "../components/ui/Buttons/Button";
+import Page from '../components/hoc/Page/Page'
+import Button from '../components/ui/Buttons/Button'
+import StatsMarquee from '../components/ui/StatsMarquee/StatsMarquee'
 
 import { setSnackbar } from "../store/actions/snackbar";
 import { hideSpinner, showSpinner } from "../store/actions/spinner";
@@ -20,25 +21,16 @@ import carouselLinks from '../config/carouselLinks.json'
 // import AnalyticsBackground from '../assets/images/background-analytics.png'
 
 const IndexPage = (props) => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const IsLoggedIn = useIsLoggedIn();
+	const navigate = useNavigate()
+	const dispatch = useDispatch()
+	const IsLoggedIn = useIsLoggedIn()
 
-  const [IsLoading, setIsLoading] = useState(false);
-  const [Highlights, setHighlights] = useState([]);
-  const [Collections, setCollections] = useState([]);
-  const [CollectionBooks, setCollectionBooks] = useState([]);
-  const [Genres, setGenres] = useState([]);
-  const [MediumData, setMediumData] = useState([]);
-  const [Analytics, setAnalytics] = useState(null);
-
-  const publishHandler = () => {
-    GaTracker("navigate_index_publish");
-    if (isUsable(IsLoggedIn)) {
-      if (IsLoggedIn) navigate("/publish");
-      else dispatch(setSnackbar("NOT_LOGGED_IN"));
-    }
-  };
+	const [IsLoading, setIsLoading] = useState(false)
+	const [Highlights, setHighlights] = useState([])
+	const [Collections, setCollections] = useState([])
+	const [CollectionBooks, setCollectionBooks] = useState([])
+	const [Genres, setGenres] = useState([])
+	const [MediumData, setMediumData] = useState([])
 
   const openHandler = (nft) => {
     GaTracker("navigate_index_book");
@@ -209,48 +201,7 @@ const IndexPage = (props) => {
     return mediumArticlesDOM;
   };
 
-  const renderAnalytics = () => {
-    let analyticsDOM = [];
-    if (isUsable(Analytics)) {
-      analyticsDOM.push(
-        <div className="index__analytics__container__row__item">
-          <h1 className="typo__head typo__head--1">
-            {Analytics.titles.toLocaleString()}
-          </h1>
-          <h6 className="typo__body typo__body--2">Titles Listed</h6>
-        </div>
-      );
-      analyticsDOM.push(
-        <div className="index__analytics__container__row__item">
-          <h1 className="typo__head typo__head--1">
-            {Analytics.copies.toLocaleString()}
-          </h1>
-          <h6 className="typo__body typo__body--2">Copies Sold</h6>
-        </div>
-      );
-      analyticsDOM.push(
-        <div className="index__analytics__container__row__item">
-          <h1 className="typo__head typo__head--1">
-            {Analytics.readTime.toLocaleString()}
-          </h1>
-          <h6 className="typo__body typo__body--2">Hours Read Time</h6>
-        </div>
-      );
-      analyticsDOM.push(
-        <div className="index__analytics__container__row__item">
-          <h1 className="typo__head typo__head--1">
-            {Analytics.users.toLocaleString()}
-          </h1>
-          <h6 className="typo__body typo__body--2">Active Users</h6>
-        </div>
-      );
-    }
-    return analyticsDOM;
-  };
-
-  useEffect(() => {
-    GaTracker("page_view_index");
-  }, []);
+	useEffect(() => { GaTracker('page_view_index') }, [])
 
   useEffect(() => {
     axios({
@@ -336,56 +287,31 @@ const IndexPage = (props) => {
     }
   }, [Collections, dispatch]);
 
-  useEffect(() => {
-    axios({
-      url: `${BASE_URL}/api/analytics/public`,
-      method: "GET",
-    })
-      .then((res) => {
-        if (res.status === 200) setAnalytics(res.data);
-      })
-      .catch((err) => {});
-  }, []);
-
-  return (
-    <Page containerClass="index" fluid>
+	return (
+		<Page containerClass='index' fluid>
+			<StatsMarquee />
       <Carousel links={carouselLinks} />
-      <div className="index__analytics">
-        <div className="index__analytics__container">
-          {/* <img src={AnalyticsBackground} className="index__analytics__container__bg" alt={""}/> */}
-          <div className="index__analytics__container__row">
-            {renderAnalytics()}
-          </div>
-        </div>
-      </div>
-      <div className="index__featured">
-        <div className="index__featured__container">
-          <div className="index__featured__container__row">
-            {renderCollections2()}
-          </div>
-        </div>
-      </div>
-      <div className="index__section">{renderGenres()}</div>
-      <div className="index__section">
-        <div className="index__medium__header">
-          <h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">
-            {isUsable(MediumData.feed)
-              ? MediumData.feed.title
-              : "Loading Stories By Nalnda..."}
-          </h4>
-          <Button
-            type="secondary"
-            onClick={() =>
-              window.open("https://nalndamktplace.medium.com/", "_blank")
-            }
-          >
-            View More
-          </Button>
-        </div>
-        <div className="index__medium">{renderMediumArticles()}</div>
-      </div>
-    </Page>
-  );
-};
+			<div className="index__featured">
+				<div className="index__featured__container">
+					<div className="index__featured__container__row">
+						{renderCollections2()}
+					</div>
+				</div>
+			</div>
+			<div className="index__section">
+				{renderGenres()}
+			</div>
+			<div className="index__section">
+				<div className="index__medium__header">
+					<h4 className="typo__head typo__head--4 index__collection__header__title typo__transform--capital">{isUsable(MediumData.feed)?MediumData.feed.title:'Loading Stories By Nalnda...'}</h4>
+					<Button type='secondary' onClick={()=>window.open('https://nalndamktplace.medium.com/', '_blank')} >View More</Button>
+				</div>
+				<div className="index__medium">
+					{renderMediumArticles()}
+				</div>
+			</div>
+		</Page>
+	)
+}
 
 export default IndexPage;
