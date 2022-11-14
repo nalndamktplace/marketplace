@@ -56,6 +56,7 @@
 
 	&__section{
 		margin: 8rem 0 ;
+		padding:0rem 16rem;
 	}
 
 	&__collection{
@@ -314,7 +315,7 @@
 		display: flex ;
 		align-items: center ;
 		justify-content: center ;
-		padding: 0 1rem 8rem 1rem ;
+		padding: 0 16rem 8rem 16rem ;
 
 		&__container {
 			max-width: 90%;
@@ -358,7 +359,7 @@
 		display: flex ;
 		align-items: center ;
 		justify-content: center ;
-		padding: 4rem 0 ;
+		padding: 4rem 16rem ;
 
 		&__container {
 			width: 100%;

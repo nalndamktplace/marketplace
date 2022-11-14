@@ -1,0 +1,18 @@
+.carousel .carousel-item {
+    height: 500px;
+  }
+.main-carousel{
+    padding-bottom: 4rem;
+}
+  
+  .carousel-item img {
+      position: absolute;
+      object-fit: cover;
+      top: 0;
+      left: 0;
+      max-height: -webkit-fill-available;
+  }
+
+  .carousel-indicators [data-bs-target]{
+    background-color: black;
+}
