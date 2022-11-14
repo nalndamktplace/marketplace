@@ -12,6 +12,7 @@
 
     &__content{
         display: flex;
+        animation: slide 10s linear infinite;
     }
 
     &__item{
