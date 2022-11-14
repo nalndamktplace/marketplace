@@ -57,6 +57,8 @@
 	&__section{
 		margin: 8rem 0 ;
 		padding:0rem 16rem;
+
+		@include respond(phone){ padding: 0 2.4rem; }
 	}
 
 	&__collection{
@@ -360,6 +362,8 @@
 		align-items: center ;
 		justify-content: center ;
 		padding: 4rem 16rem ;
+
+		@include respond(phone){ padding: 4rem 2.4rem; }
 
 		&__container {
 			width: 100%;
