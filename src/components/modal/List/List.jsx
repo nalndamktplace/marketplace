@@ -47,7 +47,7 @@ const ListModal = ({book, userCopy, onListHandler}) => {
 				}).catch(err => {
 					console.error({err})
 				}).finally(() => setFulcrumLoading(false))
-			}, 1800000)
+			}, 10000)
 			return () => clearInterval(timer)
 		}
 	}, [book, UserState, Show])
