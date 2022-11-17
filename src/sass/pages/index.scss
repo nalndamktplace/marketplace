@@ -465,10 +465,7 @@
 				@include respond(tabPort){
 					grid-template-columns: repeat(2, auto);
 					column-gap: 1rem;
-					&> * + * {
-						margin-left: 0 ;
-						margin-top: 2rem ;
-					}
+					
 				}
 			}
 
