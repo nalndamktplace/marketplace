@@ -77,6 +77,7 @@ const BookPage = props => {
 	const [Quotes, setQuotes] = useState([])
 	const [QuotesForm, setQuotesForm] = useState({quote: ''})
 	// live reader count
+	const [totalReaders, setTotalReaders] = useState(0)
 	const [liveReaderCount, setLiveReaderCount] = useState(0)
 	const [totalReadTime, setTotalReadTime] = useState(0)
 	// tabs
@@ -228,6 +229,21 @@ const BookPage = props => {
 			}).finally(() => setLoading(false))
 		}
 	}, [NFT, WalletAddress, dispatch])
+
+	useEffect(() => {
+		if(isUsable(NFT)){
+			setLoading(true)
+			axios({
+				url: `${BASE_URL}/api/reader/total-reader-count`,
+				method: 'GET',
+				params: { bookAddress: NFT.book_address }
+			}).then(res => {
+				if(res.status === 200) setTotalReaders(res.data.total_readers)
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}, [NFT, dispatch])
 
 	useEffect(() => {
 		if(isUsable(NFT)){
@@ -848,10 +864,8 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.age_group).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
 										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
-										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{NFT.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{NFT.price}</>}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Published On</div>
-										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Readers</div>
+										<div className='book__data__container__desc__summary__data'>{totalReaders} readers</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
 										<div className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Read Time</div>
