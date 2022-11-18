@@ -38,6 +38,10 @@ import {ReactComponent as SynopsisIcon} from "../assets/icons/text.svg"
 import {ReactComponent as ReviewIcon} from "../assets/icons/message.svg"
 import {ReactComponent as BlockQuoteIcon} from "../assets/icons/block-quote.svg"
 import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.svg"
+import {ReactComponent as LanguageIcon} from "../assets/icons/language.svg"
+import {ReactComponent as LiveReadersIcon} from "../assets/icons/live_readers.svg"
+import {ReactComponent as TotalReadTimeIcon} from "../assets/icons/total_read_time.svg"
+import {ReactComponent as TotalReadersIcon} from "../assets/icons/total_readers.svg"
 
 
 const BookPage = props => {
@@ -653,6 +657,33 @@ const BookPage = props => {
 		else dispatch(setSnackbar({show: true, message: "Please login first.", type: 3}))
 	}
 
+	const renderGrid = () => {
+		return (
+			<div className='book__data__container__desc__summary__grid typo__color--n700'>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<LanguageIcon />
+					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Language</div>
+					<div className='book__data__container__desc__summary__grid__item__data'>{NFT.language}</div>
+				</div>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<TotalReadersIcon />
+					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Total Readers</div>
+					<div className='book__data__container__desc__summary__grid__item__data'>{totalReaders} readers</div>
+				</div>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<LiveReadersIcon />
+					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Live Readers</div>
+					<div className='book__data__container__desc__summary__grid__item__data'>{liveReaderCount} people reading</div>
+				</div>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<TotalReadTimeIcon />
+					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Total Read Time</div>
+					<div className='book__data__container__desc__summary__grid__item__data'>{Math.ceil(totalReadTime / 60)} minutes</div>
+				</div>
+			</div>
+		)
+	}
+
 	const renderTabs = () => {
 		let tabsDOM = []
 		TABS.forEach(tab => {
@@ -862,14 +893,7 @@ const BookPage = props => {
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.age_group).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
-										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Readers</div>
-										<div className='book__data__container__desc__summary__data'>{totalReaders} readers</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
-										<div className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Read Time</div>
-										<div className='book__data__container__desc__summary__data'>{Math.ceil(totalReadTime/60)} minutes</div>
+										{renderGrid()}
 									</div>
 								</div>
 								<div className="book__data__container__desc__right">
