@@ -41,7 +41,7 @@ import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.
 import {ReactComponent as LanguageIcon} from "../assets/icons/language.svg"
 import {ReactComponent as LiveReadersIcon} from "../assets/icons/live_readers.svg"
 import {ReactComponent as TotalReadTimeIcon} from "../assets/icons/total_read_time.svg"
-import {ReactComponent as TotalReadersIcon} from "../assets/icons/total_readers.svg"
+import {ReactComponent as UsersIcon} from "../assets/icons/users.svg"
 
 
 const BookPage = props => {
@@ -662,22 +662,18 @@ const BookPage = props => {
 			<div className='book__data__container__desc__summary__grid typo__color--n700'>
 				<div className='book__data__container__desc__summary__grid__item'>
 					<LanguageIcon />
-					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Language</div>
 					<div className='book__data__container__desc__summary__grid__item__data'>{NFT.language}</div>
 				</div>
 				<div className='book__data__container__desc__summary__grid__item'>
-					<TotalReadersIcon />
-					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Total Readers</div>
+					<UsersIcon />
 					<div className='book__data__container__desc__summary__grid__item__data'>{totalReaders} readers</div>
 				</div>
 				<div className='book__data__container__desc__summary__grid__item'>
 					<LiveReadersIcon />
-					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Live Readers</div>
 					<div className='book__data__container__desc__summary__grid__item__data'>{liveReaderCount} people reading</div>
 				</div>
 				<div className='book__data__container__desc__summary__grid__item'>
 					<TotalReadTimeIcon />
-					<div className='book__data__container__desc__summary__grid__item__head typo__color--n700'>Total Read Time</div>
 					<div className='book__data__container__desc__summary__grid__item__data'>{Math.ceil(totalReadTime / 60)} minutes</div>
 				</div>
 			</div>
