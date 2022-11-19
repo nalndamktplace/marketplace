@@ -225,10 +225,11 @@
 							align-items: center ;
 							text-align: center ;
 						}
+						@include respond(phone) {
+							padding: 1.5rem ;
+						}
+		
 					}
-
-
-
 
 
 					&__contract {
