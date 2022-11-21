@@ -18,22 +18,16 @@ function StatsMarquee(){
     const renderAnalytics = () => {
 		let analyticsDOM = []
 		if(isUsable(Analytics)){
-			analyticsDOM.push(<p className='stats-marquee__item'>Titles Listed: {Analytics.titles.toLocaleString()} </p>)
-			analyticsDOM.push(<p className='stats-marquee__item'>Copies Sold: {Analytics.copies.toLocaleString()} </p>)
-			analyticsDOM.push(<p className='stats-marquee__item'>Hours Read Time: {Analytics.readTime.toLocaleString()} </p>)
-			analyticsDOM.push(<p className='stats-marquee__item'>Active Users: {Analytics.users.toLocaleString()} </p>)
+			analyticsDOM.push(<p className='stats-marquee__ticker'>Titles Listed: {Analytics.titles.toLocaleString()} <span className='stats-marquee__item'></span> Copies Sold:  {Analytics.copies.toLocaleString()}<span className='stats-marquee__item'></span> Hours Read:  {Analytics.readTime.toLocaleString()} <span className='stats-marquee__item'></span> Active Users: {Analytics.users.toLocaleString()} </p>)
+			analyticsDOM.push(<p className='stats-marquee__ticker'>Titles Listed: {Analytics.titles.toLocaleString()} <span className='stats-marquee__item'></span> Copies Sold:  {Analytics.copies.toLocaleString()}<span className='stats-marquee__item'></span> Hours Read:  {Analytics.readTime.toLocaleString()} <span className='stats-marquee__item'></span> Active Users: {Analytics.users.toLocaleString()} </p>)
+			analyticsDOM.push(<p className='stats-marquee__ticker'>Titles Listed: {Analytics.titles.toLocaleString()} <span className='stats-marquee__item'></span> Copies Sold:  {Analytics.copies.toLocaleString()}<span className='stats-marquee__item'></span> Hours Read:  {Analytics.readTime.toLocaleString()} <span className='stats-marquee__item'></span> Active Users: {Analytics.users.toLocaleString()} </p>)
 		}
 		return analyticsDOM
 	}
 
     return (
-        <div className='stats-marquee'>
-        <marquee scrollamount="4">
-			<div className='stats-marquee__content' >
-			{renderAnalytics()}
-        
-		 </div>
-        </marquee>
+        <div className='stats-marquee'>	
+		{renderAnalytics()}
       </div>
     )
 }
