@@ -294,7 +294,6 @@ const IndexPage = (props) => {
 
     return (
         <Page containerClass="index" fluid>
-            <StatsMarquee />
             <Carousel showArrows={true} autoPlay={true} showThumbs={false} infiniteLoop={true} transitionTime={1000} interval={5000}>
                 <div style={{height: window.visualViewport.width/2.5, width: window.visualViewport.width}}>
                     <img alt={'banner'} style={{height: '100%', width: '100%', objectFit: 'cover'}} src="https://miro.medium.com/max/1400/1*Rv0RecX9Th90htNyv46TAw.png" />
@@ -316,6 +315,7 @@ const IndexPage = (props) => {
                     </div>
                 </div>
             </div>
+            <StatsMarquee />
             <div className="index__section">{renderGenres()}</div>
             <div className="index__section">
                 <div className="index__medium__header">

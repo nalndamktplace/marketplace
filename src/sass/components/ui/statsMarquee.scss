@@ -1,6 +1,5 @@
 .stats-marquee {
     display: flex;
-    position: fixed;
     bottom: 0;
     left: 0;
     height: 4rem;
@@ -8,30 +7,31 @@
     background-color: #fff;
     text-align: center;
     z-index: 700;
-    background: linear-gradient(to right,$color-primary,$color-primary-dark);
-    box-shadow: $shadow-lg,$shadow-sm ;
+    background: $color-primary;
+    margin-top: 8rem;
 
 
    
     &__ticker{
         color: #fff;
         position: relative;
-        animation: ticker1 20s linear infinite;
-        // padding: 2px 24px 2px;
-        margin-left:16px;
+        animation: animate 30s linear infinite;
+        margin-left:4px;
         margin-top: 8px;
+        white-space: nowrap;
     }
 
-       @keyframes ticker1 {
+       @keyframes animate {
         0% {
-            transform: translateX(150%);
+            transform:  translateZ(0);
         }
         100% {
-            transform: translateX(0%);
+            transform: translate3d(-400%,0,0);
         }
        }
 
     &__item{
-        margin-left: 16px;
+        margin-left: 8px;
+        margin-right: 8px;
     }
 }
