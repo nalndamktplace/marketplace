@@ -38,7 +38,10 @@ import { ReactComponent as SynopsisIcon } from "../assets/icons/text.svg"
 import { ReactComponent as ReviewIcon } from "../assets/icons/message.svg"
 import { ReactComponent as BlockQuoteIcon } from "../assets/icons/block-quote.svg"
 import { ReactComponent as ExternalLinkIcon } from "../assets/icons/external-link.svg"
-
+import { ReactComponent as LanguageIcon} from "../assets/icons/language.svg"
+import { ReactComponent as LiveReadersIcon} from "../assets/icons/live_readers.svg"
+import { ReactComponent as TotalReadTimeIcon} from "../assets/icons/total_read_time.svg"
+import { ReactComponent as UsersIcon} from "../assets/icons/users.svg"
 
 
 const ListedBookPage = props => {
@@ -80,6 +83,7 @@ const ListedBookPage = props => {
 	const [Quotes, setQuotes] = useState([])
 	const [QuotesForm, setQuotesForm] = useState({ quote: '' })
 	// live reader count
+	const [totalReaders, setTotalReaders] = useState(0)
 	const [liveReaderCount, setLiveReaderCount] = useState(0)
 	const [totalReadTime, setTotalReadTime] = useState(0)
 	// tabs
@@ -233,6 +237,21 @@ const ListedBookPage = props => {
 			}).finally(() => setLoading(false))
 		}
 	}, [NFT, WalletAddress, dispatch])
+	
+	useEffect(() => {
+		if(isUsable(NFT)){
+			setLoading(true)
+			axios({
+				url: `${BASE_URL}/api/reader/total-reader-count`,
+				method: 'GET',
+				params: { bookAddress: NFT.book_address }
+			}).then(res => {
+				if(res.status === 200) setTotalReaders(res.data.total_readers)
+			}).catch(err => {
+				dispatch(setSnackbar('ERROR'))
+			}).finally(() => setLoading(false))
+		}
+	}, [NFT, dispatch])
 
 	useEffect(() => {
 		if (isUsable(NFT)) {
@@ -708,6 +727,29 @@ const ListedBookPage = props => {
 		else dispatch(setSnackbar({ show: true, message: "Please login first", type: 3 }))
 	}
 
+	const renderGrid = () => {
+		return (
+			<div className='book__data__container__desc__summary__grid typo__color--n700'>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<LanguageIcon />
+					<div className='book__data__container__desc__summary__grid__item__data'>{NFT.language}</div>
+				</div>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<UsersIcon />
+					<div className='book__data__container__desc__summary__grid__item__data'>{totalReaders} readers</div>
+				</div>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<LiveReadersIcon />
+					<div className='book__data__container__desc__summary__grid__item__data'>{liveReaderCount} people reading</div>
+				</div>
+				<div className='book__data__container__desc__summary__grid__item'>
+					<TotalReadTimeIcon />
+					<div className='book__data__container__desc__summary__grid__item__data'>{Math.ceil(totalReadTime / 60)} minutes</div>
+				</div>
+			</div>
+		)
+	}
+
 	const quoteHandler = () => {
 		GaTracker('event_book_quote')
 		if (isUsable(WalletAddress)) {
@@ -805,16 +847,7 @@ const ListedBookPage = props => {
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g => <div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.age_group).map(g => <div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Language</div>
-										<div className='book__data__container__desc__summary__data'>{NFT.language}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Price</div>
-										<div className='book__data__container__desc__summary__data utils__d__flex utils__align__center'>{secondaryNFT.price === 0 ? "FREE" : <><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{ width: 20, height: 20, objectFit: 'contain' }} alt="USDC" />&nbsp;{secondaryNFT.price}</>}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Published On</div>
-										<div className='book__data__container__desc__summary__data'>{moment(NFT.publication_date).add(6, 'h').format("D MMM, YYYY")}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Live Readers</div>
-										<div className='book__data__container__desc__summary__data'>{liveReaderCount} people reading</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Total Read Time</div>
-										<div className='book__data__container__desc__summary__data'>{Math.ceil(totalReadTime / 60)} minutes</div>
+										{renderGrid()}
 									</div>
 								</div>
 								<div className="book__data__container__desc__right">

@@ -208,6 +208,30 @@
 				}
 
 				&__summary{
+
+					&__grid {
+						margin-Top: 2rem;
+						display: grid;
+						grid-template-columns: repeat(2, 45%);
+						column-gap: 4rem;
+						row-gap: 4rem;
+						&__item {
+							min-width: 10rem;
+							background-color: $color-neutral-100 ;
+							border-radius: 1.5rem ;
+							padding: 2rem ;
+							display: flex ;
+							flex-direction: column ;
+							align-items: center ;
+							text-align: center ;
+						}
+						@include respond(phone) {
+							padding: 1.5rem ;
+						}
+		
+					}
+
+
 					&__contract {
 						display: flex ;
 						align-items: center ;
@@ -220,9 +244,6 @@
 						&__label {
 						}
 
-						&__data {
-							flex: 1 ;
-						}
 
 						&__icon {
 							width : 3rem ;
