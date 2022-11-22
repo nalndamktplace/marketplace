@@ -431,6 +431,30 @@
 								left: 50%;
 								transform: translate(-100%, -50%);
 							}
+
+							@include respond(tabPort){
+								&:nth-child(1){
+									height: 20rem;
+									width: 12.5rem;
+									position: absolute;
+									top: 50%;
+									left: 50%;
+									transform: translate(-30%, -50%);
+									z-index: 3;
+								}
+								&:nth-child(2){
+									height: 18rem;
+									width: 11.25rem;
+									position: absolute;
+									top: 50%;
+									left: 50%;
+									transform: translate(-80%, -50%);
+									z-index: 2;
+								}
+								&:nth-child(3){
+									display: none;
+								}
+							}
 						}
 					}
 
@@ -440,11 +464,8 @@
 				}
 
 				@include respond(tabPort){
-					display: block ;
-					&> * + * {
-						margin-left: 0 ;
-						margin-top: 2rem ;
-					}
+					grid-template-columns: repeat(2, auto);
+					column-gap: 1rem;
 				}
 			}
 
