@@ -1,7 +1,9 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
 import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
+import jwt_decode from "jwt-decode";
 
 import { Auth0Provider } from '@auth0/auth0-react'
 
@@ -56,11 +58,26 @@ const store = createStore(rootReducer)
 
 function App() {
     let navigate = useNavigate()
-
+    let location = useLocation()
     const onRedirectCallback = (appState) => {
         navigate(appState?.returnTo || window.location.pathname)
     }
-
+    
+    useEffect(() =>{
+        if(location.hash){
+            let hash = String(location.hash)
+            try{
+                const firstEqual = hash.search('=')
+                const firstAnd = hash.search("&")
+                const result = hash.substr(firstEqual+1, firstAnd-firstEqual-1)
+                console.log(result)
+                const d = jwt_decode(result)
+                console.log(d)
+            } catch(err){
+                console.log(err)
+            }
+        }
+    }, [location.hash])
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}

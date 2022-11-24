@@ -29,6 +29,7 @@ import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
+
 const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const Auth0 = useAuth0()
@@ -85,19 +86,20 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
-	const loginHandler = () => {
-		Auth0.loginWithRedirect({appState: { returnTo: params.pathname }})
+	const loginHandler = async () => {
+		const res = await Wallet();
+		
 	}
 
-	const handleWalletConnect = () => {
-		if(!isWalletConnected(WalletState)){
-			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-			}).catch(err => {
-				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-			})
-		}
-	}
+	// const handleWalletConnect = () => {
+	// 	if(!isWalletConnected(WalletState)){
+	// 		Wallet.connectWallet().then(res => {
+	// 			dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+	// 		}).catch(err => {
+	// 			dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+	// 		})
+	// 	}
+	// }
 
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore" ,url: "/explore",uri: null, icon: CompassIcon ,action: null, subMenu: null },
@@ -112,7 +114,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
-				{id: "NI4SMI2",title: "Connect Wallet", url: null ,uri: null,icon: null,action: () => handleWalletConnect(),},
+				// {id: "NI4SMI2",title: "Connect Wallet", url: null ,uri: null,icon: null,action: () => handleWalletConnect(),},
 				{id: "NI4SMI3",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
 				{id: "NI4SMI4",title: "Library",url: "/library",uri: null,icon: null,action: null},
 				{id: "NI4SMI5",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {logOutHandler()}},
@@ -155,12 +157,17 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		})
 	}
 
-	const logOutHandler = () => {
+	const logOutHandler = async () => {
 		GaTracker('event_header_user_logout')
-		Auth0.logout()
+		// if (web3auth) {
+		// 	console.log("web3")
+		//  	await web3auth.logout();
+		// }
+		// Auth0.logout()
 		handleWalletDisconnect()
 		dispatch(unsetUser())
 		logout()
+		
 	}
 
 	const renderNavItems = () => {
@@ -277,7 +284,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
 				</div>
 			}
-			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletConnect={handleWalletConnect} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />
+			{/* <SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletConnect={handleWalletConnect} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} /> */}
 		</header>
 	)
 }
