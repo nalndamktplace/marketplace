@@ -7,7 +7,7 @@ import { ChainId } from "@biconomy/core-types";
 import SmartAccount from "@biconomy/smart-account";
 import SocialLogin from "@biconomy/web3-auth";
 
-async function Wallet() {
+async function Wallet(setSDK) {
 
 	// init wallet
 	const socialLoginSDK = new SocialLogin();
@@ -16,6 +16,7 @@ async function Wallet() {
 
 	// show connect modal
 	socialLoginSDK.showWallet();
+	console.log(socialLoginSDK)
 
 	if (!socialLoginSDK?.web3auth?.provider) return;
 	const provider = new ethers.providers.Web3Provider(

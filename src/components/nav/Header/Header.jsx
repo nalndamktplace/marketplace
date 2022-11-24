@@ -29,6 +29,10 @@ import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
+import { ChainId } from "@biconomy/core-types";
+import SmartAccount from "@biconomy/smart-account";
+import SocialLogin from "@biconomy/web3-auth";
+import { ethers } from "ethers"
 
 const Header = ({showRibbion=true,noPadding=false}) => {
 
@@ -85,11 +89,27 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			}).finally(() => setLoading(false))
 		}
 	}, [dispatch, SearchQuery])
-
+	const [sdk, setSDK] = useState()
+	const socialLoginSDK = new SocialLogin();
 	const loginHandler = async () => {
-		const res = await Wallet();
-		
+		await socialLoginSDK.init('0x13881');    
+		socialLoginSDK.showConnectModal();
+		socialLoginSDK.showWallet();
+		setSDK(socialLoginSDK);
 	}
+	useEffect(() => {
+		const checkWallet = async () => {
+			console.log(sdk)
+			console.log(socialLoginSDK)
+			if (!socialLoginSDK?.web3auth?.provider) return;
+			const provder = new ethers.providers.Web3Provider(
+				socialLoginSDK.web3auth.provider,
+			);
+			const accounts = await provder.listAccounts();
+			console.log("EOA address", accounts)
+		}
+		checkWallet();
+	}, [socialLoginSDK])
 
 	// const handleWalletConnect = () => {
 	// 	if(!isWalletConnected(WalletState)){

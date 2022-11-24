@@ -55,7 +55,15 @@ const rootReducer = combineReducers({
 })
 
 const store = createStore(rootReducer)
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
 
+    return JSON.parse(jsonPayload);
+}
 function App() {
     let navigate = useNavigate()
     let location = useLocation()
@@ -67,11 +75,13 @@ function App() {
         if(location.hash){
             let hash = String(location.hash)
             try{
-                const firstEqual = hash.search('=')
-                const firstAnd = hash.search("&")
-                const result = hash.substr(firstEqual+1, firstAnd-firstEqual-1)
-                console.log(result)
-                const d = jwt_decode(result)
+                const firstEqual = hash.indexOf('=')
+                const firstAnd = hash.indexOf("&")
+                const stringHash = hash.substr(firstEqual+1, firstAnd-firstEqual-1)
+                console.log(typeof stringHash)
+                console.log(stringHash)
+                
+                const d = parseJwt(stringHash)
                 console.log(d)
             } catch(err){
                 console.log(err)
