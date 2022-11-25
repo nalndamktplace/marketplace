@@ -29,13 +29,22 @@ import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
-import { ChainId } from "@biconomy/core-types";
-import SmartAccount from "@biconomy/smart-account";
-import SocialLogin from "@biconomy/web3-auth";
-import { ethers } from "ethers"
+import {useWeb3AuthContext} from '../../../contexts/SocialLoginContext'
+import {useSmartAccountContext } from "../../../contexts/SmartAccountContext";
 
 const Header = ({showRibbion=true,noPadding=false}) => {
 
+	const {
+		address,
+		loading: eoaLoading,
+		connect,
+		disconnect,
+	} = useWeb3AuthContext();
+	const {
+		selectedAccount,
+		loading: scwLoading,
+		setSelectedAccount,
+	  } = useSmartAccountContext();
 	const Auth0 = useAuth0()
 
 	const dispatch = useDispatch()
@@ -89,27 +98,18 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			}).finally(() => setLoading(false))
 		}
 	}, [dispatch, SearchQuery])
-	const [sdk, setSDK] = useState()
-	const socialLoginSDK = new SocialLogin();
+
+	useEffect(() =>{
+		console.log("SELECTED ACCOUNT", selectedAccount)
+	}, [selectedAccount])
 	const loginHandler = async () => {
-		await socialLoginSDK.init('0x13881');    
-		socialLoginSDK.showConnectModal();
-		socialLoginSDK.showWallet();
-		setSDK(socialLoginSDK);
-	}
-	useEffect(() => {
-		const checkWallet = async () => {
-			console.log(sdk)
-			console.log(socialLoginSDK)
-			if (!socialLoginSDK?.web3auth?.provider) return;
-			const provder = new ethers.providers.Web3Provider(
-				socialLoginSDK.web3auth.provider,
-			);
-			const accounts = await provder.listAccounts();
-			console.log("EOA address", accounts)
+		if(!address)
+			connect();
+		else{
+			setSelectedAccount(null);
+            disconnect();
 		}
-		checkWallet();
-	}, [socialLoginSDK])
+	}
 
 	// const handleWalletConnect = () => {
 	// 	if(!isWalletConnected(WalletState)){
