@@ -33,7 +33,7 @@ export const Web3AuthProvider = ({ children }) => {
   const [socialLoginSDK, setSocialLoginSDK] = useState(null);
 
   useEffect(() =>{
-    console.log("SOCIAL LOGIN", socialLoginSDK)
+    console.log(socialLoginSDK)
   }, [socialLoginSDK])
   // if wallet already connected close widget
   useEffect(() => {
