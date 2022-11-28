@@ -58,11 +58,29 @@ const UserHOC = props => {
 	useEffect(() => {
 		GaTracker('event_userHoc_login')
 		if(address && isUsable(userInfo)){
+			let subSocial = userInfo.typeOfLogin
+			if(subSocial == "google") subSocial = "google-oauth2";
+			const sub = subSocial + '|' + userInfo.email;
+			const given_name = userInfo.name.split(' ')[0];
+			const family_name = userInfo.name.split(' ')[1];
+			const picture = userInfo.profileImage
+			const nickName = userInfo.email.split('@')[0];
+			const userData = {
+				email: userInfo.email,
+				email_verified: true,
+				family_name,
+				locale: "en",
+				name: userInfo.name,
+				nickName,
+				picture,
+				sub
+			}
+			console.log(userData)
 			setLoading(true)
 			axios({
 				url: `${BASE_URL}/api/user/oauth/login`,
 				method: 'POST',
-				data: userInfo
+				data: userData
 			}).then(res => {
 				if(res.status === 200) {
 					dispatch(setUser(res.data))

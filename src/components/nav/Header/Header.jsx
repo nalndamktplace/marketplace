@@ -102,12 +102,12 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const loginHandler = async () => {
-		if(!address)
+		// if(!address)
 			connect();
-		else{
-			setSelectedAccount(null);
-            disconnect();
-		}
+		// else{
+		// 	setSelectedAccount(null);
+        //     disconnect();
+		// }
 	}
 
 	// const handleWalletConnect = () => {
@@ -178,15 +178,12 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const logOutHandler = async () => {
 		GaTracker('event_header_user_logout')
-		// if (web3auth) {
-		// 	console.log("web3")
-		//  	await web3auth.logout();
-		// }
-		// Auth0.logout()
-		handleWalletDisconnect()
+		if(address){
+			setSelectedAccount(null);
+			disconnect();
+		}
 		dispatch(unsetUser())
-		logout()
-		
+		// logout()
 	}
 
 	const renderNavItems = () => {

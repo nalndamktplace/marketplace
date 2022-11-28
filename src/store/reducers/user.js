@@ -122,7 +122,7 @@ const handleData = (state = initState, action) => {
 				...userState
 			}
 		case UNSET_USER:
-			logout()
+			// logout()
 			return { ...initState }
 		default:
 			return state
