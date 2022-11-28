@@ -5,14 +5,16 @@ import { activeChainId } from "../config/wallet";
 
 
 export const Web3AuthContext = React.createContext({
-  connect: () => Promise.resolve(null),
+  connect: () => Promise.resolve(),
   disconnect: () => Promise.resolve(),
+  getUserInfo: () => Promise,
   loading: false,
   provider: null,
   ethersProvider: null,
   web3Provider: null,
   chainId: activeChainId,
   address: "",
+  userInfo: null
 });
 export const useWeb3AuthContext = () => useContext(Web3AuthContext);
 
@@ -31,10 +33,8 @@ export const Web3AuthProvider = ({ children }) => {
     web3State;
   const [loading, setLoading] = useState(false);
   const [socialLoginSDK, setSocialLoginSDK] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
 
-  useEffect(() =>{
-    console.log(socialLoginSDK)
-  }, [socialLoginSDK])
   // if wallet already connected close widget
   useEffect(() => {
     console.log("hidelwallet");
@@ -43,6 +43,14 @@ export const Web3AuthProvider = ({ children }) => {
     }
   }, [address, socialLoginSDK]);
 
+  const getUserInfo = useCallback(async () => {
+    if (socialLoginSDK) {
+      const userInfo = await socialLoginSDK.getUserInfo();
+      console.log("userInfo", userInfo);
+      setUserInfo(userInfo);
+    }
+  }, [socialLoginSDK]);
+  
   const connect = useCallback(async () => {
     if (address) return;
     if (socialLoginSDK?.provider) {
@@ -125,12 +133,14 @@ export const Web3AuthProvider = ({ children }) => {
       value={{
         connect,
         disconnect,
+        getUserInfo,
         loading,
         provider: provider,
         ethersProvider: ethersProvider || null,
         web3Provider: web3Provider || null,
         chainId: chainId || 0,
         address: address || "",
+        userInfo
       }}
     >
       {children}

@@ -37,8 +37,10 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const {
 		address,
 		loading: eoaLoading,
+		userInfo,
 		connect,
 		disconnect,
+		getUserInfo,
 	} = useWeb3AuthContext();
 	const {
 		selectedAccount,
@@ -99,9 +101,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
-	useEffect(() =>{
-		console.log("SELECTED ACCOUNT", selectedAccount)
-	}, [selectedAccount])
 	const loginHandler = async () => {
 		if(!address)
 			connect();
