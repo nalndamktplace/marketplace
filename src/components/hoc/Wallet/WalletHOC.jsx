@@ -14,6 +14,7 @@ import { isUserLoggedIn, isWalletConnected } from '../../../helpers/functions'
 import GaTracker from '../../../trackers/ga-tracker'
 
 const WalletHOC = props => {
+	
 	const dispatch = useDispatch()
 
 	const UserState = useSelector(state => state.UserState)

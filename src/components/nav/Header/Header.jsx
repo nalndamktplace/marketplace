@@ -102,12 +102,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	}, [dispatch, SearchQuery])
 
 	const loginHandler = async () => {
-		// if(!address)
-			connect();
-		// else{
-		// 	setSelectedAccount(null);
-        //     disconnect();
-		// }
+		connect();
 	}
 
 	// const handleWalletConnect = () => {
@@ -176,14 +171,13 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		})
 	}
 
-	const logOutHandler = async () => {
+	const logOutHandler = () => {
 		GaTracker('event_header_user_logout')
 		if(address){
 			setSelectedAccount(null);
 			disconnect();
 		}
 		dispatch(unsetUser())
-		// logout()
 	}
 
 	const renderNavItems = () => {
@@ -300,7 +294,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
 				</div>
 			}
-<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />		</header>
+			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />		</header>
 	)
 }
 

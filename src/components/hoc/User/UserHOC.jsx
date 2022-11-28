@@ -75,7 +75,6 @@ const UserHOC = props => {
 				picture,
 				sub
 			}
-			console.log(userData)
 			setLoading(true)
 			axios({
 				url: `${BASE_URL}/api/user/oauth/login`,

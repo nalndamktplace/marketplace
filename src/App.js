@@ -1,9 +1,7 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense } from 'react'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import { useLocation } from 'react-router-dom';
-import jwt_decode from "jwt-decode";
 
 import { Auth0Provider } from '@auth0/auth0-react'
 
@@ -58,6 +56,7 @@ const store = createStore(rootReducer)
 
 function App() {
     let navigate = useNavigate()
+    
     const onRedirectCallback = (appState) => {
         navigate(appState?.returnTo || window.location.pathname)
     }
