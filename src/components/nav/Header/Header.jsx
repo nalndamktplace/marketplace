@@ -300,8 +300,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
 				</div>
 			}
-			{/* <SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletConnect={handleWalletConnect} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} /> */}
-		</header>
+<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />		</header>
 	)
 }
 
