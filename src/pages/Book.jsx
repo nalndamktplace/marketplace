@@ -733,7 +733,7 @@ const BookPage = props => {
 						quotesDOM.push(
 							<div key={i} className='book__data__container__desc__tabs__data__quotes__item'>
 								<div className="book__data__container__desc__tabs__data__quotes__item__icon">
-									<QuoteIcon width={32} height={32} fill="currentColor"/>
+									<QuoteIcon width={32} height={32}  stroke="currentColor"/>
 								</div>
 								<div className="book__data__container__desc__tabs__data__quotes__item__body typo__body">
 									{quote.body}
