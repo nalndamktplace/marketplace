@@ -32,19 +32,21 @@ const ListModal = ({book, userCopy, onListHandler}) => {
 	}, [ModalState])
 
 	useEffect(()=>{
-		setFulcrumLoading(true)
-				axios({
-					url: `${BASE_URL}/api/book/fulcrum`,
-					headers: {
-						'user-id': UserState.user.uuid,
-						'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
-					},
-					params: { bookAddress: book.book_address }
-				}).then(res => {
-					if(res.status === 200) setRoyalty(res.data.royalty)
-				}).catch(err => {
-					console.error({err})
-				}).finally(() => setFulcrumLoading(false))
+		if(isUsable(UserState.user.uuid) && isUsable(UserState.tokens.acsTkn.tkn)){
+			setFulcrumLoading(true)
+			axios({
+				url: `${BASE_URL}/api/book/fulcrum`,
+				headers: {
+					'user-id': UserState.user.uuid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
+				params: { bookAddress: book.book_address }
+			}).then(res => {
+				if(res.status === 200) setRoyalty(res.data.royalty)
+			}).catch(err => {
+				console.error({err})
+			}).finally(() => setFulcrumLoading(false))
+		}
 	},[ModalState])
 
 	useEffect(() => {

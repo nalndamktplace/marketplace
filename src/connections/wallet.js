@@ -1,44 +1,53 @@
-import { ethers } from "ethers"
-import Web3Modal from "web3modal"
-import { isUsable } from '../helpers/functions'
-import providerOptions from "./providerOptions"
+import { ethers } from "ethers";
+import Web3Modal from "web3modal";
+
+import { isUsable } from "../helpers/functions";
+import providerOptions from "./providerOptions";
 
 import { ChainId } from "@biconomy/core-types";
+
 import SmartAccount from "@biconomy/smart-account";
 import SocialLogin from "@biconomy/web3-auth";
 
-async function Wallet(setSDK) {
+import { setSmartAccount } from "../store/actions/bwallet"
+import { useWeb3AuthContext } from "../contexts/SocialLoginContext";
 
-	// init wallet
-	const socialLoginSDK = new SocialLogin();
-	await socialLoginSDK.init('0x13881');    
-	socialLoginSDK.showConnectModal();
+async function Wallet(provider, dispatch) {
+  const walletProvider = new ethers.providers.Web3Provider(provider);
+  
+  // Initialize the Smart Account
 
-	// show connect modal
-	socialLoginSDK.showWallet();
-	console.log(socialLoginSDK)
+  let options = {
+    activeNetworkId: ChainId.POLYGON_MUMBAI,
+    supportedNetworksIds: [
+      ChainId.POLYGON_MUMBAI,
+    ],
+  };
 
-	if (!socialLoginSDK?.web3auth?.provider) return;
-	const provider = new ethers.providers.Web3Provider(
-		socialLoginSDK.web3auth.provider,
-	);
-	const accounts = await provider.listAccounts();
-	console.log("EOA address", accounts)
+  let smartAccount = new SmartAccount(walletProvider, options);
+  smartAccount = await smartAccount.init();
+  dispatch(setSmartAccount({ smartAccount }))
+  const smartAccountSigner = smartAccount.signer
+  const address = smartAccount.address;
+  console.log("address", address);
+  const checkBalance = async () => {
+    const balanceParams = {
+      chainId: ChainId.POLYGON_MUMBAI, // chainId of your choice
+      eoaAddress: smartAccount.address,
+      tokenAddresses: [],
+    };
+    const balFromSdk = await smartAccount.getAlltokenBalances(balanceParams);
+    console.info("getAlltokenBalances", balFromSdk);
 
-	const walletProvider = new ethers.providers.Web3Provider(provider)
-
-	let options = {
-		activeNetworkId: ChainId.POLYGON_MUMBAI,
-		supportedNetworksIds: [ChainId.POLYGON_MUMBAI]
-	}
-
-	let smartAccount = new SmartAccount(walletProvider, options);
-	smartAccount = await smartAccount.init();
-	const address = smartAccount.address;
-	console.log('address', address);
-
+    const usdBalFromSdk = await smartAccount.getTotalBalanceInUsd(
+      balanceParams
+    );
+    console.info("getTotalBalanceInUsd", usdBalFromSdk);
+    
+    
+  };
+  checkBalance();
+  
 }
 
-
-
-export default Wallet
+export default Wallet;

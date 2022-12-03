@@ -43,6 +43,7 @@ import { ReactComponent as LiveReadersIcon} from "../assets/icons/live_readers.s
 import { ReactComponent as TotalReadTimeIcon} from "../assets/icons/total_read_time.svg"
 import { ReactComponent as UsersIcon} from "../assets/icons/users.svg"
 
+import {useWeb3AuthContext} from '../contexts/SocialLoginContext'
 
 const ListedBookPage = props => {
 
@@ -52,9 +53,19 @@ const ListedBookPage = props => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const isLoggedIn = useIsLoggedIn()
+	
+	const {
+		address,
+		loading: eoaLoading,
+		userInfo,
+		connect,
+		disconnect,
+		getUserInfo,
+		provider,
+	} = useWeb3AuthContext();
 
 	const UserState = useSelector(state => state.UserState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [Loading, setLoading] = useState(false)
@@ -285,9 +296,9 @@ const ListedBookPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if (isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+		if (isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		setLoading(false)
-	}, [WalletState])
+	}, [BWalletState])
 
 	useEffect(() => { if (isUsable(Review)) setReviewForm({ title: Review.title, body: Review.body, rating: Review.rating }) }, [Review])
 
@@ -348,10 +359,10 @@ const ListedBookPage = props => {
 				method: 'GET',
 				headers: {
 					'user-id': UserState.user.uid,
-					'address': WalletState.wallet.address,
+					'address': BWalletState.smartAccount.address,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
-				params: { walletAddress: WalletState.wallet.address, bookAddress: NFT.book_address }
+				params: { walletAddress: BWalletState.smartAccount.address, bookAddress: NFT.book_address }
 			}).then(res => {
 				if (res.status === 200) {
 					setUserCopy(res.data)
@@ -362,24 +373,22 @@ const ListedBookPage = props => {
 				dispatch(setSnackbar('ERROR'))
 			})
 		}
-	}, [Owner, UserState, WalletState, dispatch, NFT])
+	}, [Owner, UserState, BWalletState, dispatch, NFT])
 
+	const loginHandler = async () => {
+		connect();
+	}
+	
 	const walletStatus = () => {
-		if (isUsable(WalletState.support) && WalletState.support === true && isUsable(WalletState.wallet.provider)) {
-			setWalletAddress(WalletState.wallet.address)
+		if (isUsable(BWalletState.smartAccount)) {
+			setWalletAddress(BWalletState.smartAccount.address)
 			return true
 		}
 		else {
-			setLoading(true)
-			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-				setWalletAddress(res.address)
-				dispatch(setSnackbar({ show: true, message: "Wallet connected.", type: 1 }))
-				return true
-			}).catch(err => {
-				dispatch(setSnackbar({ show: true, message: "Error while connecting to wallet", type: 4 }))
-				return false
-			}).finally(() => setLoading(false))
+			if (!address) {
+				loginHandler();
+			}
+			Wallet(provider, dispatch);
 		}
 	}
 
@@ -403,7 +412,7 @@ const ListedBookPage = props => {
 				if (res.status === 200) {
 					setLoading(true)
 					const orderId = res.data.order_id
-					Contracts.unlistBookFromMarketplace(orderId, WalletState.wallet.signer).then(res => {
+					Contracts.unlistBookFromMarketplace(orderId, BWalletState.smartAccount.signer).then(res => {
 						setLoading(true)
 						axios({
 							url: BASE_URL + '/api/book/unlist',
@@ -449,7 +458,7 @@ const ListedBookPage = props => {
 		GaTracker('event_book_list')
 		if (isUsable(WalletAddress)) {
 			setLoading(true)
-			Contracts.listBookToMarketplace(NFT.book_address, UserCopy.token_id, listPrice, WalletState.wallet.signer).then(res => {
+			Contracts.listBookToMarketplace(NFT.book_address, UserCopy.token_id, listPrice, BWalletState.smartAccount.signer).then(res => {
 				setLoading(true)
 				const orderId = parseInt(res.events.filter(event => event.event === 'CoverListed')[0].args[0]._hex)
 				axios({
@@ -501,13 +510,13 @@ const ListedBookPage = props => {
 			}).then(res => {
 				if (res.status === 200) {
 					const messageToSign = res.data
-					Wallet.signMessage(WalletState.wallet.signer, JSON.stringify(messageToSign)).then(res => {
+					Wallet.signMessage(BWalletState.smartAccount.signer, JSON.stringify(messageToSign)).then(res => {
 						if (res.isValid === true) {
 							axios({
 								url: BASE_URL + '/api/verify',
 								method: "POST",
 								headers: {
-									'address': WalletState.wallet.address,
+									'address': BWalletState.smartAccount.address,
 									'user-id': UserState.user.uid,
 									'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 								},
@@ -552,7 +561,7 @@ const ListedBookPage = props => {
 		GaTracker('event_book_purchase_old')
 		if (walletStatus()) {
 			setLoading(true)
-			Contracts.buyListedCover(offer.order_id, offer.price, WalletState.wallet.signer).then(res => {
+			Contracts.buyListedCover(offer.order_id, offer.price, BWalletState.smartAccount.signer).then(res => {
 				axios({
 					url: BASE_URL + '/api/book/purchase/secondary',
 					method: 'POST',

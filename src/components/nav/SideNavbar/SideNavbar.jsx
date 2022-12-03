@@ -17,7 +17,7 @@ import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
 import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
 import {ReactComponent as ArrowLeftIcon} from "../../../assets/icons/arrow-left.svg"
 
-const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
+const SideNavbar = ({MenuOpen,setMenuOpen,BWalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
 
 	const Auth0 = useAuth0()
 	const dispatch = useDispatch()
@@ -89,8 +89,8 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		let itemsDOM = []
 
 		item.subMenu.forEach(navItem => {
-			if(navItem.id === "NI4SMI2" && isWalletConnected(WalletState)){}
-			else if(navItem.id === "NI4SMI3" && !isWalletConnected(WalletState)){}
+			if(navItem.id === "NI4SMI2" && BWalletState.smartAccount){}
+			else if(navItem.id === "NI4SMI3" && !BWalletState.smartAccount){}
 			else itemsDOM.push(<div onClick={()=>{menuItemClickHandler(navItem);setSubMenuOpen(false)}} key={navItem.id} className='side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 		})
 		return itemsDOM

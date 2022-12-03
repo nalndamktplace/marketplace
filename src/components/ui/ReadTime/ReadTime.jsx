@@ -15,7 +15,7 @@ import { useNavigate } from "react-router"
 const ReadTime = ({mobileView, bookMeta, preview}) => {
 
 	const UserState = useSelector(state => state.UserState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [readTime, setReadTime] = useState(0)
 	const [lastUpdate, setLastUpdate] = useState(0)
@@ -27,11 +27,11 @@ const ReadTime = ({mobileView, bookMeta, preview}) => {
 	useEffect(() => {
 		if(!isUsable(mobileView) || mobileView === false){
 			if(isUsable(preview) && !preview){
-				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+				if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 				else navigate(-1)
 			}
 		}
-	}, [mobileView, WalletState, navigate, preview])
+	}, [mobileView, BWalletState, navigate, preview])
 
 	useEffect(() => {
 		if(!preview && isUsable(bookMeta) && (isUsable(WalletAddress) || (isUsable(mobileView) && mobileView===true))){

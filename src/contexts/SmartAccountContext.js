@@ -65,7 +65,7 @@ export const SmartAccountProvider = ({ children }) => {
         networkConfig: [
           {
             chainId: ChainId.POLYGON_MUMBAI,
-            dappAPIKey: "59fRCMXvk.8a1652f0-b522-4ea7-b296-98628499aee3",
+            dappAPIKey: "KW8u8Hxug.e88a2f4a-8448-42e8-8af1-50f09681a19c",
           },
           {
             chainId: ChainId.POLYGON_MAINNET,
@@ -177,10 +177,6 @@ export const SmartAccountProvider = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccount]);
-
-  useEffect(() => {
-    getSmartAccount();
-  }, [getSmartAccount]);
 
   return (
     <SmartAccountContext.Provider

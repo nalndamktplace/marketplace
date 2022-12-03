@@ -63,27 +63,31 @@ const listNftForSales = async function listNftForSales(
 }
 
 const purchaseNft = async function purchaseNft(
-    buyer,
-    bookAddress,
-    amount,
-    signer
+  buyer,
+  bookAddress,
+  amount,
+  signer
 ) {
-    GaTracker('event_contracts_purchase_nft')
-    const nalndaTokenContract = new ethers.Contract(
-        NALNDA_TOKEN_CONTRACT_ADDRESS,
-        nalndaToken.abi,
-        signer
-    )
+  GaTracker("event_contracts_purchase_nft");
+  const nalndaTokenContract = new ethers.Contract(
+    NALNDA_TOKEN_CONTRACT_ADDRESS,
+    nalndaToken.abi,
+    signer
+  );
+  try {
     const approval = await nalndaTokenContract.approve(
-        bookAddress,
-        ethers.utils.parseEther(amount)
-    )
-    await approval.wait()
-    const bookContract = new ethers.Contract(bookAddress, book.abi, signer)
-    const transaction = await bookContract.safeMint(buyer)
-    const tx = await transaction.wait()
-    return tx
-}
+      bookAddress,
+      ethers.utils.parseEther(amount)
+    );
+    await approval.wait();
+    const bookContract = new ethers.Contract(bookAddress, book.abi, signer);
+    const transaction = await bookContract.safeMint(buyer);
+    const tx = await transaction.wait();
+    return tx;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const getBookUri = async function getBookUri(bookAddress, signer) {
     GaTracker('event_contracts_get_book_uri')

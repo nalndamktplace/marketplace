@@ -32,6 +32,9 @@ import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-squar
 import {useWeb3AuthContext} from '../../../contexts/SocialLoginContext'
 import {useSmartAccountContext } from "../../../contexts/SmartAccountContext";
 
+import {BalancesDto } from '@biconomy/node-client'
+import { ChainId } from '@biconomy/core-types'
+
 const Header = ({showRibbion=true,noPadding=false}) => {
 
 	const {
@@ -41,12 +44,21 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		connect,
 		disconnect,
 		getUserInfo,
+		provider,
 	} = useWeb3AuthContext();
 	const {
-		selectedAccount,
-		loading: scwLoading,
-		setSelectedAccount,
+		wallet,
+        state,
+        balance,
+        loading: scwLoading,
+        isFetchingBalance,
+        selectedAccount,
+        smartAccountsArray,
+        setSelectedAccount,
+        getSmartAccount,
+        getSmartAccountBalance,
 	  } = useSmartAccountContext();
+	  
 	const Auth0 = useAuth0()
 
 	const dispatch = useDispatch()
@@ -54,7 +66,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const params = useLocation();
 	 
 	const UserState = useSelector(state=>state.UserState)
-	const WalletState = useSelector(state=>state.WalletState)
+	const BWalletState = useSelector(state=> state.BWalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
@@ -67,6 +79,27 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		if(Auth0.isLoading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Auth0.isLoading, dispatch])
+
+	// useEffect(() => {
+	// 	if (wallet) {
+	// 		getSmartAccount();
+			
+	// 		const checkBalance = async () => {
+	// 			const balanceParams =
+	// 			{
+	// 				chainId: ChainId.MAINNET, // chainId of your choice
+	// 				eoaAddress: smartAccount.address,
+	// 				tokenAddresses: [],
+	// 			};
+	// 			const balFromSdk = await smartAccount.getAlltokenBalances(balanceParams);
+	// 			console.info("getAlltokenBalances", balFromSdk);
+
+	// 			const usdBalFromSdk = await smartAccount.getTotalBalanceInUsd(balanceParams);
+	// 			console.info("getTotalBalanceInUsd", usdBalFromSdk);
+	// 		}
+	// 		checkBalance();
+	// 	}
+	// }, [wallet])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -105,15 +138,22 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		connect();
 	}
 
-	// const handleWalletConnect = () => {
-	// 	if(!isWalletConnected(WalletState)){
-	// 		Wallet.connectWallet().then(res => {
-	// 			dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-	// 		}).catch(err => {
-	// 			dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-	// 		})
-	// 	}
-	// }
+	const handleWalletConnect = () => {
+		if(!address){
+			loginHandler();
+		}
+		Wallet(provider, dispatch);
+		
+
+		// if(!isWalletConnected(WalletState)){
+		// 	Wallet.connectWallet().then(res => {
+		// 		// dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+		// 	}).catch(err => {
+		// 		dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+		// 	})
+		// }
+
+	}
 
 	const NAV_ITEMS = [
 		{ id: "NI1",title: "Explore" ,url: "/explore",uri: null, icon: CompassIcon ,action: null, subMenu: null },
@@ -128,8 +168,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		{ id: "NI4",title: "Account", url: null,uri: null,icon: UserIcon,action: null,
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
-				// {id: "NI4SMI2",title: "Connect Wallet", url: null ,uri: null,icon: null,action: () => handleWalletConnect(),},
-				{id: "NI4SMI3",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
+				{id: "NI4SMI2",title: "Connect Wallet", url: null ,uri: null,icon: null,action: () => handleWalletConnect(),},
+				// {id: "NI5SMI3",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
 				{id: "NI4SMI4",title: "Library",url: "/library",uri: null,icon: null,action: null},
 				{id: "NI4SMI5",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {logOutHandler()}},
 			],
@@ -160,15 +200,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}
 
-	const handleWalletDisconnect = () => {
+	const handleWalletDisconnect = async () => {
 		GaTracker('event_header_wallet_disconnect')
-		Wallet.disconnectWallet(WalletState.wallet.provider).then(res => {
-			dispatch(clearWallet())
-			navigate('/')
-			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
-		}).catch(err => {
-			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
-		})
+		await disconnect()
+		navigate('/')
+		dispatch(setSnackbar({ show: true, message: "Wallet disconnected.", type: 1 }))
 	}
 
 	const logOutHandler = () => {
@@ -187,8 +223,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			if(isUsable(item.subMenu)){
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
-					if(navItem.id === "NI4SMI2" && isWalletConnected(WalletState)){}
-					else if(navItem.id === "NI4SMI3" && !isWalletConnected(WalletState)){}
+					if(navItem.id === "NI4SMI2" && BWalletState.smartAccount){}
+					else if(navItem.id === "NI4SMI3" && !BWalletState.smartAccount){}
 					else subMenuitems.push(
 						<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__content__navbar__link__subitem typo__act typo__transform--capital'>
 							{isUsable(navItem.icon) && <item.icon/>}
@@ -294,7 +330,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
 				</div>
 			}
-			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />		</header>
+			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} BWalletState={BWalletState} loginHandler={loginHandler} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />		</header>
 	)
 }
 
