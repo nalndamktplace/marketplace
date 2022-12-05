@@ -158,20 +158,7 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 					dispatch(setSnackbar('ERROR'))
 				}).finally(() => setLoading(false))
 
-				axios({
-					url: `${BASE_URL}/api/book/quotes`,
-					method: 'POST',
-					data: {
-						bookAddress: bookMeta.book_address,
-						ownerAddress: WalletAddress,
-						quote : annotation
-					}
-				}).then(res => {
-					if(res.status === 200) console.log("successful")
-					else dispatch(setSnackbar('NOT200'))
-				}).catch(err => {
-					dispatch(setSnackbar('ERROR'))
-				}).finally( () => setLoading(false) )
+			
 			}
 		},
 		[Annotations, WalletAddress, bookMeta, dispatch, rendition, preview],

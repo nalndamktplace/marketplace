@@ -1,4 +1,23 @@
 .quotes {
+    
+    &__input{
+        display: block;
+        padding-bottom: 16px;
+
+        &__text-input{
+            resize: none;
+            width: 100%;
+            padding: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        &__button{
+            margin-top: 4px;
+            left: 75%;
+            border-radius: 20px;
+        }
+    }
+
     &__item {
         position: relative ;
         padding: 1.5rem ;
@@ -67,6 +86,11 @@
                     color: $color-neutral-400;
                     cursor: pointer;
                 }
+            
+                &__comment{
+                    display: flex;
+                    color:$color-neutral-400;
+                }
                 
             }
         }
@@ -77,7 +101,7 @@
     }
 
     &__comments{
-        padding-bottom: 24px;
+        padding-bottom: 12px;
 
         &__thread{
             padding-left: 24px;
