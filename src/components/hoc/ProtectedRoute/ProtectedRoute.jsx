@@ -41,10 +41,8 @@ const ProtectedRoute = ({element}) => {
 	)
 
 	useEffect(()=>{
-		console.log("USER IS LOGGED IN")
 		if(isUserLoggedIn(UserState)){
 			if(isUsable(BWalletState.smartAccount)){
-				console.log("USER IS LOGGED IN")
 				setIsAuthenticated(true)
 			} 
 			else {

@@ -69,26 +69,6 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	// 	else dispatch(hideSpinner())
 	// }, [Auth0.isLoading, dispatch])
 
-	// useEffect(() => {
-	// 	if (wallet) {
-	// 		getSmartAccount();
-			
-	// 		const checkBalance = async () => {
-	// 			const balanceParams =
-	// 			{
-	// 				chainId: ChainId.MAINNET, // chainId of your choice
-	// 				eoaAddress: smartAccount.address,
-	// 				tokenAddresses: [],
-	// 			};
-	// 			const balFromSdk = await smartAccount.getAlltokenBalances(balanceParams);
-	// 			console.info("getAlltokenBalances", balFromSdk);
-
-	// 			const usdBalFromSdk = await smartAccount.getTotalBalanceInUsd(balanceParams);
-	// 			console.info("getTotalBalanceInUsd", usdBalFromSdk);
-	// 		}
-	// 		checkBalance();
-	// 	}
-	// }, [wallet])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())

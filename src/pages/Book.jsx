@@ -294,8 +294,6 @@ const BookPage = props => {
 		setLoading(true)
 		if(isUsable(BWalletState.smartAccount)){
 			setWalletAddress(BWalletState.smartAccount.address)
-			console.log("BWALLET SET", BWalletState.smartAccount.address)
-			console.log("SEE THIS SIGNER", BWalletState.smartAccount.signer)
 		} 
 		
 		setLoading(false)
@@ -556,7 +554,6 @@ const BookPage = props => {
 	const purchaseNewCopyHandler = () => {
 		const purchase = () => {
 			Contracts.purchaseNft(WalletAddress, NFT.book_address, NFT.price.toString(), BWalletState.smartAccount.signer).then(res => {
-				console.log(res)
 				dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 				dispatch(hideModal())
 				const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
@@ -593,7 +590,6 @@ const BookPage = props => {
 		}
 		GaTracker('event_book_purchase_new')
 		setLoading(true)
-		console.log("SIGNER OUTSIDE PURCHASE", BWalletState.smartAccount.signer)
 		if(isUsable(WalletAddress)) purchase()
 		else{
 			// setLoading(true)
