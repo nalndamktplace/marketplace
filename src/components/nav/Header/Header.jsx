@@ -40,30 +40,19 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const {
 		address,
 		loading: eoaLoading,
-		userInfo,
 		connect,
 		disconnect,
-		getUserInfo,
 		provider,
 	} = useWeb3AuthContext();
 	const {
-		wallet,
-        state,
-        balance,
-        loading: scwLoading,
-        isFetchingBalance,
-        selectedAccount,
-        smartAccountsArray,
         setSelectedAccount,
-        getSmartAccount,
-        getSmartAccountBalance,
 	  } = useSmartAccountContext();
 	  
-	const Auth0 = useAuth0()
+	// const Auth0 = useAuth0()
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const params = useLocation();
+	// const params = useLocation();
 	 
 	const UserState = useSelector(state=>state.UserState)
 	const BWalletState = useSelector(state=> state.BWalletState)
@@ -75,10 +64,10 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [SearchResults, setSearchResults] = useState([])
 	const [Collections, setCollections] = useState([])
 
-	useEffect(() => {
-		if(Auth0.isLoading) dispatch(showSpinner())
-		else dispatch(hideSpinner())
-	}, [Auth0.isLoading, dispatch])
+	// useEffect(() => {
+	// 	if(Auth0.isLoading) dispatch(showSpinner())
+	// 	else dispatch(hideSpinner())
+	// }, [Auth0.isLoading, dispatch])
 
 	// useEffect(() => {
 	// 	if (wallet) {
@@ -138,11 +127,13 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		connect();
 	}
 
-	const handleWalletConnect = () => {
+	const handleWalletConnect =async () => {
+		setLoading(true)
 		if(!address){
 			loginHandler();
 		}
-		Wallet(provider, dispatch);
+		await Wallet(provider, dispatch);
+		setLoading(false)
 		
 
 		// if(!isWalletConnected(WalletState)){

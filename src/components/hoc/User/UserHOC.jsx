@@ -12,7 +12,7 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import Constants from '../../../config/constants'
 import { BASE_URL } from '../../../config/env'
 import { getData, logout } from '../../../helpers/storage'
-import { isUsable, isUserLoggedIn } from '../../../helpers/functions'
+import { isFilled, isUserLoggedIn, isUsable } from '../../../helpers/functions'
 import GaTracker from '../../../trackers/ga-tracker'
 
 
@@ -52,6 +52,7 @@ const UserHOC = props => {
 
 	useEffect(() =>{
 		if(address){
+			setLoading(true)
 			getUserInfo();
 		}
 	}, [address])
@@ -60,14 +61,22 @@ const UserHOC = props => {
 		if(address && isUsable(userInfo)){
 			let subSocial = userInfo.typeOfLogin
 			if(subSocial == "google") subSocial = "google-oauth2";
-			const sub = subSocial + '|' + userInfo.email;
-			const given_name = userInfo.name.split(' ')[0];
-			const family_name = userInfo.name.split(' ')[1];
-			const picture = userInfo.profileImage
-			const nickName = userInfo.email.split('@')[0];
+			let sub = subSocial + '|' + userInfo.email;
+			let given_name, family_name;
+			if(userInfo.name.search(' ')!=-1){
+				given_name = userInfo.name.split(' ')[0];
+				family_name = userInfo.name.split(' ')[1];
+			} else{
+				given_name=userInfo.name;
+				family_name="";
+			}
+			
+			let picture = userInfo.profileImage
+			let nickName = userInfo.email.split('@')[0];
 			const userData = {
 				email: userInfo.email,
 				email_verified: true,
+				given_name,
 				family_name,
 				locale: "en",
 				name: userInfo.name,

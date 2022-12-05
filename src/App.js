@@ -123,7 +123,11 @@ function App() {
                                 />
                                 <Route
                                     path="/profile"
-                                    element={<ProfilePage />}
+                                    element={
+                                        <ProtectedRoute
+                                            element={<ProfilePage />}
+                                        />
+                                    }
                                 />
                                 <Route
                                     path="/library"
