@@ -45,7 +45,7 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
                 method: 'GET',
                 params: {
                     bookAddress: bookMeta.book_address,
-                    ownerAddress: WalletAddress
+                    ownerAddress: WalletAddress,
                 }
             }).then(res => {
                 if (res.status === 200) {
@@ -61,8 +61,7 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
 
     const handlePostQuote = useCallback(
         (PostQuote) => {
-            debugger
-            if (isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)) {
+            if (isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition) && isUsable(rendition.currentLocation())) {
                 if (!isUsable(rendition)) return
                 if (!isUsable(bookMeta)) return
                 setLoading(true)
@@ -72,7 +71,8 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
                     data: {
                         bookAddress: bookMeta.book_address,
                         ownerAddress: WalletAddress,
-                        quote: { body: PostQuote }
+                        quote: { body: PostQuote },
+                        cfi_range : rendition?.currentLocation().start.cfi
                     }
                 }).then(res => {
                     if(res.status === 200) {
@@ -107,12 +107,13 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
     )
 
 
+
     return <div className="panel panel__annotation">
         <div className='quotes__input'>
             <textarea className='quotes__input__text-input' rows={6} onChange={e => setPostQuotes(e.target.value)} placeholder="Add a Quote..." type="text" value={PostQuote} />
             <Button className='quotes__input__button' type="primary" onClick={() => handlePostQuote(PostQuote)}>Post</Button>
         </div>
-      {Quotes.map(quote=><QuoteSection quote={quote} bookMeta={bookMeta} preview={preview} UserState={UserState} /> )  }
+      {Quotes.map(quote=><QuoteSection rendition={rendition} quote={quote} bookMeta={bookMeta} preview={preview} UserState={UserState} hideModal={hideModal} /> )  }
     </div>;
 }
 

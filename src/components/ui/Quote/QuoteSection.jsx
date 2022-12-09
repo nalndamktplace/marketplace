@@ -13,8 +13,10 @@ import { ReactComponent as SendIcon } from '../../../assets/icons/send.svg'
 import { ReactComponent as UpVoteIcon } from '../../../assets/icons/arrow-up-circle.svg'
 import { ReactComponent as DownVoteIcon } from '../../../assets/icons/arrow-down-circle.svg'
 import { useDispatch } from 'react-redux'
+import GaTracker from '../../../trackers/ga-tracker'
+import { isUsable } from "../../../helpers/functions"
 
-const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition }) => {
+const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModal }) => {
     const dispatch = useDispatch()
 
     const [CommentSection, setCommentSection] = useState(false)
@@ -110,10 +112,17 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition }) => {
         return commentsDOM
     }
 
+    const gotoPage = (cfi) => {
+		GaTracker('event_annotationpanel_goto_page')
+		if(!isUsable(rendition)) return
+		rendition.display(cfi)
+		rendition.display(cfi)
+		hideModal()
+	}
 
     return (
         <div>
-            <div className='quotes__item'>
+            <div className='quotes__item' onClick={()=>gotoPage(quote.cfi_range)}>
                 <div className="quotes__item__icon">
                     <QuoteIcon width={32} height={32} stroke="currentColor" />
                 </div>
