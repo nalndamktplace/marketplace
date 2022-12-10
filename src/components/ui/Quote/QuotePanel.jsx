@@ -9,14 +9,14 @@ import { BASE_URL } from "../../../config/env"
 import QuoteSection from "./QuoteSection"
 import Button from "../Buttons/Button"
 
-const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, onRemove = () => { }, hideModal = () => { } }) => {
+const QuotePanel = ({ mobileView, preview, rendition,  bookMeta, onRemove = () => { }, hideModal = () => { } }) => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const UserState = useSelector(state => state.UserState)
     const WalletState = useSelector(state => state.WalletState)
-
+ 
     const [WalletAddress, setWalletAddress] = useState(null)
     const [Loading, setLoading] = useState(false)
     const [Quotes, setQuotes] = useState([])
@@ -38,14 +38,15 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
 
 
     useEffect(() => {
-        if (isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)) {
-            setLoading(true)
+        if (isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition) ) {
+            if (!isUsable(rendition)) return
+            if (!isUsable(bookMeta)) return
             axios({
                 url: `${BASE_URL}/api/book/quotes`,
                 method: 'GET',
                 params: {
                     bookAddress: bookMeta.book_address,
-                    ownerAddress: WalletAddress,
+                    cfi_range : rendition.currentLocation().start.cfi
                 }
             }).then(res => {
                 if (res.status === 200) {
@@ -56,12 +57,14 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
                 dispatch(setSnackbar('ERROR'))
             }).finally(() => setLoading(false))
         }
-    }, [bookMeta, WalletAddress, dispatch, rendition, preview])
+    }, [  WalletAddress, bookMeta, dispatch, rendition?.location ])
+
+
 
 
     const handlePostQuote = useCallback(
         (PostQuote) => {
-            if (isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition) && isUsable(rendition.currentLocation())) {
+            if (isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)) {
                 if (!isUsable(rendition)) return
                 if (!isUsable(bookMeta)) return
                 setLoading(true)
@@ -81,7 +84,7 @@ const QuotePanel = ({ mobileView, preview, rendition, bookMeta, addCommentRef, o
                             method: 'GET',
                             params: {
                                 bookAddress: bookMeta.book_address,
-                                ownerAddress: WalletAddress
+                                cfi_range : rendition.currentLocation().start.cfi
                             }
                         }).then(res => {
                             if (res.status === 200) {
