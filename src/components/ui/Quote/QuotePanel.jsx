@@ -9,7 +9,7 @@ import { BASE_URL } from "../../../config/env"
 import QuoteSection from "./QuoteSection"
 import Button from "../Buttons/Button"
 
-const QuotePanel = ({ mobileView, preview, rendition,  bookMeta, onRemove = () => { }, hideModal = () => { } }) => {
+const QuotePanel = ({ show, mobileView, preview, rendition,  bookMeta, onRemove = () => { }, hideModal = () => { } }) => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -117,7 +117,9 @@ const QuotePanel = ({ mobileView, preview, rendition,  bookMeta, onRemove = () =
             <Button className='quotes__input__button' type="primary" onClick={() => handlePostQuote(PostQuote)}>Post</Button>
         </div>
       {Quotes.map(quote=><QuoteSection rendition={rendition} quote={quote} bookMeta={bookMeta} preview={preview} UserState={UserState} hideModal={hideModal} /> )  }
-    </div>;
+     {/* {!show? <div className="quotes__discussions" >Discussions:{Quotes.length}</div>:null} */}
+     <div className="quotes__discussions" >Discussions:{Quotes.length}</div>
+    </div>
 }
 
 export default QuotePanel

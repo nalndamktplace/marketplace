@@ -58,8 +58,22 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModa
                 }
             }).then(res => {
                 if (res.status === 200) {
-                    console.log("successful")
-                    setPostComment("")
+                    axios({
+                        url: `${BASE_URL}/api/book/quotes/comments`,
+                        method: 'GET',
+                        params: {
+                            bookAddress: bookMeta.book_address,
+                            quoteId: quote.book_id
+                        }
+                    }).then(res => {
+                        if (res.status === 200) {
+                            setComments(res.data)
+                            setPostComment("")
+                        }
+                        else dispatch(setSnackbar('NOT200'))
+                    }).catch(err => {
+                        dispatch(setSnackbar('ERROR'))
+                    })
                 }
                 else dispatch(setSnackbar('NOT200'))
             }).catch(err => {

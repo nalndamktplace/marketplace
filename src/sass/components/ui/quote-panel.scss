@@ -1,4 +1,10 @@
 .quotes {
+
+    &__discussions{
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
     
     &__input{
         display: block;
