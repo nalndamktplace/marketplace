@@ -9,7 +9,7 @@ import { BASE_URL } from "../../../config/env"
 import QuoteSection from "./QuoteSection"
 import Button from "../Buttons/Button"
 
-const QuotePanel = ({ show, mobileView, preview, rendition,  bookMeta, onRemove = () => { }, hideModal = () => { } }) => {
+const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, onRemove = () => { }, hideModal = () => { } }) => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -50,7 +50,9 @@ const QuotePanel = ({ show, mobileView, preview, rendition,  bookMeta, onRemove 
                 }
             }).then(res => {
                 if (res.status === 200) {
+                    setDiscCount(res.data.length)
                     setQuotes(res.data)
+                   
                 }
                 else dispatch(setSnackbar('NOT200'))
             }).catch(err => {
@@ -88,6 +90,7 @@ const QuotePanel = ({ show, mobileView, preview, rendition,  bookMeta, onRemove 
                             }
                         }).then(res => {
                             if (res.status === 200) {
+                                setDiscCount(res.data.length)
                                 setQuotes(res.data)
                                 setPostQuotes('')
                                 console.log(res.data)
@@ -117,8 +120,6 @@ const QuotePanel = ({ show, mobileView, preview, rendition,  bookMeta, onRemove 
             <Button className='quotes__input__button' type="primary" onClick={() => handlePostQuote(PostQuote)}>Post</Button>
         </div>
       {Quotes.map(quote=><QuoteSection rendition={rendition} quote={quote} bookMeta={bookMeta} preview={preview} UserState={UserState} hideModal={hideModal} /> )  }
-     {/* {!show? <div className="quotes__discussions" >Discussions:{Quotes.length}</div>:null} */}
-     <div className="quotes__discussions" >Discussions:{Quotes.length}</div>
     </div>
 }
 

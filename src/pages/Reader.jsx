@@ -61,6 +61,7 @@ const ReaderPage = () => {
 	const [annotationSelection, setAnnotationSelection] = useState({})
 	const [showContextMenu, setShowContextMenu] = useState(false)
 	const [chapterName, setChapterName] = useState("");
+	const [discCount, setDiscCount] = useState("");
 	const [currentLocationCFI, setCurrentLocationCFI] = useState("");
 
 	const debouncedProgress = useDebounce(progress, 300)
@@ -443,6 +444,7 @@ const ReaderPage = () => {
 				</div>
 			</div>
 			<div className="reader__container">
+				{!quotePanel?<div className="quotes__discussions " >Discussions:<div className="quotes__discussions__count">{discCount}</div></div>:null}
 				<div className={pageBookmarked ? "reader__container__bookmark reader__container__bookmark--show" : "reader__container__bookmark"}></div>
 				<div className="reader__container__prev-btn">
 					<div className="reader__container__prev-btn__button" onClick={()=> rendition.prev()}>
@@ -467,7 +469,7 @@ const ReaderPage = () => {
 					<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
 				</SidePanel>
 				<SidePanel show={quotePanel} setShow={setQuotePanel} position="right" title="Quotes">
-					<QuotePanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={quotePanel} addQuotesRef={addQuotesRef} hideModal={()=>{setQuotePanel(false)}}  />
+					<QuotePanel setDiscCount={setDiscCount} preview={Preview} rendition={rendition} bookMeta={bookMeta} show={quotePanel} addQuotesRef={addQuotesRef} hideModal={()=>{setQuotePanel(false)}}  />
 				</SidePanel>
 				<SidePanel show={customizerPanel} setShow={setCustomizerPanel} position="right-bottom" title="Preferences">
 					<Customizer initialFontSize={100} rendition={rendition}/>
@@ -482,6 +484,7 @@ const ReaderPage = () => {
 					<RangeSlider value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
 				</div>
 			</nav>
+			
 		</div>
 	)
 }

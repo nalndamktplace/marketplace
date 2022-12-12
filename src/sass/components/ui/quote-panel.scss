@@ -1,9 +1,14 @@
 .quotes {
 
     &__discussions{
-        position: absolute;
-        left: 0;
-        top: 0;
+        margin-left: 2.4rem;
+        color: #8d96a5;
+        display:flex;
+    font-weight: 500;
+
+        &__count{
+            margin-left: 1rem
+        }
     }
     
     &__input{
