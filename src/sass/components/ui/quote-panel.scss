@@ -29,6 +29,15 @@
         }
     }
 
+    &__view-all{
+
+        &__button{
+            position: absolute;
+            left: 4%;
+            bottom: 0.5%;
+        }
+    }
+
     &__item {
         position: relative ;
         padding: 1.5rem ;
