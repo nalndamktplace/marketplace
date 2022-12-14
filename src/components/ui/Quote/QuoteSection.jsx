@@ -137,9 +137,6 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModa
     return (
         <div>
             <div className='quotes__item' onClick={()=>gotoPage(quote.cfi_range)}>
-                <div className="quotes__item__icon">
-                    <QuoteIcon width={32} height={32} stroke="currentColor" />
-                </div>
                 <div className="quotes__item__body typo__body">
                     {quote.body}
                 </div>

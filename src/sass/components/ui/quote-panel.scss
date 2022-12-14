@@ -29,18 +29,9 @@
         }
     }
 
-    &__view-all{
-
-        &__button{
-            position: absolute;
-            left: 4%;
-            bottom: 0.5%;
-        }
-    }
-
     &__item {
         position: relative ;
-        padding: 1.5rem ;
+        padding: 1.5rem 1.5rem 1.5rem 1rem;
         display: flex;
         cursor: pointer;
         // background-color: $color-neutral-100;
@@ -53,7 +44,7 @@
 
         &__body{
             padding-top: 4px;
-            padding-left: 2rem;
+            padding-left: 0.5rem;
         }
 
         &__time {

@@ -468,7 +468,7 @@ const ReaderPage = () => {
 				<SidePanel show={annotaionPanel} setShow={setAnnotaionPanel} position="right" title="Annotations">
 					<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
 				</SidePanel>
-				<SidePanel show={quotePanel} setShow={setQuotePanel} position="right" title="Quotes">
+				<SidePanel show={quotePanel} setShow={setQuotePanel} position="right" title="Discussions">
 					<QuotePanel setDiscCount={setDiscCount} preview={Preview} rendition={rendition} bookMeta={bookMeta} show={quotePanel} addQuotesRef={addQuotesRef} hideModal={()=>{setQuotePanel(false)}}  />
 				</SidePanel>
 				<SidePanel show={customizerPanel} setShow={setCustomizerPanel} position="right-bottom" title="Preferences">

@@ -21,8 +21,7 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
     const [Loading, setLoading] = useState(false)
     const [Quotes, setQuotes] = useState([])
     const [PostQuote, setPostQuotes] = useState('')
-    const [viewAllQuotes, setViewAllQuotes] = useState(false)
-console.log(viewAllQuotes)
+
     useEffect(() => {
         if (Loading) dispatch(showSpinner())
         else dispatch(hideSpinner())
@@ -61,25 +60,6 @@ console.log(viewAllQuotes)
             }).finally(() => setLoading(false))
         }
     }, [  WalletAddress, bookMeta, dispatch, rendition?.location ])
-
-
-    const handleViewAll = () =>{
-        axios({
-            url: `${BASE_URL}/api/book/quotes/all`,
-            method: 'GET',
-            params: {
-                bookAddress: bookMeta.book_address
-            }
-        }).then(res => {
-            if (res.status === 200) {
-                setQuotes(res.data)
-                setViewAllQuotes(true)
-            }
-            else dispatch(setSnackbar('NOT200'))
-        }).catch(err => {
-            dispatch(setSnackbar('ERROR'))
-        }).finally(() => setLoading(false))
-    }
 
 
     const handlePostQuote = useCallback(
@@ -134,13 +114,10 @@ console.log(viewAllQuotes)
 
     return <div className="panel panel__annotation">
         <div className='quotes__input'>
-            <textarea className='quotes__input__text-input' rows={6} onChange={e => setPostQuotes(e.target.value)} placeholder="Add a Quote..." type="text" value={PostQuote} />
+            <textarea className='quotes__input__text-input' rows={6} onChange={e => setPostQuotes(e.target.value)} placeholder="Start a Discussion..." type="text" value={PostQuote} />
             <Button className='quotes__input__button' type="primary" onClick={() => handlePostQuote(PostQuote)}>Post</Button>
         </div>
       {Quotes.map(quote=><QuoteSection rendition={rendition} quote={quote} bookMeta={bookMeta} preview={preview} UserState={UserState} hideModal={hideModal} /> )  }
-      {!viewAllQuotes? <div>
-        <Button className='quotes__view-all__button' type='primary' onClick={() => handleViewAll()}>View All</Button>
-      </div>:null}
     </div>
 }
 
