@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import { setSnackbar } from "../../../store/actions/snackbar"
 import { BASE_URL } from "../../../config/env"
 import { ReactComponent as CommentIcon } from '../../../assets/icons/comment.svg'
-import { ReactComponent as QuoteIcon } from "../../../assets/icons/quote.svg"
 import { ReactComponent as UserIcon } from '../../../assets/icons/user.svg'
 import { ReactComponent as LikeIcon } from '../../../assets/icons/thumbs-up.svg'
 import { ReactComponent as DislikeIcon } from '../../../assets/icons/thumbs-down.svg'
@@ -22,6 +21,7 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModa
     const [CommentSection, setCommentSection] = useState(false)
     const [postComment, setPostComment] = useState('')
     const [Comments, setComments] = useState([])
+
 
     useEffect(() => {
         axios({
@@ -42,6 +42,8 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModa
 
 
     }, [bookMeta, dispatch, rendition, preview, quote])
+
+    
 
     const postComments = () => {
         if (postComment.length > 2) {
