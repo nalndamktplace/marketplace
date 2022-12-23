@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet'
 
 import Wallet from '../connections/wallet'
 import { setWallet } from '../store/actions/wallet'
@@ -225,7 +226,11 @@ const LibraryPage = props => {
 	}
 
 	return (
-		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
+		<>
+			<Helmet>
+				<meta name='Library' content='Explore library of  books' />
+			</Helmet>
+			<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="account__data">
 				<div className="account__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
 					<FilterPanel maxPrice={maxPrice} setFiltersPanelOpen={setFiltersPanelOpen} config={ACCOUNT_PAGE_FILTERS} defaults={DEFAULT_FILTERS} filters={Filters} setFilters={setFilters}/>
@@ -257,6 +262,7 @@ const LibraryPage = props => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 

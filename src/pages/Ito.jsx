@@ -3,6 +3,7 @@ import moment from 'moment'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
+import { Helmet } from 'react-helmet'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
@@ -201,6 +202,10 @@ const ItoPublishPage = props => {
 	}
 
 	return (
+		<>
+			<Helmet>
+				<meta name='ITO' content='' />
+			</Helmet>
 		<Page noFooter={true} containerClass={'publish publish__bg'}>
 			<div className="publish__data">
 				<div className="publish__data__form utils__padding__bottom--s">
@@ -268,6 +273,7 @@ const ItoPublishPage = props => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 
