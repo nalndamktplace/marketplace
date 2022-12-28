@@ -12,7 +12,7 @@ import { ReactComponent as ClockIcon } from "../../../assets/icons/clock.svg"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 
-const ReadTime = ({mobileView, bookMeta, preview}) => {
+const ReadTime = ({timerUpdate, mobileView, bookMeta, preview}) => {
 
 	const UserState = useSelector(state => state.UserState)
 	const WalletState = useSelector(state => state.WalletState)
@@ -56,10 +56,13 @@ const ReadTime = ({mobileView, bookMeta, preview}) => {
 
 	useEffect(()=>{
 		if(!isUsable(bookMeta) && (!isUsable(WalletAddress) && (!isUsable(mobileView) && mobileView!==true))) return
-		const updateReadTime = () => {setReadTime(s => s+1)}
+		const updateReadTime = () => 	{
+			if(! timerUpdate) return
+			setReadTime(s => s+1)
+		}
 		let intervalHandler = setInterval(updateReadTime,1000)
 		return () => { clearInterval(intervalHandler) }
-	},[mobileView, bookMeta,WalletAddress])
+	}, [ timerUpdate,mobileView, bookMeta,WalletAddress])
 
 	useEffect(()=>{
 		if(!preview){
