@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import Page from '../../components/hoc/Page/Page'
 import GaTracker from '../../trackers/ga-tracker'
+import { Helmet } from 'react-helmet'
 
 const TermsConditionPage = () => {
 
@@ -9,6 +10,10 @@ const TermsConditionPage = () => {
 	}, [])
 
 	return (
+		<>
+			<Helmet>
+				<meta name='Terms' content='Terms & Conditions' />
+			</Helmet>
 		<Page showRibbion={false}>
 			<h2><strong>Terms and Conditions</strong></h2>
 			<p>Welcome to Nalnda!</p>
@@ -100,6 +105,7 @@ const TermsConditionPage = () => {
 			<p>The limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty.</p>
 			<p>As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
 		</Page>
+		</>
 	)
 }
 

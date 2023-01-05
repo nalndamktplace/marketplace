@@ -3,6 +3,7 @@ import moment from 'moment'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
+import { Helmet } from 'react-helmet'
 
 import { ethers } from 'ethers'
 import { keccak256 } from "@ethersproject/keccak256";
@@ -300,6 +301,10 @@ const PublishNftPage = props => {
 	}
 
 	return (
+		<>
+			<Helmet>
+				<meta name='Publish' content='' />
+			</Helmet>
 		<Page noFooter={true} containerClass={'publish publish__bg'}>
 			<div className="publish__data">
 				<div className="publish__data__form utils__padding__bottom--s">
@@ -366,6 +371,7 @@ const PublishNftPage = props => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useRef, useEffect, useState } from "react"
 import { useDispatch, useSelector } from 'react-redux'
+import { Helmet } from 'react-helmet'
 
 import Page from "../components/hoc/Page/Page"
 import Button from "../components/ui/Buttons/Button"
@@ -157,6 +158,10 @@ const ProfilePage = () => {
 	}, [Loading, dispatch])
 
     return ( 
+		<>
+			<Helmet>
+				<meta name='Profile' content='User Profile' />
+			</Helmet>
         <Page containerClass='profile'>
             <div className="profile__container">
                 <div className="profile__left">
@@ -192,6 +197,7 @@ const ProfilePage = () => {
                 <div className="profile__spacer"></div>
             </div>
         </Page> 
+		</>
     )
 }
 

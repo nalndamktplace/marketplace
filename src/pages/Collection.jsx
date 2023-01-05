@@ -20,6 +20,7 @@ import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import GaTracker from '../trackers/ga-tracker'
+import { Helmet } from 'react-helmet'
 
 const CollectionPage = () => {
 
@@ -166,6 +167,10 @@ const CollectionPage = () => {
 	}, [])
 
 	return (
+		<>
+		<Helmet>
+			<meta name='Collection' content='View your books collection' />
+		</Helmet>
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
@@ -195,6 +200,7 @@ const CollectionPage = () => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 

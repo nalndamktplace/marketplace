@@ -3,6 +3,7 @@ import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Helmet } from 'react-helmet'
 
 import Page from '../components/hoc/Page/Page'
 
@@ -790,6 +791,10 @@ const ListedBookPage = props => {
 	}
 
 	return (
+		<>
+			<Helmet>
+				<meta name='Listed Books' content='' />
+			</Helmet>
 		<Page>
 			<div className="book__bg">
 				<img src={BackgroundBook} alt="background" loading="lazy" />
@@ -903,6 +908,7 @@ const ListedBookPage = props => {
 				: null
 			}
 		</Page>
+		</>
 	)
 }
 

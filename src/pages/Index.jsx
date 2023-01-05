@@ -3,6 +3,7 @@ import moment from 'moment'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet'
 
 import Page from '../components/hoc/Page/Page'
 import Button from '../components/ui/Buttons/Button'
@@ -293,6 +294,10 @@ const IndexPage = (props) => {
     }, [Collections, dispatch])
 
     return (
+        <>
+       <Helmet>
+			<meta name='Home Page' content='Home Page' />
+		</Helmet>
         <Page containerClass="index" fluid>
             <Carousel showArrows={true} showStatus={false} autoPlay={true} showThumbs={false} infiniteLoop={true} transitionTime={1000} interval={5000}>
                 <div style={{height: window.visualViewport.width/2.5, width: window.visualViewport.width}}>
@@ -339,6 +344,7 @@ const IndexPage = (props) => {
                 <div className="index__medium">{renderMediumArticles()}</div>
             </div>
         </Page>
+        </>
     )
 }
 

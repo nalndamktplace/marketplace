@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router"
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import { Helmet } from "react-helmet"
 
 import Epub, { EpubCFI } from "epubjs"
 
@@ -423,6 +424,10 @@ const ReaderPage = () => {
 	}
 
 	return (
+		<>
+			<Helmet>
+				<meta name='Reader' content="Book's Reader View"/>
+			</Helmet>
 		<div className="reader">
 			<div className={"reader__header" + (showUI?" reader__header--show":"")}>
 				<div className="reader__header__left">
@@ -486,6 +491,7 @@ const ReaderPage = () => {
 			</nav>
 			
 		</div>
+		</>
 	)
 }
 

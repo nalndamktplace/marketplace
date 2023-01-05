@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Helmet } from 'react-helmet'
 
 import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
@@ -161,6 +162,10 @@ const ExplorePage = () => {
 	}
 
 	return (
+		<>
+			<Helmet>
+			<meta name='Explore' content='Explore exciting books' />
+		</Helmet>
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
@@ -192,6 +197,7 @@ const ExplorePage = () => {
 			</div>
 			<SearchModal/>
 		</Page>
+		</>
 	)
 }
 
