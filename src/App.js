@@ -42,6 +42,7 @@ const PublishNftPage = React.lazy(() => import('./pages/Publish'))
 const CollectionPage = React.lazy(() => import('./pages/Collection'))
 const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
 const TermsConditionPage = React.lazy(() => import('./pages/Policies/Terms'))
+const RefundPolicyPage = React.lazy(() => import('./pages/Policies/Refund'))
 const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 
 const rootReducer = combineReducers({
@@ -152,6 +153,10 @@ function App() {
                                 <Route
                                     path="/policy/privacy"
                                     element={<PrivacyPolicyPage />}
+                                />
+                                   <Route
+                                    path="/policy/refund"
+                                    element={<RefundPolicyPage />}
                                 />
                                 {/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
                                 {/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
