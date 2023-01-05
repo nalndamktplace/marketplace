@@ -33,6 +33,7 @@ const Footer = props => {
 				<div className="footer__row__item">
 					<div className="footer__row__item__links">
 						<p onClick={()=>navigate('/policy/privacy')} className='footer__row__item__links__item'>Privacy Policy</p>
+						<p onClick={()=>navigate('/policy/refund')} className='footer__row__item__links__item'>refund Policy</p>
 						<p onClick={()=>navigate('/policy/terms')} className='footer__row__item__links__item'>Terms &amp; Conditions</p>
 						<p onClick={()=>{GaTracker('external_link_mail');window.open("mailto:contact@nalnda.com", "_self")}} className='footer__row__item__links__item'>Support</p>
 					</div>

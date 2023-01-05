@@ -3,6 +3,7 @@ import moment from 'moment'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
+import { Helmet } from 'react-helmet'
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
@@ -31,7 +32,7 @@ const ItoPublishPage = props => {
 	const navigate = useNavigate()
 
 	const UserState = useSelector(state => state.UserState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
@@ -51,9 +52,9 @@ const ItoPublishPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		setLoading(false)
-	}, [WalletState])
+	}, [BWalletState])
 
 	useEffect(()=>{
 		const ignoreFields = ["publication","isbn","primarySales","secondarySalesDate"] ;
@@ -127,7 +128,7 @@ const ItoPublishPage = props => {
 				const languageId = LANGUAGES.indexOf(language).toString()
 				const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays())
 				if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
-					Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
+					Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, BWalletState.smartAccount.signer).then(tx => {
 						const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
 						const status = tx.status
 						const txHash = tx.transactionHash
@@ -201,6 +202,10 @@ const ItoPublishPage = props => {
 	}
 
 	return (
+		<>
+			<Helmet>
+				<meta name='ITO' content='' />
+			</Helmet>
 		<Page noFooter={true} containerClass={'publish publish__bg'}>
 			<div className="publish__data">
 				<div className="publish__data__form utils__padding__bottom--s">
@@ -268,6 +273,7 @@ const ItoPublishPage = props => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 

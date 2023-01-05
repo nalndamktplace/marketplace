@@ -16,7 +16,7 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [Loading, setLoading] = useState(false)
@@ -30,11 +30,11 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 	useEffect(() => {
 		if(!isUsable(mobileView) || mobileView === false){
 			if(isUsable(preview) && !preview){
-				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+				if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 				else navigate(-1)
 			}
 		}
-	}, [WalletState, navigate, preview, mobileView])
+	}, [BWalletState, navigate, preview, mobileView])
 
 	useEffect(() => {
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){
@@ -157,6 +157,8 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 				}).catch(err => {
 					dispatch(setSnackbar('ERROR'))
 				}).finally(() => setLoading(false))
+
+			
 			}
 		},
 		[Annotations, WalletAddress, bookMeta, dispatch, rendition, preview],

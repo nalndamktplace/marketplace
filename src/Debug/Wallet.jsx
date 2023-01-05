@@ -16,6 +16,7 @@ const WalletDebugPage = props => {
 			setProvider(res.provider)
 			setWalletInstance(res.wallet)
 		})
+
 	}
 
 	const getWalletAddress = () => {

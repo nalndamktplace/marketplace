@@ -20,6 +20,7 @@ import {ReactComponent as FilterIcon} from "../assets/icons/filter.svg"
 import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import GaTracker from '../trackers/ga-tracker'
+import { Helmet } from 'react-helmet'
 
 const CollectionPage = () => {
 
@@ -29,7 +30,7 @@ const CollectionPage = () => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Collection, setCollection] = useState(null)
 	const [Nfts, setNfts] = useState([])
@@ -44,7 +45,7 @@ const CollectionPage = () => {
 	const buyHandler = nft => {
 		GaTracker('event_collection_purchase_new')
 		setLoading(true)
-		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
+		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), BWalletState.smartAccount.signer).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
@@ -106,9 +107,9 @@ const CollectionPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		setLoading(false)
-	}, [WalletState])
+	}, [BWalletState])
 
 	useEffect(() => {
 		let nfts = AllNfts
@@ -166,6 +167,10 @@ const CollectionPage = () => {
 	}, [])
 
 	return (
+		<>
+		<Helmet>
+			<meta name='Collection' content='View your books collection' />
+		</Helmet>
 		<Page noFooter={true} showRibbion={false} noPadding={true} fluid={true} containerClass={'explore'}>
 			<div className="explore__data">
 				<div className="explore__data__filter-panel-container" data-filter-open={FiltersPanelOpen}>
@@ -195,6 +200,7 @@ const CollectionPage = () => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 

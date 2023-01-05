@@ -470,15 +470,22 @@
 							&__item {
 								position: relative ;
 								padding: 1.5rem ;
+								display: flex;
+								// background-color: $color-neutral-100;
+								border-radius: 1.5rem ;
 								&__icon {
 									position: absolute ;
-									top: 0 ;
-									left: 0 ;
-									transform: translate(-50%,-50%);
-									color: $color-neutral-200 ;
+									transform: translate(-30%,-30%);
+									color: $color-neutral-500;
+								}
+
+								&__body{
+									padding-top: 4px;
+									padding-left: 2rem;
 								}
 
 								&__time {
+									padding: 4px 16px;
 									position: absolute ;
 									right: 0 ;
 									top: 0 ;

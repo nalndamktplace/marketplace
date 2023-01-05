@@ -3,13 +3,18 @@ import moment from 'moment'
 import { useNavigate } from 'react-router'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
+import { Helmet } from 'react-helmet'
+
+import { ethers } from 'ethers'
+import { keccak256 } from "@ethersproject/keccak256";
+import { toUtf8Bytes } from "@ethersproject/strings";
 
 import Page from '../components/hoc/Page/Page'
 import InputField from '../components/ui/Input/Input'
 
 import GaTracker from '../trackers/ga-tracker'
-import Contracts from '../connections/contracts'
 
+import { deleteData } from '../helpers/storage'
 import { setSnackbar } from '../store/actions/snackbar'
 import { isFilled, isUsable } from '../helpers/functions'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
@@ -23,7 +28,8 @@ import { GENRES } from '../config/genres'
 import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
 import { AGE_GROUPS } from '../config/ages'
-import { deleteData } from '../helpers/storage'
+import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+
 
 const PublishNftPage = props => {
 
@@ -31,7 +37,7 @@ const PublishNftPage = props => {
 	const navigate = useNavigate()
 
 	const UserState = useSelector(state => state.UserState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [CoverUrl, setCoverUrl] = useState(null)
@@ -51,9 +57,9 @@ const PublishNftPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		setLoading(false)
-	}, [WalletState])
+	}, [BWalletState])
 
 	useEffect(()=>{
 		const ignoreFields = ["publication","isbn","primarySales","secondarySalesDate"] ;
@@ -119,7 +125,7 @@ const PublishNftPage = props => {
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
 				data : formData
-			}).then(res => {
+			}).then(async res => {
 				const bookUrl = res.data.book.url
 				const coverUrl = res.data.cover.url
 				let genreIDs = []
@@ -127,68 +133,162 @@ const PublishNftPage = props => {
 				const languageId = LANGUAGES.indexOf(language).toString()
 				const secondaryFromInDays = Math.round(moment.duration(FormInput.secondaryFrom - moment()).asDays())
 				if(isUsable(languageId) && isUsable(genreIDs) && !isNaN(secondaryFromInDays) && isFilled(name) && isFilled(author) && isUsable(cover) && isUsable(book) && isFilled(pages)){
-					Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, WalletState.wallet.signer).then(tx => {
-						const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
-						const status = tx.status
-						const txHash = tx.transactionHash
-						if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
-							let formData = new FormData()
-							formData.append("epub", FormInput.preview)
-							formData.append("name", name)
-							formData.append("author", author)
-							formData.append("cover", coverUrl)
-							formData.append("coverFile", FormInput.cover)
-							formData.append("book", bookUrl)
-							formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
-							formData.append("ageGroup", JSON.stringify(ageGroup.sort((a,b) => a>b)))
-							formData.append("price", price)
-							formData.append("pages", pages)
-							formData.append("publication", publication)
-							formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
-							formData.append("language", language)
-							formData.append("published", published)
-							formData.append("secondarySalesFrom", secondaryFrom)
-							formData.append("publisherAddress", WalletAddress)
-							formData.append("bookAddress", bookAddress)
-							formData.append("txHash", txHash)
-							axios({
-								url: BASE_URL+'/api/book/publish',
-								method: 'POST',
-								data: formData
-							}).then(res4 => {
-								if(res4.status === 200){
-									deleteData('publish-book-form-data')
-									setLoading(false)
-									navigate('/library', {state: {tab: 'published'}})
-								}
-								else {
-									dispatch(setSnackbar('ERROR'))
-								}
-							})
-							.catch(err => {
-								if(isUsable(err.response)){
-									if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
-									else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
-								}
-								else dispatch(setSnackbar('NOT200'))
-								setLoading(false)
-							})
+					try {
+						const erc721Interface = new ethers.utils.Interface([
+							'function createNewBook(address _author, string memory _coverURI, uint256 _initialPrice, uint256 _daysForSecondarySales, uint256 _lang, uint256[] memory _genre )'
+						])
+						const address = BWalletState.smartAccount.address
+						const data = erc721Interface.encodeFunctionData(
+							'createNewBook', [address, coverUrl, ethers.utils.parseUnits(price, 6), secondaryFromInDays, languageId, genreIDs]
+						)
+						const tx = {
+							to: MARKET_CONTRACT_ADDRESS,
+							data
 						}
-						else{
+						BWalletState.smartAccount.on('txMined', response => {
+							response.receipt.logs.forEach(log => {
+								log.topics.forEach(topic => {
+									if(topic === keccak256(toUtf8Bytes("OwnershipTransferred(address,address)"))){
+										const bookAddress = log.address
+										const txHash = response.receipt.transactionHash
+										const status = response.receipt.status
+										if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
+											let formData = new FormData()
+											formData.append("epub", FormInput.preview)
+											formData.append("name", name)
+											formData.append("author", author)
+											formData.append("cover", coverUrl)
+											formData.append("coverFile", FormInput.cover)
+											formData.append("book", bookUrl)
+											formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+											formData.append("ageGroup", JSON.stringify(ageGroup.sort((a,b) => a>b)))
+											formData.append("price", price)
+											formData.append("pages", pages)
+											formData.append("publication", publication)
+											formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
+											formData.append("language", language)
+											formData.append("published", published)
+											formData.append("secondarySalesFrom", secondaryFrom)
+											formData.append("publisherAddress", WalletAddress)
+											formData.append("bookAddress", bookAddress)
+											formData.append("txHash", txHash)
+											axios({
+												url: BASE_URL+'/api/book/publish',
+												method: 'POST',
+												data: formData
+											}).then(res4 => {
+												if(res4.status === 200){
+													deleteData('publish-book-form-data')
+													setLoading(false)
+													navigate('/library', {state: {tab: 'published'}})
+												}
+												else {
+													dispatch(setSnackbar('ERROR'))
+												}
+											})
+											.catch(err => {
+												if(isUsable(err.response)){
+													if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+													else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+												}
+												else dispatch(setSnackbar('NOT200'))
+												setLoading(false)
+											})
+										}
+										else{
+											setLoading(false)
+											if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
+											else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
+										}
+									}
+								})
+							})
+						})
+						BWalletState.smartAccount.on('error', response => {
+							console.error({error: response})
 							setLoading(false)
-							if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
-							else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
-						}
-					}).catch((err => {
-						dispatch(setSnackbar('NOT200'))
+							dispatch(setSnackbar("ERROR"))
+						})
+						const feeQuotes = await BWalletState.smartAccount.prepareRefundTransaction({transaction: tx})
+						const transaction = await BWalletState.smartAccount.createRefundTransaction({
+							transaction: tx,
+							feeQuote: feeQuotes[0]
+						})
+						const txId = await BWalletState.smartAccount.sendTransaction({
+							tx: transaction,
+							gasLimit: {
+								hex: "0x4C4B40",
+								type: "hex",
+							}
+						})
+					} catch (error) {
 						setLoading(false)
-					}))
+						console.error({error})
+						dispatch(setSnackbar('ERROR'))
+					}
+					// Contracts.listNftForSales(WalletAddress, coverUrl, price, secondaryFromInDays, languageId, genreIDs, BWalletState.smartAccount.signer).then(tx => {
+					// 	const bookAddress = tx.events.filter(event => event['event'] === "OwnershipTransferred")[0].address
+					// 	const status = tx.status
+					// 	const txHash = tx.transactionHash
+					// 	if(isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)){
+					// 		let formData = new FormData()
+					// 		formData.append("epub", FormInput.preview)
+					// 		formData.append("name", name)
+					// 		formData.append("author", author)
+					// 		formData.append("cover", coverUrl)
+					// 		formData.append("coverFile", FormInput.cover)
+					// 		formData.append("book", bookUrl)
+					// 		formData.append("genres", JSON.stringify(genres.sort((a,b) => a>b)))
+					// 		formData.append("ageGroup", JSON.stringify(ageGroup.sort((a,b) => a>b)))
+					// 		formData.append("price", price)
+					// 		formData.append("pages", pages)
+					// 		formData.append("publication", publication)
+					// 		formData.append("synopsis", synopsis.replace(/<[^>]+>/g, ''))
+					// 		formData.append("language", language)
+					// 		formData.append("published", published)
+					// 		formData.append("secondarySalesFrom", secondaryFrom)
+					// 		formData.append("publisherAddress", WalletAddress)
+					// 		formData.append("bookAddress", bookAddress)
+					// 		formData.append("txHash", txHash)
+					// 		axios({
+					// 			url: BASE_URL+'/api/book/publish',
+					// 			method: 'POST',
+					// 			data: formData
+					// 		}).then(res4 => {
+					// 			if(res4.status === 200){
+					// 				deleteData('publish-book-form-data')
+					// 				setLoading(false)
+					// 				navigate('/library', {state: {tab: 'published'}})
+					// 			}
+					// 			else {
+					// 				dispatch(setSnackbar('ERROR'))
+					// 			}
+					// 		})
+					// 		.catch(err => {
+					// 			if(isUsable(err.response)){
+					// 				if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
+					// 				else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
+					// 			}
+					// 			else dispatch(setSnackbar('NOT200'))
+					// 			setLoading(false)
+					// 		})
+					// 	}
+					// 	else{
+					// 		setLoading(false)
+					// 		if(!isUsable(txHash)) dispatch(setSnackbar({show: true, message: "The transaction to mint eBook failed.", type: 3}))
+					// 		else dispatch(setSnackbar({show: true, message: `The transaction to mint eBook failed.\ntxhash: ${txHash}`, type: 3}))
+					// 	}
+					// }).catch((err => {
+					// 	dispatch(setSnackbar('NOT200'))
+					// 	setLoading(false)
+					// }))
 				}
 				else{
 					dispatch(setSnackbar({show: true, message: "Incomplete details", type: 3}))
 					setLoading(false)
 				}
 			}).catch(err => {
+				console.error({err})
 				if(isUsable(err.response)){
 					if(err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
 					else if(err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
@@ -201,6 +301,10 @@ const PublishNftPage = props => {
 	}
 
 	return (
+		<>
+			<Helmet>
+				<meta name='Publish' content='' />
+			</Helmet>
 		<Page noFooter={true} containerClass={'publish publish__bg'}>
 			<div className="publish__data">
 				<div className="publish__data__form utils__padding__bottom--s">
@@ -267,6 +371,7 @@ const PublishNftPage = props => {
 				</div>
 			</div>
 		</Page>
+		</>
 	)
 }
 

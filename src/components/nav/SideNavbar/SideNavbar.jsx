@@ -17,9 +17,20 @@ import {ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
 import {ReactComponent as TelegramIcon} from "../../../assets/icons/telegram.svg"
 import {ReactComponent as ArrowLeftIcon} from "../../../assets/icons/arrow-left.svg"
 
-const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
 
-	const Auth0 = useAuth0()
+import {useWeb3AuthContext} from '../../../contexts/SocialLoginContext'
+
+const SideNavbar = ({MenuOpen,setMenuOpen,BWalletState,toggleMenu,handleWalletConnect,NAV_ITEMS}) => {
+
+	const {
+		address,
+		loading: eoaLoading,
+		userInfo,
+		connect,
+		disconnect,
+		getUserInfo,
+		provider,
+	} = useWeb3AuthContext();
 	const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -35,9 +46,8 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		{name:"github",uri:"https://github.com/nalndamktplace",icon:<GithubIcon />}
 	]
 
-	const loginHandler = () => {
-		GaTracker('event_sidenavbar_login')
-		Auth0.loginWithRedirect()
+	const loginHandler = async () => {
+		connect();
 	}
 
 	useEffect(()=>{
@@ -89,8 +99,8 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		let itemsDOM = []
 
 		item.subMenu.forEach(navItem => {
-			if(navItem.id === "NI4SMI2" && isWalletConnected(WalletState)){}
-			else if(navItem.id === "NI4SMI3" && !isWalletConnected(WalletState)){}
+			if(navItem.id === "NI4SMI2" && BWalletState.smartAccount){}
+			else if(navItem.id === "NI4SMI3" && !BWalletState.smartAccount){}
 			else itemsDOM.push(<div onClick={()=>{menuItemClickHandler(navItem);setSubMenuOpen(false)}} key={navItem.id} className='side-navbar__container__item typo__head typo__head--4 utils__cursor--pointer'>{renderContent(navItem)}</div>)
 		})
 		return itemsDOM
@@ -121,10 +131,10 @@ const SideNavbar = ({MenuOpen,setMenuOpen,WalletState,toggleMenu,handleWalletCon
 		return domElements
 	}
 
-	useEffect(() => {
-		if(Auth0.isLoading) dispatch(showSpinner())
-		else dispatch(hideSpinner())
-	}, [Auth0.isLoading, dispatch])
+	// useEffect(() => {
+	// 	if(Auth0.isLoading) dispatch(showSpinner())
+	// 	else dispatch(hideSpinner())
+	// }, [Auth0.isLoading, dispatch])
 
     return (
         <div className={getMenuClasses()}>

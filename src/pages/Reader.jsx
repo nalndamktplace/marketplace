@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router"
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import { Helmet } from "react-helmet"
 
 import Epub, { EpubCFI } from "epubjs"
 
@@ -11,6 +12,7 @@ import ReadTimer from "../components/ui/ReadTime/ReadTime"
 import SidePanel from "../components/hoc/SidePanel/SidePanel"
 import Customizer from "../components/ui/Customizer/Customizer"
 import AnnotationPanel from "../components/ui/Annotation/AnnotationPanel"
+import QuotePanel from "../components/ui/Quote/QuotePanel"
 import AnnotationContextMenu from "../components/ui/Annotation/AnnotationContextMenu"
 
 import { isFilled, isUsable } from "../helpers/functions"
@@ -25,6 +27,7 @@ import { ReactComponent as BlockquoteIcon } from "../assets/icons/block-quote.sv
 import { ReactComponent as MaximizeIcon } from "../assets/icons/maximize.svg"
 import { ReactComponent as MinimizeIcon } from "../assets/icons/minimize.svg"
 import { ReactComponent as ListIcon } from "../assets/icons/list.svg"
+import { ReactComponent as CommunicationIcon } from "../assets/icons/communication.svg"
 
 import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
@@ -40,7 +43,7 @@ const ReaderPage = () => {
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const WalletState = useSelector(state => state.WalletState.wallet)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [readTime, setReadTime] = useState(0)
 	const [Preview, setPreview] = useState(null)
@@ -50,6 +53,7 @@ const ReaderPage = () => {
 	const [rendition, setRendition] = useState()
 	const [fullscreen, setFullscreen] = useState(false)
 	const [annotaionPanel, setAnnotaionPanel] = useState(false)
+	const [quotePanel, setQuotePanel] = useState(false)
 	const [pageBookmarked, setPageBookmarked] = useState(false)
 	const [totalLocations, setTotalLocations] = useState(0)
 	const [customizerPanel, setCustomizerPanel] = useState(false)
@@ -59,11 +63,13 @@ const ReaderPage = () => {
 	const [annotationSelection, setAnnotationSelection] = useState({})
 	const [showContextMenu, setShowContextMenu] = useState(false)
 	const [chapterName, setChapterName] = useState("");
+	const [discCount, setDiscCount] = useState("");
 	const [currentLocationCFI, setCurrentLocationCFI] = useState("");
 	const [timerUpdate, setTimerUpdate] = useState(true)
 
 	const debouncedProgress = useDebounce(progress, 300)
 	const addAnnotationRef = useRef()
+	const addQuotesRef = useRef()
 	const seeking = useRef(false);
 
 	const connectWallet = useCallback(
@@ -117,11 +123,11 @@ const ReaderPage = () => {
 	)
 
 	const hideAllPanel = useCallback(
-		({customizer=true,annotation=true,toc=true}={}) => {
-			startTimer()
+		({customizer=true,annotation=true,quote=true,toc=true}={}) => {
 			GaTracker('event_reader_panels_hide')
 			customizer && setCustomizerPanel(false)
 			annotation && setAnnotaionPanel(false)
+			quote && setQuotePanel(false)
 			toc && setTocPanel(false)
 		},
 		[]
@@ -147,10 +153,10 @@ const ReaderPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		else connectWallet()
 		setLoading(false)
-	}, [WalletState, connectWallet])
+	}, [BWalletState, connectWallet])
 
 	useEffect(()=>{
 		hideAllPanel()
@@ -453,6 +459,10 @@ const ReaderPage = () => {
 
 
 	return (
+		<>
+			<Helmet>
+				<meta name='Reader' content="Book's Reader View"/>
+			</Helmet>
 		<div className="reader">
 			<div className={"reader__header" + (showUI?" reader__header--show":"")}>
 				<div className="reader__header__left">
@@ -469,11 +479,13 @@ const ReaderPage = () => {
 					<Button className="reader__header__right__hide-on-mobile" type="icon" onClick={()=>setFullscreen(s=>!s)}> {fullscreen?<MinimizeIcon/>:<MaximizeIcon/>} </Button>
 					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s);startTimer()}} > <ListIcon/> </Button>
 					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s);startTimer()}} > <BlockquoteIcon/> </Button>
+					<Button type="icon" className={quotePanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({quotePanel:false});setQuotePanel(s=>!s);startTimer()}} > <CommunicationIcon/> </Button>
 					<Button type="icon" className={pageBookmarked?"reader__header__right__button--active":""} onClick={toggleBookMark} ><BookmarkIcon /></Button>
 					<Button type="icon" className={customizerPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s);startTimer()}}><LetterCaseIcon /></Button>
 				</div>
 			</div>
 			<div className="reader__container">
+				{!quotePanel?<div className="quotes__discussions " >Discussions:<div className="quotes__discussions__count">{discCount}</div></div>:null}
 				<div className={pageBookmarked ? "reader__container__bookmark reader__container__bookmark--show" : "reader__container__bookmark"}></div>
 				<div className="reader__container__prev-btn">
 					<div className="reader__container__prev-btn__button" onClick={()=> {rendition.prev();startTimer()}}>
@@ -497,6 +509,9 @@ const ReaderPage = () => {
 				<SidePanel show={annotaionPanel} setShow={setAnnotaionPanel} position="right" title="Annotations">
 					<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false); startTimer()}} onRemove={()=>{setAnnotaionPanel(false)}} />
 				</SidePanel>
+				<SidePanel show={quotePanel} setShow={setQuotePanel} position="right" title="Discussions">
+					<QuotePanel setDiscCount={setDiscCount} preview={Preview} rendition={rendition} bookMeta={bookMeta} show={quotePanel} addQuotesRef={addQuotesRef} hideModal={()=>{setQuotePanel(false)}}  />
+				</SidePanel>
 				<SidePanel show={customizerPanel} setShow={setCustomizerPanel} position="right-bottom" title="Preferences">
 					<Customizer initialFontSize={100} rendition={rendition}/>
 				</SidePanel>
@@ -510,7 +525,9 @@ const ReaderPage = () => {
 					<RangeSlider value={progress} onChange={handlePageUpdate} max={totalLocations} className="reader__nav__progress" />
 				</div>
 			</nav>
+			
 		</div>
+		</>
 	)
 }
 

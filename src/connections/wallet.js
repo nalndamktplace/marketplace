@@ -1,39 +1,46 @@
-import { ethers } from "ethers"
-import Web3Modal from "web3modal"
+import { ethers } from 'ethers'
+import Web3Modal from 'web3modal'
+
 import { isUsable } from '../helpers/functions'
+import providerOptions from './providerOptions'
 
-import providerOptions from "./providerOptions"
+import { ChainId } from '@biconomy/core-types'
 
-const web3Modal = new Web3Modal({
-	cacheProvider: true,
-	network: "polygon",
-	providerOptions
-})
+import SmartAccount from '@biconomy/smart-account'
+import SocialLogin from '@biconomy/web3-auth'
 
-const Wallet = {
-	web3Modal,
-	connectWallet: async () => {
-		const provider = await web3Modal.connect()
-		const ethersProvider = new ethers.providers.Web3Provider(provider)
-		if (isUsable(provider.sequence)) ethersProvider.sequence = provider.sequence
-		const signer = ethersProvider.getSigner()
-		const address = await signer.getAddress()
-		const balance = (await ethersProvider.getBalance("fEc014B41506430F055ceff9A007e690D409b304")).toNumber()
-		console.log({balance})
-		const network = (await ethersProvider.getNetwork()).chainId
-		console.log({network})
-		const accounts = (await ethersProvider.listAccounts())
-		console.log({accounts})
-		return {wallet: ethersProvider, provider, signer, address, network, accounts}
-	},
-	disconnectWallet: async () => {
-		web3Modal.clearCachedProvider()
-	},
-	signMessage: async (signer, message) => {
-		const sig = await signer.signMessage(message)
-		return {signedData: sig, isValid: true}
-	}
+import { setSmartAccount } from '../store/actions/bwallet'
+import { useWeb3AuthContext } from '../contexts/SocialLoginContext'
 
+async function Wallet(provider, dispatch) {
+    const walletProvider = new ethers.providers.Web3Provider(provider)
+
+    // Initialize the Smart Account
+
+    let options = {
+        activeNetworkId: ChainId.POLYGON_MUMBAI,
+        supportedNetworksIds: [ChainId.POLYGON_MUMBAI],
+    }
+
+    let smartAccount = new SmartAccount(walletProvider, options)
+    smartAccount = await smartAccount.init()
+    dispatch(setSmartAccount({ smartAccount }))
+    const smartAccountSigner = smartAccount.signer
+    const address = smartAccount.address
+    console.log('address', address)
+    const checkBalance = async () => {
+        const balanceParams = {
+            chainId: ChainId.POLYGON_MUMBAI, // chainId of your choice
+            eoaAddress: smartAccount.address,
+            tokenAddresses: ['0xfEc014B41506430F055ceff9A007e690D409b304'],
+        }
+        const balFromSdk = await smartAccount.getAlltokenBalances(balanceParams)
+        console.info('getAlltokenBalances', balFromSdk)
+
+        const usdBalFromSdk = await smartAccount.getTotalBalanceInUsd(balanceParams)
+        console.info('getTotalBalanceInUsd', usdBalFromSdk)
+    }
+    checkBalance()
 }
 
 export default Wallet
