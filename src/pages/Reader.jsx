@@ -45,6 +45,7 @@ const ReaderPage = () => {
 	const navigate = useNavigate()
 	const BWalletState = useSelector(state => state.BWalletState)
 
+	const [readTime, setReadTime] = useState(0)
 	const [Preview, setPreview] = useState(null)
 	const [Loading, setLoading] = useState(false)
 	const [bookMeta, setBookMeta] = useState({})
@@ -64,6 +65,7 @@ const ReaderPage = () => {
 	const [chapterName, setChapterName] = useState("");
 	const [discCount, setDiscCount] = useState("");
 	const [currentLocationCFI, setCurrentLocationCFI] = useState("");
+	const [timerUpdate, setTimerUpdate] = useState(true)
 
 	const debouncedProgress = useDebounce(progress, 300)
 	const addAnnotationRef = useRef()
@@ -334,11 +336,13 @@ const ReaderPage = () => {
 	},[rendition,bookMeta])
 
 	const handlePageUpdate = (e) => {
+		startTimer()
 		seeking.current = true ;
 		setProgress(e.target.value)
 	}
 
 	const openFullscreen = () => {
+		startTimer()
 		var elem = document.documentElement
 		if (elem.requestFullscreen) elem.requestFullscreen()
 		else if (elem.webkitRequestFullscreen)elem.webkitRequestFullscreen()
@@ -346,6 +350,7 @@ const ReaderPage = () => {
 	}
 
 	const closeFullscreen = () => {
+		startTimer()
 		if(!document.fullscreenElement) return
 		if (document.exitFullscreen) document.exitFullscreen()
 		else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
@@ -353,6 +358,7 @@ const ReaderPage = () => {
 	}
 
 	const handleAnnotationColorSelect = (color) => {
+		startTimer()
 		if(!isUsable(annotationSelection)) return
 		if(!isUsable(rendition)) return
 		if(!isUsable(bookMeta)) return
@@ -419,9 +425,38 @@ const ReaderPage = () => {
 	}
 
 	const toggleBookMark = () => {
+		startTimer()
 		if(isCurrentPageBookmarked()===true) removeBookMark();
 		else addBookMark();
 	}
+
+	useEffect(()=>{
+		if(!isUsable(bookMeta) && (!isUsable(WalletAddress))) return
+		const updateReadTime = () => {setReadTime(s => s+1)}
+		let intervalHandler = setInterval(updateReadTime,1000)
+		return () => { clearInterval(intervalHandler) }
+	},[ bookMeta, WalletAddress])
+
+	useEffect(()=>{
+		function resetTimer(){
+			if(readTime >= 1000)
+			{
+				setTimerUpdate(false)
+				setReadTime(0)
+			}
+		}
+		resetTimer()
+	})
+
+
+
+	function startTimer(){
+		setTimerUpdate(true)
+		setReadTime(0)
+	}
+
+	
+
 
 	return (
 		<>
@@ -433,7 +468,8 @@ const ReaderPage = () => {
 				<div className="reader__header__left">
 					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 					<div className="reader__header__left__timer">
-						{rendition && <ReadTimer preview={Preview} bookMeta={bookMeta}/>}
+						<span class="reader__header__left__timer__dot"></span>
+						{rendition && <ReadTimer preview={Preview} bookMeta={bookMeta} rendition={rendition}/>}
 					</div>
 				</div>
 				<div className="reader__header__center">
@@ -441,24 +477,24 @@ const ReaderPage = () => {
 				</div> 
 				<div className="reader__header__right">
 					<Button className="reader__header__right__hide-on-mobile" type="icon" onClick={()=>setFullscreen(s=>!s)}> {fullscreen?<MinimizeIcon/>:<MaximizeIcon/>} </Button>
-					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s)}} > <ListIcon/> </Button>
-					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s)}} > <BlockquoteIcon/> </Button>
-					<Button type="icon" className={quotePanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({quotePanel:false});setQuotePanel(s=>!s)}} > <CommunicationIcon/> </Button>
+					<Button type="icon" className={tocPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({toc:false});setTocPanel(s=>!s);startTimer()}} > <ListIcon/> </Button>
+					<Button type="icon" className={annotaionPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({annotation:false});setAnnotaionPanel(s=>!s);startTimer()}} > <BlockquoteIcon/> </Button>
+					<Button type="icon" className={quotePanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({quotePanel:false});setQuotePanel(s=>!s);startTimer()}} > <CommunicationIcon/> </Button>
 					<Button type="icon" className={pageBookmarked?"reader__header__right__button--active":""} onClick={toggleBookMark} ><BookmarkIcon /></Button>
-					<Button type="icon" className={customizerPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s)}}><LetterCaseIcon /></Button>
+					<Button type="icon" className={customizerPanel?"reader__header__right__button--active":""} onClick={()=>{hideAllPanel({customizer:false});setCustomizerPanel(s=>!s);startTimer()}}><LetterCaseIcon /></Button>
 				</div>
 			</div>
 			<div className="reader__container">
 				{!quotePanel?<div className="quotes__discussions " >Discussions:<div className="quotes__discussions__count">{discCount}</div></div>:null}
 				<div className={pageBookmarked ? "reader__container__bookmark reader__container__bookmark--show" : "reader__container__bookmark"}></div>
 				<div className="reader__container__prev-btn">
-					<div className="reader__container__prev-btn__button" onClick={()=> rendition.prev()}>
+					<div className="reader__container__prev-btn__button" onClick={()=> {rendition.prev();startTimer()}}>
 						<ChevronLeftIcon width={32} stroke="currentColor" />
 					</div>
 				</div>
 				<div id="book__reader" className="reader__container__book"></div>
 				<div className="reader__container__next-btn">
-					<div className="reader__container__next-btn__button" onClick={()=> rendition.next()}>
+					<div className="reader__container__next-btn__button" onClick={()=> {rendition.next();startTimer()}}>
 						<ChevronRightIcon width={32} stroke="currentColor" />
 					</div>
 				</div>
@@ -471,7 +507,7 @@ const ReaderPage = () => {
 					<TocPanel onSelect={()=>{hideAllPanel({toc: false});setTocPanel(false)}} rendition={rendition}/>
 				</SidePanel>
 				<SidePanel show={annotaionPanel} setShow={setAnnotaionPanel} position="right" title="Annotations">
-					<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false)}} onRemove={()=>{setAnnotaionPanel(false)}} />
+					<AnnotationPanel preview={Preview} rendition={rendition} bookMeta={bookMeta} show={annotaionPanel} addAnnotationRef={addAnnotationRef} hideModal={()=>{setAnnotaionPanel(false); startTimer()}} onRemove={()=>{setAnnotaionPanel(false)}} />
 				</SidePanel>
 				<SidePanel show={quotePanel} setShow={setQuotePanel} position="right" title="Discussions">
 					<QuotePanel setDiscCount={setDiscCount} preview={Preview} rendition={rendition} bookMeta={bookMeta} show={quotePanel} addQuotesRef={addQuotesRef} hideModal={()=>{setQuotePanel(false)}}  />
