@@ -157,6 +157,8 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 				}).catch(err => {
 					dispatch(setSnackbar('ERROR'))
 				}).finally(() => setLoading(false))
+
+			
 			}
 		},
 		[Annotations, WalletAddress, bookMeta, dispatch, rendition, preview],
