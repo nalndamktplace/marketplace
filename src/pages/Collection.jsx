@@ -30,7 +30,7 @@ const CollectionPage = () => {
 	const navigate = useNavigate()
 	const dispatch = useDispatch()
 
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Collection, setCollection] = useState(null)
 	const [Nfts, setNfts] = useState([])
@@ -45,7 +45,7 @@ const CollectionPage = () => {
 	const buyHandler = nft => {
 		GaTracker('event_collection_purchase_new')
 		setLoading(true)
-		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), WalletState.wallet.signer).then(res => {
+		Contracts.purchaseNft(WalletAddress, nft.book_address, nft.price.toString(), BWalletState.smartAccount.signer).then(res => {
 			dispatch(setSnackbar({show: true, message: "Book purchased.", type: 1}))
 			const tokenId = Number(res.events.filter(event => event.eventSignature === "Transfer(address,address,uint256)")[0].args[2]._hex)
 			axios({
@@ -107,9 +107,9 @@ const CollectionPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		setLoading(false)
-	}, [WalletState])
+	}, [BWalletState])
 
 	useEffect(() => {
 		let nfts = AllNfts

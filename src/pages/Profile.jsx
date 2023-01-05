@@ -20,14 +20,23 @@ import { hideSpinner, showSpinner } from '../store/actions/spinner'
 import { setWallet } from '../store/actions/wallet'
 import Wallet from '../connections/wallet'
 
+import {useWeb3AuthContext} from '../contexts/SocialLoginContext'
+import {useSmartAccountContext } from "../contexts/SmartAccountContext";
+
 const ProfilePage = () => {
+
+	const {
+		address,
+		connect,
+		provider,
+	} = useWeb3AuthContext();
 
 	const dispatch = useDispatch()
 
 	const fileInputRef = useRef()
 
 	const UserState = useSelector(state => state.UserState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [FormInput, setFormInput] = useState({fullName: '', bio: '', displayPic: null})
@@ -41,7 +50,7 @@ const ProfilePage = () => {
 				url: BASE_URL+'/api/user/profile',
 				method: 'PUT',
 				headers: {
-					'address': WalletState.wallet.address,
+					'address': BWalletState.smartAccount.address,
 					'user-id': UserState.user.uid,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
@@ -65,8 +74,8 @@ const ProfilePage = () => {
 	}
 
 	const walletHandler = () => {
-		if(isUsable(WalletState.wallet.wallet))
-			WalletState.wallet.wallet.sequence.openWallet()
+		// if(isUsable(WalletState.wallet.wallet))
+		// 	WalletState.wallet.wallet.sequence.openWallet()
 	}
 
 	const handleFileChange = (e) => {
@@ -78,7 +87,7 @@ const ProfilePage = () => {
 				url: BASE_URL+'/api/user/profile/pic',
 				method: 'PUT',
 				headers: {
-					'address': WalletState.wallet.address,
+					'address': BWalletState.smartAccount.address,
 					'user-id': UserState.user.uid,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
@@ -101,13 +110,18 @@ const ProfilePage = () => {
 		}
 	}
 
+	const loginHandler = async () => {
+		connect();
+	}
+
 	const walletOnClickHandler = () => {
 		GaTracker('event_profile_wallet')
-		if(isWalletConnected(WalletState)){}
+		if(BWalletState.smartAccount){}
 		else{
-			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-			}).catch(err => { })
+			if(!address){
+				loginHandler();
+			}
+			Wallet(provider, dispatch);
 		}
 	}
 
@@ -136,7 +150,7 @@ const ProfilePage = () => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [UserState, dispatch, WalletState])
+	}, [UserState, dispatch, BWalletState])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -169,8 +183,8 @@ const ProfilePage = () => {
                         <div className="profile__details__connect__icon">
                             <WalletIcon width={32} height={32} stroke="currentColor"/>
                         </div>
-                        <div className="profile__details__connect__label typo__head--6">Wallet: {WalletState.wallet.address}</div>
-                        <Button type="primary" onClick={()=>walletOnClickHandler()}>{isWalletConnected(WalletState)?"open":"Connect"}</Button>
+                        <div className="profile__details__connect__label typo__head--6">Wallet: {BWalletState.smartAccount.address}</div>
+                        <Button type="primary" onClick={()=>walletOnClickHandler()}>{BWalletState.smartAccount?"open":"Connect"}</Button>
                     </div>
                     <div className="profile__details__connect">
                         <div className="profile__details__connect__icon">

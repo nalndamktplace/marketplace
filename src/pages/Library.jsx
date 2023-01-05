@@ -23,7 +23,15 @@ import {ReactComponent as GridViewIcon} from "../assets/icons/layout-grid.svg"
 import {ReactComponent as ListViewIcon} from "../assets/icons/layout-list.svg"
 import GaTracker from '../trackers/ga-tracker'
 
+import { useWeb3AuthContext } from '../contexts/SocialLoginContext'
+
 const LibraryPage = props => {
+
+	const {
+		connect,
+		address,
+		provider,
+	} = useWeb3AuthContext();
 
 	const DEFAULT_FILTERS = [{key: 'price', value: null, type: 'range'}, {key: 'genres', value: [], type: 'multiselect'}, {key: 'age_group', value: [], type: 'multiselect'}, {key: 'orderby', value: null, type: 'select'}, {key: 'decayscore', value: null, type: 'range'}]
 
@@ -32,7 +40,7 @@ const LibraryPage = props => {
 	const dispatch = useDispatch()
 
 	const UserState = useSelector(state => state.UserState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Nfts, setNfts] = useState([])
 	const [AllNfts, setAllNfts] = useState([])
@@ -50,14 +58,17 @@ const LibraryPage = props => {
 		if(ActiveTab === 0) GaTracker('tab_view_account_owned')
 		else GaTracker('tab_view_account_published')
 	}, [ActiveTab])
+	
+	const loginHandler = async () => {
+		connect();
+	}
 
 	const connectWallet = useCallback(
 		() => {
-			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-			}).catch(err => {
-				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-			}).finally(() => setLoading(false))
+			if(!address){
+				loginHandler();
+			}
+			Wallet(provider, dispatch);
 		},[dispatch]
 	)
 
@@ -116,10 +127,10 @@ const LibraryPage = props => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		else connectWallet()
 		setLoading(false)
-	}, [WalletState, connectWallet])
+	}, [BWalletState, connectWallet])
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -182,7 +193,7 @@ const LibraryPage = props => {
 			}).then(res => {
 				if(res.status === 200){
 					const messageToSign = res.data
-					Wallet.signMessage(WalletState.wallet.signer, JSON.stringify(messageToSign)).then(res => {
+					Wallet.signMessage(BWalletState.smartAccount.signer, JSON.stringify(messageToSign)).then(res => {
 						if(res.isValid === true){
 							axios({
 								url : BASE_URL + '/api/verify',

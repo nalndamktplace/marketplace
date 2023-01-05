@@ -22,15 +22,15 @@ const FeedbackModal = () => {
 
 	const UserState = useSelector(state => state.UserState)
 	const ModalState = useSelector(state => state.ModalState)
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
     const [Show, setShow] = useState(false)
     const [FeedbackForm, setFeedbackForm] = useState({category:FEEDBACK_CATEGORIES[0].id,feedback:""});
 	const [WalletAddress, setWalletAddress] = useState();
 
 	useEffect(() => {
-		if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
-	}, [WalletState])
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
+	}, [BWalletState])
 
 	useEffect(() => {
 		if(ModalState.show === true && ModalState.type === SHOW_FEEDBACK_MODAL){

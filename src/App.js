@@ -18,6 +18,7 @@ import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 import DarkModeReducer from './store/reducers/darkmode'
+import BWalletReducer from './store/reducers/bwallet'
 
 import IndexPage from './pages/Index'
 //	/*	Page to debug App
@@ -41,26 +42,28 @@ const PublishNftPage = React.lazy(() => import('./pages/Publish'))
 const CollectionPage = React.lazy(() => import('./pages/Collection'))
 const PrivacyPolicyPage = React.lazy(() => import('./pages/Policies/Privacy'))
 const TermsConditionPage = React.lazy(() => import('./pages/Policies/Terms'))
+const RefundPolicyPage = React.lazy(() => import('./pages/Policies/Refund'))
 const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 
 const rootReducer = combineReducers({
     UserState: UserReducer,
     ModalState: ModalReducer,
-    WalletState: WalletReducer,
+    // WalletState: WalletReducer,
     SpinnerState: SpinnerReducer,
     SnackbarState: SnackbarReducer,
     DarkModeState: DarkModeReducer,
+    BWalletState: BWalletReducer
 })
 
 const store = createStore(rootReducer)
 
 function App() {
     let navigate = useNavigate()
-
+    
     const onRedirectCallback = (appState) => {
         navigate(appState?.returnTo || window.location.pathname)
     }
-
+    
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}
@@ -121,7 +124,11 @@ function App() {
                                 />
                                 <Route
                                     path="/profile"
-                                    element={<ProfilePage />}
+                                    element={
+                                        <ProtectedRoute
+                                            element={<ProfilePage />}
+                                        />
+                                    }
                                 />
                                 <Route
                                     path="/library"
@@ -146,6 +153,10 @@ function App() {
                                 <Route
                                     path="/policy/privacy"
                                     element={<PrivacyPolicyPage />}
+                                />
+                                   <Route
+                                    path="/policy/refund"
+                                    element={<RefundPolicyPage />}
                                 />
                                 {/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
                                 {/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}

@@ -17,7 +17,7 @@ const BookMarkPanel = ({mobileView, preview, rendition, bookMeta, onAdd=()=>{}, 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const WalletState = useSelector(state => state.WalletState)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Loading, setLoading] = useState(true)
 	const [bookmarks, setBookmarks] = useState([])
@@ -56,11 +56,11 @@ const BookMarkPanel = ({mobileView, preview, rendition, bookMeta, onAdd=()=>{}, 
 	useEffect(() => {
 		if(!isUsable(mobileView) || mobileView === false){
 			if(isUsable(preview) && !preview){
-				if(isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+				if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 				else navigate(-1)
 			}
 		}
-	}, [mobileView, WalletState, navigate, preview])
+	}, [mobileView, BWalletState, navigate, preview])
 
 	const renderBookmarkedItems = () => {
 		let domItems = []

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import axios from 'axios'
 import moment from 'moment'
-import { useAuth0 } from '@auth0/auth0-react'
 
 import { clearWallet } from '../../../store/actions/wallet'
 import { setSnackbar } from '../../../store/actions/snackbar'
@@ -13,12 +12,14 @@ import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 import Constants from '../../../config/constants'
 import { BASE_URL } from '../../../config/env'
 import { getData, logout } from '../../../helpers/storage'
-import { isUsable, isUserLoggedIn } from '../../../helpers/functions'
+import { isFilled, isUserLoggedIn, isUsable } from '../../../helpers/functions'
 import GaTracker from '../../../trackers/ga-tracker'
 
-const UserHOC = props => {
 
-	const Auth0 = useAuth0()
+import {useWeb3AuthContext} from '../../../contexts/SocialLoginContext'
+import {useSmartAccountContext } from "../../../contexts/SmartAccountContext";
+
+const UserHOC = props => {
 
 	const dispatch = useDispatch()
 
@@ -26,23 +27,68 @@ const UserHOC = props => {
 
 	const [Loading, setLoading] = useState(false)
 
-	useEffect(() => {
-		if(isUsable(Auth0.error)) dispatch(setSnackbar('ERROR'))
-	}, [Auth0.error, dispatch])
+	const {
+		address,
+		loading: eoaLoading,
+		userInfo,
+		connect,
+		disconnect,
+		getUserInfo,
+	} = useWeb3AuthContext();
+	const {
+		selectedAccount,
+		loading: scwLoading,
+		setSelectedAccount,
+	  } = useSmartAccountContext();
+
+	// useEffect(() => {
+	// 	if(isUsable(Auth0.error)) dispatch(setSnackbar('ERROR'))
+	// }, [Auth0.error, dispatch])
 
 	useEffect(() => {
-		if(Loading || Auth0.isLoading) dispatch(showSpinner())
+		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
-	}, [Loading, Auth0.isLoading, dispatch])
+	}, [Loading, dispatch])
 
+	useEffect(() =>{
+		if(address){
+			setLoading(true)
+			getUserInfo();
+		}
+	}, [address])
 	useEffect(() => {
 		GaTracker('event_userHoc_login')
-		if(Auth0.isAuthenticated && isUsable(Auth0.user)){
+		if(address && isUsable(userInfo)){
+			let subSocial = userInfo.typeOfLogin
+			if(subSocial == "google") subSocial = "google-oauth2";
+			let sub = subSocial + '|' + userInfo.email;
+			let given_name, family_name;
+			if(userInfo.name.search(' ')!=-1){
+				given_name = userInfo.name.split(' ')[0];
+				family_name = userInfo.name.split(' ')[1];
+			} else{
+				given_name=userInfo.name;
+				family_name="";
+			}
+			
+			let picture = userInfo.profileImage
+			let nickName = userInfo.email.split('@')[0];
+			const userData = {
+				email: userInfo.email,
+				email_verified: true,
+				given_name,
+				family_name,
+				locale: "en",
+				name: userInfo.name,
+				nickName,
+				picture,
+				sub
+			}
 			setLoading(true)
 			axios({
 				url: `${BASE_URL}/api/user/oauth/login`,
 				method: 'POST',
-				data: Auth0.user
+				data: userData
 			}).then(res => {
 				if(res.status === 200) {
 					dispatch(setUser(res.data))
@@ -51,7 +97,7 @@ const UserHOC = props => {
 				dispatch(setSnackbar('ERROR'))
 			}).finally(() => setLoading(false))
 		}
-	}, [Auth0.isAuthenticated ,Auth0.user, dispatch])
+	}, [address,userInfo, dispatch])
 
 	useEffect(() => {
 		if(!isUserLoggedIn(UserState)){
@@ -60,7 +106,6 @@ const UserHOC = props => {
 				const accessTokenExpiry = userData.tokens.acsTkn.exp
 				if(moment(accessTokenExpiry).diff(moment())<0){
 					GaTracker('event_userHoc_jwt_expire')
-					Auth0.logout()
 					dispatch(unsetUser())
 					dispatch(clearWallet())
 					dispatch(setSnackbar({show: true, message: "You have been logged out.", type: 3}))
@@ -68,7 +113,7 @@ const UserHOC = props => {
 				}
 			}
 		}
-	}, [UserState, dispatch, Auth0])
+	}, [UserState, dispatch])
 
 	return null
 }
