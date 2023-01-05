@@ -18,6 +18,7 @@ import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 import DarkModeReducer from './store/reducers/darkmode'
+import BWalletReducer from './store/reducers/bwallet'
 
 import IndexPage from './pages/Index'
 //	/*	Page to debug App
@@ -46,21 +47,22 @@ const ListedBookPage = React.lazy(() => import('./pages/ListedBook'))
 const rootReducer = combineReducers({
     UserState: UserReducer,
     ModalState: ModalReducer,
-    WalletState: WalletReducer,
+    // WalletState: WalletReducer,
     SpinnerState: SpinnerReducer,
     SnackbarState: SnackbarReducer,
     DarkModeState: DarkModeReducer,
+    BWalletState: BWalletReducer
 })
 
 const store = createStore(rootReducer)
 
 function App() {
     let navigate = useNavigate()
-
+    
     const onRedirectCallback = (appState) => {
         navigate(appState?.returnTo || window.location.pathname)
     }
-
+    
     return (
         <Auth0Provider
             domain={process.env.REACT_APP_AUTH0_DOMAIN}
@@ -121,7 +123,11 @@ function App() {
                                 />
                                 <Route
                                     path="/profile"
-                                    element={<ProfilePage />}
+                                    element={
+                                        <ProtectedRoute
+                                            element={<ProfilePage />}
+                                        />
+                                    }
                                 />
                                 <Route
                                     path="/library"

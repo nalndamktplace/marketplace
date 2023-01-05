@@ -29,16 +29,33 @@ import {ReactComponent as SearchIcon} from "../../../assets/icons/search.svg"
 import {ReactComponent as CompassIcon} from "../../../assets/icons/compass.svg"
 import {ReactComponent as PlusSquareIcon} from "../../../assets/icons/plus-square.svg"
 
+import {useWeb3AuthContext} from '../../../contexts/SocialLoginContext'
+import {useSmartAccountContext } from "../../../contexts/SmartAccountContext";
+
+import {BalancesDto } from '@biconomy/node-client'
+import { ChainId } from '@biconomy/core-types'
+
 const Header = ({showRibbion=true,noPadding=false}) => {
 
-	const Auth0 = useAuth0()
+	const {
+		address,
+		loading: eoaLoading,
+		connect,
+		disconnect,
+		provider,
+	} = useWeb3AuthContext();
+	const {
+        setSelectedAccount,
+	  } = useSmartAccountContext();
+	  
+	// const Auth0 = useAuth0()
 
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const params = useLocation();
+	// const params = useLocation();
 	 
 	const UserState = useSelector(state=>state.UserState)
-	const WalletState = useSelector(state=>state.WalletState)
+	const BWalletState = useSelector(state=> state.BWalletState)
 
 	const [Loading, setLoading] = useState(false)
 	const [MenuOpen, setMenuOpen] = useState(false)
@@ -47,10 +64,11 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 	const [SearchResults, setSearchResults] = useState([])
 	const [Collections, setCollections] = useState([])
 
-	useEffect(() => {
-		if(Auth0.isLoading) dispatch(showSpinner())
-		else dispatch(hideSpinner())
-	}, [Auth0.isLoading, dispatch])
+	// useEffect(() => {
+	// 	if(Auth0.isLoading) dispatch(showSpinner())
+	// 	else dispatch(hideSpinner())
+	// }, [Auth0.isLoading, dispatch])
+
 
 	useEffect(() => {
 		if(Loading) dispatch(showSpinner())
@@ -85,18 +103,27 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}, [dispatch, SearchQuery])
 
-	const loginHandler = () => {
-		Auth0.loginWithRedirect({appState: { returnTo: params.pathname }})
+	const loginHandler = async () => {
+		connect();
 	}
 
-	const handleWalletConnect = () => {
-		if(!isWalletConnected(WalletState)){
-			Wallet.connectWallet().then(res => {
-				dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
-			}).catch(err => {
-				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-			})
+	const handleWalletConnect =async () => {
+		setLoading(true)
+		if(!address){
+			loginHandler();
 		}
+		await Wallet(provider, dispatch);
+		setLoading(false)
+		
+
+		// if(!isWalletConnected(WalletState)){
+		// 	Wallet.connectWallet().then(res => {
+		// 		// dispatch(setWallet({ wallet: res.wallet, provider: res.provider, signer: res.signer, address: res.address }))
+		// 	}).catch(err => {
+		// 		dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
+		// 	})
+		// }
+
 	}
 
 	const NAV_ITEMS = [
@@ -113,7 +140,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			subMenu: [
 				{id: "NI4SMI1",title: "Profile",url: "/profile",uri: null,icon: null,action: null,},
 				{id: "NI4SMI2",title: "Connect Wallet", url: null ,uri: null,icon: null,action: () => handleWalletConnect(),},
-				{id: "NI4SMI3",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
+				// {id: "NI5SMI3",title: "Wallet", url: null ,uri: null,icon: null,action: () => isUsable(WalletState.wallet.wallet)?WalletState.wallet.wallet.sequence.openWallet():null,},
 				{id: "NI4SMI4",title: "Library",url: "/library",uri: null,icon: null,action: null},
 				{id: "NI4SMI5",title: "Logout", url: "/" ,uri: null,icon: null,action: () => {logOutHandler()}},
 			],
@@ -144,23 +171,20 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 		}
 	}
 
-	const handleWalletDisconnect = () => {
+	const handleWalletDisconnect = async () => {
 		GaTracker('event_header_wallet_disconnect')
-		Wallet.disconnectWallet(WalletState.wallet.provider).then(res => {
-			dispatch(clearWallet())
-			navigate('/')
-			dispatch(setSnackbar({show: true, message: "Wallet disconnected.", type: 1}))
-		}).catch(err => {
-			dispatch(setSnackbar({show: true, message: "Error while disconnecting wallet.", type: 4}))
-		})
+		await disconnect()
+		navigate('/')
+		dispatch(setSnackbar({ show: true, message: "Wallet disconnected.", type: 1 }))
 	}
 
 	const logOutHandler = () => {
 		GaTracker('event_header_user_logout')
-		Auth0.logout()
-		handleWalletDisconnect()
+		if(address){
+			setSelectedAccount(null);
+			disconnect();
+		}
 		dispatch(unsetUser())
-		logout()
 	}
 
 	const renderNavItems = () => {
@@ -170,8 +194,8 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 			if(isUsable(item.subMenu)){
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
-					if(navItem.id === "NI4SMI2" && isWalletConnected(WalletState)){}
-					else if(navItem.id === "NI4SMI3" && !isWalletConnected(WalletState)){}
+					if(navItem.id === "NI4SMI2" && BWalletState.smartAccount){}
+					else if(navItem.id === "NI4SMI3" && !BWalletState.smartAccount){}
 					else subMenuitems.push(
 						<div onClick={()=>menuItemClickHandler(navItem)} key={navItem.id} className='header__content__navbar__link__subitem typo__act typo__transform--capital'>
 							{isUsable(navItem.icon) && <item.icon/>}
@@ -277,8 +301,7 @@ const Header = ({showRibbion=true,noPadding=false}) => {
 				{Collections.map(collection=><div key={collection.id} onClick={()=>navigate('/collection', {state: {id: collection.id, name: collection.name}})} className="header__ribbion__item typo__transform--capital">{collection.name}</div>)}
 				</div>
 			}
-			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} WalletState={WalletState} loginHandler={loginHandler} handleWalletConnect={handleWalletConnect} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />
-		</header>
+			<SideNavbar MenuOpen={MenuOpen} setMenuOpen={setMenuOpen} BWalletState={BWalletState} loginHandler={loginHandler} handleWalletDisconnect={handleWalletDisconnect} toggleMenu={toggleMenu} NAV_ITEMS={NAV_ITEMS} />		</header>
 	)
 }
 

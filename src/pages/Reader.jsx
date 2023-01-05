@@ -42,7 +42,7 @@ const ReaderPage = () => {
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const WalletState = useSelector(state => state.WalletState.wallet)
+	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [Preview, setPreview] = useState(null)
 	const [Loading, setLoading] = useState(false)
@@ -150,10 +150,10 @@ const ReaderPage = () => {
 
 	useEffect(() => {
 		setLoading(true)
-		if(isUsable(WalletState)) setWalletAddress(WalletState.address)
+		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
 		else connectWallet()
 		setLoading(false)
-	}, [WalletState, connectWallet])
+	}, [BWalletState, connectWallet])
 
 	useEffect(()=>{
 		hideAllPanel()
