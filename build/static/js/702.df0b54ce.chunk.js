@@ -1,1 +1,0 @@
-(self.webpackChunkmarketplace=self.webpackChunkmarketplace||[]).push([[702],{7420:()=>{},95856:()=>{},11922:()=>{},78848:()=>{},71456:()=>{}}]);
