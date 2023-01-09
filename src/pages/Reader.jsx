@@ -432,7 +432,9 @@ const ReaderPage = () => {
 
 	useEffect(()=>{
 		if(!isUsable(bookMeta) && (!isUsable(WalletAddress))) return
-		const updateReadTime = () => {setReadTime(s => s+1)}
+		const updateReadTime = () => {
+			setReadTime(s => s+1)
+		}
 		let intervalHandler = setInterval(updateReadTime,1000)
 		return () => { clearInterval(intervalHandler) }
 	},[ bookMeta, WalletAddress])
@@ -448,15 +450,10 @@ const ReaderPage = () => {
 		resetTimer()
 	})
 
-
-
 	function startTimer(){
 		setTimerUpdate(true)
 		setReadTime(0)
 	}
-
-	
-
 
 	return (
 		<>
@@ -469,7 +466,7 @@ const ReaderPage = () => {
 					<Button type="icon" onClick={()=>{navigate(-1)}}><ChevronLeftIcon/></Button>
 					<div className="reader__header__left__timer">
 						<span class="reader__header__left__timer__dot"></span>
-						{rendition && <ReadTimer preview={Preview} bookMeta={bookMeta} rendition={rendition}/>}
+						{rendition && <ReadTimer timerUpdate={timerUpdate} preview={Preview} bookMeta={bookMeta} rendition={rendition}/>}
 					</div>
 				</div>
 				<div className="reader__header__center">
