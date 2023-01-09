@@ -60,11 +60,7 @@ const BookPage = props => {
 
 	const {
 		address,
-		loading: eoaLoading,
-		userInfo,
 		connect,
-		disconnect,
-		getUserInfo,
 		provider,
 	} = useWeb3AuthContext();
 
@@ -172,6 +168,7 @@ const BookPage = props => {
 					}
 				}).then(res => {
 					if(res.status === 200) setQuotes(res.data)
+					else if(res.status === 204) {}
 					else dispatch(setSnackbar('NOT200'))
 				}).catch(err => {
 					dispatch(setSnackbar('ERROR'))
@@ -453,6 +450,7 @@ const BookPage = props => {
 		else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
 	}
 
+	// TODO: Compatible for Biconomy wallet
 	const onListHandler = listPrice => {
 		GaTracker('event_book_list')
 		if(isUsable(WalletAddress)){
@@ -499,45 +497,70 @@ const BookPage = props => {
 		GaTracker('event_book_read')
 		setLoading(true)
 		try {
+			// axios({
+			// 	url: `${BASE_URL}/api/verify`,
+			// 	method: 'GET',
+			// 	params: {
+			// 		bookAddress: NFT.book_address,
+			// 		ownerAddress: WalletAddress
+			// 	}
+			// }).then(res => {
+			// 	if(res.status === 200){
+			// 		const messageToSign = res.data
+			// 		Wallet.signMessage(BWalletState.smartAccount.signer, JSON.stringify(messageToSign)).then(res => {
+			// 			if(res.isValid === true){
+			// 				axios({
+			// 					url : BASE_URL + '/api/verify',
+			// 					method : "POST",
+			// 					headers: {
+			// 						'address': BWalletState.smartAccount.address,
+			// 						'user-id': UserState.user.uid,
+			// 						'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+			// 					},
+			// 					data : {
+			// 						accountAddress: WalletAddress,
+			// 						bookAddress: NFT.book_address,
+			// 						signedData: res.signedData,
+			// 						cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1),
+			// 					}
+			// 				}).then(res=>{
+			// 					if(res.status === 200) {
+			// 						GaTracker('navigate_book_reader')
+			// 						navigate('/library/reader', {state: {book: {...NFT, url: res.data.url}, preview: false}}) 
+			// 					}
+			// 					else dispatch(setSnackbar({show:true,message : "Error", type : 4}))
+			// 				}).catch(err => { dispatch(setSnackbar('ERROR'))
+			// 				}).finally( () => setLoading(false))
+			// 			}
+			// 			else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
+			// 		})
+			// 	}
+			// 	else dispatch(setSnackbar('NOT200'))
+			// })
 			axios({
-				url: `${BASE_URL}/api/verify`,
-				method: 'GET',
-				params: {
+				url: `${BASE_URL}/api/verify/mobile`,
+				method: 'POST',
+				headers: {
+					'address': BWalletState.smartAccount.address,
+					'user-id': UserState.user.uid,
+					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
+				},
+				data: {
 					bookAddress: NFT.book_address,
-					ownerAddress: WalletAddress
+					ownerAddress: BWalletState.smartAccount.address
 				}
 			}).then(res => {
 				if(res.status === 200){
-					const messageToSign = res.data
-					Wallet.signMessage(BWalletState.smartAccount.signer, JSON.stringify(messageToSign)).then(res => {
-						if(res.isValid === true){
-							axios({
-								url : BASE_URL + '/api/verify',
-								method : "POST",
-								headers: {
-									'address': BWalletState.smartAccount.address,
-									'user-id': UserState.user.uid,
-									'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
-								},
-								data : {
-									accountAddress: WalletAddress,
-									bookAddress: NFT.book_address,
-									signedData: res.signedData,
-									cid : NFT.book.slice(NFT.book.lastIndexOf("/")+1),
-								}
-							}).then(res=>{
-								if(res.status === 200) {
-									GaTracker('navigate_book_reader')
-									navigate('/library/reader', {state: {book: {...NFT, url: res.data.url}, preview: false}}) 
-								}
-								else dispatch(setSnackbar({show:true,message : "Error", type : 4}))
-							}).catch(err => { dispatch(setSnackbar('ERROR'))
-							}).finally( () => setLoading(false))
+					GaTracker('navigate_book_reader')
+					navigate('/library/reader', {
+						state: {
+							book: {
+								...NFT,
+								url: `${res.data.base}?token=${res.data.token}&cid=${res.data.cid}&fileName=${res.data.fileName}`
+							}
 						}
-						else dispatch(setSnackbar({show: true, message: "Could not verify the authenticity of the signature.", type: 3}))
 					})
 				}
-				else dispatch(setSnackbar('NOT200'))
 			})
 		} catch (err) {
 			setLoading(false)
@@ -574,7 +597,10 @@ const BookPage = props => {
 							method: 'POST',
 							data: {ownerAddress: address, bookAddress: NFT.book_address, tokenId, purchasePrice: NFT.price}
 						}).then(res => {
-							if(res.status === 200) setOwner(true)
+							if(res.status === 200){
+								setOwner(true)
+								dispatch(hideModal())
+							}
 							else dispatch(setSnackbar('NOT200'))
 						}).catch(err => {
 							dispatch(setSnackbar('ERROR'))
@@ -598,7 +624,7 @@ const BookPage = props => {
 				const transactions = [approveTx, safeMintTx]
 				const feeQuotes = await BWalletState.smartAccount.prepareRefundTransactionBatch({ transactions })
 				const transaction = await BWalletState.smartAccount.createRefundTransactionBatch({ transactions, feeQuote: feeQuotes[1] })
-				const transactionHash = await BWalletState.smartAccount.sendTransaction({
+				await BWalletState.smartAccount.sendTransaction({
 					tx: transaction,
 					gasLimit: { hex: "0x4C4B40", type: "hex" }
 				})
@@ -900,10 +926,10 @@ const BookPage = props => {
 							<div className='book__data__container__desc'>
 								<div className="book__data__container__desc__left">
 									<div className="book__data__container__desc__summary">
-										<div className="book__data__container__desc__summary__contract">
+										<div className="book__data__container__desc__summary__contract" onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>
 											<div className='book__data__container__desc__summary__contract__data'>
 												<div className='book__data__container__desc__summary__contract__label typo__color--n700'>Contract Address</div>
-												<div className='book__data__container__desc__summary__contract__value typo__color--n500' onClick={()=>window.open(`https://mumbai.polygonscan.com/address/${NFT.book_address}`, "_blank")}>{(NFT.book_address||"").slice(0,12)}…{(NFT.book_address||"").slice((NFT.contract||"").length-10)}</div>
+												<div className='book__data__container__desc__summary__contract__value typo__color--n500'>{(NFT.book_address||"").slice(0,12)}…{(NFT.book_address||"").slice((NFT.contract||"").length-10)}</div>
 											</div>
 											<div className='book__data__container__desc__summary__contract__icon'>
 												<ExternalLinkIcon width={24} height={24}/>
