@@ -36,7 +36,7 @@ const PurchaseModal = ({onOldBookPurchase,onNewBookPurchase,data}) => {
 			}
 			const balances = await BWalletState.smartAccount.getAlltokenBalances(balanceParams)
 			const usdc = balances.data.filter(token => token.contract_address === "0xda5289fcaaf71d52a80a254da614a192b693e977")[0]
-			usdc.balance = ethers.utils.formatUnits(usdc.balance, "mwei")
+			usdc.balance = ethers.utils.formatUnits(usdc?.balance, "mwei")
 			setWalletData(usdc)
 		},
 		[BWalletState.smartAccount],

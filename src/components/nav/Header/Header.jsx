@@ -49,16 +49,17 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 	const [WalletBalance, setWalletBalance] = useState(null)
 
 	const getBalance = useCallback(async () => {
-		const balanceParams = {
-			chainId: ChainId.POLYGON_MUMBAI,
-			eoaAddress: BWalletState.smartAccount.address,
-			tokenAddresses: ['0xdA5289fCAAF71d52a80A254da614a192b693e977'],
+		if(isUsable(BWalletState.smartAccount)){
+			const balanceParams = {
+				chainId: ChainId.POLYGON_MUMBAI,
+				eoaAddress: BWalletState.smartAccount.address,
+				tokenAddresses: ['0xdA5289fCAAF71d52a80A254da614a192b693e977'],
+			}
+			const balances = await BWalletState.smartAccount.getAlltokenBalances(balanceParams)
+			const usdc = balances.data.filter(token => token.contract_address === '0xda5289fcaaf71d52a80a254da614a192b693e977')[0]
+			usdc.balance = ethers.utils.formatUnits(usdc?.balance, 'mwei')
+			setWalletBalance(usdc)
 		}
-		const balances = await BWalletState.smartAccount.getAlltokenBalances(balanceParams)
-		const usdc = balances.data.filter(token => token.contract_address === '0xda5289fcaaf71d52a80a254da614a192b693e977')[0]
-		usdc.balance = ethers.utils.formatUnits(usdc.balance, 'mwei')
-		console.log({ usdc })
-		setWalletBalance(usdc)
 	}, [BWalletState.smartAccount])
 
 	useEffect(() => {
