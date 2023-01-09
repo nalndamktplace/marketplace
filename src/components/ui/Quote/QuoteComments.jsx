@@ -17,9 +17,8 @@ const QuoteComments = ({ quote, comment }) => {
                 discussion_id:
             }  
         }).then(res => {
-                if (res.status === 200) {
-                    setComments(res.data)
-                }
+                if (res.status === 200) setComments(res.data)
+                else if(res.status === 204) {}
                 else dispatch(setSnackbar('NOT200'))
             }).catch(err => {
                 dispatch(setSnackbar('ERROR'))

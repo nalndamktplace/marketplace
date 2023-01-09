@@ -15,7 +15,7 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
     const navigate = useNavigate()
 
     const UserState = useSelector(state => state.UserState)
-    const WalletState = useSelector(state => state.WalletState)
+    const BWalletState = useSelector(state => state.BWalletState)
  
     const [WalletAddress, setWalletAddress] = useState(null)
     const [Loading, setLoading] = useState(false)
@@ -30,11 +30,11 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
     useEffect(() => {
         if (!isUsable(mobileView) || mobileView === false) {
             if (isUsable(preview) && !preview) {
-                if (isUsable(WalletState.wallet.provider)) setWalletAddress(WalletState.wallet.address)
+                if (isUsable(BWalletState.smartAccount.address)) setWalletAddress(BWalletState.smartAccount.address)
                 else navigate(-1)
             }
         }
-    }, [WalletState, navigate, preview, mobileView])
+    }, [BWalletState, navigate, preview, mobileView])
 
 
     useEffect(() => {
@@ -52,8 +52,8 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
                 if (res.status === 200) {
                     setDiscCount(res.data.length)
                     setQuotes(res.data)
-                   
                 }
+                else if(res.status === 204){}
                 else dispatch(setSnackbar('NOT200'))
             }).catch(err => {
                 dispatch(setSnackbar('ERROR'))
@@ -92,8 +92,8 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
                                 setQuotes(res.data)
                                 setPostQuotes('')
                                 console.log(res.data)
-                                
                             }
+                            else if(res.status === 204) {}
                             else dispatch(setSnackbar('NOT200'))
                         }).catch(err => {
                             dispatch(setSnackbar('ERROR'))

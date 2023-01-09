@@ -35,6 +35,7 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModa
             if (res.status === 200) {
                 setComments(res.data)
             }
+            else if(res.status === 204) {}
             else dispatch(setSnackbar('NOT200'))
         }).catch(err => {
             dispatch(setSnackbar('ERROR'))
@@ -72,6 +73,7 @@ const QuoteSection = ({ quote, bookMeta, UserState, preview, rendition, hideModa
                             setComments(res.data)
                             setPostComment("")
                         }
+                        else if(res.status === 204) {}
                         else dispatch(setSnackbar('NOT200'))
                     }).catch(err => {
                         dispatch(setSnackbar('ERROR'))
