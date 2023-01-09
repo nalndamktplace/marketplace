@@ -84,10 +84,10 @@ const ListModal = ({book, userCopy, onListHandler}) => {
 				<Modal title='List eBook' open={Show} toggleModal={modalCloseHandler} cancellable>
 					<p className='utils__margin__bottom--n typo__transform--capital'>Book: {book.title}</p>
 					<p className='utils__margin__bottom--n typo__transform--capital'>Author: {book.author}</p>
-					<p className='typo__transform--capital'>purchased at: {isUsable(userCopy.purchase_price)?parseFloat(userCopy.purchase_price).toFixed(2):null}</p>
+					<p className='typo__transform--capital'>purchased at: {isUsable(userCopy.purchase_price)?parseFloat(userCopy.purchase_price):null}</p>
 					<p className='typo__transform--capital'>DA Score: {isUsable(userCopy.da_score)?parseFloat(userCopy.da_score).toFixed(2):null}</p>
 					<p className='typo__transform--capital'>You'll Get {renderFulcrum()} of the sales proceedings.</p>
-					<p className='typo__transform--capital'>Suggestive Selling Price: {userCopy?.suggestedPrice.toFixed(2)}</p>
+					<p className='typo__transform--capital'>Suggestive Selling Price: {userCopy?.suggestedPrice}</p>
 					<InputField type="string" label="listing price in USDC" onChange={e => setListPrice(e.target.value)} />
 					<div style={{flex: 1}}/>
 					<Button type="primary" onClick={()=>onListHandler(ListPrice)}>List eBook</Button>
