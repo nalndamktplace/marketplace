@@ -72,7 +72,7 @@ export const Web3AuthProvider = ({ children }) => {
 			return socialLoginSDK
 		}
 		setLoading(true)
-		const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001), 'https://nalnda.com')
+		const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001), ['https://nalnda.com'])
 		sdk.showConnectModal()
 		sdk.showWallet()
 		setSocialLoginSDK(sdk)
@@ -84,7 +84,7 @@ export const Web3AuthProvider = ({ children }) => {
 	useEffect(() => {
 		;(async () => {
 			if (window && window.location.hash && !address) {
-				const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001), 'https://nalnda.com')
+				const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001), ['https://nalnda.com'])
 				setSocialLoginSDK(sdk)
 			}
 		})()
