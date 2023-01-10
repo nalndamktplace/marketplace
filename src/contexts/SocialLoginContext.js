@@ -72,8 +72,14 @@ export const Web3AuthProvider = ({ children }) => {
 			return socialLoginSDK
 		}
 		setLoading(true)
-		const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001), ['https://nalnda.com'])
-		sdk.showConnectModal()
+		const sdk = new SocialLogin()
+		const signature = await sdk.whitelistUrl('https://nalnda.com')
+		await sdk.init({
+			chainId: ethers.utils.hexValue(80001),
+			whitelistUrls: {
+				'https://nalnda.com': signature,
+			},
+		})
 		sdk.showWallet()
 		setSocialLoginSDK(sdk)
 		setLoading(false)
@@ -84,7 +90,14 @@ export const Web3AuthProvider = ({ children }) => {
 	useEffect(() => {
 		;(async () => {
 			if (window && window.location.hash && !address) {
-				const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001), ['https://nalnda.com'])
+				const sdk = new SocialLogin()
+				const signature = await sdk.whitelistUrl('https://nalnda.com')
+				await sdk.init({
+					chainId: ethers.utils.hexValue(80001),
+					whitelistUrls: {
+						'https://nalnda.com': signature,
+					},
+				})
 				setSocialLoginSDK(sdk)
 			}
 		})()
