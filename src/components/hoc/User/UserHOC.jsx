@@ -11,7 +11,7 @@ import { setSnackbar } from '../../../store/actions/snackbar'
 import { setUser, unsetUser } from '../../../store/actions/user'
 import { hideSpinner, showSpinner } from '../../../store/actions/spinner'
 
-import Constants from '../../../config/constants'
+import { USER_STATE } from '../../../config/constants'
 import { BASE_URL } from '../../../config/env'
 import { getData, logout } from '../../../helpers/storage'
 import { isUserLoggedIn, isUsable } from '../../../helpers/functions'
@@ -104,7 +104,7 @@ const UserHOC = props => {
 
 	useEffect(() => {
 		if (!isUserLoggedIn(UserState)) {
-			const userData = getData(Constants.USER_STATE)
+			const userData = getData(USER_STATE)
 			if (isUserLoggedIn(userData)) {
 				const accessTokenExpiry = userData.tokens.acsTkn.exp
 				if (moment(accessTokenExpiry).diff(moment()) < 0) {

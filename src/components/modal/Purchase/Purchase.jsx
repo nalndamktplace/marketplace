@@ -14,6 +14,7 @@ import { ReactComponent as CloseIcon } from "../../../assets/icons/close-icon.sv
 import { ChainId } from '@biconomy/core-types'
 import { ethers } from 'ethers'
 import PriceTag from '../../ui/Tags/Price'
+import { USDC_ADDRESS } from '../../../config/constants'
 
 const PurchaseModal = ({onOldBookPurchase,onNewBookPurchase,data}) => {
 
@@ -32,10 +33,10 @@ const PurchaseModal = ({onOldBookPurchase,onNewBookPurchase,data}) => {
 			const balanceParams = {
 				chainId: ChainId.POLYGON_MUMBAI,
 				eoaAddress: BWalletState.smartAccount.address,
-				tokenAddresses: ['0xdA5289fCAAF71d52a80A254da614a192b693e977'],
+				tokenAddresses: [USDC_ADDRESS],
 			}
 			const balances = await BWalletState.smartAccount.getAlltokenBalances(balanceParams)
-			const usdc = balances.data.filter(token => token.contract_address === "0xda5289fcaaf71d52a80a254da614a192b693e977")[0]
+			const usdc = balances.data.filter(token => token.contract_address === USDC_ADDRESS)[0]
 			usdc.balance = ethers.utils.formatUnits(usdc?.balance, "mwei")
 			setWalletData(usdc)
 		},

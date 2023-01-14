@@ -6,6 +6,7 @@ import SmartAccount from '@biconomy/smart-account'
 
 import { setSmartAccount } from '../store/actions/bwallet'
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
+import { USDC_ADDRESS } from '../config/constants'
 
 async function Wallet(provider, dispatch) {
 	dispatch(showSpinner())
@@ -28,7 +29,7 @@ async function Wallet(provider, dispatch) {
 		const balanceParams = {
 			chainId: ChainId.POLYGON_MUMBAI, // chainId of your choice
 			eoaAddress: smartAccount.address,
-			tokenAddresses: ['0xfEc014B41506430F055ceff9A007e690D409b304'],
+			tokenAddresses: [USDC_ADDRESS],
 		}
 		const balFromSdk = await smartAccount.getAlltokenBalances(balanceParams)
 		console.info('getAlltokenBalances', balFromSdk)

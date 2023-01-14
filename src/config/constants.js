@@ -1,6 +1,4 @@
-const Constants = {
-	USER_STATE: 'USER_STATE',
-	WALLET_STATE: 'WALLET_STATE'
-}
-
-export default Constants
+export const USER_STATE = 'USER_STATE'
+export const WALLET_STATE = 'WALLET_STATE'
+export const USDC_ADDRESS = '0xdA5289fCAAF71d52a80A254da614a192b693e977'
+export const GAS_LIMIT = '0x4C4B40'

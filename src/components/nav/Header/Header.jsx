@@ -29,6 +29,7 @@ import { useWeb3AuthContext } from '../../../contexts/SocialLoginContext'
 import { useSmartAccountContext } from '../../../contexts/SmartAccountContext'
 import { ChainId } from '@biconomy/core-types'
 import { ethers } from 'ethers'
+import { USDC_ADDRESS } from '../../../config/constants'
 
 const Header = ({ showRibbion = true, noPadding = false }) => {
 	const { address, loading: eoaLoading, connect, disconnect, provider } = useWeb3AuthContext()
@@ -53,10 +54,10 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 			const balanceParams = {
 				chainId: ChainId.POLYGON_MUMBAI,
 				eoaAddress: BWalletState.smartAccount.address,
-				tokenAddresses: ['0xdA5289fCAAF71d52a80A254da614a192b693e977'],
+				tokenAddresses: [USDC_ADDRESS],
 			}
 			const balances = await BWalletState.smartAccount.getAlltokenBalances(balanceParams)
-			const usdc = balances.data.filter(token => token.contract_address === '0xda5289fcaaf71d52a80a254da614a192b693e977')[0]
+			const usdc = balances.data.filter(token => token.contract_address === USDC_ADDRESS)[0]
 			usdc.balance = ethers.utils.formatUnits(usdc?.balance, 'mwei')
 			setWalletBalance(usdc)
 		}

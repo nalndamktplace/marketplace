@@ -48,6 +48,8 @@ import {ReactComponent as ExternalLinkIcon} from "../assets/icons/external-link.
 import {ReactComponent as TotalReadTimeIcon} from "../assets/icons/total_read_time.svg"
 
 import {useWeb3AuthContext} from '../contexts/SocialLoginContext'
+import { GAS_LIMIT, USDC_ADDRESS } from '../config/constants'
+import { useSmartAccountContext } from '../contexts/SmartAccountContext'
 
 const BookPage = props => {
 
@@ -57,6 +59,7 @@ const BookPage = props => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const isLoggedIn = useIsLoggedIn()
+	const { getWalletBalance } = useSmartAccountContext()
 
 	const {
 		address,
@@ -572,7 +575,12 @@ const BookPage = props => {
 		navigate('/book/preview', {state: {book: NFT, preview: true}})
 	}
 
-	const purchaseHandler = () => isLoggedIn?dispatch(showModal(SHOW_PURCHASE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
+	const purchaseHandler = () => {
+		console.log({getWalletBalance: getWalletBalance()})
+		isLoggedIn?
+			dispatch(showModal(SHOW_PURCHASE_MODAL))
+			:dispatch(setSnackbar('NOT_LOGGED_IN'))
+	}
 
 	const reviewModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_REVIEW_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
@@ -584,7 +592,7 @@ const BookPage = props => {
 				const approveErc721Interface = new ethers.utils.Interface(['function approve(address spender, uint256 amount)'])
 				const address = BWalletState.smartAccount.address
 				const approveData = approveErc721Interface.encodeFunctionData( 'approve', [NFT.book_address, ethers.utils.parseUnits(NFT.price.toString(), 6)] )
-				const approveTx = { to: "0xdA5289fCAAF71d52a80A254da614a192b693e977", data: approveData }
+				const approveTx = { to: USDC_ADDRESS, data: approveData }
 				const safeMintErc721Interface = new ethers.utils.Interface(['function safeMint(address to)'])
 				const safeMintData = safeMintErc721Interface.encodeFunctionData( 'safeMint', [address] )
 				const safeMintTx = { to: NFT.book_address, data: safeMintData }
@@ -626,7 +634,7 @@ const BookPage = props => {
 				const transaction = await BWalletState.smartAccount.createRefundTransactionBatch({ transactions, feeQuote: feeQuotes[1] })
 				await BWalletState.smartAccount.sendTransaction({
 					tx: transaction,
-					gasLimit: { hex: "0x4C4B40", type: "hex" }
+					gasLimit: { hex: GAS_LIMIT, type: "hex" }
 				})
 			} catch (error) {
 				setLoading(false)

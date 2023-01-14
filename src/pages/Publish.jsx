@@ -29,6 +29,7 @@ import { BASE_URL } from '../config/env'
 import { LANGUAGES } from '../config/languages'
 import { AGE_GROUPS } from '../config/ages'
 import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
+import { GAS_LIMIT } from '../config/constants'
 
 
 const PublishNftPage = props => {
@@ -214,10 +215,10 @@ const PublishNftPage = props => {
 							transaction: tx,
 							feeQuote: feeQuotes[0]
 						})
-						const txId = await BWalletState.smartAccount.sendTransaction({
+						await BWalletState.smartAccount.sendTransaction({
 							tx: transaction,
 							gasLimit: {
-								hex: "0x4C4B40",
+								hex: GAS_LIMIT,
 								type: "hex",
 							}
 						})
