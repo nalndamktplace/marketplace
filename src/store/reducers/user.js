@@ -1,10 +1,10 @@
-import Constants from "../../config/constants";
+import { USER_STATE } from '../../config/constants'
 import jwt_decode from 'jwt-decode'
-import { BASE_URL } from "../../config/env";
-import { isFilled } from "../../helpers/functions";
-import { logout, postData } from "../../helpers/storage";
-import { FOUND_USER, SET_USER, SET_USER_ONLY, UNSET_USER } from "../actions/user";
-import moment from "moment";
+import { BASE_URL } from '../../config/env'
+import { isFilled } from '../../helpers/functions'
+import { postData } from '../../helpers/storage'
+import { FOUND_USER, SET_USER, SET_USER_ONLY, UNSET_USER } from '../actions/user'
+import moment from 'moment'
 
 const initState = {
 	user: {
@@ -20,12 +20,12 @@ const initState = {
 		locale: null,
 		type: null,
 		uid: null,
-		wallet: null
+		wallet: null,
 	},
 	tokens: {
 		acsTkn: null,
-		rfsTkn: null
-	}
+		rfsTkn: null,
+	},
 }
 
 const handleData = (state = initState, action) => {
@@ -35,7 +35,7 @@ const handleData = (state = initState, action) => {
 			userState = {
 				user: {
 					bio: action.data.bio,
-					displayPic: isFilled(action.data.display_pic)?BASE_URL+'/files/'+action.data.display_pic:null,
+					displayPic: isFilled(action.data.display_pic) ? BASE_URL + '/files/' + action.data.display_pic : null,
 					email: action.data.email,
 					name: [action.data.first_name, action.data.last_name],
 					socialId: action.data.social_id,
@@ -50,26 +50,26 @@ const handleData = (state = initState, action) => {
 				},
 				tokens: {
 					acsTkn: {
-						exp: moment(jwt_decode(action.data.tokens.acsTkn).exp*1000),
-						tkn: action.data.tokens.acsTkn
+						exp: moment(jwt_decode(action.data.tokens.acsTkn).exp * 1000),
+						tkn: action.data.tokens.acsTkn,
 					},
 					rfsTkn: {
-						exp: moment(jwt_decode(action.data.tokens.rfsTkn).exp*1000),
-						tkn: action.data.tokens.rfsTkn
-					}
-				}
+						exp: moment(jwt_decode(action.data.tokens.rfsTkn).exp * 1000),
+						tkn: action.data.tokens.rfsTkn,
+					},
+				},
 			}
-			postData(Constants.USER_STATE, userState)
+			postData(USER_STATE, userState)
 			return {
 				...state,
-				...userState
+				...userState,
 			}
 		case SET_USER_ONLY:
 			userState = {
 				...state,
 				user: {
 					bio: action.data.bio,
-					displayPic: isFilled(action.data.display_pic)?BASE_URL+'/files/'+action.data.display_pic:null,
+					displayPic: isFilled(action.data.display_pic) ? BASE_URL + '/files/' + action.data.display_pic : null,
 					email: action.data.email,
 					name: [action.data.first_name, action.data.last_name],
 					socialId: action.data.social_id,
@@ -81,12 +81,12 @@ const handleData = (state = initState, action) => {
 					type: action.data.type,
 					uid: action.data.uid,
 					wallet: action.data.wallet_address,
-				}
+				},
 			}
-			postData(Constants.USER_STATE, userState)
+			postData(USER_STATE, userState)
 			return {
 				...state,
-				...userState
+				...userState,
 			}
 		case FOUND_USER:
 			userState = {
@@ -108,18 +108,18 @@ const handleData = (state = initState, action) => {
 				tokens: {
 					acsTkn: {
 						exp: action.data.tokens.acsTkn.exp,
-						tkn: action.data.tokens.acsTkn.tkn
+						tkn: action.data.tokens.acsTkn.tkn,
 					},
 					rfsTkn: {
 						exp: action.data.tokens.rfsTkn.exp,
-						tkn: action.data.tokens.rfsTkn.tkn
-					}
-				}
+						tkn: action.data.tokens.rfsTkn.tkn,
+					},
+				},
 			}
-			postData(Constants.USER_STATE, userState)
+			postData(USER_STATE, userState)
 			return {
 				...state,
-				...userState
+				...userState,
 			}
 		case UNSET_USER:
 			// logout()
