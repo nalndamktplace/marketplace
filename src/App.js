@@ -11,12 +11,16 @@ import './main.scss'
 
 import { Grid } from 'react-spinners-css'
 
+import { Web3Modal } from '@web3modal/react'
+import { polygonMumbai } from 'wagmi/chains'
+import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
+
 import Spinner from './components/ui/Spinner/Spinner'
 import Snackbar from './components/ui/Snackbar/Snackbar'
 
 import UserReducer from './store/reducers/user'
 import ModalReducer from './store/reducers/modal'
-import WalletReducer from './store/reducers/wallet'
 import SpinnerReducer from './store/reducers/spinner'
 import SnackbarReducer from './store/reducers/snackbar'
 import DarkModeReducer from './store/reducers/darkmode'
@@ -32,7 +36,7 @@ import UserHOC from './components/hoc/User/UserHOC'
 import WalletHOC from './components/hoc/Wallet/WalletHOC'
 import ScrollToTop from './components/hoc/ScrollToTop/ScrollToTop'
 import ProtectedRoute from './components/hoc/ProtectedRoute/ProtectedRoute'
-import InternHirePage from './pages/Intern'
+import SelectWalletModal from './components/modal/Wallet/SelectWallet'
 
 const BookPage = React.lazy(() => import('./pages/Book'))
 const ReaderPage = React.lazy(() => import('./pages/Reader'))
@@ -66,48 +70,68 @@ function App() {
 		navigate(appState?.returnTo || window.location.pathname)
 	}
 
+	const chains = [polygonMumbai]
+	// Wagmi client
+	const { provider } = configureChains(chains, [walletConnectProvider({ projectId: '41001854cb342b1dddae9c5ab115e900' })])
+	const wagmiClient = createClient({
+		autoConnect: true,
+		connectors: modalConnectors({ appName: 'Nalnda Marketplace', chains }),
+		provider,
+	})
+	// Web3Modal Ethereum Client
+	const ethereumClient = new EthereumClient(wagmiClient, chains)
+
 	return (
-		<Auth0Provider domain={process.env.REACT_APP_AUTH0_DOMAIN} clientId={process.env.REACT_APP_AUTH0_CLIENT_ID} redirectUri={window.location.origin} onRedirectCallback={onRedirectCallback}>
-			<div className='typo'>
-				<Provider store={store}>
-					<ScrollToTop>
-						<Suspense
-							fallback={
-								<div className={'spinner spinner--show'}>
-									<div className='spinner__container'>
-										<Grid color='#00a2e8' />
-									</div>
-								</div>
-							}>
-							<Routes>
-								<Route path='/*' element={<IndexPage />} />
-								<Route path='/' element={<IndexPage />} />
-								<Route path='/hire/intern' element={<InternHirePage />} />
-								<Route path='/book/:bookID' element={<BookPage />} />
-								<Route path='/book/preview' element={<ReaderPage />} />
-								<Route path='/listbook/:bookID' element={<ListedBookPage />} />
-								<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage />} />} />
-								<Route path='/publish/ito' element={<ProtectedRoute element={<ItoPublishPage />} />} />
-								<Route path='/explore' element={<ExplorePage />} />
-								<Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />} />
-								<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />} />
-								<Route path='/collection' element={<CollectionPage />} />
-								<Route path='/library/reader' element={<ReaderPage />} />
-								<Route path='/policy/terms' element={<TermsConditionPage />} />
-								<Route path='/policy/privacy' element={<PrivacyPolicyPage />} />
-								<Route path='/policy/refund' element={<RefundPolicyPage />} />
-								{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
-								{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
-							</Routes>
-						</Suspense>
-					</ScrollToTop>
-					<Snackbar />
-					<Spinner />
-					<WalletHOC />
-					<UserHOC />
-				</Provider>
-			</div>
-		</Auth0Provider>
+		<>
+			<WagmiConfig client={wagmiClient}>
+				<Auth0Provider
+					domain={process.env.REACT_APP_AUTH0_DOMAIN}
+					clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+					redirectUri={window.location.origin}
+					onRedirectCallback={onRedirectCallback}>
+					<div className='typo'>
+						<Provider store={store}>
+							<ScrollToTop>
+								<Suspense
+									fallback={
+										<div className={'spinner spinner--show'}>
+											<div className='spinner__container'>
+												<Grid color='#00a2e8' />
+											</div>
+										</div>
+									}>
+									<Routes>
+										<Route path='/*' element={<IndexPage />} />
+										<Route path='/' element={<IndexPage />} />
+										<Route path='/book/:bookID' element={<BookPage />} />
+										<Route path='/book/preview' element={<ReaderPage />} />
+										<Route path='/listbook/:bookID' element={<ListedBookPage />} />
+										<Route path='/publish' element={<ProtectedRoute element={<PublishNftPage />} />} />
+										<Route path='/publish/ito' element={<ProtectedRoute element={<ItoPublishPage />} />} />
+										<Route path='/explore' element={<ExplorePage />} />
+										<Route path='/profile' element={<ProtectedRoute element={<ProfilePage />} />} />
+										<Route path='/library' element={<ProtectedRoute element={<LibraryPage />} />} />
+										<Route path='/collection' element={<CollectionPage />} />
+										<Route path='/library/reader' element={<ReaderPage />} />
+										<Route path='/policy/terms' element={<TermsConditionPage />} />
+										<Route path='/policy/privacy' element={<PrivacyPolicyPage />} />
+										<Route path='/policy/refund' element={<RefundPolicyPage />} />
+										{/* <Route path='/debug/interface' element={<InterfaceDebugPage />}/> */}
+										{/* <Route path='/debug/wallet' element={<WalletDebugPage/>}/> */}
+									</Routes>
+								</Suspense>
+							</ScrollToTop>
+							<Snackbar />
+							<Spinner />
+							<WalletHOC />
+							<UserHOC />
+							<SelectWalletModal />
+						</Provider>
+					</div>
+				</Auth0Provider>
+			</WagmiConfig>
+			<Web3Modal projectId='41001854cb342b1dddae9c5ab115e900' ethereumClient={ethereumClient} />
+		</>
 	)
 }
 
