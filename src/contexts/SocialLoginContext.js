@@ -79,6 +79,7 @@ export const Web3AuthProvider = ({ children }) => {
 			whitelistUrls: {
 				'https://nalnda.com': signature,
 			},
+			network: 'testnet',
 		})
 		sdk.showWallet()
 		setSocialLoginSDK(sdk)
@@ -97,6 +98,7 @@ export const Web3AuthProvider = ({ children }) => {
 					whitelistUrls: {
 						'https://nalnda.com': signature,
 					},
+					network: 'testnet',
 				})
 				setSocialLoginSDK(sdk)
 			}
