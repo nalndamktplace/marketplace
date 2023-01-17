@@ -30,11 +30,14 @@ import { useSmartAccountContext } from '../../../contexts/SmartAccountContext'
 import { ChainId } from '@biconomy/core-types'
 import { ethers } from 'ethers'
 import { USDC_ADDRESS } from '../../../config/constants'
+import useWallet from '../../.../../../hook/useWallet'
+import { showModal, SHOW_SELECT_WALLET_MODEL } from '../../../store/actions/modal'
 
 const Header = ({ showRibbion = true, noPadding = false }) => {
 	const { address, loading: eoaLoading, connect, disconnect, provider } = useWeb3AuthContext()
 	const { setSelectedAccount } = useSmartAccountContext()
-
+	
+	const wallet = useWallet()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
@@ -107,13 +110,19 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 	}, [dispatch, SearchQuery])
 
 	const loginHandler = async () => connect()
+	// const loginHandler = async () => handleWalletConnect()
 
-	const handleWalletConnect = async () => {
-		setLoading(true)
-		if (!address) loginHandler()
-		await Wallet(provider, dispatch)
-		setLoading(false)
-	}
+	const handleWalletConnect = () => dispatch(showModal(SHOW_SELECT_WALLET_MODEL))
+
+	const biconomyWalletHandler = async () => await Wallet(provider, dispatch)
+
+	const walletConnectHandler = () => wallet.connect()
+
+	useEffect(() => {
+		if(wallet.isConnected()){
+			console.log({network: wallet.getNetwork()})
+		}
+	}, [wallet])
 
 	const NAV_ITEMS = [
 		{ id: 'NI1', title: 'Explore', url: '/explore', uri: null, icon: CompassIcon, action: null, subMenu: null },
@@ -141,7 +150,7 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 			subMenu: [
 				{ id: 'NI4SMI1', title: 'Profile', url: '/profile', uri: null, icon: null, action: null },
 				{ id: 'NI4SMI2', title: 'Connect Wallet', url: null, uri: null, icon: null, action: () => handleWalletConnect() },
-				{ id: 'NI5SMI3', title: 'Wallet', data: WalletBalance ? WalletBalance.balance : 'loading...', url: null, uri: null, icon: null, action: null },
+				{ id: 'NI4SMI3', title: 'Wallet', data: WalletBalance ? WalletBalance.balance : 'loading...', url: null, uri: null, icon: null, action: null },
 				{ id: 'NI4SMI4', title: 'Library', url: '/library', uri: null, icon: null, action: null },
 				{
 					id: 'NI4SMI5',
@@ -190,10 +199,10 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 
 	const logOutHandler = () => {
 		GaTracker('event_header_user_logout')
-		if (address) {
+		// if (useW3mAccount.address) {
 			setSelectedAccount(null)
 			disconnect()
-		}
+		// }
 		dispatch(unsetUser())
 	}
 
