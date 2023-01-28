@@ -8,15 +8,16 @@ import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 import { BASE_URL } from "../../../config/env"
 import QuoteSection from "./QuoteSection"
 import Button from "../Buttons/Button"
+import useWallet from "../../../hook/useWallet"
 
 const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, hideModal = () => { } }) => {
 
+    const wallet = useWallet()
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const UserState = useSelector(state => state.UserState)
-    const BWalletState = useSelector(state => state.BWalletState)
- 
+
     const [WalletAddress, setWalletAddress] = useState(null)
     const [Loading, setLoading] = useState(false)
     const [Quotes, setQuotes] = useState([])
@@ -30,11 +31,11 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
     useEffect(() => {
         if (!isUsable(mobileView) || mobileView === false) {
             if (isUsable(preview) && !preview) {
-                if (isUsable(BWalletState.smartAccount.address)) setWalletAddress(BWalletState.smartAccount.address)
+                if (isUsable(wallet.getAddress())) setWalletAddress(wallet.getAddress())
                 else navigate(-1)
             }
         }
-    }, [BWalletState, navigate, preview, mobileView])
+    }, [navigate, preview, mobileView])
 
 
     useEffect(() => {

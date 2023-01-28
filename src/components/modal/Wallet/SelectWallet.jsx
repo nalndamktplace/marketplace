@@ -22,11 +22,13 @@ const SelectWalletModal = () => {
 	const biconomyWalletHandler = async () => {
 		dispatch(hideModal())
 		await Wallet(provider, dispatch)
+		wallet.getAddress()
 	}
 
 	const walletConnectHandler = () => {
 		dispatch(hideModal())
 		wallet.connect()
+		wallet.getAddress()
 	}
 
     const getClasses = () => {
