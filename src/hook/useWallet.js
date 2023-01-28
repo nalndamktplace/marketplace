@@ -3,16 +3,24 @@ import { useEffect, useState } from 'react'
 
 import { polygonMumbai } from '@wagmi/chains'
 import { useWeb3Modal } from '@web3modal/react'
-import { useAccount, useBalance, useDisconnect, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useBalance, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi'
 
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
 import { USDC_ADDRESS } from '../config/constants'
+import { useSelector } from 'react-redux'
+import { isUsable } from '../helpers/functions'
+import axios from 'axios'
+import { BASE_URL } from '../config/env'
 
 const useWallet = () => {
+	const UserState = useSelector(state => state.UserState)
+	const BWalletState = useSelector(state => state.BWalletState)
+
 	const dispatch = useDispatch()
 
 	const w3mModal = useWeb3Modal()
+	const w3mSigner = useSigner()
 	const w3mAccount = useAccount()
 	const w3mBalance = useBalance({ address: USDC_ADDRESS })
 	const w3mNetwork = useNetwork()
@@ -32,14 +40,26 @@ const useWallet = () => {
 
 	return {
 		connect: () => w3mModal.open(),
-		getBalance: () => w3mBalance.data,
+		getBalance: async () => {
+			const bal = await axios(`${BASE_URL}/api/user/wallet/balance`, {
+				headers: {
+					address: w3mAccount.isConnected ? w3mAccount.address : isUsable(BWalletState.smartAccount) ? BWalletState.smartAccount.address : null,
+					'user-id': UserState.user.uid,
+					authorization: `Bearer ${UserState.tokens.acsTkn.tkn}`,
+				},
+			})
+			if (bal.status === 200) {
+				console.log({ balance: bal.data })
+				return bal.data
+			} else return null
+		},
 		disconnect: () => w3mDisconnect.disconnect(),
-		getAddress: () => w3mAccount.address(),
-		isConnected: () => w3mAccount.isConnected,
+		getAddress: () => (w3mAccount.isConnected ? w3mAccount.address : isUsable(BWalletState.smartAccount) ? BWalletState.smartAccount.address : null),
+		isConnected: () => w3mAccount.isConnected || isUsable(BWalletState.smartAccount),
 		getNetwork: () => w3mNetwork.chains,
+		getSigner: () => w3mSigner.data,
 		switchNetwork: networkId => w3mSwitchNetwork.switchNetwork(networkId),
-		// switchNetworkToMumbai: () => w3mSwitchNetwork.switchNetwork(polygonMumbai.id),
-		switchNetworkToMumbai: () => w3mSwitchNetwork.switchNetwork(80001),
+		switchNetworkToMumbai: () => w3mSwitchNetwork.switchNetwork(polygonMumbai.id),
 	}
 }
 
