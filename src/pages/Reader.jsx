@@ -33,17 +33,16 @@ import { BASE_URL } from '../config/env'
 import GaTracker from "../trackers/ga-tracker"
 import TocPanel from "../components/ui/TocPanel/TocPanel"
 import RangeSlider from "../components/ui/RangeSlider/RangeSlider"
-import { setWallet } from "../store/actions/wallet"
-import Wallet from "../connections/wallet"
 import axios from "axios"
 import { ReaderBaseTheme } from "../config/readerTheme"
+import useWallet from "../hook/useWallet"
 
 const ReaderPage = () => {
 
+	const wallet = useWallet()
 	const params = useLocation()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [readTime, setReadTime] = useState(0)
 	const [Preview, setPreview] = useState(null)
@@ -72,16 +71,7 @@ const ReaderPage = () => {
 	const addQuotesRef = useRef()
 	const seeking = useRef(false);
 
-	const connectWallet = useCallback(
-		() => {
-			Wallet.connectWallet().then(res => {
-				dispatch(setWallet(res.selectedAddress))
-				dispatch(setSnackbar({show: true, message: "Wallet connected.", type: 1}))
-			}).catch(err => {
-				dispatch(setSnackbar({show: true, message: "Error while connecting to wallet", type: 4}))
-			}).finally(() => setLoading(false))
-		},[dispatch],
-	)
+	useEffect(() => setWalletAddress(wallet.getAddress()), [])
 
 	const saveLastReadPage = useCallback(
 		(cfi) => {
@@ -150,13 +140,6 @@ const ReaderPage = () => {
 		if(Loading) dispatch(showSpinner())
 		else dispatch(hideSpinner())
 	}, [Loading, dispatch])
-
-	useEffect(() => {
-		setLoading(true)
-		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
-		else connectWallet()
-		setLoading(false)
-	}, [BWalletState, connectWallet])
 
 	useEffect(()=>{
 		hideAllPanel()
