@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import moment from 'moment'
 
-import Wallet from '../../../connections/wallet'
-
 import { clearWallet } from '../../../store/actions/wallet'
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { setUser, unsetUser } from '../../../store/actions/user'
@@ -19,6 +17,7 @@ import GaTracker from '../../../trackers/ga-tracker'
 
 import { useWeb3AuthContext } from '../../../contexts/SocialLoginContext'
 import { useSmartAccountContext } from '../../../contexts/SmartAccountContext'
+import { showModal, SHOW_SELECT_WALLET_MODEL } from '../../../store/actions/modal'
 
 const UserHOC = props => {
 	const dispatch = useDispatch()
@@ -89,10 +88,7 @@ const UserHOC = props => {
 				.then(async res => {
 					if (res.status === 200) {
 						dispatch(setUser(res.data))
-						console.log({ res: res.data })
-						setLoading(true)
-						await Wallet(provider, dispatch)
-						setLoading(false)
+						dispatch(showModal(SHOW_SELECT_WALLET_MODEL))
 					}
 				})
 				.catch(err => {
