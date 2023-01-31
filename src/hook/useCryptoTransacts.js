@@ -19,7 +19,6 @@ import { BASE_URL } from '../config/env'
 import Contracts from '../connections/contracts'
 import { hideModal } from '../store/actions/modal'
 import { MARKET_CONTRACT_ADDRESS } from '../config/contracts'
-import { deleteData } from '../helpers/storage'
 
 const useCryptoTransacts = () => {
 	const UserState = useSelector(state => state.UserState)
@@ -31,10 +30,18 @@ const useCryptoTransacts = () => {
 
 	const [Loading, setLoading] = useState(false)
 
+	const headers = { address: wallet.getAddress(), 'user-id': UserState.user.uid, authorization: `Bearer ${UserState.tokens.acsTkn.tkn}` }
+
+	let orderId = null
+
 	const BiconomyTransactions = {
 		purchase: async (bookAddress, bookPrice, onPurchaseHandler) => {
 			try {
 				setLoading(true)
+
+				const order = await axios.post(`${BASE_URL}/api/book/crypto/order/wc`, { amount: bookPrice }, { headers })
+				if (order.status === 200) orderId = order.data.id
+
 				const approveErc721Interface = new ethers.utils.Interface(['function approve(address spender, uint256 amount)'])
 				const address = wallet.getAddress()
 				// const approveData = approveErc721Interface.encodeFunctionData( 'approve', [bookAddress, ethers.utils.parseUnits(bookPrice.toString(), 6)] )
@@ -47,6 +54,7 @@ const useCryptoTransacts = () => {
 				const safeMintData = safeMintErc721Interface.encodeFunctionData('privateMint', [address, ethers.utils.parseEther(bookPrice.toString()), ethers.utils.parseEther(bookPrice.toString())])
 				const safeMintTx = { to: bookAddress, data: safeMintData }
 				BWalletState.smartAccount.on('txMined', async response => {
+					const txHash = response.receipt.transactionHash
 					const logs = response.receipt.logs.filter(
 						log =>
 							log.address === bookAddress &&
@@ -54,6 +62,8 @@ const useCryptoTransacts = () => {
 							isFilled(log.topics.filter(topic => topic === keccak256(toUtf8Bytes('Transfer(address,address,uint256)')) && isFilled(log.topics[log.topics.length - 1])))
 					)
 					if (isFilled(logs)) {
+						axios.post(`${BASE_URL}/api/book/crypto/mine`, { transactionId: orderId, wallet: wallet.getAddress(), hash: txHash }, { headers })
+
 						const tokenId = parseInt(logs[0].topics[logs[0].topics.length - 1])
 						axios({
 							url: `${BASE_URL}/api/book/copies`,
@@ -63,11 +73,6 @@ const useCryptoTransacts = () => {
 							.then(res => {})
 							.catch(err => {})
 						const data = { ownerAddress: address, bookAddress: bookAddress, tokenId, purchasePrice: bookPrice }
-						const headers = {
-							address: wallet.getAddress(),
-							'user-id': UserState.user.uid,
-							authorization: `Bearer ${UserState.tokens.acsTkn.tkn}`,
-						}
 						const purchase = await axios.post(`${BASE_URL}/api/book/purchase`, data, { headers })
 						if (purchase.status === 200) onPurchaseHandler()
 						else dispatch(setSnackbar('NOT200'))
@@ -75,9 +80,9 @@ const useCryptoTransacts = () => {
 					}
 				})
 				BWalletState.smartAccount.on('error', response => {
+					axios.post(`${BASE_URL}/api/book/crypto/error/bc`, { transactionId: orderId, error: response }, { headers })
 					setLoading(false)
 					dispatch(setSnackbar('ERROR'))
-					console.error({ error: response })
 				})
 				// const transactions = [approveTx]
 				const transactions = [safeMintTx]
@@ -89,8 +94,8 @@ const useCryptoTransacts = () => {
 					gasLimit: { hex: GAS_LIMIT, type: 'hex' },
 				})
 			} catch (error) {
+				axios.post(`${BASE_URL}/api/book/crypto/error/bc`, { transactionId: orderId, error }, { headers })
 				setLoading(false)
-				console.error({ error })
 				dispatch(setSnackbar('ERROR'))
 			}
 		},
@@ -185,7 +190,6 @@ const useCryptoTransacts = () => {
 					})
 				})
 				BWalletState.smartAccount.on('error', response => {
-					console.error({ error: response })
 					setLoading(false)
 					dispatch(setSnackbar('ERROR'))
 				})
@@ -203,19 +207,25 @@ const useCryptoTransacts = () => {
 				})
 			} catch (error) {
 				setLoading(false)
-				console.error({ error })
 				dispatch(setSnackbar('ERROR'))
 			}
 		},
 	}
 
 	const WalletConnectTransactions = {
-		purchase: (bookAddress, bookPrice, onPurchaseHandler) => {
+		purchase: async (bookAddress, bookPrice, onPurchaseHandler) => {
+			const order = await axios.post(`${BASE_URL}/api/book/crypto/order/wc`, { amount: bookPrice }, { headers })
+			if (order.status === 200) orderId = order.data.id
+
+			setLoading(true)
 			Contracts.purchaseNft(wallet.getAddress(), bookAddress, bookPrice.toString(), wallet.getSigner())
 				.then(res => {
 					dispatch(setSnackbar({ show: true, message: 'Book purchased.', type: 1 }))
 					dispatch(hideModal())
 					const tokenId = Number(res.events.filter(event => event.eventSignature === 'Transfer(address,address,uint256)')[0].args[2]._hex)
+
+					axios.post(`${BASE_URL}/api/book/crypto/mine`, { transactionId: orderId, wallet: wallet.getAddress(), hash: res.transactionHash }, { headers })
+
 					axios({
 						url: BASE_URL + '/api/book/purchase',
 						method: 'POST',
@@ -238,6 +248,7 @@ const useCryptoTransacts = () => {
 						.catch(err => {})
 				})
 				.catch(err => {
+					axios.post(`${BASE_URL}/api/book/crypto/error/bc`, { transactionId: orderId, error: err }, { headers })
 					setLoading(false)
 					if (err.message) {
 						if (err?.message?.indexOf('execution reverted: ERC20: transfer amount exceeds balance') > -1)
@@ -270,13 +281,9 @@ const useCryptoTransacts = () => {
 			onPublishHandler
 		) => {
 			try {
-				console.log('listing')
-				console.log({ address: wallet.getAddress(), coverUrl, price, secondaryFromInDays, languageId, genreIDs, signer: wallet.getSigner() })
 				Contracts.listNftForSales(wallet.getAddress(), coverUrl, price, secondaryFromInDays, languageId, genreIDs, wallet.getSigner())
 					.then(tx => {
-						console.log('listing inside')
 						const bookAddress = tx.events.filter(event => event['event'] === 'OwnershipTransferred')[0].address
-						console.log({ bookAddress })
 						const status = tx.status
 						const txHash = tx.transactionHash
 						if (isUsable(bookAddress) && isUsable(status) && status === 1 && isUsable(txHash)) {
@@ -312,7 +319,6 @@ const useCryptoTransacts = () => {
 									}
 								})
 								.catch(err => {
-									console.error({ err })
 									if (isUsable(err.response)) {
 										if (err.response.status === 413) dispatch(setSnackbar('LIMIT_FILE_SIZE'))
 										else if (err.response.status === 415) dispatch(setSnackbar('INVALID_FILE_TYPE'))
@@ -326,13 +332,11 @@ const useCryptoTransacts = () => {
 						}
 					})
 					.catch(err => {
-						console.error({ err })
 						dispatch(setSnackbar('NOT200'))
 						setLoading(false)
 					})
 			} catch (error) {
 				setLoading(false)
-				console.error({ error })
 				dispatch(setSnackbar('ERROR'))
 			}
 		},
