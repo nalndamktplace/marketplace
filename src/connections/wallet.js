@@ -23,7 +23,6 @@ async function Wallet(provider, dispatch) {
 	dispatch(setSmartAccount({ smartAccount }))
 	const smartAccountSigner = smartAccount.signer
 	const address = smartAccount.address
-	console.log('address', address)
 	dispatch(hideSpinner())
 	const checkBalance = async () => {
 		const balanceParams = {

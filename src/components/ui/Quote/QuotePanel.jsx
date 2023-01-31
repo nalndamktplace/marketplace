@@ -92,7 +92,6 @@ const QuotePanel = ({ setDiscCount, mobileView, preview, rendition,  bookMeta, h
                                 setDiscCount(res.data.length)
                                 setQuotes(res.data)
                                 setPostQuotes('')
-                                console.log(res.data)
                             }
                             else if(res.status === 204) {}
                             else dispatch(setSnackbar('NOT200'))

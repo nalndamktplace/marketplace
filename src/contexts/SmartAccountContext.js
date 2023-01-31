@@ -51,7 +51,6 @@ export const SmartAccountProvider = ({ children }) => {
 		try {
 			setLoading(true)
 			const walletProvider = new ethers.providers.Web3Provider(provider)
-			console.log('walletProvider', walletProvider)
 			// New instance, all config params are optional
 			const wallet = new SmartAccount(walletProvider, {
 				activeNetworkId: activeChainId,
@@ -67,7 +66,6 @@ export const SmartAccountProvider = ({ children }) => {
 					},
 				],
 			})
-			console.log('wallet', wallet)
 
 			// Wallet initialization to fetch wallet info
 			const smartAccount = await wallet.init()
@@ -127,10 +125,6 @@ export const SmartAccountProvider = ({ children }) => {
 
 		try {
 			setIsFetchingBalance(true)
-			// ethAdapter could be used like this
-			// const bal = await wallet.ethersAdapter().getBalance(state.address);
-			// console.log(bal);
-			// you may use EOA address my goerli SCW 0x1927366dA53F312a66BD7D09a88500Ccd16f175e
 			const balanceParams = {
 				chainId: activeChainId,
 				eoaAddress: state.address,

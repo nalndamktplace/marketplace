@@ -43,7 +43,7 @@ const purchaseNft = async function purchaseNft(buyer, bookAddress, amount, signe
 		const tx = await transaction.wait()
 		return tx
 	} catch (err) {
-		console.log(err)
+		// console.log(err)
 	}
 }
 

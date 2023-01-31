@@ -48,7 +48,7 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 	const [Collections, setCollections] = useState([])
 	const [WalletBalance, setWalletBalance] = useState(null)
 
-	useEffect(() => { if(wallet.isConnected()) wallet.getBalance().then(res => setWalletBalance(parseFloat(res).toFixed(2).toLocaleString())).catch(err => console.error({err})) }, [wallet])
+	useEffect(() => { if(wallet.isConnected()) wallet.getBalance().then(res => setWalletBalance(parseFloat(res).toFixed(2).toLocaleString())).catch(err => {}) }, [wallet])
 
 	useEffect(() => {
 		if (eoaLoading) dispatch(showSpinner())
@@ -95,12 +95,6 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 	const loginHandler = async () => connect()
 
 	const handleWalletConnect = () => dispatch(showModal(SHOW_SELECT_WALLET_MODEL))
-
-	useEffect(() => {
-		if(wallet.isConnected()){
-			console.log({network: wallet.getNetwork()})
-		}
-	}, [wallet])
 
 	const NAV_ITEMS = [
 		{ id: 'NI1', title: 'Explore', url: '/explore', uri: null, icon: CompassIcon, action: null, subMenu: null },

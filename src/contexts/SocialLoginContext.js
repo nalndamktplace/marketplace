@@ -34,16 +34,12 @@ export const Web3AuthProvider = ({ children }) => {
 
 	// if wallet already connected close widget
 	useEffect(() => {
-		console.log('hidelwallet')
-		if (socialLoginSDK && socialLoginSDK.provider) {
-			socialLoginSDK.hideWallet()
-		}
+		if (socialLoginSDK && socialLoginSDK.provider) socialLoginSDK.hideWallet()
 	}, [address, socialLoginSDK])
 
 	const getUserInfo = useCallback(async () => {
 		if (socialLoginSDK) {
 			const userInfo = await socialLoginSDK.getUserInfo()
-			console.log('userInfo', userInfo)
 			setUserInfo(userInfo)
 		}
 	}, [socialLoginSDK])
@@ -121,10 +117,7 @@ export const Web3AuthProvider = ({ children }) => {
 	}, [address, connect, socialLoginSDK])
 
 	const disconnect = useCallback(async () => {
-		if (!socialLoginSDK || !socialLoginSDK.web3auth) {
-			console.error('Web3Modal not initialized.')
-			return
-		}
+		if (!socialLoginSDK || !socialLoginSDK.web3auth) return
 		await socialLoginSDK.logout()
 		setWeb3State({
 			provider: null,
