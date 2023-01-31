@@ -45,7 +45,17 @@ const useRazorpay = () => {
 			}
 
 			// creating a new order
-			const result = await axios.post(`${BASE_URL}/api/book/fiat/order`, { amount: transactionAmount * 100, currency: 'INR' }, { headers: {} })
+			const result = await axios.post(
+				`${BASE_URL}/api/book/fiat/order`,
+				{ amount: transactionAmount * 100, currency: 'INR' },
+				{
+					headers: {
+						address: wallet.getAddress(),
+						'user-id': UserState.user.uid,
+						authorization: `Bearer ${UserState.tokens.acsTkn.tkn}`,
+					},
+				}
+			)
 
 			if (!result) {
 				alert('Server error. Are you online?')
