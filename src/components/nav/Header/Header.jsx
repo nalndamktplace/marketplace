@@ -1,9 +1,7 @@
 import axios from 'axios'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-
-import Wallet from '../../../connections/wallet'
 
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
@@ -27,14 +25,15 @@ import { ReactComponent as PlusSquareIcon } from '../../../assets/icons/plus-squ
 
 import { useWeb3AuthContext } from '../../../contexts/SocialLoginContext'
 import { useSmartAccountContext } from '../../../contexts/SmartAccountContext'
-import { ChainId } from '@biconomy/core-types'
-import { ethers } from 'ethers'
-import { USDC_ADDRESS } from '../../../config/constants'
+import useWallet from '../../.../../../hook/useWallet'
+import { showModal, SHOW_SELECT_WALLET_MODEL } from '../../../store/actions/modal'
+import { logout } from '../../../helpers/storage'
 
 const Header = ({ showRibbion = true, noPadding = false }) => {
-	const { address, loading: eoaLoading, connect, disconnect, provider } = useWeb3AuthContext()
+	const { loading: eoaLoading, connect, disconnect } = useWeb3AuthContext()
 	const { setSelectedAccount } = useSmartAccountContext()
-
+	
+	const wallet = useWallet()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
@@ -49,19 +48,7 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 	const [Collections, setCollections] = useState([])
 	const [WalletBalance, setWalletBalance] = useState(null)
 
-	const getBalance = useCallback(async () => {
-		if(isUsable(BWalletState.smartAccount)){
-			const balanceParams = {
-				chainId: ChainId.POLYGON_MUMBAI,
-				eoaAddress: BWalletState.smartAccount.address,
-				tokenAddresses: [USDC_ADDRESS],
-			}
-			const balances = await BWalletState.smartAccount.getAlltokenBalances(balanceParams)
-			const usdc = balances.data.filter(token => token.contract_address === USDC_ADDRESS)[0]
-			usdc.balance = ethers.utils.formatUnits(usdc?.balance, 'mwei')
-			setWalletBalance(usdc)
-		}
-	}, [BWalletState.smartAccount])
+	useEffect(() => { if(wallet.isConnected()) wallet.getBalance().then(res => setWalletBalance(parseFloat(res).toFixed(2).toLocaleString())).catch(err => {}) }, [wallet])
 
 	useEffect(() => {
 		if (eoaLoading) dispatch(showSpinner())
@@ -74,7 +61,6 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 	}, [Loading, dispatch])
 
 	useEffect(() => {
-		getBalance()
 		setCollections([])
 		axios({
 			url: BASE_URL + '/api/collections',
@@ -84,7 +70,7 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 				if (res.status === 200) setCollections(res.data)
 			})
 			.catch(err => {})
-	}, [getBalance])
+	}, [])
 
 	useEffect(() => {
 		GaTracker('event_header_search')
@@ -108,12 +94,7 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 
 	const loginHandler = async () => connect()
 
-	const handleWalletConnect = async () => {
-		setLoading(true)
-		if (!address) loginHandler()
-		await Wallet(provider, dispatch)
-		setLoading(false)
-	}
+	const handleWalletConnect = () => dispatch(showModal(SHOW_SELECT_WALLET_MODEL))
 
 	const NAV_ITEMS = [
 		{ id: 'NI1', title: 'Explore', url: '/explore', uri: null, icon: CompassIcon, action: null, subMenu: null },
@@ -141,7 +122,7 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 			subMenu: [
 				{ id: 'NI4SMI1', title: 'Profile', url: '/profile', uri: null, icon: null, action: null },
 				{ id: 'NI4SMI2', title: 'Connect Wallet', url: null, uri: null, icon: null, action: () => handleWalletConnect() },
-				{ id: 'NI5SMI3', title: 'Wallet', data: WalletBalance ? WalletBalance.balance : 'loading...', url: null, uri: null, icon: null, action: null },
+				{ id: 'NI4SMI3', title: 'Wallet', data: WalletBalance ? WalletBalance : 'loading...', url: null, uri: null, icon: null, action: null },
 				{ id: 'NI4SMI4', title: 'Library', url: '/library', uri: null, icon: null, action: null },
 				{
 					id: 'NI4SMI5',
@@ -190,10 +171,9 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 
 	const logOutHandler = () => {
 		GaTracker('event_header_user_logout')
-		if (address) {
-			setSelectedAccount(null)
-			disconnect()
-		}
+		setSelectedAccount(null)
+		disconnect()
+		logout()
 		dispatch(unsetUser())
 	}
 
@@ -204,8 +184,8 @@ const Header = ({ showRibbion = true, noPadding = false }) => {
 			if (isUsable(item.subMenu)) {
 				const subMenuitems = []
 				item.subMenu.forEach(navItem => {
-					if (navItem.id === 'NI4SMI2' && BWalletState.smartAccount) {
-					} else if (navItem.id === 'NI4SMI3' && !BWalletState.smartAccount) {
+					if (navItem.id === 'NI4SMI2' && wallet.isConnected()) {
+					} else if (navItem.id === 'NI4SMI3' && !wallet.isConnected()) {
 					} else
 						subMenuitems.push(
 							<div onClick={() => menuItemClickHandler(navItem)} key={navItem.id} className="header__content__navbar__link__subitem">

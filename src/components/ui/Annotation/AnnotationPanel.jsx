@@ -10,13 +10,13 @@ import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 
 import { BASE_URL } from "../../../config/env"
 import Button from "../Buttons/Button"
+import useWallet from "../../../hook/useWallet"
 
 const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotationRef, onRemove=()=>{}, hideModal=()=>{}}) => {
 
+	const wallet = useWallet()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
-
-	const BWalletState = useSelector(state => state.BWalletState)
 
 	const [WalletAddress, setWalletAddress] = useState(null)
 	const [Loading, setLoading] = useState(false)
@@ -30,11 +30,11 @@ const AnnotationPanel = ({mobileView, preview, rendition, bookMeta, addAnnotatio
 	useEffect(() => {
 		if(!isUsable(mobileView) || mobileView === false){
 			if(isUsable(preview) && !preview){
-				if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
+				if(isUsable(wallet.getAddress())) setWalletAddress(wallet.getAddress())
 				else navigate(-1)
 			}
 		}
-	}, [BWalletState, navigate, preview, mobileView])
+	}, [navigate, preview, mobileView])
 
 	useEffect(() => {
 		if(isUsable(preview) && !preview && isUsable(bookMeta) && isUsable(WalletAddress) && isUsable(rendition)){

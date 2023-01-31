@@ -11,6 +11,7 @@ import { setSnackbar } from "../../../store/actions/snackbar"
 import { ReactComponent as ClockIcon } from "../../../assets/icons/clock.svg"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
+import useWallet from "../../../hook/useWallet"
 
 const ReadTime = ({timerUpdate, mobileView, bookMeta, preview}) => {
 
@@ -21,13 +22,14 @@ const ReadTime = ({timerUpdate, mobileView, bookMeta, preview}) => {
 	const [lastUpdate, setLastUpdate] = useState(0)
 	const [WalletAddress, setWalletAddress] = useState(null)
 
+	const wallet = useWallet()
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
 	useEffect(() => {
 		if(!isUsable(mobileView) || mobileView === false){
 			if(isUsable(preview) && !preview){
-				if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
+				if(isUsable(wallet.getAddress())) setWalletAddress(wallet.getAddress())
 				else navigate(-1)
 			}
 		}

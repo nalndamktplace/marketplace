@@ -2,32 +2,29 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import Wallet from '../../../connections/wallet'
-
 import { BASE_URL } from '../../../config/env'
 
-import { setWallet } from '../../../store/actions/wallet'
 import { setSnackbar } from '../../../store/actions/snackbar'
 import { showSpinner, hideSpinner } from '../../../store/actions/spinner'
 
-import { isUserLoggedIn, isWalletConnected, isUsable } from '../../../helpers/functions'
-import GaTracker from '../../../trackers/ga-tracker'
+import { isUserLoggedIn } from '../../../helpers/functions'
+import useWallet from '../../../hook/useWallet'
 
 const WalletHOC = props => {
 	
+	const wallet = useWallet()
 	const dispatch = useDispatch()
 
 	const UserState = useSelector(state => state.UserState)
-	const BWalletState = useSelector(state => state.BWalletState)
 
 	useEffect(() => {
-		if(isUserLoggedIn(UserState) && isUsable(BWalletState.smartAccount)){
+		if(isUserLoggedIn(UserState) && wallet.isConnected()){
 			dispatch(showSpinner())
 			axios({
 				url: BASE_URL+'/api/user/wallet',
 				method: 'POST',
 				headers: {
-					'address': BWalletState.smartAccount.address,
+					'address': wallet.getAddress(),
 					'user-id': UserState.user.uid,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				}
@@ -40,7 +37,7 @@ const WalletHOC = props => {
 				dispatch(hideSpinner())
 			})
 		}
-	}, [BWalletState, dispatch, UserState])
+	}, [dispatch, UserState])
 
 	return null
 }

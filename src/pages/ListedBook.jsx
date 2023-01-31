@@ -860,7 +860,7 @@ const ListedBookPage = props => {
 										<div className='book__data__container__desc__summary__data'>{secondaryNFT.token_id}</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g => <div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Preferred Age Group</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.age_group).map(g => <div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										{renderGrid()}
 									</div>

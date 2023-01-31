@@ -14,23 +14,24 @@ import { isFilled, isUsable } from '../../../helpers/functions'
 import { BASE_URL } from '../../../config/env'
 import axios from 'axios'
 import { setSnackbar } from '../../../store/actions/snackbar'
+import useWallet from '../../../hook/useWallet'
 
 
 const FeedbackModal = () => {
 
+	const wallet = useWallet()
 	const dispatch = useDispatch()
 
 	const UserState = useSelector(state => state.UserState)
 	const ModalState = useSelector(state => state.ModalState)
-	const BWalletState = useSelector(state => state.BWalletState)
 
     const [Show, setShow] = useState(false)
     const [FeedbackForm, setFeedbackForm] = useState({category:FEEDBACK_CATEGORIES[0].id,feedback:""});
 	const [WalletAddress, setWalletAddress] = useState();
 
 	useEffect(() => {
-		if(isUsable(BWalletState.smartAccount)) setWalletAddress(BWalletState.smartAccount.address)
-	}, [BWalletState])
+		if(wallet.isConnected()) setWalletAddress(wallet.getAddress())
+	}, [])
 
 	useEffect(() => {
 		if(ModalState.show === true && ModalState.type === SHOW_FEEDBACK_MODAL){

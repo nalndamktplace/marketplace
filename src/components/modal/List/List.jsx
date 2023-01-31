@@ -44,7 +44,6 @@ const ListModal = ({book, userCopy, onListHandler}) => {
 			}).then(res => {
 				if(res.status === 200) setRoyalty(res.data.royalty)
 			}).catch(err => {
-				console.error({err})
 			}).finally(() => setFulcrumLoading(false))
 		}
 	},[ModalState])
@@ -63,7 +62,6 @@ const ListModal = ({book, userCopy, onListHandler}) => {
 				}).then(res => {
 					if(res.status === 200) setRoyalty(res.data.royalty)
 				}).catch(err => {
-					console.error({err})
 				}).finally(() => setFulcrumLoading(false))
 			}, 1800000)
 			return () => clearInterval(timer)
