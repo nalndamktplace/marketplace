@@ -62,12 +62,11 @@ const BookPage = props => {
 	const razorpay = useRazorpay()
 	const isLoggedIn = useIsLoggedIn()
 	const cryptoTransacts = useCryptoTransacts()
-	const { address, connect, provider, } = useWeb3AuthContext();
 
 	const UserState = useSelector(state => state.UserState)
 	const BWalletState = useSelector(state=> state.BWalletState)
 
-	const [WalletAddress, setWalletAddress] = useState(null)
+	const [WalletAddress, setWalletAddress] = useState(wallet.getAddress())
 	const [Loading, setLoading] = useState(false)
 	const [ActiveTab, setActiveTab] = useState('TAB01')
 	// NFT
@@ -132,7 +131,7 @@ const BookPage = props => {
 		},
 		[NFT, dispatch],
 	)
-	
+
 	const getUserReview = useCallback(
 		() => {
 			if(isUsable(NFT) && isUsable(WalletAddress)){
@@ -291,16 +290,8 @@ const BookPage = props => {
 		}
 	}, [NFT, dispatch])
 
-	useEffect(() => {
-		setLoading(true)
-		if(isUsable(BWalletState.smartAccount)){
-			setWalletAddress(BWalletState.smartAccount.address)
-		} 
-		
-		setLoading(false)
-	}, [BWalletState])
-
 	useEffect(() => { if(isUsable(Review)) setReviewForm({title: Review.title, body: Review.body, rating: Review.rating}) }, [Review])
+
 	useEffect(() => {
         const bookID = params.bookID
         axios({
@@ -313,20 +304,20 @@ const BookPage = props => {
             setNFT(res.data[0])
         })
 	}, [params])
-	
+
 	useEffect(() =>{
-		if(isUsable(wallet.getAddress()) && isUsable(NFT)){
+		if(isUsable(WalletAddress) && isUsable(NFT)){
 			setLoading(true)
 			const book = NFT
-			if(book.new_owner === wallet.getAddress()) setOwner(true)
+			if(book.new_owner === WalletAddress) setOwner(true)
 			else setOwner(false)
-			if(book.publisher_address === wallet.getAddress()) setPublished(true)
+			if(book.publisher_address === WalletAddress) setPublished(true)
 			else setPublished(false)
 			axios({
 				url: BASE_URL+'/api/book/owner',
 				method: 'GET',
 				params: {
-					ownerAddress: wallet.getAddress(),
+					ownerAddress: WalletAddress,
 					bookAddress: book.book_address
 				}
 			}).then(res => {
@@ -335,7 +326,7 @@ const BookPage = props => {
 			}).catch(err => {
 				setLoading(false)
 			})
-		} }, [NFT, params, dispatch]
+		} }, [NFT, params, dispatch, WalletAddress]
 	)
 
 	useEffect(() => { if(isUsable(NFT) && isUsable(Published) && isUsable(Owner)) setLoading(false) }, [NFT, Published, Owner])
@@ -359,37 +350,24 @@ const BookPage = props => {
 				method: 'GET',
 				headers: {
 					'user-id': UserState.user.uid,
-					'address': wallet.getAddress(),
+					'address': WalletAddress,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
-				params: {walletAddress: wallet.getAddress(), bookAddress: NFT.book_address}
+				params: {walletAddress: WalletAddress, bookAddress: NFT.book_address}
 			}).then(res => {
 				if(res.status === 200) {
 					setUserCopy(res.data)
 					setListed(res.data.listed)
 				}
+				else if(res.status === 204) {}
 				else dispatch(setSnackbar('NOT200'))
 			}).catch(err => {
 				dispatch(setSnackbar('ERROR'))
 			})
 		}
-	}, [Owner, UserState, dispatch, NFT])
+	}, [Owner, UserState, dispatch, NFT, WalletAddress])
 
-	const loginHandler = async () => connect()
-
-	const walletStatus = () => {
-		if (isUsable(BWalletState.smartAccount)) {
-			setWalletAddress(BWalletState.smartAccount.address)
-			return true
-		}
-		else {
-			if (!address) {
-				loginHandler();
-			}
-			Wallet(provider, dispatch);
-		}
-	}
-
+	// TODO: Write transaction for Biconomy Wallet
 	const unlistHandler = () => {
 		GaTracker('event_book_unlist')
 		if(isUsable(WalletAddress)){
@@ -451,7 +429,7 @@ const BookPage = props => {
 		else if(moment(NFT.secondary_sales_from).isAfter(moment())) dispatch(setSnackbar({show: true, message: `Secondary Sales will open only after ${moment(NFT.secondary_sales_from).format('D MMM, YYYY')}.`, type: 2}))
 	}
 
-	// TODO: Compatible for Biconomy wallet
+	// TODO: Write transaction for Biconomy Wallet
 	const onListHandler = listPrice => {
 		GaTracker('event_book_list')
 		if(isUsable(WalletAddress)){
@@ -542,15 +520,16 @@ const BookPage = props => {
 				url: `${BASE_URL}/api/verify/mobile`,
 				method: 'POST',
 				headers: {
-					'address': wallet.getAddress(),
+					'address': WalletAddress,
 					'user-id': UserState.user.uid,
 					'authorization': `Bearer ${UserState.tokens.acsTkn.tkn}`
 				},
 				data: {
 					bookAddress: NFT.book_address,
-					ownerAddress: wallet.getAddress()
+					ownerAddress: WalletAddress
 				}
 			}).then(res => {
+				setLoading(false)
 				if(res.status === 200){
 					GaTracker('navigate_book_reader')
 					navigate('/library/reader', {
@@ -562,6 +541,11 @@ const BookPage = props => {
 						}
 					})
 				}
+				else dispatch(setSnackbar('NOT200'))
+			}).catch(err => {
+				setLoading(false)
+				if(err.response?.status === 401) dispatch(setSnackbar({show: true, message: "Please purchase the book first.", type: 3})) 
+				else dispatch(setSnackbar('ERROR'))
 			})
 		} catch (err) {
 			setLoading(false)
@@ -584,7 +568,7 @@ const BookPage = props => {
 	const quoteModalHandler = () => isLoggedIn?dispatch(showModal(SHOW_QUOTE_MODAL)):dispatch(setSnackbar('NOT_LOGGED_IN'))
 
 	const likeHandler = () => {
-		if(walletStatus()){
+		if(wallet.isConnected()){
 			if(Owner){
 				if(!Liked){
 					setLikes(old => old+1)
@@ -804,7 +788,7 @@ const BookPage = props => {
 								<div className='book__data__container__meta'>
 									<h3 className="typo__color--n700 typo__head typo__head--3 typo__transform--capital">{NFT.title}</h3>
 									<h5 className="typo__color--n500 typo__head typo__head--6 typo__transform--upper">{NFT.author}</h5>
-									{Owner||Published?null:<div className='book__data__container__meta__price typo-head--6 typo__act typo__color--success'>{NFT.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{NFT.price}</>}</div>}
+									{/* {Owner||Published?null:<div className='book__data__container__meta__price typo-head--6 typo__act typo__color--success'>{NFT.price===0?"FREE":<><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{NFT.price}</>}</div>} */}
 									<div className="book__data__container__meta__rating">
 										<div className="book__data__container__meta__rating__stars">
 											<Stars size={'small'} rating={Rating}/>
@@ -827,8 +811,8 @@ const BookPage = props => {
 														<Button onClick={()=>listHandler()}>List</Button>
 													</>
 													:<>
-														<Button type="primary" size="lg" onClick={()=>cryptoPurchaseHandler()}>Crypto</Button>
-														<Button type="primary" size="lg" onClick={()=>fiatPurchaseHandler()}>Fiat</Button>
+														<Button type="primary" size="lg" onClick={()=>cryptoPurchaseHandler()}><img src='https://imagedelivery.net/yOWneHxM1h9mu46Te3Yjwg/59c27d12-e4eb-4f74-7a6e-b33ba6537600/icon48' style={{width: 20, height: 20, objectFit: 'contain'}} alt="USDC"/>&nbsp;{NFT.price}</Button>
+														<Button type="primary" size="lg" onClick={()=>fiatPurchaseHandler()}>$&nbsp;{NFT.price}</Button>
 														<Button onClick={()=>previewHandler()}>Preview</Button>
 													</>
 										}
@@ -849,7 +833,7 @@ const BookPage = props => {
 										</div>
 										<div className='book__data__container__desc__summary__head typo__color--n700'>Genres</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.genres).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
-										<div className='book__data__container__desc__summary__head typo__color--n700'>Prefered Age Group</div>
+										<div className='book__data__container__desc__summary__head typo__color--n700'>Preferred Age Group</div>
 										<div className='book__data__container__desc__summary__chips typo__transform--capital'>{JSON.parse(NFT.age_group).map(g=><div className="book__data__container__desc__summary__chips__item">{g}</div>)}</div>
 										{renderGrid()}
 									</div>
