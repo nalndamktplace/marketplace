@@ -7,11 +7,11 @@ import { useAccount, useBalance, useDisconnect, useNetwork, useSigner, useSwitch
 
 import { hideSpinner, showSpinner } from '../store/actions/spinner'
 
-import { USDC_ADDRESS } from '../config/constants'
 import { useSelector } from 'react-redux'
 import { isUsable } from '../helpers/functions'
 import axios from 'axios'
 import { BASE_URL } from '../config/env'
+import { NALNDA_TOKEN_CONTRACT_ADDRESS } from '../config/contracts'
 
 const useWallet = () => {
 	const UserState = useSelector(state => state.UserState)
@@ -22,7 +22,7 @@ const useWallet = () => {
 	const w3mModal = useWeb3Modal()
 	const w3mSigner = useSigner()
 	const w3mAccount = useAccount()
-	const w3mBalance = useBalance({ address: USDC_ADDRESS })
+	const w3mBalance = useBalance({ address: NALNDA_TOKEN_CONTRACT_ADDRESS })
 	const w3mNetwork = useNetwork()
 	const w3mDisconnect = useDisconnect()
 	const w3mSwitchNetwork = useSwitchNetwork()
@@ -48,10 +48,8 @@ const useWallet = () => {
 					authorization: `Bearer ${UserState.tokens.acsTkn.tkn}`,
 				},
 			})
-			if (bal.status === 200) {
-				console.log({ balance: bal.data })
-				return bal.data
-			} else return null
+			if (bal.status === 200) return bal.data
+			return null
 		},
 		disconnect: () => w3mDisconnect.disconnect(),
 		getAddress: () => (w3mAccount.isConnected ? w3mAccount.address : isUsable(BWalletState.smartAccount) ? BWalletState.smartAccount.address : null),
