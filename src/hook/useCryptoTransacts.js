@@ -48,10 +48,10 @@ const useCryptoTransacts = () => {
 				// const approveData = approveErc721Interface.encodeFunctionData( 'approve', [bookAddress, ethers.utils.parseEther(bookPrice.toString())] )
 				const approveData = approveErc721Interface.encodeFunctionData('approve', [bookAddress, ethers.utils.parseEther(bookPrice.toString())])
 				const approveTx = { to: USDC_ADDRESS, data: approveData }
-				// const safeMintErc721Interface = new ethers.utils.Interface(['function safeMint(address to)'])
-				const safeMintErc721Interface = new ethers.utils.Interface(['function privateMint(address to, uint256 _mintPrice, uint256 _authorEarningsPaidout)'])
-				// const safeMintData = safeMintErc721Interface.encodeFunctionData( 'safeMint', [address] )
-				const safeMintData = safeMintErc721Interface.encodeFunctionData('privateMint', [address, ethers.utils.parseEther(bookPrice.toString()), ethers.utils.parseEther(bookPrice.toString())])
+				const safeMintErc721Interface = new ethers.utils.Interface(['function safeMint(address to)'])
+				// const safeMintErc721Interface = new ethers.utils.Interface(['function privateMint(address to, uint256 _mintPrice, uint256 _authorEarningsPaidout)'])
+				const safeMintData = safeMintErc721Interface.encodeFunctionData('safeMint', [address])
+				// const safeMintData = safeMintErc721Interface.encodeFunctionData('privateMint', [address, ethers.utils.parseEther(bookPrice.toString()), ethers.utils.parseEther(bookPrice.toString())])
 				const safeMintTx = { to: bookAddress, data: safeMintData }
 				BWalletState.smartAccount.on('txMined', async response => {
 					const txHash = response.receipt.transactionHash
