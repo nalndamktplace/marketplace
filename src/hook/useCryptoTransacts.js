@@ -30,7 +30,7 @@ const useCryptoTransacts = () => {
 
 	const [Loading, setLoading] = useState(false)
 
-	const headers = { address: wallet.getAddress(), 'user-id': UserState.user.uid, authorization: `Bearer ${UserState.tokens.acsTkn.tkn}` }
+	const headers = { address: wallet.getAddress(), 'user-id': UserState.user.uid, authorization: `Bearer ${UserState.tokens?.acsTkn?.tkn}` }
 
 	let orderId = null
 
