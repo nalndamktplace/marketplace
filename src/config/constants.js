@@ -1,4 +1,0 @@
-export const USER_STATE = 'USER_STATE'
-export const WALLET_STATE = 'WALLET_STATE'
-export const USDC_ADDRESS = '0xfEc014B41506430F055ceff9A007e690D409b304'
-export const GAS_LIMIT = '0x4C4B40'
