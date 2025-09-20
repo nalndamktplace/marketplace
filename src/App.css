@@ -1,0 +1,32 @@
+:root {
+  --swiper-pagination-color: #f2b219;
+  /* --swiper-pagination-bullet-inactive-color: #ffffff; */
+}
+.container {
+  max-width: 1400px !important;
+  margin: 0 auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.stats-marquee {
+  color: #fff;
+  position: relative;
+  animation: animate 30s linear infinite;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+@keyframes animate {
+  0% {
+    transform: translateZ(0);
+  }
+  100% {
+    transform: translate3d(-400%, 0, 0);
+  }
+}
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+  border-color: #fe6845;
+  background-color: #fe6845;
+}
