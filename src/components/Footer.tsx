@@ -3,8 +3,10 @@ import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { Button, Input, Modal } from "antd";
 import LOGO from "./../assets/logo.svg";
+
 function Footer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <div className="container p-10 mt-10 bg-primary rounded-2xl">
@@ -145,6 +147,16 @@ function Footer() {
                     className="mb-4 text-sm font-semibold text-black transition-all cursor-pointer hover:text-black hover:translate-x-2 hover:underline me-4 md:me-6"
                   >
                     Subscribe to our newsletter
+                  </li>
+
+                  {/* Address section */}
+                  <li className="mb-4 text-sm text-black">
+                    <address className="not-italic">
+                      Kumar Keshav <br />
+                      Chankyapuri Colony, Gaushala Road <br />
+                      Ramgarh Cantt, Ramgarh <br />
+                      Jharkhand - 829122
+                    </address>
                   </li>
                 </ul>
               </div>
