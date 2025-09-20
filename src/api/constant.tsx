@@ -1,5 +1,5 @@
-export const BASE_URL = "http://localhost:8080";
-//export const BASE_URL = "https://server.nalnda.com";
+//export const BASE_URL = "http://localhost:8080";
+export const BASE_URL = "https://server.nalnda.com";
 export const ENDPOINTS = {
   COLLECTION: {
     COLLECTION: BASE_URL + "/api/collections",
