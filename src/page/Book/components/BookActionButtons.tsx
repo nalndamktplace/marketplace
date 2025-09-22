@@ -42,7 +42,7 @@ function BookActionButtons({
         <>
           {!isAuthenticated ? (
             <>
-              <span className="text-3xl font-extrabold ">${NFT?.price}</span>{" "}
+              <span className="text-3xl font-extrabold ">₹{NFT?.price}</span>{" "}
               <CustomButton
                 onClick={() => {
                   Swal.fire("Warning", "Login and register first", "warning");
@@ -87,13 +87,13 @@ function BookActionButtons({
                 userBookReadTimeData={userBookReadTimeData}
                 onListHandler={onListHandler}
                 readTime={Math.ceil(
-                  bookReaderReadTimeData?.total_read_time / 60
+                  bookReaderReadTimeData?.total_read_time / 60,
                 )}
               />
             </>
           ) : (
             <>
-              <span className="text-3xl font-extrabold ">${NFT?.price}</span>{" "}
+              <span className="text-3xl font-extrabold ">₹{NFT?.price}</span>{" "}
               <CustomButton
                 onClick={() => cryptoPurchaseHandler()}
                 loading={
@@ -138,7 +138,7 @@ const SellListModal = ({
   // const [price, setPrice] = useState("");
   const upperBand = Math.min(
     Number(bookData?.purchase_price),
-    userBookReadTimeData?.upperBand * Number(bookData?.purchase_price)
+    userBookReadTimeData?.upperBand * Number(bookData?.purchase_price),
   );
 
   const lowerBand =
