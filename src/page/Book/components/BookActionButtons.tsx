@@ -302,7 +302,7 @@ const SellListModal = ({
                   >
                     <span>Service Fee(1.99%)</span>
                     <span className="font-semibold ">
-                      ${serviceFee.toFixed(2)}
+                      ₹{serviceFee.toFixed(2)}
                     </span>
                   </Typography>
                   <Typography
@@ -315,7 +315,7 @@ const SellListModal = ({
                   >
                     <span>Authors Commission(5%)</span>
                     <span className="font-semibold ">
-                      ${authorsCommission.toFixed(2)}
+                      ₹{authorsCommission.toFixed(2)}
                     </span>
                   </Typography>
                   <Typography
@@ -327,7 +327,7 @@ const SellListModal = ({
                   >
                     <span>You will receive</span>
                     <span className="font-semibold ">
-                      ${receivePrice?.toFixed(2)}
+                      ₹{receivePrice?.toFixed(2)}
                     </span>
                   </Typography>
                 </div>

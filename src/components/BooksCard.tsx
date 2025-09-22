@@ -77,7 +77,7 @@ function BooksCard({
             </p>
           </div>
           <div>
-            <p className="font-bold">${Number(price)?.toFixed(2)} </p>
+            <p className="font-bold">₹{Number(price)?.toFixed(2)} </p>
           </div>
         </div>
       </Link>

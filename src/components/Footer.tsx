@@ -149,13 +149,17 @@ function Footer() {
                     Subscribe to our newsletter
                   </li>
 
-                  {/* Address section */}
+                  {/* Updated Address section */}
                   <li className="mb-4 text-sm text-black">
                     <address className="not-italic">
                       Kumar Keshav <br />
-                      Chankyapuri Colony, Gaushala Road <br />
-                      Ramgarh Cantt, Ramgarh <br />
-                      Jharkhand - 829122
+                      S/o Shrawan Kumar, 00, <br />
+                      Chankyapuri Colony, Gaushala <br />
+                      Ramgarh Ramgarh, <br />
+                      Ramgarh Cantt, <br />
+                      Ramgarh Jharkhand - 829122 <br />
+                      Mob: +91 70230 02015 <br />
+                      Mail id: contact@nalnda.com
                     </address>
                   </li>
                 </ul>
